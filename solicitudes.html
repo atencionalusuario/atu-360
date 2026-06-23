@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATU 360 — Solicitudes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+
+  .sidebar { width: 220px; flex-shrink: 0; background: #0F2070; display: flex; flex-direction: column; min-height: 100vh; }
+  .sb-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .sb-name { font-size: 1.25rem; font-weight: 800; color: white; }
+  .sb-name span { color: #29ABE2; }
+  .sb-tagline { font-size: 0.62rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 2px; margin-top: 3px; }
+  .sb-nav { padding: 20px 12px; flex: 1; }
+  .nav-section-label { font-size: 0.58rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; padding: 0 10px; margin: 16px 0 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 6px; font-size: 0.8rem; color: rgba(255,255,255,0.55); cursor: pointer; transition: all 0.15s; margin-bottom: 1px; }
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+  .nav-item.active { background: rgba(41,171,226,0.15); color: white; font-weight: 600; border-left: 2px solid #29ABE2; }
+  .sb-bottom { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .sb-user { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .sb-avatar { width: 32px; height: 32px; border-radius: 50%; background: #1A3DAA; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: white; font-weight: 700; flex-shrink: 0; border: 1.5px solid rgba(41,171,226,0.4); }
+  .sb-user-name { font-size: 0.76rem; font-weight: 600; color: white; }
+  .sb-user-role { font-size: 0.62rem; color: rgba(255,255,255,0.4); margin-top: 1px; }
+  .btn-logout { width: 100%; padding: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: rgba(255,255,255,0.5); font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-logout:hover { background: rgba(255,255,255,0.1); color: white; }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+  .btn-nueva { padding: 8px 16px; background: #1A3DAA; color: white; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; }
+  .btn-nueva:hover { opacity: 0.88; }
+
+  .content { padding: 24px 28px; display: flex; gap: 24px; align-items: flex-start; }
+
+  .list-col { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
+  .section-title { font-size: 0.72rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+  .sol-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 14px 16px; cursor: pointer; transition: all 0.15s; }
+  .sol-card:hover { border-color: #CBD5E1; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .sol-card.active { border-color: #1A3DAA; }
+  .sol-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .sol-tipo { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 2px 8px; border-radius: 3px; }
+  .sol-tipo.permiso { background: #EEF2FF; color: #1A3DAA; }
+  .estado-pill { font-size: 0.62rem; font-weight: 700; padding: 2px 8px; border-radius: 3px; }
+  .estado-pill.pendiente-sup   { background: #FFFBEB; color: #B45309; }
+  .estado-pill.pendiente-admin { background: #FFF7ED; color: #C2410C; }
+  .estado-pill.aprobada        { background: #F0FDF4; color: #16A34A; }
+  .estado-pill.rechazada       { background: #FEF2F2; color: #DC2626; }
+  .estado-pill.borrador        { background: #F1F5F9; color: #64748B; }
+  .sol-titulo { font-size: 0.82rem; font-weight: 700; color: #1E293B; line-height: 1.3; }
+  .sol-meta   { font-size: 0.68rem; color: #94A3B8; margin-top: 4px; }
+
+  .detail-col { flex: 1; }
+  .empty-state { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 48px 24px; text-align: center; }
+  .empty-state p { font-size: 0.82rem; color: #94A3B8; margin-top: 12px; }
+  .detail-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; display: none; }
+  .detail-card.show { display: block; }
+  .detail-header { padding: 20px 24px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .detail-header-title { font-size: 0.92rem; font-weight: 700; color: #1E293B; }
+  .detail-header-sub { font-size: 0.72rem; color: #94A3B8; margin-top: 3px; }
+  .detail-body { padding: 24px; display: flex; flex-direction: column; gap: 18px; }
+
+  .field-label { font-size: 0.75rem; font-weight: 600; color: #374151; margin-bottom: 6px; display: block; }
+  .field-req { color: #DC2626; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  select, input[type="date"], input[type="time"], textarea {
+    width: 100%; padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 8px;
+    font-size: 0.85rem; color: #1E293B; background: #F8FAFC; outline: none;
+    transition: border 0.2s; font-family: inherit;
+  }
+  select:focus, input:focus, textarea:focus { border-color: #1A3DAA; box-shadow: 0 0 0 3px rgba(26,61,170,0.07); background: white; }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+  .upload-area { border: 2px dashed #E2E8F0; border-radius: 10px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.15s; background: #F8FAFC; }
+  .upload-area:hover { border-color: #1A3DAA; background: #EEF2FF; }
+  .upload-area.has-file { border-color: #16A34A; background: #F0FDF4; border-style: solid; }
+  .upload-icon { color: #94A3B8; margin-bottom: 8px; }
+  .upload-area.has-file .upload-icon { color: #16A34A; }
+  .upload-label { font-size: 0.8rem; font-weight: 600; color: #64748B; }
+  .upload-area.has-file .upload-label { color: #16A34A; }
+  .upload-hint { font-size: 0.68rem; color: #94A3B8; margin-top: 4px; }
+  #fileInput { display: none; }
+  .file-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .file-item { display: flex; align-items: center; justify-content: space-between; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 7px; padding: 8px 12px; }
+  .file-item-name { font-size: 0.75rem; font-weight: 600; color: #15803D; display: flex; align-items: center; gap: 6px; }
+  .file-item-remove { background: none; border: none; cursor: pointer; color: #94A3B8; font-size: 0.85rem; padding: 0; }
+  .file-item-remove:hover { color: #DC2626; }
+
+  .timeline { display: flex; flex-direction: column; }
+  .tl-step { display: flex; gap: 12px; }
+  .tl-line-wrap { display: flex; flex-direction: column; align-items: center; }
+  .tl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .tl-dot.done    { background: #16A34A; }
+  .tl-dot.active  { background: #1A3DAA; box-shadow: 0 0 0 3px rgba(26,61,170,0.15); }
+  .tl-dot.pending { background: #E2E8F0; }
+  .tl-connector { width: 2px; height: 28px; background: #E2E8F0; margin: 3px 0; }
+  .tl-connector.done { background: #16A34A; }
+  .tl-text { padding-bottom: 20px; }
+  .tl-label { font-size: 0.78rem; font-weight: 700; color: #1E293B; }
+  .tl-sub   { font-size: 0.68rem; color: #94A3B8; margin-top: 2px; }
+  .tl-nota  { font-size: 0.72rem; color: #DC2626; margin-top: 4px; background: #FEF2F2; padding: 6px 10px; border-radius: 5px; }
+
+  .detail-footer { padding: 16px 24px; border-top: 1px solid #F1F5F9; display: flex; justify-content: flex-end; gap: 8px; }
+  .btn-sec { padding: 9px 18px; border: 1.5px solid #E2E8F0; border-radius: 7px; background: white; font-size: 0.82rem; font-weight: 600; color: #374151; cursor: pointer; font-family: inherit; }
+  .btn-sec:hover { border-color: #CBD5E1; }
+  .btn-pri { padding: 9px 18px; border: none; border-radius: 7px; background: #1A3DAA; color: white; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-pri:hover { opacity: 0.88; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+  .loading { text-align: center; padding: 24px; font-size: 0.8rem; color: #94A3B8; }
+  .info-row { display: flex; flex-direction: column; gap: 2px; }
+  .info-label { font-size: 0.68rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; }
+  .info-val   { font-size: 0.85rem; font-weight: 600; color: #1E293B; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-name">ATU <span>360</span></div>
+    <div class="sb-tagline">by DoctorSV</div>
+  </div>
+  <div class="sb-nav">
+    <div class="nav-section-label">Principal</div>
+    <div class="nav-item" onclick="window.location.href='home.html'">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Inicio
+    </div>
+    <div class="nav-item" onclick="window.location.href='flash.html'">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 000-4H4v4z"/><path d="M18 18V2H6a2 2 0 00-2 2v14"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="13" y2="11"/></svg>Flash Informativos
+    </div>
+    <div class="nav-item active">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>Solicitudes
+    </div>
+    <div class="nav-item">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Mi Turno
+    </div>
+    <div class="nav-section-label">Reportes</div>
+    <div class="nav-item">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Mis Métricas
+    </div>
+  </div>
+  <div class="sb-bottom">
+    <div class="sb-user">
+      <div class="sb-avatar" id="sbAvatar">--</div>
+      <div>
+        <div class="sb-user-name" id="sbName">Cargando...</div>
+        <div class="sb-user-role">Agente</div>
+      </div>
+    </div>
+    <button class="btn-logout" id="btnLogout">Cerrar sesión</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Solicitudes</h2>
+      <span class="topbar-sep">/</span>
+      <p>Mis solicitudes</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+      <button class="btn-nueva" id="btnNueva">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nueva solicitud
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="list-col">
+      <div class="section-title">Historial</div>
+      <div id="solLista"><div class="loading">Cargando...</div></div>
+    </div>
+    <div class="detail-col">
+      <div class="empty-state" id="emptyState">
+        <svg width="40" height="40" fill="none" stroke="#CBD5E1" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>
+        <p>Selecciona una solicitud<br>o crea una nueva</p>
+      </div>
+      <div class="detail-card" id="detailCard"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var auth    = firebase.auth();
+  var db      = firebase.firestore();
+
+
+  var currentUser = null;
+  var solicitudes = [];
+  var solActual   = null;
+  var archivosSeleccionados = [];
+
+  var ESTADOS = {
+    'borrador':'Borrador', 'pendiente-sup':'Pendiente — Supervisor',
+    'pendiente-admin':'Pendiente — Admin', 'aprobada':'Aprobada', 'rechazada':'Rechazada'
+  };
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  // Auth
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = 'login.html'; return; }
+    currentUser = user;
+    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      var nombre = doc.exists ? doc.data().nombre : user.email.split('@')[0];
+      document.getElementById('sbName').textContent   = nombre;
+      document.getElementById('sbAvatar').textContent = nombre.substring(0,2).toUpperCase();
+    });
+    cargarSolicitudes();
+  });
+
+  document.getElementById('btnLogout').addEventListener('click', function(){
+    auth.signOut().then(function(){ window.location.href = 'login.html'; });
+  });
+
+  document.getElementById('btnNueva').addEventListener('click', function(){ mostrarFormulario(null); });
+
+  document.getElementById('fileInput').addEventListener('change', function(e) {
+    Array.from(e.target.files).forEach(function(f) {
+      if (!archivosSeleccionados.find(function(x){ return x.name===f.name; }))
+        archivosSeleccionados.push(f);
+    });
+    renderFileList();
+    this.value = '';
+  });
+
+  // Cargar solicitudes en tiempo real
+  function cargarSolicitudes() {
+    db.collection('solicitudes')
+      .where('agenteUid', '==', currentUser.uid)
+      .orderBy('fechaCreacion', 'desc')
+      .onSnapshot(function(snap) {
+        solicitudes = [];
+        snap.forEach(function(doc){ solicitudes.push(Object.assign({ id: doc.id }, doc.data())); });
+        renderLista();
+      });
+  }
+
+  function renderLista() {
+    if (solicitudes.length === 0) {
+      document.getElementById('solLista').innerHTML = '<div class="loading">Sin solicitudes aún.</div>';
+      return;
+    }
+    var html = '';
+    solicitudes.forEach(function(s) {
+      var fecha = s.fechaCreacion ? new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
+      html += '<div class="sol-card'+(solActual===s.id?' active':'')+'" onclick="verSolicitud(\''+s.id+'\')">'
+        +'<div class="sol-card-top">'
+        +'<span class="sol-tipo permiso">Permiso</span>'
+        +'<span class="estado-pill '+s.estado+'">'+(ESTADOS[s.estado]||s.estado)+'</span>'
+        +'</div>'
+        +'<div class="sol-titulo">'+(s.comentarios?s.comentarios.substring(0,55)+'...':'Sin comentarios')+'</div>'
+        +'<div class="sol-meta">'+fecha+(s.fechaInicio?' · '+s.fechaInicio:'')+'</div>'
+        +'</div>';
+    });
+    document.getElementById('solLista').innerHTML = html;
+  }
+
+  function verSolicitud(id) {
+    solActual = id;
+    renderLista();
+    var s = solicitudes.find(function(x){ return x.id===id; });
+    if (!s) return;
+    var esEditable = s.estado==='borrador' || s.estado==='rechazada';
+
+    var pasos = [
+      { label:'Solicitud enviada',          sub: s.fechaCreacion ? new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '', estado:'done' },
+      { label:'Revisión del supervisor',    sub: s.estado==='pendiente-sup'?'En espera':(s.estado==='borrador'?'Pendiente de envío':'Revisado'), estado: s.estado==='pendiente-sup'?'active':(s.estado==='borrador'?'pending':'done') },
+      { label:'Revisión del administrador', sub: s.estado==='pendiente-admin'?'En espera':(s.estado==='aprobada'||s.estado==='rechazada'?'Revisado':'Pendiente'), estado: s.estado==='pendiente-admin'?'active':(s.estado==='aprobada'||s.estado==='rechazada'?'done':'pending') },
+      { label: s.estado==='aprobada'?'Aprobada':s.estado==='rechazada'?'Rechazada':'Resolución final', sub: s.estado==='aprobada'?'Solicitud aprobada':s.estado==='rechazada'?'Solicitud rechazada':'Pendiente', estado: s.estado==='aprobada'||s.estado==='rechazada'?'done':'pending', nota: s.notaRechazo||'' }
+    ];
+
+    var tlHtml = '<div class="timeline">';
+    pasos.forEach(function(p,i){
+      tlHtml += '<div class="tl-step"><div class="tl-line-wrap"><div class="tl-dot '+p.estado+'"></div>'
+        +(i<pasos.length-1?'<div class="tl-connector'+(p.estado==='done'?' done':'')+'"></div>':'')+'</div>'
+        +'<div class="tl-text"><div class="tl-label">'+p.label+'</div><div class="tl-sub">'+p.sub+'</div>'
+        +(p.nota?'<div class="tl-nota">'+p.nota+'</div>':'')+'</div></div>';
+    });
+    tlHtml += '</div>';
+
+    var archHtml = '';
+    if (s.archivos && s.archivos.length > 0) {
+      archHtml = '<div><span class="info-label">Documentación adjunta</span>'
+        +'<div class="file-list">'
+        +s.archivos.map(function(a){
+          return '<div class="file-item"><span class="file-item-name">'
+            +'<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
+            +a.nombre+'</span>'
+            +(a.url?'<a href="'+a.url+'" target="_blank" style="font-size:0.72rem;color:#1A3DAA;font-weight:600">Ver</a>':'')
+            +'</div>';
+        }).join('')+'</div></div>';
+    }
+
+    document.getElementById('emptyState').style.display = 'none';
+    var dc = document.getElementById('detailCard');
+    dc.className = 'detail-card show';
+    dc.innerHTML =
+      '<div class="detail-header"><div>'
+      +'<div class="detail-header-title">Permiso</div>'
+      +'<div class="detail-header-sub"><span class="estado-pill '+s.estado+'" style="font-size:0.65rem">'+(ESTADOS[s.estado]||s.estado)+'</span></div>'
+      +'</div>'+(esEditable?'<button class="btn-sec" onclick="editarSolicitud(\''+s.id+'\')">Editar</button>':'')+'</div>'
+      +'<div class="detail-body">'
+      +'<div class="field-row">'
+      +'<div class="info-row"><span class="info-label">Fecha inicio</span><span class="info-val">'+(s.fechaInicio||'—')+'</span></div>'
+      +'<div class="info-row"><span class="info-label">Fecha fin</span><span class="info-val">'+(s.fechaFin||'—')+'</span></div>'
+      +'</div>'
+      +'<div class="field-row">'
+      +'<div class="info-row"><span class="info-label">Hora inicio</span><span class="info-val">'+(s.horaInicio||'—')+'</span></div>'
+      +'<div class="info-row"><span class="info-label">Hora fin</span><span class="info-val">'+(s.horaFin||'—')+'</span></div>'
+      +'</div>'
+      +'<div class="info-row"><span class="info-label">Comentarios</span>'
+      +'<div style="font-size:0.84rem;color:#374151;line-height:1.6;background:#F8FAFC;padding:10px 14px;border-radius:8px;border:1px solid #F1F5F9;margin-top:4px">'+(s.comentarios||'—')+'</div></div>'
+      + archHtml
+      +'<div><span class="info-label" style="display:block;margin-bottom:10px">Estado de la solicitud</span>'+tlHtml+'</div>'
+      +'</div>';
+  }
+
+  function mostrarFormulario(s) {
+    archivosSeleccionados = [];
+    solActual = s ? s.id : null;
+    document.querySelectorAll('.sol-card').forEach(function(c){ c.classList.remove('active'); });
+    document.getElementById('emptyState').style.display = 'none';
+    var dc = document.getElementById('detailCard');
+    dc.className = 'detail-card show';
+    dc.innerHTML =
+      '<div class="detail-header"><div>'
+      +'<div class="detail-header-title">'+(s?'Editar solicitud':'Nueva solicitud')+'</div>'
+      +'<div class="detail-header-sub">Se enviará al supervisor para revisión</div>'
+      +'</div></div>'
+      +'<div class="detail-body">'
+
+      +'<div><label class="field-label">Tipo de solicitud <span class="field-req">*</span></label>'
+      +'<select id="fTipo"><option value="permiso">Permiso</option></select></div>'
+
+      +'<div class="field-row">'
+      +'<div><label class="field-label">Fecha inicio <span class="field-req">*</span></label><input type="date" id="fFechaInicio" value="'+(s&&s.fechaInicio?s.fechaInicio:'')+'"></div>'
+      +'<div><label class="field-label">Fecha fin <span class="field-req">*</span></label><input type="date" id="fFechaFin" value="'+(s&&s.fechaFin?s.fechaFin:'')+'"></div>'
+      +'</div>'
+
+      +'<div class="field-row">'
+      +'<div><label class="field-label">Hora inicio <span class="field-req">*</span></label><input type="time" id="fHoraInicio" value="'+(s&&s.horaInicio?s.horaInicio:'')+'"></div>'
+      +'<div><label class="field-label">Hora fin <span class="field-req">*</span></label><input type="time" id="fHoraFin" value="'+(s&&s.horaFin?s.horaFin:'')+'"></div>'
+      +'</div>'
+
+      +'<div><label class="field-label">Comentarios <span class="field-req">*</span></label>'
+      +'<textarea id="fComentarios" placeholder="Describe el motivo o contexto de tu solicitud...">'+(s&&s.comentarios?s.comentarios:'')+'</textarea></div>'
+
+      +'<div><label class="field-label">Documentación adjunta <span style="color:#94A3B8;font-weight:400">(opcional)</span></label>'
+      +'<div class="upload-area" id="uploadArea" onclick="document.getElementById(\'fileInput\').click()">'
+      +'<div class="upload-icon"><svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>'
+      +'<div class="upload-label">Haz clic para subir archivos</div>'
+      +'<div class="upload-hint">PDF, JPG, PNG, DOC — Máx. 10MB por archivo</div>'
+      +'</div>'
+      +'<div class="file-list" id="fileList"></div>'
+      +'</div>'
+
+      +'</div>'
+      +'<div class="detail-footer">'
+      +'<button class="btn-sec" id="btnBorrador">Guardar borrador</button>'
+      +'<button class="btn-pri" id="btnEnviar">Enviar al supervisor</button>'
+      +'</div>';
+
+    document.getElementById('btnBorrador').addEventListener('click', function(){ guardar('borrador'); });
+    document.getElementById('btnEnviar').addEventListener('click',   function(){ guardar('pendiente-sup'); });
+  }
+
+  function editarSolicitud(id) {
+    var s = solicitudes.find(function(x){ return x.id===id; });
+    mostrarFormulario(s);
+  }
+
+  function renderFileList() {
+    var el = document.getElementById('fileList'); if (!el) return;
+    var area = document.getElementById('uploadArea');
+    if (archivosSeleccionados.length === 0) { el.innerHTML = ''; if (area) area.classList.remove('has-file'); return; }
+    if (area) area.classList.add('has-file');
+    el.innerHTML = archivosSeleccionados.map(function(f,i){
+      return '<div class="file-item">'
+        +'<span class="file-item-name"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'+f.name+'</span>'
+        +'<button class="file-item-remove" onclick="removeFile('+i+')">✕</button>'
+        +'</div>';
+    }).join('');
+  }
+
+  function removeFile(i) { archivosSeleccionados.splice(i,1); renderFileList(); }
+
+function guardar(estado) {
+    var fi  = (document.getElementById('fFechaInicio')||{}).value||'';
+    var ff  = (document.getElementById('fFechaFin')||{}).value||'';
+    var hi  = (document.getElementById('fHoraInicio')||{}).value||'';
+    var hf  = (document.getElementById('fHoraFin')||{}).value||'';
+    var com = ((document.getElementById('fComentarios')||{}).value||'').trim();
+
+    if (!fi || !ff)  { showToast('Selecciona las fechas de la solicitud.'); return; }
+    if (!hi || !hf)  { showToast('Selecciona la hora de inicio y hora de fin.'); return; }
+    if (!com)        { showToast('Agrega un comentario.'); return; }
+
+    var data = {
+      agenteUid:    currentUser.uid,
+      agenteEmail:  currentUser.email,
+      agenteNombre: document.getElementById('sbName').textContent,
+      tipo:         'permiso',
+      fechaInicio:  fi, fechaFin: ff,
+      horaInicio:   hi, horaFin:  hf,
+      comentarios:  com,
+      estado:       estado,
+      // Solo guardamos nombres de archivos — sin subida por ahora
+      archivos:     archivosSeleccionados.map(function(f){ return { nombre: f.name, url: '' }; }),
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    var promesa;
+    if (!solActual) {
+      data.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
+      promesa = db.collection('solicitudes').add(data).then(function(ref){ return ref.id; });
+    } else {
+      promesa = db.collection('solicitudes').doc(solActual).update(data).then(function(){ return solActual; });
+    }
+
+    promesa.then(function(id) {
+      solActual = id;
+      showToast(estado==='borrador' ? 'Borrador guardado.' : 'Solicitud enviada al supervisor.');
+      if (estado !== 'borrador') verSolicitud(id);
+    }).catch(function(e) {
+      showToast('Error al guardar. Intenta de nuevo.');
+      console.error(e);
+    });
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
+</script>
+</body>
+</html>

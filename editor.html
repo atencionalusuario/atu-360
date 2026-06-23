@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATU 360 — Editor Flash</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+  .sidebar { width: 220px; flex-shrink: 0; background: #0F2070; display: flex; flex-direction: column; min-height: 100vh; }
+  .sb-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .sb-name { font-size: 1.25rem; font-weight: 800; color: white; }
+  .sb-name span { color: #29ABE2; }
+  .sb-tagline { font-size: 0.62rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 2px; margin-top: 3px; }
+  .sb-nav { padding: 20px 12px; flex: 1; }
+  .nav-section-label { font-size: 0.58rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; padding: 0 10px; margin: 16px 0 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 6px; font-size: 0.8rem; color: rgba(255,255,255,0.55); cursor: pointer; transition: all 0.15s; margin-bottom: 1px; }
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+  .nav-item.active { background: rgba(41,171,226,0.15); color: white; font-weight: 600; border-left: 2px solid #29ABE2; }
+  .sb-bottom { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .sb-user { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .sb-avatar { width: 32px; height: 32px; border-radius: 50%; background: #29ABE2; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: white; font-weight: 700; flex-shrink: 0; }
+  .sb-user-name { font-size: 0.76rem; font-weight: 600; color: white; }
+  .sb-user-role { font-size: 0.62rem; color: #29ABE2; font-weight: 600; margin-top: 1px; }
+  .btn-logout { width: 100%; padding: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: rgba(255,255,255,0.5); font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-logout:hover { background: rgba(255,255,255,0.1); color: white; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+  .btn-nuevo { padding: 8px 16px; background: #1A3DAA; color: white; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; }
+  .btn-nuevo:hover { opacity: 0.88; }
+  .content { padding: 24px 28px; display: flex; gap: 24px; align-items: flex-start; }
+  .list-col { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
+  .section-title { font-size: 0.72rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+  .pub-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 14px 16px; cursor: pointer; transition: all 0.15s; }
+  .pub-card:hover { border-color: #CBD5E1; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .pub-card.active { border-color: #1A3DAA; }
+  .pub-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .pub-cat { display: inline-block; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 2px 8px; border-radius: 3px; }
+  .pub-cat.actualizacion { background: #EEF2FF; color: #1A3DAA; }
+  .pub-cat.noticia       { background: #F0FDF4; color: #16A34A; }
+  .pub-cat.cambio        { background: #FFFBEB; color: #B45309; }
+  .pub-cat.urgente       { background: #FEF2F2; color: #DC2626; }
+  .estado-badge { font-size: 0.62rem; font-weight: 700; padding: 2px 8px; border-radius: 3px; }
+  .estado-badge.borrador   { background: #F1F5F9; color: #64748B; }
+  .estado-badge.pendiente  { background: #FFFBEB; color: #B45309; }
+  .estado-badge.publicado  { background: #F0FDF4; color: #16A34A; }
+  .estado-badge.rechazado  { background: #FEF2F2; color: #DC2626; }
+  .pub-title { font-size: 0.82rem; font-weight: 700; color: #1E293B; line-height: 1.3; }
+  .pub-meta  { font-size: 0.68rem; color: #94A3B8; margin-top: 5px; }
+  .editor-col { flex: 1; }
+  .editor-empty { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 48px 24px; text-align: center; }
+  .editor-empty p { font-size: 0.82rem; color: #94A3B8; margin-top: 12px; }
+  .editor-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; display: none; }
+  .editor-card.show { display: block; }
+  .editor-header { padding: 20px 24px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; }
+  .editor-header-title { font-size: 0.88rem; font-weight: 700; color: #1E293B; }
+  .editor-header-sub { font-size: 0.72rem; color: #94A3B8; margin-top: 2px; }
+  .editor-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+  .field-label { font-size: 0.75rem; font-weight: 600; color: #374151; margin-bottom: 6px; display: block; }
+  .field-req { color: #DC2626; }
+  input[type="text"], select, textarea { width: 100%; padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.85rem; color: #1E293B; background: #F8FAFC; outline: none; transition: border 0.2s; font-family: inherit; }
+  input[type="text"]:focus, select:focus, textarea:focus { border-color: #1A3DAA; box-shadow: 0 0 0 3px rgba(26,61,170,0.07); background: white; }
+  textarea { resize: vertical; min-height: 180px; line-height: 1.6; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .toolbar { display: flex; gap: 4px; margin-bottom: 6px; }
+  .tb-btn { padding: 5px 10px; border: 1px solid #E2E8F0; border-radius: 5px; background: white; font-size: 0.75rem; font-weight: 600; color: #374151; cursor: pointer; font-family: inherit; }
+  .tb-btn:hover { border-color: #1A3DAA; color: #1A3DAA; background: #EEF2FF; }
+  .preview-box { background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 8px; padding: 16px 18px; font-size: 0.83rem; color: #374151; line-height: 1.8; min-height: 120px; display: none; white-space: pre-wrap; }
+  .preview-box.show { display: block; }
+  .rechazo-box { background: #FEF2F2; border: 1px solid #FECACA; border-radius: 8px; padding: 12px 16px; font-size: 0.78rem; color: #DC2626; display: flex; gap: 8px; align-items: flex-start; }
+  .rechazo-box strong { display: block; margin-bottom: 3px; }
+  .editor-footer { padding: 16px 24px; border-top: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .footer-left { font-size: 0.72rem; color: #94A3B8; }
+  .footer-right { display: flex; gap: 8px; }
+  .btn-sec { padding: 9px 18px; border: 1.5px solid #E2E8F0; border-radius: 7px; background: white; font-size: 0.82rem; font-weight: 600; color: #374151; cursor: pointer; font-family: inherit; }
+  .btn-sec:hover { border-color: #CBD5E1; }
+  .btn-pri { padding: 9px 18px; border: none; border-radius: 7px; background: #1A3DAA; color: white; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-pri:hover { opacity: 0.88; }
+  .btn-pri:disabled { opacity: 0.45; cursor: not-allowed; }
+  .lecturas-title { font-size: 0.72rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .lecturas-bar-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .lecturas-bar { flex: 1; height: 6px; background: #F1F5F9; border-radius: 3px; overflow: hidden; }
+  .lecturas-bar-fill { height: 100%; background: #1A3DAA; border-radius: 3px; }
+  .lecturas-pct { font-size: 0.78rem; font-weight: 700; color: #1A3DAA; }
+  .lecturas-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 8px 12px; background: #F8FAFC; border-radius: 6px; font-size: 0.75rem; margin-bottom: 4px; border: 1px solid #F1F5F9; }
+  .lecturas-nombre { font-weight: 600; color: #1E293B; }
+  .lecturas-hora { color: #94A3B8; }
+  .lcheck { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .lcheck.ok { background: #F0FDF4; }
+  .lcheck.no { background: #F1F5F9; }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+  .loading { text-align: center; padding: 24px; font-size: 0.8rem; color: #94A3B8; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-name">ATU <span>360</span></div>
+    <div class="sb-tagline">by DoctorSV</div>
+  </div>
+  <div class="sb-nav">
+    <div class="nav-section-label">Contenido</div>
+    <div class="nav-item active">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 000-4H4v4z"/><path d="M18 18V2H6a2 2 0 00-2 2v14"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="13" y2="11"/></svg>Flash Informativos
+    </div>
+    <div class="nav-section-label">Mi cuenta</div>
+    <div class="nav-item">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Mi perfil
+    </div>
+  </div>
+  <div class="sb-bottom">
+    <div class="sb-user">
+      <div class="sb-avatar" id="sbAvatar">--</div>
+      <div>
+        <div class="sb-user-name" id="sbName">Cargando...</div>
+        <div class="sb-user-role">Editor</div>
+      </div>
+    </div>
+    <button class="btn-logout" id="btnLogout">Cerrar sesión</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Flash Informativos</h2>
+      <span class="topbar-sep">/</span>
+      <p>Mis publicaciones</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+      <button class="btn-nuevo" id="btnNuevo">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nueva publicación
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="list-col">
+      <div class="section-title">Publicaciones</div>
+      <div id="pubLista"><div class="loading">Cargando...</div></div>
+    </div>
+    <div class="editor-col">
+      <div class="editor-empty" id="editorEmpty">
+        <svg width="40" height="40" fill="none" stroke="#CBD5E1" stroke-width="1.5" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <p>Selecciona una publicación<br>o crea una nueva</p>
+      </div>
+      <div class="editor-card" id="editorCard"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var auth = firebase.auth();
+  var db   = firebase.firestore();
+
+  var currentUser = null;
+  var pubs = [];
+  var pubActual = null;
+  var modoActual = null;
+  var previewVisible = false;
+  var CATS = { actualizacion:'Actualización', noticia:'Noticia', cambio:'Cambio', urgente:'Urgente' };
+  var ESTADOS = { borrador:'Borrador', pendiente:'Pendiente', publicado:'Publicado', rechazado:'Rechazado' };
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  // Auth
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = 'login.html'; return; }
+    currentUser = user;
+    var name = user.email.split('@')[0];
+    document.getElementById('sbName').textContent   = name;
+    document.getElementById('sbAvatar').textContent = name.substring(0,2).toUpperCase();
+    cargarPubs();
+  });
+
+  document.getElementById('btnLogout').addEventListener('click', function(){
+    auth.signOut().then(function(){ window.location.href = 'login.html'; });
+  });
+
+  document.getElementById('btnNuevo').addEventListener('click', function(){ nuevaPublicacion(); });
+
+  // Cargar publicaciones del editor en tiempo real
+  function cargarPubs() {
+    db.collection('flash_posts')
+      .where('autorUid', '==', currentUser ? currentUser.uid : '')
+      .orderBy('fechaCreacion', 'desc')
+      .onSnapshot(function(snap) {
+        pubs = [];
+        snap.forEach(function(doc){ pubs.push(Object.assign({ id: doc.id }, doc.data())); });
+        renderLista();
+      });
+  }
+
+  function renderLista() {
+    if (pubs.length === 0) {
+      document.getElementById('pubLista').innerHTML = '<div class="loading">Sin publicaciones aún.</div>';
+      return;
+    }
+    var html = '';
+    pubs.forEach(function(p) {
+      var fecha = p.fechaCreacion ? new Date(p.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
+      html += '<div class="pub-card'+(pubActual===p.id?' active':'')+'" onclick="verPublicacion(\''+p.id+'\')">'
+        +'<div class="pub-card-top">'
+        +'<span class="pub-cat '+p.categoria+'">'+CATS[p.categoria]+'</span>'
+        +'<span class="estado-badge '+p.estado+'">'+ESTADOS[p.estado]+'</span>'
+        +'</div>'
+        +'<div class="pub-title">'+p.titulo+'</div>'
+        +'<div class="pub-meta">'+fecha+'</div>'
+        +'</div>';
+    });
+    document.getElementById('pubLista').innerHTML = html;
+  }
+
+  function verPublicacion(id) {
+    pubActual = id; modoActual = 'ver';
+    var p = pubs.find(function(x){ return x.id===id; });
+    if (!p) return;
+    renderLista();
+    var esEditable = p.estado==='borrador' || p.estado==='rechazado';
+
+    var rechazoHtml = p.estado==='rechazado' && p.notaRechazo
+      ? '<div class="rechazo-box"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div><strong>Nota del administrador</strong>'+p.notaRechazo+'</div></div>'
+      : '';
+
+    // Cargar lecturas si está publicado
+    var lectHtml = '';
+    if (p.estado === 'publicado') {
+      lectHtml = '<div style="padding:20px 24px;border-top:1px solid #F1F5F9">'
+        +'<div class="lecturas-title">Registro de lecturas</div>'
+        +'<div id="lecturasContent"><div class="loading">Cargando lecturas...</div></div>'
+        +'</div>';
+    }
+
+    document.getElementById('editorEmpty').style.display='none';
+    var ec = document.getElementById('editorCard');
+    ec.className='editor-card show';
+    ec.innerHTML =
+      '<div class="editor-header"><div>'
+      +'<div class="editor-header-title">'+p.titulo+'</div>'
+      +'<div class="editor-header-sub"><span class="estado-badge '+p.estado+'" style="font-size:0.65rem">'+ESTADOS[p.estado]+'</span></div>'
+      +'</div>'
+      +(esEditable?'<button class="btn-sec" onclick="editarPublicacion(\''+p.id+'\')">Editar</button>':'')
+      +'</div>'
+      +'<div class="editor-body">'+rechazoHtml
+      +'<div><span class="field-label">Categoría</span><span class="pub-cat '+p.categoria+'">'+CATS[p.categoria]+'</span></div>'
+      +'<div><span class="field-label">Contenido</span><div class="preview-box show">'+p.contenido+'</div></div>'
+      +'</div>'
+      + lectHtml;
+
+    if (p.estado === 'publicado') cargarLecturas(id);
+  }
+
+  function cargarLecturas(postId) {
+    db.collection('flash_lecturas')
+      .where('postId', '==', postId)
+      .orderBy('timestamp', 'asc')
+      .get()
+      .then(function(snap) {
+        var rows = [];
+        snap.forEach(function(doc){ rows.push(doc.data()); });
+        var total = rows.length;
+        var pct = total > 0 ? 100 : 0;
+        var html = '<div class="lecturas-bar-wrap"><div class="lecturas-bar"><div class="lecturas-bar-fill" style="width:'+pct+'%"></div></div><span class="lecturas-pct">'+total+' lecturas registradas</span></div>';
+        if (total === 0) {
+          html += '<div class="loading">Ningún agente ha marcado esta publicación como leída aún.</div>';
+        } else {
+          rows.forEach(function(r){
+            var ts = r.timestamp ? new Date(r.timestamp.seconds*1000).toLocaleString('es-SV') : '';
+            html += '<div class="lecturas-row">'
+              +'<span class="lecturas-nombre">'+(r.nombre||r.email)+'</span>'
+              +'<span class="lecturas-hora">'+ts+'</span>'
+              +'<div class="lcheck ok"><svg width="10" height="10" fill="none" stroke="#16A34A" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>'
+              +'</div>';
+          });
+        }
+        var el = document.getElementById('lecturasContent');
+        if (el) el.innerHTML = html;
+      });
+  }
+
+  function editarPublicacion(id) {
+    pubActual = id; modoActual = 'editar';
+    var p = pubs.find(function(x){ return x.id===id; });
+    mostrarEditor(p);
+  }
+
+  function nuevaPublicacion() {
+    pubActual = null; modoActual = 'nuevo';
+    mostrarEditor(null);
+    document.querySelectorAll('.pub-card').forEach(function(c){ c.classList.remove('active'); });
+  }
+
+  function mostrarEditor(p) {
+    previewVisible = false;
+    var titulo    = p ? p.titulo    : '';
+    var cat       = p ? p.categoria : 'actualizacion';
+    var contenido = p ? p.contenido : '';
+    var esNuevo   = !p;
+    document.getElementById('editorEmpty').style.display='none';
+    var ec = document.getElementById('editorCard');
+    ec.className = 'editor-card show';
+    ec.innerHTML =
+      '<div class="editor-header"><div>'
+      +'<div class="editor-header-title">'+(esNuevo?'Nueva publicación':'Editar publicación')+'</div>'
+      +'<div class="editor-header-sub">'+(esNuevo?'Se enviará a revisión del administrador':'Los cambios se enviarán nuevamente a revisión')+'</div>'
+      +'</div></div>'
+      +'<div class="editor-body">'
+      +'<div class="field-row">'
+      +'<div><label class="field-label">Título <span class="field-req">*</span></label>'
+      +'<input type="text" id="fTitulo" placeholder="Escribe el título..." value="'+titulo+'"></div>'
+      +'<div><label class="field-label">Categoría <span class="field-req">*</span></label>'
+      +'<select id="fCat">'
+      +'<option value="actualizacion"'+(cat==='actualizacion'?' selected':'')+'>Actualización</option>'
+      +'<option value="noticia"'+(cat==='noticia'?' selected':'')+'>Noticia</option>'
+      +'<option value="cambio"'+(cat==='cambio'?' selected':'')+'>Cambio</option>'
+      +'<option value="urgente"'+(cat==='urgente'?' selected':'')+'>Urgente</option>'
+      +'</select></div></div>'
+      +'<div><label class="field-label">Contenido <span class="field-req">*</span></label>'
+      +'<div class="toolbar">'
+      +'<button class="tb-btn" id="tbNegrita"><strong>N</strong></button>'
+      +'<button class="tb-btn" id="tbLista">— Lista</button>'
+      +'<button class="tb-btn" id="tbPreview">Vista previa</button>'
+      +'</div>'
+      +'<textarea id="fContenido" placeholder="Escribe el contenido...">'+contenido+'</textarea>'
+      +'<div class="preview-box" id="previewBox"></div>'
+      +'</div></div>'
+      +'<div class="editor-footer">'
+      +'<span class="footer-left">El administrador recibirá una notificación para aprobar o rechazar.</span>'
+      +'<div class="footer-right">'
+      +'<button class="btn-sec" id="btnBorrador">Guardar borrador</button>'
+      +'<button class="btn-pri" id="btnEnviar">Enviar a revisión</button>'
+      +'</div></div>';
+
+    document.getElementById('tbNegrita').addEventListener('click', function(){ insertarFormato('negrita'); });
+    document.getElementById('tbLista').addEventListener('click',   function(){ insertarFormato('lista'); });
+    document.getElementById('tbPreview').addEventListener('click', togglePreview);
+    document.getElementById('btnBorrador').addEventListener('click', guardarBorrador);
+    document.getElementById('btnEnviar').addEventListener('click',   enviarRevision);
+  }
+
+  function togglePreview() {
+    previewVisible = !previewVisible;
+    var txt = document.getElementById('fContenido').value;
+    var box = document.getElementById('previewBox');
+    if (previewVisible) {
+      box.innerHTML = txt; box.classList.add('show');
+      document.getElementById('fContenido').style.display='none';
+    } else {
+      box.classList.remove('show');
+      document.getElementById('fContenido').style.display='block';
+    }
+  }
+
+  function insertarFormato(tipo) {
+    var ta=document.getElementById('fContenido'); if(!ta) return;
+    var s=ta.selectionStart, e=ta.selectionEnd, v=ta.value, sel=v.substring(s,e);
+    var ins=tipo==='negrita'?'**'+(sel||'texto')+'**':'\n- '+(sel||'elemento');
+    ta.value=v.substring(0,s)+ins+v.substring(e); ta.focus();
+  }
+
+  function getDatos() {
+    return {
+      titulo:    (document.getElementById('fTitulo')   ||{}).value || '',
+      categoria: (document.getElementById('fCat')      ||{}).value || 'actualizacion',
+      contenido: (document.getElementById('fContenido')||{}).value || ''
+    };
+  }
+
+  function guardarBorrador() {
+    var d = getDatos();
+    if (!d.titulo.trim()) { showToast('Agrega un título antes de guardar.'); return; }
+    var data = {
+      titulo: d.titulo.trim(), categoria: d.categoria, contenido: d.contenido,
+      estado: 'borrador', autorUid: currentUser.uid,
+      autorNombre: currentUser.email.split('@')[0],
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    if (modoActual === 'nuevo') {
+      data.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
+      db.collection('flash_posts').add(data)
+        .then(function(ref){ pubActual=ref.id; modoActual='editar'; showToast('Borrador guardado.'); })
+        .catch(function(e){ showToast('Error al guardar.'); console.error(e); });
+    } else {
+      db.collection('flash_posts').doc(pubActual).update(data)
+        .then(function(){ showToast('Borrador actualizado.'); })
+        .catch(function(e){ showToast('Error al guardar.'); console.error(e); });
+    }
+  }
+
+  function enviarRevision() {
+    var d = getDatos();
+    if (!d.titulo.trim() || !d.contenido.trim()) { showToast('Completa el título y el contenido.'); return; }
+    var data = {
+      titulo: d.titulo.trim(), categoria: d.categoria, contenido: d.contenido,
+      estado: 'pendiente', notaRechazo: null,
+      autorUid: currentUser.uid, autorNombre: currentUser.email.split('@')[0],
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    if (modoActual === 'nuevo') {
+      data.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
+      db.collection('flash_posts').add(data)
+        .then(function(ref){ pubActual=ref.id; modoActual='editar'; showToast('Enviado a revisión.'); verPublicacion(ref.id); })
+        .catch(function(e){ showToast('Error al enviar.'); console.error(e); });
+    } else {
+      db.collection('flash_posts').doc(pubActual).update(data)
+        .then(function(){ showToast('Enviado a revisión.'); verPublicacion(pubActual); })
+        .catch(function(e){ showToast('Error al enviar.'); console.error(e); });
+    }
+  }
+
+  function showToast(msg) {
+    var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
+</script>
+</body>
+</html>

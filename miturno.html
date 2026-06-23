@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATU 360 — Mi Turno</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+
+  .sidebar { width: 220px; flex-shrink: 0; background: #0F2070; display: flex; flex-direction: column; min-height: 100vh; }
+  .sb-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .sb-name { font-size: 1.25rem; font-weight: 800; color: white; }
+  .sb-name span { color: #29ABE2; }
+  .sb-tagline { font-size: 0.62rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 2px; margin-top: 3px; }
+  .sb-nav { padding: 20px 12px; flex: 1; }
+  .nav-section-label { font-size: 0.58rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; padding: 0 10px; margin: 16px 0 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 6px; font-size: 0.8rem; color: rgba(255,255,255,0.55); cursor: pointer; transition: all 0.15s; margin-bottom: 1px; }
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+  .nav-item.active { background: rgba(41,171,226,0.15); color: white; font-weight: 600; border-left: 2px solid #29ABE2; }
+  .sb-bottom { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .sb-user-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .sb-avatar { width: 32px; height: 32px; border-radius: 50%; background: #1A3DAA; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: white; font-weight: 700; flex-shrink: 0; border: 1.5px solid rgba(41,171,226,0.4); }
+  .sb-user-name { font-size: 0.76rem; font-weight: 600; color: white; }
+  .sb-user-role { font-size: 0.62rem; color: rgba(255,255,255,0.4); margin-top: 1px; }
+  .btn-logout { width: 100%; padding: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: rgba(255,255,255,0.5); font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-logout:hover { background: rgba(255,255,255,0.1); color: white; }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+
+  .content { padding: 24px 28px; display: flex; flex-direction: column; gap: 18px; }
+
+  .turno-banner { background: #0F2070; border-radius: 10px; padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; }
+  .tb-left .tb-label { font-size: 0.62rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 2px; }
+  .tb-left .tb-nombre { font-size: 1.1rem; font-weight: 800; color: white; margin-top: 4px; }
+  .tb-left .tb-horario { font-size: 0.82rem; color: rgba(255,255,255,0.65); margin-top: 3px; }
+  .tb-stats { display: flex; gap: 28px; }
+  .tb-stat { text-align: center; }
+  .tb-stat-val { font-size: 1.1rem; font-weight: 800; color: white; }
+  .tb-stat-key { font-size: 0.62rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+  .tb-divider { width: 1px; background: rgba(255,255,255,0.1); align-self: stretch; }
+
+  .cal-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 24px; }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .cal-mes { font-size: 1rem; font-weight: 700; color: #1E293B; }
+  .cal-nav { display: flex; align-items: center; gap: 8px; }
+  .cal-nav-btn { width: 30px; height: 30px; border-radius: 6px; border: 1px solid #E2E8F0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; font-size: 0.9rem; color: #64748B; }
+  .cal-nav-btn:hover { border-color: #1A3DAA; color: #1A3DAA; background: #EEF2FF; }
+  .cal-leyenda { display: flex; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+  .ley-item { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: #64748B; }
+  .ley-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .ley-dot.laboral  { background: #1A3DAA; }
+  .ley-dot.descanso { background: #F1F5F9; border: 1px solid #E2E8F0; }
+  .ley-dot.hoy      { background: #29ABE2; }
+  .cal-dias-semana { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 6px; }
+  .cal-dia-semana { text-align: center; font-size: 0.68rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; padding: 4px 0; letter-spacing: 0.5px; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 6px; }
+  .cal-dia { border-radius: 8px; padding: 10px 6px; text-align: center; min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: all 0.15s; }
+  .cal-dia.vacio    { background: transparent; }
+  .cal-dia.descanso { background: #F8FAFC; border: 1px solid #F1F5F9; }
+  .cal-dia.laboral  { background: #EEF2FF; border: 1px solid #C7D2FE; }
+  .cal-dia.hoy      { background: #1A3DAA; border: 1px solid #1A3DAA; }
+  .cal-dia.hoy .dia-num { color: white; }
+  .cal-dia.hoy .dia-tag { color: rgba(255,255,255,0.8); }
+  .cal-dia.pasado   { opacity: 0.5; }
+  .dia-num { font-size: 0.88rem; font-weight: 700; color: #1E293B; line-height: 1; }
+  .cal-dia.laboral  .dia-num { color: #1A3DAA; }
+  .cal-dia.descanso .dia-num { color: #94A3B8; }
+  .dia-tag { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+  .cal-dia.laboral  .dia-tag { color: #4F6EF7; }
+  .cal-dia.descanso .dia-tag { color: #CBD5E1; }
+
+  .resumen-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+  .res-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 16px 20px; }
+  .res-label { font-size: 0.7rem; color: #64748B; font-weight: 500; margin-bottom: 6px; }
+  .res-val { font-size: 1.4rem; font-weight: 800; color: #1E293B; }
+  .res-sub { font-size: 0.68rem; color: #94A3B8; margin-top: 3px; }
+  .res-bar { height: 4px; background: #F1F5F9; border-radius: 2px; margin-top: 10px; overflow: hidden; }
+  .res-bar-fill { height: 100%; border-radius: 2px; background: #1A3DAA; }
+
+  .loading { text-align: center; padding: 40px; font-size: 0.82rem; color: #94A3B8; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-name">ATU <span>360</span></div>
+    <div class="sb-tagline">by DoctorSV</div>
+  </div>
+  <div class="sb-nav">
+    <div class="nav-section-label">Principal</div>
+    <div class="nav-item" onclick="window.location.href='home.html'">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Inicio
+    </div>
+    <div class="nav-item" onclick="window.location.href='flash.html'">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 000-4H4v4z"/><path d="M18 18V2H6a2 2 0 00-2 2v14"/></svg>Flash Informativos
+    </div>
+    <div class="nav-item" onclick="window.location.href='solicitudes.html'">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Solicitudes
+    </div>
+    <div class="nav-item" onclick="window.location.href='biblioteca.html'">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>Biblioteca
+    </div>
+    <div class="nav-item active">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Mi Turno
+    </div>
+    <div class="nav-section-label">Reportes</div>
+    <div class="nav-item" onclick="window.location.href='metricas.html'">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Mis Métricas
+    </div>
+  </div>
+  <div class="sb-bottom">
+    <div class="sb-user-wrap">
+      <div class="sb-avatar" id="sbAvatar">--</div>
+      <div>
+        <div class="sb-user-name" id="sbName">Cargando...</div>
+        <div class="sb-user-role">Agente</div>
+      </div>
+    </div>
+    <button class="btn-logout" id="btnLogout">Cerrar sesión</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Mi Turno</h2>
+      <span class="topbar-sep">/</span>
+      <p id="mesActualLabel">Cargando...</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="turno-banner" id="turnoBanner">
+      <div class="tb-left">
+        <div class="tb-label">Turno asignado</div>
+        <div class="tb-nombre" id="turnoNombre">Cargando...</div>
+        <div class="tb-horario" id="turnoHorario">—</div>
+      </div>
+      <div class="tb-stats">
+        <div class="tb-stat"><div class="tb-stat-val" id="statLaborales">—</div><div class="tb-stat-key">Días laborales</div></div>
+        <div class="tb-divider"></div>
+        <div class="tb-stat"><div class="tb-stat-val" id="statDescanso">—</div><div class="tb-stat-key">Días descanso</div></div>
+        <div class="tb-divider"></div>
+        <div class="tb-stat"><div class="tb-stat-val" id="statRestantes">—</div><div class="tb-stat-key">Días restantes</div></div>
+      </div>
+    </div>
+
+    <div class="cal-card">
+      <div class="cal-header">
+        <div class="cal-mes" id="calMesTitle">—</div>
+        <div class="cal-nav">
+          <button class="cal-nav-btn" onclick="cambiarMes(-1)">&#8249;</button>
+          <button class="cal-nav-btn" onclick="irHoy()">Hoy</button>
+          <button class="cal-nav-btn" onclick="cambiarMes(1)">&#8250;</button>
+        </div>
+      </div>
+      <div class="cal-leyenda">
+        <div class="ley-item"><div class="ley-dot laboral"></div>Día laboral</div>
+        <div class="ley-item"><div class="ley-dot descanso"></div>Descanso</div>
+        <div class="ley-item"><div class="ley-dot hoy"></div>Hoy</div>
+      </div>
+      <div class="cal-dias-semana">
+        <div class="cal-dia-semana">Dom</div>
+        <div class="cal-dia-semana">Lun</div>
+        <div class="cal-dia-semana">Mar</div>
+        <div class="cal-dia-semana">Mié</div>
+        <div class="cal-dia-semana">Jue</div>
+        <div class="cal-dia-semana">Vie</div>
+        <div class="cal-dia-semana">Sáb</div>
+      </div>
+      <div class="cal-grid" id="calGrid"><div class="loading">Cargando turno...</div></div>
+    </div>
+
+    <div class="resumen-grid">
+      <div class="res-card">
+        <div class="res-label">Días laborales este mes</div>
+        <div class="res-val" id="resLaborales">—</div>
+        <div class="res-sub">días de trabajo</div>
+        <div class="res-bar"><div class="res-bar-fill" id="resBarLab" style="width:0%"></div></div>
+      </div>
+      <div class="res-card">
+        <div class="res-label">Días de descanso este mes</div>
+        <div class="res-val" id="resDescanso">—</div>
+        <div class="res-sub">días libres</div>
+        <div class="res-bar"><div class="res-bar-fill" id="resBarDesc" style="width:0%;background:#E2E8F0"></div></div>
+      </div>
+      <div class="res-card">
+        <div class="res-label">Horas laborales este mes</div>
+        <div class="res-val" id="resHoras">—</div>
+        <div class="res-sub">horas totales (8h/día)</div>
+        <div class="res-bar"><div class="res-bar-fill" id="resBarHoras" style="width:0%;background:#29ABE2"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var auth = firebase.auth();
+  var db   = firebase.firestore();
+
+  var hoy = new Date();
+  var mesVista = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+  var diasLaborales = {};
+  var turnoInfo = { nombre: 'Sin turno asignado', horario: '—' };
+
+  var MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  function pad2(n){ return String(n).padStart(2,'0'); }
+
+  // Auth
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = 'login.html'; return; }
+    var name = user.email.split('@')[0];
+    document.getElementById('sbName').textContent   = name;
+    document.getElementById('sbAvatar').textContent = name.substring(0,2).toUpperCase();
+    cargarTurno(user.uid);
+  });
+
+  document.getElementById('btnLogout').addEventListener('click', function(){
+    auth.signOut().then(function(){ window.location.href = 'login.html'; });
+  });
+
+  // Cargar turno desde Firestore
+  // Colección: turnos — documento por agente con campos:
+  //   nombre: string (ej: "Turno A — Mañana")
+  //   horario: string (ej: "07:00 AM — 03:00 PM · 8h")
+  //   dias: objeto { "2026-06-01": "laboral", "2026-06-02": "descanso", ... }
+  function cargarTurno(uid) {
+    db.collection('turnos').doc(uid).get()
+      .then(function(doc) {
+        if (doc.exists) {
+          var data = doc.data();
+          turnoInfo.nombre  = data.nombre  || 'Turno asignado';
+          turnoInfo.horario = data.horario || '—';
+          diasLaborales = data.dias || {};
+        } else {
+          // Si no hay turno en Firestore usamos ejemplo lun-vie
+          diasLaborales = generarEjemplo();
+          turnoInfo.nombre  = 'Turno A — Mañana';
+          turnoInfo.horario = '07:00 AM — 03:00 PM · 8h por jornada';
+        }
+        document.getElementById('turnoNombre').textContent  = turnoInfo.nombre;
+        document.getElementById('turnoHorario').textContent = turnoInfo.horario;
+        renderCalendario();
+      })
+      .catch(function(e){
+        console.error('Error cargando turno:', e);
+        diasLaborales = generarEjemplo();
+        document.getElementById('turnoNombre').textContent  = 'Turno A — Mañana';
+        document.getElementById('turnoHorario').textContent = '07:00 AM — 03:00 PM · 8h por jornada';
+        renderCalendario();
+      });
+  }
+
+  function generarEjemplo() {
+    var dias = {};
+    var d = new Date(hoy.getFullYear(), 0, 1);
+    var fin = new Date(hoy.getFullYear(), 11, 31);
+    while (d <= fin) {
+      var dow = d.getDay();
+      var key = d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate());
+      dias[key] = (dow >= 1 && dow <= 5) ? 'laboral' : 'descanso';
+      d.setDate(d.getDate()+1);
+    }
+    return dias;
+  }
+
+  function renderCalendario() {
+    var año = mesVista.getFullYear();
+    var mes = mesVista.getMonth();
+    var primerDia = new Date(año, mes, 1).getDay();
+    var totalDias = new Date(año, mes+1, 0).getDate();
+
+    document.getElementById('calMesTitle').textContent    = MESES[mes] + ' ' + año;
+    document.getElementById('mesActualLabel').textContent = MESES[mes] + ' ' + año;
+
+    var laborales = 0, descanso = 0, restantes = 0;
+    var html = '';
+
+    for (var i = 0; i < primerDia; i++) {
+      html += '<div class="cal-dia vacio"></div>';
+    }
+
+    for (var d = 1; d <= totalDias; d++) {
+      var fecha  = año + '-' + pad2(mes+1) + '-' + pad2(d);
+      var tipo   = diasLaborales[fecha] || 'descanso';
+      var esHoy  = (año === hoy.getFullYear() && mes === hoy.getMonth() && d === hoy.getDate());
+      var fechaD = new Date(año, mes, d);
+      var hoyD   = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+      var esPasado = fechaD < hoyD;
+
+      if (tipo === 'laboral') laborales++;
+      else descanso++;
+      if (tipo === 'laboral' && !esPasado) restantes++;
+
+      var clases = 'cal-dia ' + tipo + (esHoy ? ' hoy' : '') + (esPasado && !esHoy ? ' pasado' : '');
+      var tag = tipo === 'laboral' ? 'Laboral' : 'Descanso';
+      html += '<div class="' + clases + '">'
+        + '<span class="dia-num">' + d + '</span>'
+        + '<span class="dia-tag">' + tag + '</span>'
+        + '</div>';
+    }
+
+    document.getElementById('calGrid').innerHTML = html;
+    document.getElementById('statLaborales').textContent = laborales;
+    document.getElementById('statDescanso').textContent  = descanso;
+    document.getElementById('statRestantes').textContent = restantes;
+    document.getElementById('resLaborales').textContent  = laborales;
+    document.getElementById('resDescanso').textContent   = descanso;
+    document.getElementById('resHoras').textContent      = (laborales * 8) + 'h';
+    document.getElementById('resBarLab').style.width     = Math.round((laborales/totalDias)*100) + '%';
+    document.getElementById('resBarDesc').style.width    = Math.round((descanso/totalDias)*100) + '%';
+    document.getElementById('resBarHoras').style.width   = Math.min(100, Math.round((laborales*8/200)*100)) + '%';
+  }
+
+  function cambiarMes(dir) {
+    mesVista.setMonth(mesVista.getMonth() + dir);
+    renderCalendario();
+  }
+
+  function irHoy() {
+    mesVista = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+    renderCalendario();
+  }
+</script>
+</body>
+</html>

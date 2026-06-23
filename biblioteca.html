@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATU 360 — Biblioteca</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+
+  /* SIDEBAR */
+  .sidebar { width: 220px; flex-shrink: 0; background: #0F2070; display: flex; flex-direction: column; min-height: 100vh; }
+  .sb-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .sb-name { font-size: 1.25rem; font-weight: 800; color: white; }
+  .sb-name span { color: #29ABE2; }
+  .sb-tagline { font-size: 0.62rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 2px; margin-top: 3px; }
+  .sb-nav { padding: 20px 12px; flex: 1; }
+  .nav-section-label { font-size: 0.58rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; padding: 0 10px; margin: 16px 0 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 6px; font-size: 0.8rem; color: rgba(255,255,255,0.55); cursor: pointer; transition: all 0.15s; margin-bottom: 1px; }
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+  .nav-item.active { background: rgba(41,171,226,0.15); color: white; font-weight: 600; border-left: 2px solid #29ABE2; }
+  .sb-bottom { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .sb-user-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .sb-avatar { width: 32px; height: 32px; border-radius: 50%; background: #1A3DAA; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: white; font-weight: 700; flex-shrink: 0; border: 1.5px solid rgba(41,171,226,0.4); }
+  .sb-user-name { font-size: 0.76rem; font-weight: 600; color: white; }
+  .sb-user-role { font-size: 0.62rem; color: rgba(255,255,255,0.4); margin-top: 1px; }
+  .btn-logout { width: 100%; padding: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: rgba(255,255,255,0.5); font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-logout:hover { background: rgba(255,255,255,0.1); color: white; }
+
+  /* MAIN */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+
+  /* BIBLIOTECA CONTENT */
+  .bib-wrap { padding: 24px 28px; display: flex; flex-direction: column; gap: 16px; }
+
+  /* Buscador */
+  .bib-search { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 24px; }
+  .bib-search input { width: 100%; padding: 10px 16px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.88rem; font-family: 'Inter', sans-serif; outline: none; color: #1E293B; background: #F8FAFC; transition: border 0.2s; }
+  .bib-search input:focus { border-color: #1A3DAA; box-shadow: 0 0 0 3px rgba(26,61,170,0.07); background: white; }
+
+  /* Saludo */
+  .bib-saludo { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 24px; font-family: 'Montserrat', sans-serif; }
+  .bib-saludo p { font-size: 0.9rem; line-height: 1.7; color: #374151; margin-bottom: 8px; }
+  .bib-saludo p:last-child { margin-bottom: 0; }
+  .bib-saludo strong { color: #0F2070; }
+
+  /* Mensaje vacío */
+  .bib-vacio { display: none; text-align: center; font-size: 0.88rem; color: #94A3B8; padding: 28px; background: white; border-radius: 10px; border: 1px solid #E2E8F0; }
+
+  /* Tarjetas filtrables */
+  .bib-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .bib-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 24px; font-family: 'Montserrat', sans-serif; }
+  .bib-card h2 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: #0F2070; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid #F1F5F9; letter-spacing: 0.5px; }
+  .bib-card p { font-size: 0.85rem; line-height: 1.65; color: #555; margin-bottom: 10px; }
+  .bib-card p:last-child { margin-bottom: 0; }
+  .bib-card strong { color: #0F2070; }
+
+  /* Tarjeta menú usuario */
+  .bib-menu { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 24px; }
+  .bib-menu h2 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: #0F2070; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid #F1F5F9; letter-spacing: 0.5px; font-family: 'Montserrat', sans-serif; }
+  .bib-botones { display: flex; flex-wrap: wrap; gap: 8px; }
+  .bib-btn { background: #0F2070; color: white; padding: 10px 16px; border-radius: 7px; border: none; cursor: pointer; font-weight: 600; font-size: 0.78rem; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+  .bib-btn:hover { background: #1A3DAA; transform: translateY(-1px); }
+
+  /* Footer biblioteca */
+  .bib-footer { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .bib-footer-logo { font-size: 1.1rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; }
+  .bib-footer-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .bib-footer-btn { padding: 9px 18px; border: none; border-radius: 7px; font-weight: 700; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+  .bib-footer-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-menu-f    { background: #0F2070; color: white; }
+  .btn-objeciones{ background: #F27C34; color: white; }
+  .btn-despedida { background: #0F2070; color: white; }
+
+  @media (max-width: 700px) {
+    .bib-grid { grid-template-columns: 1fr; }
+    .bib-footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-name">ATU <span>360</span></div>
+    <div class="sb-tagline">by DoctorSV</div>
+  </div>
+  <div class="sb-nav">
+    <div class="nav-section-label">Principal</div>
+    <div class="nav-item" onclick="window.location.href='home.html'">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Inicio
+    </div>
+    <div class="nav-item" onclick="window.location.href='flash.html'">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 000-4H4v4z"/><path d="M18 18V2H6a2 2 0 00-2 2v14"/></svg>Flash Informativos
+    </div>
+    <div class="nav-item" onclick="window.location.href='solicitudes.html'">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Solicitudes
+    </div>
+    <div class="nav-item active">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>Biblioteca
+    </div>
+    <div class="nav-section-label">Reportes</div>
+    <div class="nav-item" onclick="window.location.href='metricas.html'">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Mis Métricas
+    </div>
+  </div>
+  <div class="sb-bottom">
+    <div class="sb-user-wrap">
+      <div class="sb-avatar" id="sbAvatar">MA</div>
+      <div>
+        <div class="sb-user-name" id="sbName">María Alvarado</div>
+        <div class="sb-user-role">Agente</div>
+      </div>
+    </div>
+    <button class="btn-logout" id="btnLogout">Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Biblioteca</h2>
+      <span class="topbar-sep">/</span>
+      <p>Guía telefónica</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="bib-wrap">
+
+    <!-- BUSCADOR -->
+    <div class="bib-search">
+      <input type="text" id="buscador" placeholder="Buscar en tarjetas o menús..." oninput="filtrar()">
+    </div>
+
+    <!-- SALUDO -->
+    <div class="bib-saludo">
+      <p>Gracias por contactar a <strong>DoctorSV</strong>, le saluda el/la agente <strong>XXXX XXXX</strong>, <strong>¿con quién tengo el gusto?</strong></p>
+      <p>Un placer SR / SRA <strong>XXXXXXX</strong>, antes de continuar, ¿me podría indicar su <strong>número de documento?</strong></p>
+      <p>Le confirmo, su número de documento es <strong>XXXXXXX-X</strong>.</p>
+    </div>
+
+    <!-- MENSAJE VACÍO -->
+    <div class="bib-vacio" id="bibVacio">No se encontraron opciones que coincidan con tu búsqueda.</div>
+
+    <!-- CONTENEDOR FILTRABLE -->
+    <div id="contenedorFiltrable">
+
+      <!-- GRID DE TARJETAS -->
+      <div class="bib-grid" id="bibGrid">
+        <div class="elemento-filtrable bib-card">
+          <h2>No está registrado en el SDP:</h2>
+          <p>Muchas gracias, ¿me podría indicar su <strong>fecha de nacimiento</strong> y su <strong>número de teléfono?</strong></p>
+          <p>Le confirmo: su teléfono es <strong>XXXX-XXXX</strong> y su fecha de nacimiento es <strong>XX/XX/XXXX</strong></p>
+          <p>De acuerdo, por favor, <strong>permítame un momento en línea para verificar en nuestro sistema.</strong></p>
+          <p><strong>Muchas gracias por su espera en línea, SR / SRA XXXXXXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
+        </div>
+        <div class="elemento-filtrable bib-card">
+          <h2>Ya está registrado en el SDP:</h2>
+          <p>Muchas gracias, ¿me podría confirmar si los últimos 4 dígitos de su teléfono siguen siendo <strong>XXXX?</strong></p>
+          <p><strong>Muchas gracias SR / SRA XXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
+        </div>
+      </div>
+
+      <!-- MENÚ USUARIO -->
+      <div class="elemento-filtrable bib-menu" style="margin-top:16px">
+        <h2>Menú Usuario</h2>
+        <div class="bib-botones">
+          <button class="bib-btn">Consultas</button>
+          <button class="bib-btn">Gestión de citas</button>
+          <button class="bib-btn">Gestión de perfiles</button>
+          <button class="bib-btn">Incidencias técnicas</button>
+          <button class="bib-btn">Incidencias con los médicos</button>
+          <button class="bib-btn">Incidencias con farmacias</button>
+          <button class="bib-btn">Incidencias con laboratorios</button>
+          <button class="bib-btn">Incidencias con imágenes</button>
+          <button class="bib-btn">Incidencias con proced. presenciales</button>
+          <button class="bib-btn">Gestión de recetas / órdenes de estudios</button>
+          <button class="bib-btn">Incidencias operativas</button>
+          <button class="bib-btn">Denuncias / Incidencias centro de soporte</button>
+          <button class="bib-btn">No relacionado al servicio</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="bib-footer">
+      <div class="bib-footer-logo">DoctorSV</div>
+      <div class="bib-footer-btns">
+        <button class="bib-footer-btn btn-menu-f">Menú</button>
+        <button class="bib-footer-btn btn-objeciones">Objeciones y casos especiales</button>
+        <button class="bib-footer-btn btn-despedida">Script de despedida</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var auth = firebase.auth();
+
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = 'login.html'; return; }
+    var name = user.email.split('@')[0];
+    document.getElementById('sbName').textContent   = name;
+    document.getElementById('sbAvatar').textContent = name.substring(0,2).toUpperCase();
+  });
+
+  document.getElementById('btnLogout').addEventListener('click', function(){
+    auth.signOut().then(function(){ window.location.href = 'login.html'; });
+  });
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  function filtrar() {
+    var input = document.getElementById('buscador').value.toLowerCase();
+    var elementos = document.querySelectorAll('#contenedorFiltrable .elemento-filtrable');
+    var encontrados = 0;
+    elementos.forEach(function(el) {
+      if (el.innerText.toLowerCase().includes(input)) {
+        el.style.display = 'block'; encontrados++;
+      } else {
+        el.style.display = 'none';
+      }
+    });
+    document.getElementById('bibVacio').style.display = encontrados === 0 ? 'block' : 'none';
+    // Ocultar/mostrar el grid si ambas tarjetas están ocultas
+    var grid = document.getElementById('bibGrid');
+    var visibles = grid.querySelectorAll('.elemento-filtrable[style*="block"]');
+    grid.style.display = visibles.length === 0 ? 'none' : 'grid';
+  }
+</script>
+</body>
+</html>
