@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<base href="/atu-360/">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ATU 360 — Iniciar sesión</title>
 <style>
@@ -79,6 +78,10 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+
+  var RUTAS = { agente: BASE+'home.html', editor: BASE+'editor.html', admin: BASE+'admin.html' };
+
   firebase.initializeApp({
     apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
     authDomain:        "atu-360.firebaseapp.com",
@@ -89,13 +92,6 @@
   });
   var auth = firebase.auth();
   var db   = firebase.firestore();
-
-  // Mapa de redirección por rol
-  var RUTAS = {
-    agente:  'home.html',
-    editor:  'editor.html',
-    admin:   'admin.html'
-  };
 
   document.getElementById('togglePass').addEventListener('click', function(){
     var p = document.getElementById('pass');
@@ -125,33 +121,25 @@
 
     auth.signInWithEmailAndPassword(email, pass)
       .then(function(cred) {
-        var uid = cred.user.uid;
-        // Leer rol desde Firestore
-        return db.collection('usuarios').doc(uid).get();
+        return db.collection('usuarios').doc(cred.user.uid).get();
       })
       .then(function(doc) {
-        if (!doc.exists) {
-          throw { code: 'auth/no-profile', message: 'No se encontró el perfil del usuario.' };
-        }
+        if (!doc.exists) throw { code: 'auth/no-profile' };
         var rol  = doc.data().rol;
         var ruta = RUTAS[rol];
-        if (!ruta) {
-          throw { code: 'auth/unknown-role', message: 'Rol no reconocido: ' + rol };
-        }
-        // Guardar datos de sesión
+        if (!ruta) throw { code: 'auth/unknown-role' };
         sessionStorage.setItem('atu_rol',    rol);
         sessionStorage.setItem('atu_nombre', doc.data().nombre || '');
-        // Redirigir según rol
         window.location.href = ruta;
       })
       .catch(function(e) {
         var msg = 'Correo o contraseña incorrectos.';
-        if (e.code === 'auth/too-many-requests')  msg = 'Demasiados intentos. Intenta más tarde.';
+        if (e.code === 'auth/too-many-requests')      msg = 'Demasiados intentos. Intenta más tarde.';
         if (e.code === 'auth/network-request-failed') msg = 'Sin conexión. Verifica tu red.';
-        if (e.code === 'auth/no-profile')         msg = 'Usuario sin perfil asignado. Contacta al administrador.';
-        if (e.code === 'auth/unknown-role')       msg = 'Rol no reconocido. Contacta al administrador.';
-        document.getElementById('errMsg').textContent = msg;
-        document.getElementById('errMsg').classList.add('show');
+        if (e.code === 'auth/no-profile')             msg = 'Usuario sin perfil asignado.';
+        if (e.code === 'auth/unknown-role')           msg = 'Rol no reconocido.';
+        err.textContent = msg;
+        err.classList.add('show');
         btn.disabled = false;
         btn.innerHTML = 'Iniciar sesión';
       });
