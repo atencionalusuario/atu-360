@@ -293,25 +293,8 @@
 
   function pad(n){ return String(n).padStart(2,'0'); }
 
-  // Auth
-  auth.onAuthStateChanged(function(user) {
-    if (!user) { window.location.href = 'login.html'; return; }
-    currentUser = user;
-    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
-      var nombre = doc.exists ? doc.data().nombre : user.email.split('@')[0];
-      document.getElementById('greetName').textContent = nombre;
-      document.getElementById('sbName').textContent    = nombre;
-      document.getElementById('sbAvatar').textContent  = nombre.substring(0,2).toUpperCase();
-    });
-    cargarBadges(user.uid);
-    cargarBadgeFlash(user.uid);
-  });
 
-  document.getElementById('btnLogout').addEventListener('click', function(){
-    auth.signOut().then(function(){ window.location.href = 'login.html'; });
-  });
-
-  // BADGES
+    // BADGES
   var BADGES_DEF = [
     { id: 'puntualidad-oro',    icon: '📅', nivel: 'gold',    label: 'Puntualidad Oro' },
     { id: 'puntualidad-plata',  icon: '📅', nivel: 'silver',  label: 'Puntualidad Plata' },
@@ -329,59 +312,6 @@
     { id: 'apoyo-invaluable',   icon: '🤝', nivel: 'special', label: 'Apoyo Invaluable' },
     { id: 'embajador-atu',      icon: '🎖️', nivel: 'special', label: 'Embajador ATU' }
   ];
-
-  function renderBadges(ids) {
-    var grid = document.getElementById('badgesGrid');
-    if (!grid) return;
-    if (!ids || ids.length === 0) {
-      grid.innerHTML = '<span style="font-size:0.68rem;color:rgba(255,255,255,0.3)">Sin badges aún</span>';
-      return;
-    }
-    var html = '';
-    for (var i = 0; i < ids.length; i++) {
-      var b = null;
-      for (var j = 0; j < BADGES_DEF.length; j++) {
-        if (BADGES_DEF[j].id === ids[i]) { b = BADGES_DEF[j]; break; }
-      }
-      if (!b) continue;
-      html += '<div class="badge-item">'
-        + '<div class="badge-icon ' + b.nivel + '">' + b.icon + '</div>'
-        + '<div class="badge-tooltip">' + b.label + '</div>'
-        + '</div>';
-    }
-    grid.innerHTML = html;
-  }
-
-  function cargarBadges(uid) {
-    db.collection('badges')
-      .where('uid', '==', uid)
-      .where('activo', '==', true)
-      .get()
-      .then(function(snap) {
-        var ids = [];
-        snap.forEach(function(doc){ ids.push(doc.data().badgeId); });
-        renderBadges(ids);
-      })
-      .catch(function(e){ console.error('Error cargando badges:', e); });
-  }
-
-  // Flash badge
-  function cargarBadgeFlash(uid) {
-    db.collection('flash_posts').where('estado','==','publicado').get()
-      .then(function(snapPosts) {
-        var ids = [];
-        snapPosts.forEach(function(d){ ids.push(d.id); });
-        if (ids.length === 0) return;
-        db.collection('flash_lecturas').where('uid','==',uid).get()
-          .then(function(snapLect) {
-            var leidos = {};
-            snapLect.forEach(function(d){ leidos[d.data().postId] = true; });
-            var sinLeer = ids.filter(function(id){ return !leidos[id]; }).length;
-            var badge = document.getElementById('flashBadge');
-            if (sinLeer > 0) { badge.textContent = sinLeer; badge.style.display = 'inline'; }
-          });
-      });
-  }
 
   // Save indicator
   function setSave(state, text) {
