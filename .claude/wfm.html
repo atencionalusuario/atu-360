@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATU 360 — WFM</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+
+  /* SIDEBAR */
+  .sidebar { width: 220px; flex-shrink: 0; background: #0F2070; display: flex; flex-direction: column; min-height: 100vh; }
+  .sb-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .sb-name { font-size: 1.25rem; font-weight: 800; color: white; }
+  .sb-name span { color: #29ABE2; }
+  .sb-tagline { font-size: 0.62rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 2px; margin-top: 3px; }
+  .sb-nav { padding: 20px 12px; flex: 1; }
+  .nav-section-label { font-size: 0.58rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; padding: 0 10px; margin: 16px 0 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 6px; font-size: 0.8rem; color: rgba(255,255,255,0.55); cursor: pointer; transition: all 0.15s; margin-bottom: 1px; }
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+  .nav-item.active { background: rgba(41,171,226,0.15); color: white; font-weight: 600; border-left: 2px solid #29ABE2; }
+  .sb-bottom { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .sb-user-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .sb-avatar { width: 32px; height: 32px; border-radius: 50%; background: #29ABE2; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: white; font-weight: 700; flex-shrink: 0; }
+  .sb-user-name { font-size: 0.76rem; font-weight: 600; color: white; }
+  .sb-user-role { font-size: 0.62rem; color: #29ABE2; font-weight: 600; margin-top: 1px; }
+  .btn-logout { width: 100%; padding: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: rgba(255,255,255,0.5); font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-logout:hover { background: rgba(255,255,255,0.1); color: white; }
+
+  /* MAIN */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+  .btn-nuevo { padding: 8px 16px; background: #1A3DAA; color: white; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; }
+  .btn-nuevo:hover { opacity: 0.88; }
+
+  /* CONTENT */
+  .content { padding: 24px 28px; display: flex; gap: 24px; align-items: flex-start; }
+
+  /* FILTROS Y LISTA */
+  .list-col { width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 12px; }
+
+  .filtros { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .filtro-row { display: flex; gap: 8px; }
+  .filtro-input { flex: 1; padding: 8px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.78rem; font-family: inherit; color: #1E293B; background: #F8FAFC; outline: none; }
+  .filtro-input:focus { border-color: #1A3DAA; background: white; }
+  .filtro-select { padding: 8px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.78rem; font-family: inherit; color: #1E293B; background: #F8FAFC; outline: none; cursor: pointer; }
+  .filtro-select:focus { border-color: #1A3DAA; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .stat-mini { background: white; border-radius: 8px; border: 1px solid #E2E8F0; padding: 10px 12px; text-align: center; }
+  .stat-mini-val { font-size: 1.2rem; font-weight: 800; color: #1A3DAA; }
+  .stat-mini-label { font-size: 0.62rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  .section-title { font-size: 0.72rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 1.5px; }
+
+  .usuarios-lista { display: flex; flex-direction: column; gap: 8px; }
+  .user-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 12px 16px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 12px; }
+  .user-card:hover { border-color: #CBD5E1; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .user-card.active { border-color: #1A3DAA; }
+  .user-card.inactivo { opacity: 0.5; }
+  .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: #1A3DAA; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: white; font-weight: 700; flex-shrink: 0; }
+  .user-info { flex: 1; min-width: 0; }
+  .user-nombre { font-size: 0.82rem; font-weight: 700; color: #1E293B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-meta { font-size: 0.68rem; color: #94A3B8; margin-top: 2px; }
+  .user-badges { display: flex; gap: 4px; flex-shrink: 0; }
+  .tag { font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 3px; text-transform: uppercase; }
+  .tag.agente     { background: #EEF2FF; color: #1A3DAA; }
+  .tag.supervisor { background: #F0FDF4; color: #16A34A; }
+  .tag.editor     { background: #F5F3FF; color: #7C3AED; }
+  .tag.admin      { background: #FFF7ED; color: #C2410C; }
+  .tag.wfm        { background: #F0F9FF; color: #0284C7; }
+  .tag.doctorsv   { background: #EEF2FF; color: #3730A3; }
+  .tag.educacion  { background: #F0FDF4; color: #15803D; }
+  .tag.marn       { background: #FFFBEB; color: #B45309; }
+  .tag.global     { background: #F1F5F9; color: #475569; }
+  .tag.inactivo   { background: #FEF2F2; color: #DC2626; }
+
+  /* DETALLE / FORMULARIO */
+  .detail-col { flex: 1; }
+  .empty-state { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 48px 24px; text-align: center; }
+  .empty-state p { font-size: 0.82rem; color: #94A3B8; margin-top: 12px; }
+  .detail-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; display: none; }
+  .detail-card.show { display: block; }
+  .detail-header { padding: 20px 24px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .detail-header-left { display: flex; align-items: center; gap: 12px; }
+  .detail-avatar { width: 44px; height: 44px; border-radius: 50%; background: #1A3DAA; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: white; font-weight: 700; flex-shrink: 0; }
+  .detail-nombre { font-size: 0.95rem; font-weight: 700; color: #1E293B; }
+  .detail-sub { font-size: 0.72rem; color: #94A3B8; margin-top: 3px; display: flex; gap: 6px; align-items: center; }
+  .detail-actions { display: flex; gap: 8px; }
+
+  .detail-body { padding: 24px; }
+  .form-section { margin-bottom: 24px; }
+  .form-section-title { font-size: 0.68rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #F1F5F9; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field-full { grid-column: 1 / -1; }
+  label { font-size: 0.72rem; font-weight: 600; color: #374151; }
+  .field-req { color: #DC2626; }
+  input[type="text"], input[type="email"], input[type="date"], input[type="number"], select {
+    padding: 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px;
+    font-size: 0.82rem; color: #1E293B; background: #F8FAFC; outline: none;
+    transition: border 0.2s; font-family: inherit; width: 100%;
+  }
+  input:focus, select:focus { border-color: #1A3DAA; box-shadow: 0 0 0 3px rgba(26,61,170,0.07); background: white; }
+  input:read-only { background: #F1F5F9; color: #94A3B8; cursor: not-allowed; }
+
+  .toggle-wrap { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px; background: #F8FAFC; }
+  .toggle { width: 36px; height: 20px; border-radius: 10px; background: #E2E8F0; position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+  .toggle.on { background: #1A3DAA; }
+  .toggle-thumb { width: 14px; height: 14px; border-radius: 50%; background: white; position: absolute; top: 3px; left: 3px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .toggle.on .toggle-thumb { left: 19px; }
+  .toggle-label { font-size: 0.78rem; font-weight: 600; color: #374151; }
+
+  .info-readonly { padding: 9px 12px; border: 1.5px solid #F1F5F9; border-radius: 7px; background: #F8FAFC; font-size: 0.82rem; color: #64748B; }
+
+  .detail-footer { padding: 16px 24px; border-top: 1px solid #F1F5F9; display: flex; justify-content: space-between; align-items: center; }
+  .footer-left { font-size: 0.72rem; color: #94A3B8; }
+  .footer-right { display: flex; gap: 8px; }
+  .btn-sec { padding: 9px 18px; border: 1.5px solid #E2E8F0; border-radius: 7px; background: white; font-size: 0.82rem; font-weight: 600; color: #374151; cursor: pointer; font-family: inherit; }
+  .btn-sec:hover { border-color: #CBD5E1; }
+  .btn-pri { padding: 9px 18px; border: none; border-radius: 7px; background: #1A3DAA; color: white; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-pri:hover { opacity: 0.88; }
+  .btn-danger { padding: 9px 18px; border: none; border-radius: 7px; background: #FEF2F2; color: #DC2626; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; border: 1px solid #FECACA; }
+  .btn-danger:hover { background: #FEE2E2; }
+
+  .preview-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
+  .preview-table th { background: #F8FAFC; padding: 7px 10px; text-align: left; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E2E8F0; white-space: nowrap; }
+  .preview-table td { padding: 7px 10px; border-bottom: 1px solid #F8FAFC; color: #374151; }
+  .preview-table tr:last-child td { border-bottom: none; }
+  .preview-table tr.error-row td { background: #FEF2F2; }
+  .error-badge { background: #FEF2F2; color: #DC2626; padding: 2px 6px; border-radius: 3px; font-size: 0.65rem; font-weight: 700; }
+  .ok-badge { background: #F0FDF4; color: #16A34A; padding: 2px 6px; border-radius: 3px; font-size: 0.65rem; font-weight: 700; }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+  .loading { text-align: center; padding: 24px; font-size: 0.8rem; color: #94A3B8; }
+
+  /* Modal confirmación */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15,32,112,0.4); display: flex; align-items: center; justify-content: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(3px); }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+  .modal { background: white; border-radius: 12px; padding: 28px; width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+  .modal-title { font-size: 0.95rem; font-weight: 700; color: #1E293B; margin-bottom: 8px; }
+  .modal-sub { font-size: 0.8rem; color: #64748B; line-height: 1.6; margin-bottom: 20px; }
+  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-name">ATU <span>360</span></div>
+    <div class="sb-tagline">Workforce Management</div>
+  </div>
+  <div class="sb-nav">
+    <div class="nav-section-label">Gestión</div>
+    <div class="nav-item active">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      Usuarios
+    </div>
+  </div>
+  <div class="sb-bottom">
+    <div class="sb-user-wrap">
+      <div class="sb-avatar" id="sbAvatar">WF</div>
+      <div>
+        <div class="sb-user-name" id="sbName">Cargando...</div>
+        <div class="sb-user-role">WFM</div>
+      </div>
+    </div>
+    <button class="btn-logout" id="btnLogout">Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Usuarios</h2>
+      <span class="topbar-sep">/</span>
+      <p id="totalLabel">Cargando...</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+      <button class="btn-sec" id="btnPlantilla" onclick="descargarPlantilla()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Plantilla CSV
+      </button>
+      <button class="btn-sec" id="btnCargaMasiva" onclick="document.getElementById('csvInput').click()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Carga masiva
+      </button>
+      <button class="btn-nuevo" id="btnNuevo">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nuevo usuario
+      </button>
+      <input type="file" id="csvInput" accept=".csv" style="display:none">
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- LISTA -->
+    <div class="list-col">
+      <div class="stats-row" id="statsRow">
+        <div class="stat-mini"><div class="stat-mini-val" id="statTotal">—</div><div class="stat-mini-label">Total</div></div>
+        <div class="stat-mini"><div class="stat-mini-val" id="statActivos">—</div><div class="stat-mini-label">Activos</div></div>
+        <div class="stat-mini"><div class="stat-mini-val" id="statInactivos">—</div><div class="stat-mini-label">Inactivos</div></div>
+      </div>
+
+      <div class="filtros">
+        <input class="filtro-input" id="busqueda" placeholder="Buscar por nombre o email..." oninput="filtrar()">
+        <div class="filtro-row">
+          <select class="filtro-select" id="filtroProyecto" onchange="filtrar()">
+            <option value="">Todos los proyectos</option>
+            <option value="doctorsv">DoctorSV</option>
+            <option value="educacion">Educación</option>
+            <option value="marn">MARN</option>
+            <option value="global">Global</option>
+          </select>
+          <select class="filtro-select" id="filtroRol" onchange="filtrar()">
+            <option value="">Todos los roles</option>
+            <option value="agente">Agente</option>
+            <option value="supervisor">Supervisor</option>
+            <option value="editor">Editor</option>
+            <option value="admin">Admin</option>
+            <option value="wfm">WFM</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-title">Usuarios</div>
+      <div class="usuarios-lista" id="usuariosLista">
+        <div class="loading">Cargando usuarios...</div>
+      </div>
+    </div>
+
+    <!-- DETALLE -->
+    <div class="detail-col">
+      <div class="empty-state" id="emptyState">
+        <svg width="40" height="40" fill="none" stroke="#CBD5E1" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        <p>Selecciona un usuario<br>o crea uno nuevo</p>
+      </div>
+      <div class="detail-card" id="detailCard"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal confirmación -->
+<!-- Modal carga masiva -->
+<div class="modal-overlay" id="modalCarga">
+  <div class="modal" style="width:700px;max-width:95vw">
+    <div class="modal-title">Carga masiva de usuarios</div>
+    <div class="modal-sub" id="cargaResumen"></div>
+    <div id="cargaPreview" style="max-height:320px;overflow-y:auto;margin-bottom:16px"></div>
+    <div class="modal-btns">
+      <button class="btn-sec" onclick="cerrarModalCarga()">Cancelar</button>
+      <button class="btn-pri" id="btnConfirmarCarga" onclick="confirmarCarga()">Crear usuarios</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Confirmar acción</div>
+    <div class="modal-sub" id="modalSub"></div>
+    <div class="modal-btns">
+      <button class="btn-sec" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-danger" id="modalConfirm">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  // Datos de ejemplo — en producción vienen de Firestore
+  var usuarios = [
+    { id:'1', nombre:'María Alvarado',  email:'maria@doctorsv.com',   rol:'agente',     proyecto:'doctorsv',  cargo:'Agente de atención', telefono:'7890-1234', documento:'04567890-1', canal:'Telefónico', supervisor:'Juan Pérez', emailSupervisor:'juan@doctorsv.com', fechaIngreso:'2025-01-15', horasConGoce:40, horasSinGoce:480, vehiculo:false, activo:true },
+    { id:'2', nombre:'Carlos Mendoza',  email:'carlos@doctorsv.com',  rol:'editor',     proyecto:'doctorsv',  cargo:'Editor de contenido', telefono:'7123-4567', documento:'05678901-2', canal:'Telefónico', supervisor:'Ana López', emailSupervisor:'ana@doctorsv.com', fechaIngreso:'2024-06-01', horasConGoce:40, horasSinGoce:480, vehiculo:true, tipoVehiculo:'Automóvil', placa:'P123456', marca:'Toyota', modelo:'Corolla', activo:true },
+    { id:'3', nombre:'Ana González',    email:'ana@educacion.com',    rol:'agente',     proyecto:'educacion', cargo:'Agente educativo',   telefono:'7654-3210', documento:'06789012-3', canal:'Chat', supervisor:'Luis Ramos', emailSupervisor:'luis@educacion.com', fechaIngreso:'2025-03-10', horasConGoce:40, horasSinGoce:480, vehiculo:false, activo:true },
+    { id:'4', nombre:'Pedro Castillo',  email:'pedro@marn.com',       rol:'supervisor', proyecto:'marn',      cargo:'Supervisor MARN',    telefono:'7321-6540', documento:'07890123-4', canal:'Telefónico', supervisor:'', emailSupervisor:'', fechaIngreso:'2023-11-20', horasConGoce:40, horasSinGoce:480, vehiculo:true, tipoVehiculo:'Motocicleta', placa:'M456789', marca:'Honda', modelo:'CB150', activo:false }
+  ];
+
+  var usuarioActual = null;
+  var modoFormulario = null;
+
+  var LABELS = {
+    rol: { agente:'Agente', supervisor:'Supervisor', editor:'Editor', admin:'Admin', wfm:'WFM', superadmin:'Superadmin' },
+    proyecto: { doctorsv:'DoctorSV', educacion:'Educación', marn:'MARN', global:'Global' }
+  };
+
+  function antiguedad(fechaStr) {
+    if (!fechaStr) return '—';
+    var inicio = new Date(fechaStr);
+    var hoy = new Date();
+    var dias = Math.floor((hoy - inicio) / (1000*60*60*24));
+    if (dias < 30) return dias + ' días';
+    if (dias < 365) return Math.floor(dias/30) + ' meses';
+    return Math.floor(dias/365) + ' año(s) y ' + Math.floor((dias%365)/30) + ' meses';
+  }
+
+  function iniciales(nombre) {
+    return nombre.split(' ').map(function(w){ return w[0]; }).join('').substring(0,2).toUpperCase();
+  }
+
+  function renderLista(lista) {
+    if (!lista) lista = usuarios;
+    var activos   = lista.filter(function(u){ return u.activo; }).length;
+    var inactivos = lista.filter(function(u){ return !u.activo; }).length;
+    document.getElementById('statTotal').textContent    = lista.length;
+    document.getElementById('statActivos').textContent  = activos;
+    document.getElementById('statInactivos').textContent= inactivos;
+    document.getElementById('totalLabel').textContent   = lista.length + ' usuarios';
+
+    if (lista.length === 0) {
+      document.getElementById('usuariosLista').innerHTML = '<div class="loading">Sin resultados</div>';
+      return;
+    }
+    var html = '';
+    lista.forEach(function(u) {
+      html += '<div class="user-card'+(usuarioActual===u.id?' active':'')+(u.activo?'':' inactivo')+'" onclick="verUsuario(\''+u.id+'\')">'
+        +'<div class="user-avatar">'+iniciales(u.nombre)+'</div>'
+        +'<div class="user-info">'
+        +'<div class="user-nombre">'+u.nombre+'</div>'
+        +'<div class="user-meta">'+u.email+'</div>'
+        +'</div>'
+        +'<div class="user-badges">'
+        +'<span class="tag '+u.rol+'">'+LABELS.rol[u.rol]+'</span>'
+        +'<span class="tag '+u.proyecto+'">'+LABELS.proyecto[u.proyecto]+'</span>'
+        +(u.activo?'':'<span class="tag inactivo">Inactivo</span>')
+        +'</div>'
+        +'</div>';
+    });
+    document.getElementById('usuariosLista').innerHTML = html;
+  }
+
+  function filtrar() {
+    var busq = document.getElementById('busqueda').value.toLowerCase();
+    var proy = document.getElementById('filtroProyecto').value;
+    var rol  = document.getElementById('filtroRol').value;
+    var lista = usuarios.filter(function(u) {
+      var matchBusq = !busq || u.nombre.toLowerCase().includes(busq) || u.email.toLowerCase().includes(busq);
+      var matchProy = !proy || u.proyecto === proy;
+      var matchRol  = !rol  || u.rol === rol;
+      return matchBusq && matchProy && matchRol;
+    });
+    renderLista(lista);
+  }
+
+  function verUsuario(id) {
+    usuarioActual = id;
+    var u = usuarios.find(function(x){ return x.id===id; });
+    if (!u) return;
+    filtrar();
+
+    document.getElementById('emptyState').style.display = 'none';
+    var dc = document.getElementById('detailCard');
+    dc.className = 'detail-card show';
+    dc.innerHTML =
+      '<div class="detail-header">'
+      +'<div class="detail-header-left">'
+      +'<div class="detail-avatar">'+iniciales(u.nombre)+'</div>'
+      +'<div>'
+      +'<div class="detail-nombre">'+u.nombre+'</div>'
+      +'<div class="detail-sub">'
+      +'<span class="tag '+u.rol+'">'+LABELS.rol[u.rol]+'</span>'
+      +'<span class="tag '+u.proyecto+'">'+LABELS.proyecto[u.proyecto]+'</span>'
+      +(u.activo?'':'<span class="tag inactivo">Inactivo</span>')
+      +'</div>'
+      +'</div></div>'
+      +'<div class="detail-actions">'
+      +'<button class="btn-sec" onclick="editarUsuario(\''+id+'\')">Editar</button>'
+      +(u.activo
+        ? '<button class="btn-danger" onclick="confirmarDesactivar(\''+id+'\')">Desactivar</button>'
+        : '<button class="btn-pri" onclick="activarUsuario(\''+id+'\')">Activar</button>')
+      +'</div>'
+      +'</div>'
+      +'<div class="detail-body">'
+
+      // Info personal
+      +'<div class="form-section">'
+      +'<div class="form-section-title">Información personal</div>'
+      +'<div class="form-grid">'
+      +'<div class="field"><label>Documento</label><div class="info-readonly">'+(u.documento||'—')+'</div></div>'
+      +'<div class="field"><label>Teléfono</label><div class="info-readonly">'+(u.telefono||'—')+'</div></div>'
+      +'<div class="field"><label>Correo institucional</label><div class="info-readonly">'+u.email+'</div></div>'
+      +'<div class="field"><label>Cargo</label><div class="info-readonly">'+(u.cargo||'—')+'</div></div>'
+      +'</div></div>'
+
+      // Info operativa
+      +'<div class="form-section">'
+      +'<div class="form-section-title">Información operativa</div>'
+      +'<div class="form-grid">'
+      +'<div class="field"><label>Proyecto</label><div class="info-readonly">'+LABELS.proyecto[u.proyecto]+'</div></div>'
+      +'<div class="field"><label>Canal</label><div class="info-readonly">'+(u.canal||'—')+'</div></div>'
+      +'<div class="field"><label>Supervisor</label><div class="info-readonly">'+(u.supervisor||'—')+'</div></div>'
+      +'<div class="field"><label>Correo supervisor</label><div class="info-readonly">'+(u.emailSupervisor||'—')+'</div></div>'
+      +'<div class="field"><label>Fecha de ingreso</label><div class="info-readonly">'+(u.fechaIngreso||'—')+'</div></div>'
+      +'<div class="field"><label>Antigüedad</label><div class="info-readonly">'+antiguedad(u.fechaIngreso)+'</div></div>'
+      +'</div></div>'
+
+      // Horas
+      +'<div class="form-section">'
+      +'<div class="form-section-title">Saldo de horas</div>'
+      +'<div class="form-grid">'
+      +'<div class="field"><label>Horas con goce disponibles</label><div class="info-readonly">'+u.horasConGoce+' horas</div></div>'
+      +'<div class="field"><label>Horas sin goce disponibles</label><div class="info-readonly">'+u.horasSinGoce+' horas</div></div>'
+      +'</div></div>'
+
+      // Vehículo
+      +'<div class="form-section">'
+      +'<div class="form-section-title">Vehículo</div>'
+      +'<div class="form-grid">'
+      +'<div class="field"><label>Tiene vehículo</label><div class="info-readonly">'+(u.vehiculo?'Sí':'No')+'</div></div>'
+      +(u.vehiculo
+        ? '<div class="field"><label>Tipo</label><div class="info-readonly">'+(u.tipoVehiculo||'—')+'</div></div>'
+        +'<div class="field"><label>Marca</label><div class="info-readonly">'+(u.marca||'—')+'</div></div>'
+        +'<div class="field"><label>Modelo</label><div class="info-readonly">'+(u.modelo||'—')+'</div></div>'
+        +'<div class="field"><label>Placa</label><div class="info-readonly">'+(u.placa||'—')+'</div></div>'
+        : '')
+      +'</div></div>'
+      +'</div>';
+  }
+
+  function editarUsuario(id) {
+    usuarioActual = id;
+    modoFormulario = 'editar';
+    var u = usuarios.find(function(x){ return x.id===id; });
+    mostrarFormulario(u);
+  }
+
+  document.getElementById('btnNuevo').addEventListener('click', function() {
+    usuarioActual = null;
+    modoFormulario = 'nuevo';
+    mostrarFormulario(null);
+  });
+
+  function mostrarFormulario(u) {
+    var esNuevo = !u;
+    document.getElementById('emptyState').style.display = 'none';
+    var dc = document.getElementById('detailCard');
+    dc.className = 'detail-card show';
+
+    dc.innerHTML =
+      '<div class="detail-header"><div class="detail-header-left">'
+      +(esNuevo
+        ? '<div><div class="detail-nombre">Nuevo usuario</div><div class="detail-sub" style="color:#94A3B8">Completa los campos requeridos</div></div>'
+        : '<div class="detail-avatar">'+iniciales(u.nombre)+'</div><div><div class="detail-nombre">Editar: '+u.nombre+'</div></div>')
+      +'</div></div>'
+      +'<div class="detail-body">'
+
+      // Personal
+      +'<div class="form-section"><div class="form-section-title">Información personal</div>'
+      +'<div class="form-grid">'
+      +'<div class="field"><label>Nombre completo <span class="field-req">*</span></label><input type="text" id="fNombre" value="'+(u?u.nombre:'')+'" placeholder="Nombre completo"></div>'
+      +'<div class="field"><label>Documento <span class="field-req">*</span></label><input type="text" id="fDocumento" value="'+(u?u.documento||'':'')+'" placeholder="00000000-0"></div>'
+      +'<div class="field"><label>Correo institucional <span class="field-req">*</span></label><input type="email" id="fEmail" value="'+(u?u.email:'')+'" placeholder="usuario@proyecto.com"'+(esNuevo?'':' readonly')+'></div>'
+      +'<div class="field"><label>Teléfono</label><input type="text" id="fTelefono" value="'+(u?u.telefono||'':'')+'" placeholder="0000-0000"></div>'
+      +'</div></div>'
+
+      // Operativa
+      +'<div class="form-section"><div class="form-section-title">Información operativa</div>'
+      +'<div class="form-grid">'
+      +'<div class="field"><label>Cargo <span class="field-req">*</span></label><input type="text" id="fCargo" value="'+(u?u.cargo||'':'')+'" placeholder="Agente de atención"></div>'
+      +'<div class="field"><label>Canal</label>'
+      +'<select id="fCanal">'
+      +'<option value="">— Selecciona —</option>'
+      +'<option value="Telefónico"'+(u&&u.canal==='Telefónico'?' selected':'')+'>Telefónico</option>'
+      +'<option value="Chat"'+(u&&u.canal==='Chat'?' selected':'')+'>Chat</option>'
+      +'<option value="Email"'+(u&&u.canal==='Email'?' selected':'')+'>Email</option>'
+      +'<option value="Presencial"'+(u&&u.canal==='Presencial'?' selected':'')+'>Presencial</option>'
+      +'</select></div>'
+      +'<div class="field"><label>Proyecto <span class="field-req">*</span></label>'
+      +'<select id="fProyecto">'
+      +'<option value="">— Selecciona —</option>'
+      +'<option value="doctorsv"'+(u&&u.proyecto==='doctorsv'?' selected':'')+'>DoctorSV</option>'
+      +'<option value="educacion"'+(u&&u.proyecto==='educacion'?' selected':'')+'>Educación</option>'
+      +'<option value="marn"'+(u&&u.proyecto==='marn'?' selected':'')+'>MARN</option>'
+      +'<option value="global"'+(u&&u.proyecto==='global'?' selected':'')+'>Global</option>'
+      +'</select></div>'
+      +'<div class="field"><label>Rol <span class="field-req">*</span></label>'
+      +'<select id="fRol">'
+      +'<option value="">— Selecciona —</option>'
+      +'<option value="agente"'+(u&&u.rol==='agente'?' selected':'')+'>Agente</option>'
+      +'<option value="supervisor"'+(u&&u.rol==='supervisor'?' selected':'')+'>Supervisor</option>'
+      +'<option value="editor"'+(u&&u.rol==='editor'?' selected':'')+'>Editor</option>'
+      +'<option value="admin"'+(u&&u.rol==='admin'?' selected':'')+'>Admin</option>'
+      +'<option value="wfm"'+(u&&u.rol==='wfm'?' selected':'')+'>WFM</option>'
+      +'</select></div>'
+      +'<div class="field"><label>Supervisor directo</label><input type="text" id="fSupervisor" value="'+(u?u.supervisor||'':'')+'" placeholder="Nombre del supervisor"></div>'
+      +'<div class="field"><label>Correo del supervisor</label><input type="email" id="fEmailSupervisor" value="'+(u?u.emailSupervisor||'':'')+'" placeholder="supervisor@proyecto.com"></div>'
+      +'<div class="field"><label>Fecha de ingreso <span class="field-req">*</span></label><input type="date" id="fFechaIngreso" value="'+(u?u.fechaIngreso||'':'')+'"></div>'
+      +'<div class="field"><label>Antigüedad</label><div class="info-readonly">'+(u?antiguedad(u.fechaIngreso):'Se calculará automáticamente')+'</div></div>'
+      +'</div></div>'
+
+      // Horas
+      +'<div class="form-section"><div class="form-section-title">Saldo de horas</div>'
+      +'<div class="form-grid">'
+      +'<div class="field"><label>Horas con goce</label><input type="number" id="fHorasGoce" value="'+(u?u.horasConGoce:40)+'" min="0"></div>'
+      +'<div class="field"><label>Horas sin goce</label><input type="number" id="fHorasSinGoce" value="'+(u?u.horasSinGoce:480)+'" min="0"></div>'
+      +'</div></div>'
+
+      // Vehículo
+      +'<div class="form-section"><div class="form-section-title">Vehículo</div>'
+      +'<div class="form-grid">'
+      +'<div class="field field-full">'
+      +'<div class="toggle-wrap" onclick="toggleVehiculo()">'
+      +'<div class="toggle'+(u&&u.vehiculo?' on':'')+'" id="toggleVeh"><div class="toggle-thumb"></div></div>'
+      +'<span class="toggle-label" id="toggleVehLabel">'+(u&&u.vehiculo?'Tiene vehículo':'Sin vehículo')+'</span>'
+      +'</div></div>'
+      +'<div id="camposVehiculo" style="display:'+(u&&u.vehiculo?'contents':'none')+'">'
+      +'<div class="field"><label>Tipo de vehículo</label>'
+      +'<select id="fTipoVehiculo">'
+      +'<option value="">— Selecciona —</option>'
+      +'<option value="Automóvil"'+(u&&u.tipoVehiculo==='Automóvil'?' selected':'')+'>Automóvil</option>'
+      +'<option value="Motocicleta"'+(u&&u.tipoVehiculo==='Motocicleta'?' selected':'')+'>Motocicleta</option>'
+      +'<option value="Camioneta"'+(u&&u.tipoVehiculo==='Camioneta'?' selected':'')+'>Camioneta</option>'
+      +'</select></div>'
+      +'<div class="field"><label>Marca</label><input type="text" id="fMarca" value="'+(u?u.marca||'':'')+'" placeholder="Toyota"></div>'
+      +'<div class="field"><label>Modelo</label><input type="text" id="fModelo" value="'+(u?u.modelo||'':'')+'" placeholder="Corolla"></div>'
+      +'<div class="field"><label>Placa</label><input type="text" id="fPlaca" value="'+(u?u.placa||'':'')+'" placeholder="P123456"></div>'
+      +'</div>'
+      +'</div></div>'
+      +'</div>'
+
+      +'<div class="detail-footer">'
+      +'<span class="footer-left">'+(esNuevo?'La contraseña inicial será <strong>ATU360*</strong>':'')+'</span>'
+      +'<div class="footer-right">'
+      +'<button class="btn-sec" onclick="cancelarFormulario()">Cancelar</button>'
+      +'<button class="btn-pri" onclick="guardarUsuario()">'+( esNuevo?'Crear usuario':'Guardar cambios')+'</button>'
+      +'</div></div>';
+
+    var vehActivo = u && u.vehiculo;
+    document.getElementById('toggleVeh')._activo = vehActivo;
+  }
+
+  function toggleVehiculo() {
+    var tog = document.getElementById('toggleVeh');
+    var activo = !tog._activo;
+    tog._activo = activo;
+    tog.className = 'toggle' + (activo?' on':'');
+    document.getElementById('toggleVehLabel').textContent = activo?'Tiene vehículo':'Sin vehículo';
+    document.getElementById('camposVehiculo').style.display = activo?'contents':'none';
+  }
+
+  function guardarUsuario() {
+    var nombre   = (document.getElementById('fNombre')||{}).value||'';
+    var email    = (document.getElementById('fEmail')||{}).value||'';
+    var doc      = (document.getElementById('fDocumento')||{}).value||'';
+    var proyecto = (document.getElementById('fProyecto')||{}).value||'';
+    var rol      = (document.getElementById('fRol')||{}).value||'';
+    var fecha    = (document.getElementById('fFechaIngreso')||{}).value||'';
+
+    if (!nombre||!email||!doc||!proyecto||!rol||!fecha) {
+      showToast('Completa todos los campos requeridos.'); return;
+    }
+
+    var vehActivo = document.getElementById('toggleVeh')._activo;
+    var nuevo = {
+      id:               modoFormulario==='nuevo' ? Date.now()+'' : usuarioActual,
+      nombre:           nombre,
+      email:            email,
+      documento:        doc,
+      telefono:         (document.getElementById('fTelefono')||{}).value||'',
+      cargo:            (document.getElementById('fCargo')||{}).value||'',
+      canal:            (document.getElementById('fCanal')||{}).value||'',
+      proyecto:         proyecto,
+      rol:              rol,
+      supervisor:       (document.getElementById('fSupervisor')||{}).value||'',
+      emailSupervisor:  (document.getElementById('fEmailSupervisor')||{}).value||'',
+      fechaIngreso:     fecha,
+      horasConGoce:     parseInt((document.getElementById('fHorasGoce')||{}).value)||40,
+      horasSinGoce:     parseInt((document.getElementById('fHorasSinGoce')||{}).value)||480,
+      vehiculo:         vehActivo,
+      tipoVehiculo:     vehActivo?(document.getElementById('fTipoVehiculo')||{}).value||'':'',
+      marca:            vehActivo?(document.getElementById('fMarca')||{}).value||'':'',
+      modelo:           vehActivo?(document.getElementById('fModelo')||{}).value||'':'',
+      placa:            vehActivo?(document.getElementById('fPlaca')||{}).value||'':'',
+      activo:           true,
+      primerAcceso:     modoFormulario==='nuevo'
+    };
+
+    if (modoFormulario==='nuevo') {
+      usuarios.unshift(nuevo);
+      showToast('Usuario creado. Contraseña inicial: ATU360*');
+    } else {
+      var idx = usuarios.findIndex(function(x){ return x.id===usuarioActual; });
+      if (idx>=0) usuarios[idx] = Object.assign(usuarios[idx], nuevo);
+      showToast('Cambios guardados.');
+    }
+    usuarioActual = nuevo.id;
+    filtrar();
+    verUsuario(nuevo.id);
+  }
+
+  function cancelarFormulario() {
+    if (usuarioActual) verUsuario(usuarioActual);
+    else { document.getElementById('detailCard').className='detail-card'; document.getElementById('emptyState').style.display='block'; }
+  }
+
+  function confirmarDesactivar(id) {
+    var u = usuarios.find(function(x){ return x.id===id; });
+    document.getElementById('modalTitle').textContent = 'Desactivar usuario';
+    document.getElementById('modalSub').textContent = '¿Estás seguro que deseas desactivar a ' + u.nombre + '? El usuario no podrá iniciar sesión hasta ser reactivado.';
+    document.getElementById('modalConfirm').onclick = function(){ desactivarUsuario(id); cerrarModal(); };
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+
+  function desactivarUsuario(id) {
+    var idx = usuarios.findIndex(function(x){ return x.id===id; });
+    if (idx>=0) usuarios[idx].activo = false;
+    filtrar(); verUsuario(id);
+    showToast('Usuario desactivado.');
+  }
+
+  function activarUsuario(id) {
+    var idx = usuarios.findIndex(function(x){ return x.id===id; });
+    if (idx>=0) usuarios[idx].activo = true;
+    filtrar(); verUsuario(id);
+    showToast('Usuario activado.');
+  }
+
+  function cerrarModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+
+  function showToast(msg) {
+    var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
+
+  // ===== CARGA MASIVA =====
+
+  var COLUMNAS = ['nombre','documento','email','telefono','cargo','canal','proyecto','rol','supervisor','emailSupervisor','fechaIngreso','vehiculo','tipoVehiculo','marca','modelo','placa'];
+  var PROYECTOS_VALIDOS = ['doctorsv','educacion','marn','global'];
+  var ROLES_VALIDOS     = ['agente','supervisor','editor','admin','wfm','superadmin'];
+
+  function descargarPlantilla() {
+    var header = COLUMNAS.join(',');
+    var ejemplo = [
+      'María Alvarado',
+      '04567890-1',
+      'maria@doctorsv.com',
+      '7890-1234',
+      'Agente de atención',
+      'Telefónico',
+      'doctorsv',
+      'agente',
+      'Juan Pérez',
+      'juan@doctorsv.com',
+      '2025-01-15',
+      'false',
+      '','','',''
+    ].join(',');
+    var csv = header + '\n' + ejemplo;
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href = url; a.download = 'plantilla_usuarios_ATU360.csv';
+    a.click(); URL.revokeObjectURL(url);
+  }
+
+  document.getElementById('csvInput').addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      procesarCSV(ev.target.result);
+    };
+    reader.readAsText(file, 'UTF-8');
+    this.value = '';
+  });
+
+  var usuariosPendientes = [];
+
+  function procesarCSV(texto) {
+    var lineas = texto.trim().split('\n');
+    if (lineas.length < 2) { showToast('El archivo está vacío o no tiene datos.'); return; }
+
+    var headers = lineas[0].split(',').map(function(h){ return h.trim().toLowerCase(); });
+    var filas   = lineas.slice(1);
+    var validos = 0, errores = 0;
+    usuariosPendientes = [];
+
+    var html = '<table class="preview-table"><thead><tr>'
+      + '<th>#</th><th>Nombre</th><th>Email</th><th>Proyecto</th><th>Rol</th><th>Estado</th>'
+      + '</tr></thead><tbody>';
+
+    filas.forEach(function(linea, i) {
+      if (!linea.trim()) return;
+      var cols = linea.split(',').map(function(c){ return c.trim(); });
+      var fila = {};
+      headers.forEach(function(h, idx){ fila[h] = cols[idx] || ''; });
+
+      var errList = [];
+      if (!fila.nombre)                              errList.push('Nombre requerido');
+      if (!fila.email || !fila.email.includes('@'))  errList.push('Email inválido');
+      if (!fila.documento)                           errList.push('Documento requerido');
+      if (!PROYECTOS_VALIDOS.includes(fila.proyecto)) errList.push('Proyecto inválido');
+      if (!ROLES_VALIDOS.includes(fila.rol))          errList.push('Rol inválido');
+      if (!fila.fechaingreso && !fila.fechaIngreso)   errList.push('Fecha ingreso requerida');
+
+      var esError = errList.length > 0;
+      if (esError) { errores++; }
+      else {
+        validos++;
+        usuariosPendientes.push({
+          id:              Date.now() + '' + i,
+          nombre:          fila.nombre,
+          documento:       fila.documento,
+          email:           fila.email,
+          telefono:        fila.telefono || '',
+          cargo:           fila.cargo || '',
+          canal:           fila.canal || '',
+          proyecto:        fila.proyecto,
+          rol:             fila.rol,
+          supervisor:      fila.supervisor || '',
+          emailSupervisor: fila.emailsupervisor || fila.emailSupervisor || '',
+          fechaIngreso:    fila.fechaingreso  || fila.fechaIngreso || '',
+          vehiculo:        fila.vehiculo === 'true',
+          tipoVehiculo:    fila.tipovehiculo  || fila.tipoVehiculo || '',
+          marca:           fila.marca || '',
+          modelo:          fila.modelo || '',
+          placa:           fila.placa || '',
+          horasConGoce:    40,
+          horasSinGoce:    480,
+          activo:          true,
+          primerAcceso:    true
+        });
+      }
+
+      html += '<tr class="'+(esError?'error-row':'')+'">'
+        +'<td>'+(i+1)+'</td>'
+        +'<td>'+fila.nombre+'</td>'
+        +'<td>'+fila.email+'</td>'
+        +'<td>'+fila.proyecto+'</td>'
+        +'<td>'+fila.rol+'</td>'
+        +'<td>'+(esError
+          ? '<span class="error-badge">Error: '+errList.join(', ')+'</span>'
+          : '<span class="ok-badge">Válido</span>')
+        +'</td></tr>';
+    });
+    html += '</tbody></table>';
+
+    document.getElementById('cargaPreview').innerHTML = html;
+    document.getElementById('cargaResumen').innerHTML =
+      '<strong>'+validos+' usuarios válidos</strong> listos para crear'
+      +(errores > 0 ? ' · <span style="color:#DC2626">'+errores+' filas con errores</span> (serán ignoradas)' : '');
+    document.getElementById('btnConfirmarCarga').disabled = validos === 0;
+    document.getElementById('modalCarga').classList.add('show');
+  }
+
+  function confirmarCarga() {
+    if (usuariosPendientes.length === 0) return;
+    usuariosPendientes.forEach(function(u){ usuarios.unshift(u); });
+    showToast(usuariosPendientes.length + ' usuarios creados. Contraseña inicial: ATU360*');
+    cerrarModalCarga();
+    filtrar();
+    usuariosPendientes = [];
+  }
+
+  function cerrarModalCarga() {
+    document.getElementById('modalCarga').classList.remove('show');
+    usuariosPendientes = [];
+  }
+
+  renderLista();
+</script>
+</body>
+</html>
