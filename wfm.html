@@ -875,26 +875,44 @@
     this.value='';
   });
 
+  function normalizarFecha(f) {
+    if (!f) return '';
+    // Acepta dd/mm/yyyy o d/m/yyyy → convierte a yyyy-mm-dd
+    var m = f.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m) return m[3] + '-' + m[2].padStart(2,'0') + '-' + m[1].padStart(2,'0');
+    // Ya viene en yyyy-mm-dd
+    if (f.match(/^\d{4}-\d{2}-\d{2}$/)) return f;
+    return '';
+  }
+
+  function detectarSeparador(linea) {
+    var comas     = (linea.match(/,/g)   || []).length;
+    var puntoycoma= (linea.match(/;/g)   || []).length;
+    return puntoycoma > comas ? ';' : ',';
+  }
+
   function procesarCSV(texto){
     var lineas=texto.trim().split('\n'); if(lineas.length<2){showToast('Archivo vacío.');return;}
-    var headers=lineas[0].split(',').map(function(h){return h.trim().toLowerCase();});
+    var sep = detectarSeparador(lineas[0]);
+    var headers=lineas[0].split(sep).map(function(h){return h.trim().toLowerCase();});
     pendientesCSV=[]; var ok=0,err=0;
     var html='<table class="preview-table"><thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Proyecto</th><th>Rol</th><th>Estado</th></tr></thead><tbody>';
     lineas.slice(1).forEach(function(linea,i){
       if(!linea.trim()) return;
-      var cols=linea.split(',').map(function(c){return c.trim();}), fila={};
+      var cols=linea.split(sep).map(function(c){return c.trim();}), fila={};
       headers.forEach(function(h,j){fila[h]=cols[j]||'';});
+      var fecha = normalizarFecha(fila.fechaingreso || fila['fechaingreso'] || '');
       var errs=[];
       if(!fila.nombre) errs.push('Nombre');
       if(!fila.email||!fila.email.includes('@')) errs.push('Email');
       if(!fila.documento) errs.push('Documento');
       if(!PROYECTOS_OK.includes(fila.proyecto)) errs.push('Proyecto');
       if(!ROLES_OK.includes(fila.rol)) errs.push('Rol');
-      if(!fila.fechaingreso&&!fila.fechaingreso) errs.push('Fecha');
+      if(!fecha) errs.push('Fecha');
       if(errs.length){ err++;
         html+='<tr class="error-row"><td>'+(i+1)+'</td><td>'+fila.nombre+'</td><td>'+fila.email+'</td><td>'+fila.proyecto+'</td><td>'+fila.rol+'</td><td><span class="badge-err">'+errs.join(', ')+'</span></td></tr>';
       } else { ok++;
-        pendientesCSV.push({id:Date.now()+''+i,nombre:fila.nombre,documento:fila.documento,email:fila.email,telefono:fila.telefono||'',cargo:fila.cargo||'',canal:fila.canal||'',proyecto:fila.proyecto,rol:fila.rol,supervisor:fila.supervisor||'',emailSupervisor:fila.emailsupervisor||'',fechaIngreso:fila.fechaingreso||'',vehiculo:fila.vehiculo==='true',tipoVehiculo:fila.tipovehiculo||'',marca:fila.marca||'',modelo:fila.modelo||'',placa:fila.placa||'',horasConGoce:40,horasSinGoce:480,activo:true});
+        pendientesCSV.push({nombre:fila.nombre,documento:fila.documento,email:fila.email,telefono:fila.telefono||'',cargo:fila.cargo||'',canal:fila.canal||'',proyecto:fila.proyecto,rol:fila.rol,supervisor:fila.supervisor||'',emailSupervisor:fila.emailsupervisor||'',fechaIngreso:fecha,vehiculo:fila.vehiculo==='true',tipoVehiculo:fila.tipovehiculo||'',marca:fila.marca||'',modelo:fila.modelo||'',placa:fila.placa||'',horasConGoce:40,horasSinGoce:480,activo:true});
         html+='<tr><td>'+(i+1)+'</td><td>'+fila.nombre+'</td><td>'+fila.email+'</td><td>'+fila.proyecto+'</td><td>'+fila.rol+'</td><td><span class="badge-ok">Válido</span></td></tr>';
       }
     });
