@@ -126,13 +126,26 @@
   .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
   .toast.show { opacity: 1; }
 
+  /* ===== STAT CARDS ===== */
+  .stat-cards-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .stat-card { background: white; border: 1px solid #E2E8F0; border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; gap: 14px; min-width: 140px; flex: 1; }
+  .stat-card-icon { width: 38px; height: 38px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .stat-card-val  { font-size: 1.5rem; font-weight: 800; line-height: 1; }
+  .stat-card-lbl  { font-size: 0.68rem; color: #64748B; margin-top: 3px; font-weight: 500; }
+  .stat-card.total  .stat-card-icon { background: #EEF2FF; }
+  .stat-card.online .stat-card-icon { background: #F0FDF4; }
+  .stat-card.offline .stat-card-icon { background: #F8FAFC; }
+  .stat-card.total  .stat-card-val  { color: #1A3DAA; }
+  .stat-card.online .stat-card-val  { color: #16A34A; }
+  .stat-card.offline .stat-card-val { color: #94A3B8; }
+
   /* ===== TARJETAS AGENTES ===== */
   .agentes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
   .agente-card { border-radius: 12px; padding: 16px 14px 14px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; position: relative; border: 2px solid transparent; display: flex; flex-direction: column; gap: 10px; }
   .agente-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
   .agente-card.selected { border-color: #1A3DAA; }
   .agente-card.card-activo { background: #F0FDF4; }
-  .agente-card.card-fuera  { background: #F8FAFC; opacity: 0.65; }
+  .agente-card.card-fuera  { background: #E2E8F0; }
   .ac-top { display: flex; align-items: center; gap: 9px; }
   .ac-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: white; flex-shrink: 0; }
   .ac-avatar.online  { background: #16A34A; }
@@ -333,23 +346,18 @@
       <!-- FILTROS -->
       <div class="filtros-row">
         <input class="ctrl-input" id="busqueda" placeholder="Buscar agente..." oninput="renderTabla()">
-        <select class="ctrl-select" id="filtroProyecto" onchange="renderTabla()">
-          <option value="">Todos los proyectos</option>
-          <option value="doctorsv">DoctorSV</option>
-          <option value="educacion">Educación</option>
-          <option value="marn">MARN</option>
-          <option value="global">Global</option>
-        </select>
         <select class="ctrl-select" id="filtroEstado" onchange="renderTabla()">
           <option value="">Todos los estados</option>
         </select>
-        <span class="tabla-count" id="tablaCount" style="margin-left:auto;font-size:0.75rem;color:#94A3B8"></span>
       </div>
 
-      <!-- RESUMEN -->
+      <!-- STAT CARDS -->
+      <div class="stat-cards-row" id="statCards"></div>
+
+      <!-- RESUMEN AUXILIARES -->
       <div class="resumen-grid" id="resumenGrid"></div>
 
-      <!-- TARJETAS -->
+      <!-- TARJETAS AGENTES -->
       <div class="agentes-grid" id="agentesGrid"></div>
 
     </div>
@@ -502,15 +510,35 @@
 
   // ===== RESUMEN =====
   function renderResumen() {
-    var conteo = {};
-    agentes.forEach(function(a) {
-      var e = a.estadoActual || 'Fuera';
-      conteo[e] = (conteo[e] || 0) + 1;
-    });
+    var total    = agentes.length;
+    var enLinea  = agentes.filter(function(a){ return !!a.enLinea; }).length;
+    var fuera    = total - enLinea;
 
-    var orden = ['Inbound','Outbound','Pausa administrativa','Break','Baño','Comida','Capacitación','Feedback','Jornada finalizada','Fuera'];
+    // Stat cards
+    document.getElementById('statCards').innerHTML =
+      '<div class="stat-card total">'
+        + '<div class="stat-card-icon"><svg width="18" height="18" fill="none" stroke="#1A3DAA" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>'
+        + '<div><div class="stat-card-val">'+total+'</div><div class="stat-card-lbl">Total asignados</div></div>'
+      + '</div>'
+      + '<div class="stat-card online">'
+        + '<div class="stat-card-icon"><svg width="18" height="18" fill="none" stroke="#16A34A" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>'
+        + '<div><div class="stat-card-val">'+enLinea+'</div><div class="stat-card-lbl">En línea</div></div>'
+      + '</div>'
+      + '<div class="stat-card offline">'
+        + '<div class="stat-card-icon"><svg width="18" height="18" fill="none" stroke="#94A3B8" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div>'
+        + '<div><div class="stat-card-val">'+fuera+'</div><div class="stat-card-lbl">Sin conexión</div></div>'
+      + '</div>';
+
+    // Chips de auxiliares (solo agentes en línea con estado real)
+    var conteo = {};
+    var AUXILIARES = ['Inbound','Outbound','Pausa administrativa','Break','Baño','Comida','Capacitación','Feedback'];
+    agentes.forEach(function(a) {
+      if (!a.enLinea) return;
+      var e = a.estadoActual;
+      if (e && AUXILIARES.indexOf(e) !== -1) conteo[e] = (conteo[e]||0) + 1;
+    });
     var html = '';
-    orden.forEach(function(e) {
+    AUXILIARES.forEach(function(e) {
       if (!conteo[e]) return;
       var cfg = estadoConfig(e);
       html += '<div class="estado-chip" style="background:'+cfg.color+';border-color:'+cfg.color+'" onclick="filtrarPorEstado(\''+e+'\')">'
@@ -519,14 +547,7 @@
         + '<div class="ec-label">'+e+'</div></div>'
         + '</div>';
     });
-    // Total activos
-    var enLinea = agentes.filter(function(a){ return a.enLinea; }).length;
-    html = '<div class="estado-chip" style="background:#F0FDF4;border-color:#BBF7D0">'
-      + '<div class="ec-dot" style="background:#16A34A;animation:blink 1.4s infinite"></div>'
-      + '<div><div class="ec-val" style="color:#16A34A">'+enLinea+'</div>'
-      + '<div class="ec-label">En línea</div></div>'
-      + '</div>' + html;
-    document.getElementById('resumenGrid').innerHTML = html;
+    document.getElementById('resumenGrid').innerHTML = html || '';
   }
 
   function filtrarPorEstado(e) {
@@ -538,12 +559,10 @@
   // ===== TARJETAS =====
   function renderTabla() {
     var busq = document.getElementById('busqueda').value.toLowerCase();
-    var proy = document.getElementById('filtroProyecto').value;
     var est  = document.getElementById('filtroEstado').value;
 
     var lista = agentes.filter(function(a) {
       if (busq && !(a.nombre||'').toLowerCase().includes(busq) && !(a.email||'').toLowerCase().includes(busq)) return false;
-      if (proy && a.proyecto !== proy) return false;
       if (est  && (a.estadoActual||'Fuera') !== est) return false;
       return true;
     });
