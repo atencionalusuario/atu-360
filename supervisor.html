@@ -126,6 +126,28 @@
   .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
   .toast.show { opacity: 1; }
 
+  /* ===== TARJETAS AGENTES ===== */
+  .agentes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+  .agente-card { border-radius: 12px; padding: 16px 14px 14px; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; position: relative; border: 2px solid transparent; display: flex; flex-direction: column; gap: 10px; }
+  .agente-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+  .agente-card.selected { border-color: #1A3DAA; }
+  .agente-card.card-activo { background: #F0FDF4; }
+  .agente-card.card-fuera  { background: #F8FAFC; opacity: 0.65; }
+  .ac-top { display: flex; align-items: center; gap: 9px; }
+  .ac-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: white; flex-shrink: 0; }
+  .ac-avatar.online  { background: #16A34A; }
+  .ac-avatar.offline { background: #CBD5E1; }
+  .ac-nombre { font-size: 0.75rem; font-weight: 700; color: #1E293B; line-height: 1.3; word-break: break-word; }
+  .ac-proyecto { font-size: 0.62rem; color: #94A3B8; margin-top: 1px; }
+  .ac-indicator { width: 9px; height: 9px; border-radius: 50%; position: absolute; top: 12px; right: 12px; flex-shrink: 0; }
+  .ac-indicator.online  { background: #16A34A; animation: blink 1.4s infinite; }
+  .ac-indicator.offline { background: #CBD5E1; }
+  .ac-estado { border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 3px; }
+  .ac-estado-nombre { font-size: 0.68rem; font-weight: 700; }
+  .ac-timer { font-size: 0.82rem; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.5px; }
+  .ac-sin-entrada { font-size: 0.68rem; color: #94A3B8; text-align: center; padding: 4px 0; }
+  .grid-empty { grid-column: 1/-1; text-align: center; padding: 48px; color: #94A3B8; font-size: 0.85rem; }
+
   /* ===== JORNADA ===== */
   .jornada-wrap { display: flex; flex-direction: column; gap: 18px; max-width: 700px; padding: 20px 24px; }
   .j-card { background: white; border-radius: 10px; padding: 24px 28px; border: 1px solid #E2E8F0; }
@@ -321,30 +343,14 @@
         <select class="ctrl-select" id="filtroEstado" onchange="renderTabla()">
           <option value="">Todos los estados</option>
         </select>
+        <span class="tabla-count" id="tablaCount" style="margin-left:auto;font-size:0.75rem;color:#94A3B8"></span>
       </div>
 
       <!-- RESUMEN -->
       <div class="resumen-grid" id="resumenGrid"></div>
 
-      <!-- TABLA -->
-      <div class="tabla-wrap">
-        <div class="tabla-header">
-          <span class="tabla-title">Agentes</span>
-          <span class="tabla-count" id="tablaCount">—</span>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Agente</th>
-              <th>Proyecto</th>
-              <th>Estado actual</th>
-              <th>Tiempo en estado</th>
-              <th>Supervisor</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
-      </div>
+      <!-- TARJETAS -->
+      <div class="agentes-grid" id="agentesGrid"></div>
 
     </div>
 
@@ -529,7 +535,7 @@
     renderTabla();
   }
 
-  // ===== TABLA =====
+  // ===== TARJETAS =====
   function renderTabla() {
     var busq = document.getElementById('busqueda').value.toLowerCase();
     var proy = document.getElementById('filtroProyecto').value;
@@ -542,43 +548,48 @@
       return true;
     });
 
-    // Orden: en línea primero, luego por nombre
     lista.sort(function(a,b) {
       if (a.enLinea && !b.enLinea) return -1;
       if (!a.enLinea && b.enLinea)  return 1;
       return (a.nombre||'').localeCompare(b.nombre||'', 'es');
     });
 
-    document.getElementById('tablaCount').textContent = lista.length + ' agentes';
-
-    if (lista.length === 0) {
-      document.getElementById('tbody').innerHTML = '<tr class="empty-row"><td colspan="5">Sin agentes para los filtros seleccionados</td></tr>';
-      return;
-    }
+    document.getElementById('tablaCount').textContent = lista.length + ' agente' + (lista.length !== 1 ? 's' : '');
 
     // Limpiar timers anteriores
     Object.keys(timers).forEach(function(k){ clearInterval(timers[k]); });
     timers = {};
 
+    if (lista.length === 0) {
+      document.getElementById('agentesGrid').innerHTML = '<div class="grid-empty">Sin agentes para los filtros seleccionados</div>';
+      return;
+    }
+
     var html = '';
     lista.forEach(function(a) {
-      var cfg = estadoConfig(a.estadoActual || 'Fuera');
-      var esFuera = !a.enLinea;
-      html += '<tr class="'+(esFuera?'fuera-row':'')+(seleccionado===a.id?' selected':'')+'" onclick="verHistorial(\''+a.id+'\')">'
-        + '<td><div class="td-user"><div class="td-avatar">'+iniciales(a.nombre||a.email)+'</div>'
-        + '<div><div class="td-nombre">'+(a.nombre||a.email)+'</div><div class="td-email">'+a.email+'</div></div></div></td>'
-        + '<td>'+(a.proyecto ? '<span class="tag '+a.proyecto+'">'+LABELS_PROY[a.proyecto]+'</span>' : '—')+'</td>'
-        + '<td><span class="estado-badge" style="background:'+cfg.color+';color:'+cfg.text+'">'
-        + '<span class="dot" style="background:'+cfg.dot+'"></span>'+(a.estadoActual||'Fuera')+'</span></td>'
-        + '<td class="timer-cell" id="timer-'+a.id+'">—</td>'
-        + '<td>'+(a.supervisor||'—')+'</td>'
-        + '</tr>';
+      var online = !!a.enLinea;
+      var cfg    = estadoConfig(a.estadoActual || 'Fuera');
+      var nombre = (a.nombre || a.email || '?').split(' ').slice(0, 2).join(' ');
+      var pLabel = LABELS_PROY[a.proyecto] || '';
+      html += '<div class="agente-card '+(online ? 'card-activo' : 'card-fuera')+(seleccionado===a.id?' selected':'')+'" onclick="verHistorial(\''+a.id+'\')">'
+        + '<div class="ac-indicator '+(online?'online':'offline')+'"></div>'
+        + '<div class="ac-top">'
+        +   '<div class="ac-avatar '+(online?'online':'offline')+'">'+iniciales(a.nombre||a.email)+'</div>'
+        +   '<div><div class="ac-nombre">'+nombre+'</div>'+(pLabel?'<div class="ac-proyecto">'+pLabel+'</div>':'')+'</div>'
+        + '</div>'
+        + (online
+            ? '<div class="ac-estado" style="background:'+cfg.color+'">'
+              + '<div class="ac-estado-nombre" style="color:'+cfg.text+'">'+(a.estadoActual||'En línea')+'</div>'
+              + '<div class="ac-timer" style="color:'+cfg.text+'" id="timer-'+a.id+'">00:00:00</div>'
+              + '</div>'
+            : '<div class="ac-sin-entrada">Sin entrada hoy</div>')
+        + '</div>';
     });
-    document.getElementById('tbody').innerHTML = html;
+    document.getElementById('agentesGrid').innerHTML = html;
 
-    // Iniciar timers
+    // Iniciar timers para agentes en línea
     lista.forEach(function(a) {
-      if (!a.estadoDesde) return;
+      if (!a.enLinea || !a.estadoDesde) return;
       var desde = a.estadoDesde.toDate ? a.estadoDesde.toDate() : new Date(a.estadoDesde);
       timers[a.id] = setInterval(function() {
         var el = document.getElementById('timer-'+a.id);
