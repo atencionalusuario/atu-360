@@ -719,8 +719,9 @@
       +'<option value="admin"'+(u&&u.rol==='admin'?' selected':'')+'>Admin</option>'
       +'<option value="wfm"'+(u&&u.rol==='wfm'?' selected':'')+'>WFM</option>'
       +'</select></div>'
-      +'<div class="field"><label>Supervisor</label><input type="text" id="fSupervisor" value="'+(u?u.supervisor||'':'')+'" placeholder="Nombre del supervisor"></div>'
-      +'<div class="field"><label>Correo supervisor</label><input type="email" id="fEmailSup" value="'+(u?u.emailSupervisor||'':'')+'" placeholder="supervisor@proyecto.com"></div>'
+      +'<div class="field"><label>Supervisor</label><select id="fSupervisor"><option value="">— Sin supervisor —</option>'
+      +supervisores().map(function(s){return '<option value="'+s.id+'"'+(u&&u.emailSupervisor===s.email?' selected':'')+'>'+s.nombre+' ('+s.email+')</option>';}).join('')
+      +'</select></div>'
       +'<div class="field"><label>Fecha de ingreso <span class="field-req">*</span></label><input type="date" id="fFecha" value="'+(u?u.fechaIngreso||'':'')+'"></div>'
       +'<div class="field"><label>Horas con goce</label><input type="number" id="fHCG" value="'+(u?u.horasConGoce:40)+'" min="0"></div>'
       +'<div class="field"><label>Horas sin goce</label><input type="number" id="fHSG" value="'+(u?u.horasSinGoce:480)+'" min="0"></div>'
@@ -772,8 +773,8 @@
       canal:           g('fCanal'),
       proyecto:        proyecto,
       rol:             rol,
-      supervisor:      g('fSupervisor'),
-      emailSupervisor: g('fEmailSup'),
+      supervisor:      supNombre(),
+      emailSupervisor: supEmail(),
       fechaIngreso:    fecha,
       horasConGoce:    parseInt(g('fHCG'))||40,
       horasSinGoce:    parseInt(g('fHSG'))||480,
@@ -826,6 +827,9 @@
   }
 
   function g(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
+  function supervisores(){ return usuarios.filter(function(u){ return u.rol==='supervisor'; }); }
+  function supNombre(){ var id=g('fSupervisor'); var s=usuarios.find(function(u){return u.id===id;}); return s?s.nombre||'':''; }
+  function supEmail() { var id=g('fSupervisor'); var s=usuarios.find(function(u){return u.id===id;}); return s?s.email||'':''; }
 
   function cerrarModalForm(){ document.getElementById('modalForm').classList.remove('show'); }
 
