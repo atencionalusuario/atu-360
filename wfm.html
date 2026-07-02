@@ -760,8 +760,21 @@
   function guardarUsuario(){
     var nombre  = g('fNombre'), email = g('fEmail'), docNum = g('fDocumento');
     var proyecto= g('fProyecto'), rol = g('fRol'), fecha = g('fFecha'), cargo = g('fCargo');
-    if(!nombre||!email||!docNum||!proyecto||!rol||!fecha||!cargo){
-      showToast('Completa todos los campos requeridos.'); return;
+
+    // Resaltar campos vacíos y hacer scroll al primero
+    var req = [{id:'fNombre',v:nombre},{id:'fDocumento',v:docNum},{id:'fEmail',v:email},
+               {id:'fCargo',v:cargo},{id:'fProyecto',v:proyecto},{id:'fRol',v:rol},{id:'fFecha',v:fecha}];
+    var primero = null;
+    req.forEach(function(r){
+      var el = document.getElementById(r.id);
+      if (!el) return;
+      if (!r.v) { el.style.borderColor='#DC2626'; if (!primero) primero = el; }
+      else { el.style.borderColor=''; }
+    });
+    if (primero) {
+      primero.scrollIntoView({behavior:'smooth', block:'center'});
+      showToast('Completa los campos marcados en rojo.');
+      return;
     }
     var veh = document.getElementById('togVeh')._on;
     var datos = {
@@ -814,15 +827,20 @@
     } else {
       // Editar — solo actualiza Firestore, no toca Auth
       datos.fechaActualizacion = firebase.firestore.FieldValue.serverTimestamp();
-      db.collection('usuarios').doc(usuarioSeleccionado).update(datos)
-        .then(function() {
-          cerrarModalForm();
-          showToast('Cambios guardados.');
-        })
-        .catch(function(err) {
-          btnG.disabled = false; btnG.textContent = 'Guardar cambios';
-          showToast('Error al guardar.'); console.error(err);
-        });
+      try {
+        db.collection('usuarios').doc(usuarioSeleccionado).update(datos)
+          .then(function() {
+            cerrarModalForm();
+            showToast('Cambios guardados.');
+          })
+          .catch(function(err) {
+            btnG.disabled = false; btnG.textContent = 'Guardar cambios';
+            showToast('Error al guardar: ' + err.message); console.error(err);
+          });
+      } catch(err) {
+        btnG.disabled = false; btnG.textContent = 'Guardar cambios';
+        showToast('Error: ' + err.message); console.error(err);
+      }
     }
   }
 
