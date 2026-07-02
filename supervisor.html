@@ -125,6 +125,83 @@
 
   .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
   .toast.show { opacity: 1; }
+
+  /* ===== JORNADA ===== */
+  .jornada-wrap { display: flex; flex-direction: column; gap: 18px; max-width: 700px; padding: 20px 24px; }
+  .j-card { background: white; border-radius: 10px; padding: 24px 28px; border: 1px solid #E2E8F0; }
+  .marcaje-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .marcaje-greeting { font-size: 1rem; font-weight: 700; color: #1E293B; }
+  .marcaje-greeting span { color: #1A3DAA; }
+  .marcaje-sub { font-size: 0.78rem; color: #64748B; margin-top: 3px; }
+  .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; margin-top: 12px; }
+  .status-badge.out  { background: #FEF2F2; color: #DC2626; }
+  .status-badge.in   { background: #F0FDF4; color: #16A34A; }
+  .status-badge.done { background: #F1F5F9; color: #475569; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .status-badge.out  .status-dot { background: #DC2626; }
+  .status-badge.in   .status-dot { background: #16A34A; animation: blink 1.5s infinite; }
+  .status-badge.done .status-dot { background: #94A3B8; }
+  .entrada-info { margin-top: 8px; font-size: 0.73rem; color: #64748B; }
+  .save-indicator { font-size: 0.68rem; display: flex; align-items: center; gap: 5px; margin-top: 6px; }
+  .save-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .save-dot.saving { background: #F59E0B; animation: blink 0.8s infinite; }
+  .save-dot.saved  { background: #16A34A; }
+  .save-dot.error  { background: #DC2626; }
+  .save-text { font-size: 0.68rem; color: #94A3B8; }
+  .marcaje-right { display: flex; flex-direction: column; align-items: center; gap: 10px; flex-shrink: 0; }
+  .btn-marcaje { width: 96px; height: 96px; border-radius: 50%; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font-size: 0.72rem; font-weight: 700; transition: all 0.2s; font-family: inherit; }
+  .btn-marcaje.entrada { background: #1A3DAA; color: white; box-shadow: 0 4px 16px rgba(26,61,170,0.2); }
+  .btn-marcaje.salida  { background: #DC2626; color: white; box-shadow: 0 4px 16px rgba(220,38,38,0.2); }
+  .btn-marcaje.done    { background: #F1F5F9; color: #94A3B8; cursor: not-allowed; }
+  .btn-marcaje:not(.done):hover { transform: scale(1.04); }
+  .timer-wrap { text-align: center; }
+  .timer-label { font-size: 0.62rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; }
+  .timer-val { font-size: 0.95rem; font-weight: 700; color: #1A3DAA; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .aux-title { font-size: 1rem; font-weight: 700; color: #1E293B; }
+  .aux-sub { font-size: 0.78rem; color: #64748B; margin-top: 3px; margin-bottom: 16px; }
+  .aux-btns { display: flex; flex-wrap: wrap; gap: 10px; }
+  .aux-btn { padding: 14px 18px; border-radius: 10px; border: 1.5px solid #E2E8F0; background: white; font-size: 0.82rem; font-weight: 600; color: #374151; cursor: pointer; transition: all 0.18s; font-family: inherit; box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: flex; flex-direction: column; align-items: center; gap: 6px; width: 120px; height: 90px; justify-content: center; }
+  .aux-btn .aux-btn-icon { font-size: 1.3rem; line-height: 1; }
+  .aux-btn:hover:not(.aux-active):not(:disabled) { border-color: #94A3B8; color: #1E293B; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+  .aux-btn.aux-active { border-color: #1A3DAA; background: #1A3DAA; color: white; box-shadow: 0 4px 16px rgba(26,61,170,0.25); }
+  .aux-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .aux-btn-timer { font-size: 0.7rem; font-variant-numeric: tabular-nums; font-weight: 700; color: rgba(255,255,255,0.85); visibility: hidden; height: 14px; }
+  .aux-btn.aux-active .aux-btn-timer { visibility: visible; }
+  .aux-divider { border: none; border-top: 1px solid #F1F5F9; margin: 18px 0; }
+  .aux-log-title { font-size: 0.68rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .aux-log { display: flex; flex-direction: column; gap: 4px; }
+  .aux-log-empty { font-size: 0.72rem; color: #CBD5E1; text-align: center; padding: 10px 0; }
+  .aux-log-row { display: grid; grid-template-columns: 1fr 1.6fr 0.6fr; align-items: center; background: #F8FAFC; border-radius: 5px; padding: 7px 12px; font-size: 0.72rem; color: #374151; gap: 8px; border: 1px solid #F1F5F9; }
+  .aux-log-nombre { font-weight: 600; color: #1E293B; }
+  .aux-log-dur { color: #64748B; font-variant-numeric: tabular-nums; }
+  .aux-log-dur.right { text-align: right; }
+  .j-overlay { position: fixed; inset: 0; background: rgba(15,32,112,0.4); display: flex; align-items: center; justify-content: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(3px); }
+  .j-overlay.show { opacity: 1; pointer-events: all; }
+  .j-modal { background: white; border-radius: 12px; padding: 28px; width: 420px; transform: translateY(8px); transition: transform 0.2s; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+  .j-overlay.show .j-modal { transform: translateY(0); }
+  .j-modal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .j-modal-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .j-modal-icon.entrada { background: #EEF2FF; }
+  .j-modal-icon.salida  { background: #FEF2F2; }
+  .j-modal-title { font-size: 0.95rem; font-weight: 700; color: #1E293B; }
+  .j-modal-sub { font-size: 0.76rem; color: #64748B; margin-top: 2px; }
+  .camera-label { font-size: 0.68rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .camera-wrap { position: relative; width: 100%; aspect-ratio: 4/3; background: #0F172A; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  #jCamVideo { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+  #jCapturedImg { width: 100%; height: 100%; object-fit: cover; display: none; position: absolute; inset: 0; }
+  #jCamCanvas { display: none; }
+  .cam-frame { position: absolute; inset: 12px; border: 1.5px solid rgba(41,171,226,0.5); border-radius: 8px; pointer-events: none; }
+  .cam-hint { position: absolute; bottom: 10px; left: 0; right: 0; text-align: center; font-size: 0.68rem; color: rgba(255,255,255,0.5); }
+  .cam-error { font-size: 0.78rem; color: #94A3B8; text-align: center; padding: 24px 16px; line-height: 1.6; display: none; }
+  .j-time-block { background: #F8FAFC; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+  .j-time-label { font-size: 0.68rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; }
+  .j-time-val { font-size: 1rem; font-weight: 800; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+  .j-modal-btns { display: flex; gap: 8px; }
+  .j-btn-cancel  { flex: 1; padding: 10px; border: 1px solid #E2E8F0; border-radius: 7px; background: white; font-size: 0.82rem; font-weight: 600; color: #64748B; cursor: pointer; font-family: inherit; }
+  .j-btn-confirm { flex: 1; padding: 10px; border: none; border-radius: 7px; font-size: 0.82rem; font-weight: 700; color: white; cursor: pointer; font-family: inherit; }
+  .j-btn-confirm.entrada { background: #1A3DAA; }
+  .j-btn-confirm.salida  { background: #DC2626; }
+  .j-btn-confirm:hover { opacity: 0.88; }
 </style>
 </head>
 <body>
@@ -136,9 +213,14 @@
   </div>
   <div class="sb-nav">
     <div class="nav-section-label">Panel</div>
-    <div class="nav-item active">
+    <div class="nav-item active" id="navMonitoreo" onclick="switchVista('monitoreo')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Tiempo real
+    </div>
+    <div class="nav-section-label">Mi turno</div>
+    <div class="nav-item" id="navJornada" onclick="switchVista('jornada')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Mi jornada
     </div>
     <div class="nav-section-label">WFM</div>
     <div class="nav-item" onclick="window.location.href='wfm.html'">
@@ -173,7 +255,58 @@
   </div>
 
   <div class="body-wrap">
-    <div class="content-area">
+    <div class="content-area" id="vistaJornada" style="display:none">
+      <div class="jornada-wrap">
+
+        <!-- MARCAJE -->
+        <div class="j-card">
+          <div class="marcaje-inner">
+            <div>
+              <div class="marcaje-greeting">Hola, <span id="jGreetName">--</span></div>
+              <div class="marcaje-sub">Registra tu entrada para iniciar la jornada laboral.</div>
+              <div class="status-badge out" id="jStatusBadge"><div class="status-dot"></div><span id="jStatusText">Sin marcar entrada</span></div>
+              <div class="entrada-info" id="jEntradaInfo"></div>
+              <div class="save-indicator" id="jSaveIndicator" style="display:none">
+                <div class="save-dot" id="jSaveDot"></div>
+                <span class="save-text" id="jSaveText"></span>
+              </div>
+            </div>
+            <div class="marcaje-right">
+              <button class="btn-marcaje entrada" id="jBtnMarcaje">
+                <div id="jBtnIcon"><svg width="22" height="22" fill="white" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+                <span id="jBtnLabel">Marcar entrada</span>
+              </button>
+              <div class="timer-wrap" id="jTimerWrap" style="display:none">
+                <div class="timer-label">Tiempo activo</div>
+                <div class="timer-val" id="jTimerVal">00:00:00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AUXILIARES -->
+        <div class="j-card" id="jAuxCard" style="display:none">
+          <div class="aux-title">Auxiliares</div>
+          <div class="aux-sub" id="jAuxSub">Selecciona el auxiliar correspondiente a tu actividad actual.</div>
+          <div class="aux-btns" id="jAuxBtns">
+            <button class="aux-btn" data-nombre="Pausa administrativa"><span class="aux-btn-icon">📋</span>Pausa administrativa<span class="aux-btn-timer">00:00</span></button>
+            <button class="aux-btn" data-nombre="Inbound"><span class="aux-btn-icon">📥</span>Inbound<span class="aux-btn-timer">00:00</span></button>
+            <button class="aux-btn" data-nombre="Outbound"><span class="aux-btn-icon">📤</span>Outbound<span class="aux-btn-timer">00:00</span></button>
+            <button class="aux-btn" data-nombre="Break"><span class="aux-btn-icon">☕</span>Break<span class="aux-btn-timer">00:00</span></button>
+            <button class="aux-btn" data-nombre="Baño"><span class="aux-btn-icon">🚻</span>Baño<span class="aux-btn-timer">00:00</span></button>
+            <button class="aux-btn" data-nombre="Comida"><span class="aux-btn-icon">🍽</span>Comida<span class="aux-btn-timer">00:00</span></button>
+            <button class="aux-btn" data-nombre="Capacitación"><span class="aux-btn-icon">📖</span>Capacitación<span class="aux-btn-timer">00:00</span></button>
+            <button class="aux-btn" data-nombre="Feedback"><span class="aux-btn-icon">💬</span>Feedback<span class="aux-btn-timer">00:00</span></button>
+          </div>
+          <hr class="aux-divider">
+          <div class="aux-log-title">Registro del día</div>
+          <div class="aux-log" id="jAuxLog"><div class="aux-log-empty" id="jAuxLogEmpty">Sin registros aún</div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="content-area" id="vistaMonitoreo">
 
       <!-- FILTROS -->
       <div class="filtros-row">
@@ -215,6 +348,8 @@
 
     </div>
 
+    </div><!-- /vistaMonitoreo -->
+
     <!-- PANEL HISTORIAL -->
     <div class="hist-panel" id="histPanel">
       <div class="hp-header">
@@ -234,6 +369,38 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- OVERLAY CÁMARA JORNADA -->
+<div class="j-overlay" id="jOverlay">
+  <div class="j-modal">
+    <div class="j-modal-header">
+      <div class="j-modal-icon entrada" id="jModalIcon">
+        <svg width="20" height="20" fill="#1A3DAA" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+      <div>
+        <div class="j-modal-title" id="jModalTitle">Confirmar entrada</div>
+        <div class="j-modal-sub">Se capturará una foto al confirmar.</div>
+      </div>
+    </div>
+    <div class="camera-label">Vista de cámara</div>
+    <div class="camera-wrap">
+      <video id="jCamVideo" autoplay playsinline muted></video>
+      <img id="jCapturedImg" alt="foto">
+      <canvas id="jCamCanvas"></canvas>
+      <div class="cam-frame"></div>
+      <div class="cam-hint" id="jCamHint">Posiciónate frente a la cámara</div>
+      <div class="cam-error" id="jCamError">No se pudo acceder a la cámara.<br>Verifica los permisos del navegador.</div>
+    </div>
+    <div class="j-time-block">
+      <div class="j-time-label">Hora de registro</div>
+      <div class="j-time-val" id="jModalTime">--:--:--</div>
+    </div>
+    <div class="j-modal-btns">
+      <button class="j-btn-cancel" id="jBtnCancel">Cancelar</button>
+      <button class="j-btn-confirm entrada" id="jBtnConfirm">Confirmar entrada</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -543,6 +710,212 @@
   function showToast(msg) {
     var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
     setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
+
+  // ===== SWITCH VISTAS =====
+  function switchVista(vista) {
+    var esJornada = vista === 'jornada';
+    document.getElementById('vistaMonitoreo').style.display = esJornada ? 'none' : 'flex';
+    document.getElementById('vistaJornada').style.display   = esJornada ? 'flex' : 'none';
+    document.getElementById('navMonitoreo').classList.toggle('active', !esJornada);
+    document.getElementById('navJornada').classList.toggle('active',   esJornada);
+    // El panel historial solo aplica al monitoreo
+    if (esJornada) document.getElementById('histPanel').classList.remove('open');
+  }
+
+  // ===== JORNADA =====
+  var jEstado = 'fuera', jEntradaTime = null, jJornIv = null, jCamStream = null;
+  var jAuxActivo = null, jAuxInicio = null, jAuxIv = null, jAuxBtnActivo = null;
+
+  // Nombre del supervisor en el saludo
+  auth.onAuthStateChanged(function(user) {
+    if (!user) return;
+    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      if (doc.exists) {
+        var n = doc.data().nombre || user.email.split('@')[0];
+        document.getElementById('jGreetName').textContent = n;
+      }
+    });
+  });
+
+  document.getElementById('jBtnMarcaje').addEventListener('click', function() {
+    if (jEstado === 'terminado') return;
+    document.getElementById('jModalTime').textContent = new Date().toLocaleTimeString('es-SV');
+    var esE = jEstado === 'fuera';
+    document.getElementById('jModalIcon').className    = 'j-modal-icon ' + (esE ? 'entrada' : 'salida');
+    document.getElementById('jModalIcon').innerHTML    = esE
+      ? '<svg width="20" height="20" fill="#1A3DAA" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>'
+      : '<svg width="20" height="20" fill="#DC2626" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>';
+    document.getElementById('jModalTitle').textContent = esE ? 'Confirmar entrada' : 'Confirmar salida';
+    document.getElementById('jBtnConfirm').textContent = esE ? 'Confirmar entrada' : 'Confirmar salida';
+    document.getElementById('jBtnConfirm').className   = 'j-btn-confirm ' + (esE ? 'entrada' : 'salida');
+    document.getElementById('jCapturedImg').style.display = 'none';
+    document.getElementById('jCamVideo').style.display    = 'block';
+    document.getElementById('jCamHint').style.display     = 'block';
+    document.getElementById('jCamError').style.display    = 'none';
+    document.getElementById('jOverlay').classList.add('show');
+    jStartCamera();
+  });
+
+  document.getElementById('jBtnCancel').addEventListener('click',  function() { jCloseModal(); });
+  document.getElementById('jBtnConfirm').addEventListener('click', function() { jConfirmar(); });
+
+  function jCloseModal() { document.getElementById('jOverlay').classList.remove('show'); jStopCamera(); }
+
+  function jStartCamera() {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+      .then(function(s) { jCamStream = s; document.getElementById('jCamVideo').srcObject = s; })
+      .catch(function() {
+        document.getElementById('jCamVideo').style.display  = 'none';
+        document.getElementById('jCamHint').style.display   = 'none';
+        document.getElementById('jCamError').style.display  = 'block';
+      });
+  }
+
+  function jStopCamera() {
+    if (jCamStream) { jCamStream.getTracks().forEach(function(t) { t.stop(); }); jCamStream = null; }
+  }
+
+  function jCapturePhoto() {
+    var v = document.getElementById('jCamVideo');
+    var c = document.getElementById('jCamCanvas');
+    if (!v.srcObject) return null;
+    c.width = v.videoWidth || 320; c.height = v.videoHeight || 240;
+    var ctx = c.getContext('2d');
+    ctx.save(); ctx.scale(-1, 1); ctx.drawImage(v, -c.width, 0); ctx.restore();
+    return c.toDataURL('image/jpeg', 0.6);
+  }
+
+  function jConfirmar() {
+    var now = new Date(), foto = jCapturePhoto();
+    if (foto) {
+      document.getElementById('jCapturedImg').src = foto;
+      document.getElementById('jCapturedImg').style.display = 'block';
+      document.getElementById('jCamVideo').style.display    = 'none';
+      document.getElementById('jCamHint').style.display     = 'none';
+    }
+    setTimeout(function() {
+      jCloseModal();
+      if (jEstado === 'fuera') {
+        jEstado = 'dentro'; jEntradaTime = now;
+        jSetBadge('in', 'En turno activo');
+        document.getElementById('jEntradaInfo').textContent = 'Entrada registrada a las ' + now.toLocaleTimeString('es-SV');
+        document.getElementById('jBtnMarcaje').className = 'btn-marcaje salida';
+        document.getElementById('jBtnIcon').innerHTML = '<svg width="22" height="22" fill="white" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>';
+        document.getElementById('jBtnLabel').textContent = 'Marcar salida';
+        document.getElementById('jTimerWrap').style.display = 'block';
+        jJornIv = setInterval(function() {
+          var d = Math.floor((new Date() - jEntradaTime) / 1000);
+          document.getElementById('jTimerVal').textContent = pad(Math.floor(d/3600)) + ':' + pad(Math.floor((d%3600)/60)) + ':' + pad(d%60);
+        }, 1000);
+        document.getElementById('jAuxCard').style.display = 'block';
+        jActivarBtn(document.querySelector('#jAuxBtns [data-nombre="Pausa administrativa"]'));
+        jActualizarEstado('Pausa administrativa');
+        jGuardarMarcaje('entrada', now, foto);
+      } else {
+        jEstado = 'terminado'; clearInterval(jJornIv);
+        if (jAuxActivo) jRegistrarAux(now);
+        clearInterval(jAuxIv); jAuxActivo = null; jAuxInicio = null;
+        jSetBadge('done', 'Jornada finalizada');
+        document.getElementById('jEntradaInfo').textContent = 'Salida registrada a las ' + now.toLocaleTimeString('es-SV');
+        document.getElementById('jBtnMarcaje').className = 'btn-marcaje done';
+        document.getElementById('jBtnIcon').innerHTML = '<svg width="22" height="22" fill="none" stroke="#94A3B8" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+        document.getElementById('jBtnLabel').textContent = 'Jornada completa';
+        document.querySelectorAll('#jAuxBtns .aux-btn').forEach(function(b) { b.disabled = true; b.classList.remove('aux-active'); });
+        document.getElementById('jAuxSub').textContent = 'La jornada ha finalizado.';
+        jActualizarEstado('Jornada finalizada');
+        jGuardarMarcaje('salida', now, foto);
+      }
+    }, 700);
+  }
+
+  function jSetBadge(cls, txt) {
+    document.getElementById('jStatusBadge').className = 'status-badge ' + cls;
+    document.getElementById('jStatusText').textContent = txt;
+  }
+
+  // Auxiliares jornada
+  document.getElementById('jAuxBtns').addEventListener('click', function(e) {
+    var btn = e.target.closest('.aux-btn');
+    if (!btn || jEstado !== 'dentro') return;
+    var nuevo = btn.getAttribute('data-nombre');
+    if (jAuxActivo === nuevo) return;
+    if (jAuxActivo) jRegistrarAux(new Date());
+    jActivarBtn(btn);
+  });
+
+  function jActivarBtn(btn) {
+    if (jAuxBtnActivo) jAuxBtnActivo.classList.remove('aux-active');
+    btn.classList.add('aux-active');
+    jAuxBtnActivo = btn; jAuxActivo = btn.getAttribute('data-nombre'); jAuxInicio = new Date();
+    jActualizarEstado(jAuxActivo);
+    clearInterval(jAuxIv);
+    var tidEl = btn.querySelector('.aux-btn-timer');
+    jAuxIv = setInterval(function() {
+      var d = Math.floor((new Date() - jAuxInicio) / 1000);
+      if (tidEl) tidEl.textContent = pad(Math.floor(d/60)) + ':' + pad(d%60);
+    }, 1000);
+    document.getElementById('jAuxSub').textContent = jAuxActivo + ' activo. Selecciona otro auxiliar para cambiar.';
+  }
+
+  function jRegistrarAux(fin) {
+    var dur = Math.floor((fin - jAuxInicio) / 1000);
+    var durStr = pad(Math.floor(dur/60)) + ':' + pad(dur%60);
+    var ini = jAuxInicio.toLocaleTimeString('es-SV', { hour:'2-digit', minute:'2-digit' });
+    var finStr = fin.toLocaleTimeString('es-SV', { hour:'2-digit', minute:'2-digit' });
+    var empty = document.getElementById('jAuxLogEmpty');
+    if (empty) empty.remove();
+    var row = document.createElement('div');
+    row.className = 'aux-log-row';
+    row.innerHTML = '<span class="aux-log-nombre">' + jAuxActivo + '</span>'
+      + '<span class="aux-log-dur">' + ini + ' – ' + finStr + '</span>'
+      + '<span class="aux-log-dur right">' + durStr + '</span>';
+    document.getElementById('jAuxLog').prepend(row);
+    var tidEl = jAuxBtnActivo ? jAuxBtnActivo.querySelector('.aux-btn-timer') : null;
+    if (tidEl) tidEl.textContent = '00:00';
+    jGuardarAuxiliar(jAuxActivo, jAuxInicio, fin);
+  }
+
+  function jGuardarMarcaje(tipo, ts, foto) {
+    var user = auth.currentUser; if (!user) return;
+    document.getElementById('jSaveIndicator').style.display = 'flex';
+    document.getElementById('jSaveDot').className = 'save-dot saving';
+    document.getElementById('jSaveText').textContent = 'Guardando...';
+    db.collection('marcajes').add({
+      uid: user.uid, email: user.email, tipo: tipo,
+      hora: ts.toLocaleTimeString('es-SV'),
+      fecha: ts.toLocaleDateString('es-SV'),
+      foto: foto || null,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function() {
+      document.getElementById('jSaveDot').className = 'save-dot saved';
+      document.getElementById('jSaveText').textContent = 'Guardado correctamente';
+    }).catch(function(e) {
+      document.getElementById('jSaveDot').className = 'save-dot error';
+      document.getElementById('jSaveText').textContent = 'Error al guardar';
+      console.error(e);
+    });
+  }
+
+  function jGuardarAuxiliar(nombre, inicio, fin) {
+    var user = auth.currentUser; if (!user) return;
+    db.collection('auxiliares').add({
+      uid: user.uid, email: user.email, auxiliar: nombre,
+      inicio: inicio.toLocaleTimeString('es-SV'),
+      fin: fin.toLocaleTimeString('es-SV'),
+      duracion_seg: Math.floor((fin - inicio) / 1000),
+      fecha: inicio.toLocaleDateString('es-SV'),
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(function(e) { console.error('Error auxiliar:', e); });
+  }
+
+  function jActualizarEstado(estadoNombre) {
+    var user = auth.currentUser; if (!user) return;
+    db.collection('usuarios').doc(user.uid).update({
+      estadoActual: estadoNombre,
+      estadoDesde:  firebase.firestore.FieldValue.serverTimestamp(),
+      enLinea:      estadoNombre !== 'Fuera' && estadoNombre !== 'Jornada finalizada'
+    }).catch(function(e) { console.error('Error estado:', e); });
   }
 </script>
 </body>
