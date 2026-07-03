@@ -579,7 +579,7 @@
       return (a.nombre||'').localeCompare(b.nombre||'', 'es');
     });
 
-    document.getElementById('tablaCount').textContent = lista.length + ' agente' + (lista.length !== 1 ? 's' : '');
+    var tcEl = document.getElementById('tablaCount'); if (tcEl) tcEl.textContent = lista.length + ' agente' + (lista.length !== 1 ? 's' : '');
 
     // Limpiar timers anteriores
     Object.keys(timers).forEach(function(k){ clearInterval(timers[k]); });
