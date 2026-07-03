@@ -195,6 +195,53 @@
   .btn-flash-marcar.done:hover { opacity: 1; }
   .flash-badge { background: #EF4444; color: white; font-size: 0.58rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: auto; display: none; }
 
+  /* ===== MÉTRICAS ===== */
+  #vistaMetricas { gap: 16px !important; }
+  .met-selector-row { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .met-selector-row label { font-size: 0.78rem; font-weight: 600; color: #374151; white-space: nowrap; }
+  .met-select { padding: 9px 14px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.84rem; font-family: inherit; color: #1E293B; background: white; outline: none; cursor: pointer; transition: border 0.2s; min-width: 240px; }
+  .met-select:focus { border-color: #1A3DAA; }
+  .met-general { background: linear-gradient(135deg,#0F2070,#1A3DAA); border-radius: 12px; padding: 22px 28px; flex-shrink: 0; }
+  .met-gc-label { font-size: 0.68rem; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+  .met-gc-val { font-size: 2.8rem; font-weight: 800; color: white; line-height: 1; }
+  .met-gc-unit { font-size: 0.95rem; color: rgba(255,255,255,0.5); font-weight: 500; margin-left: 4px; }
+  .met-gc-tag { margin-top: 8px; display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; }
+  .met-gc-tag.high { background: rgba(22,163,74,0.2); color: #4ADE80; }
+  .met-gc-tag.mid  { background: rgba(245,158,11,0.2); color: #FCD34D; }
+  .met-gc-tag.low  { background: rgba(220,38,38,0.2); color: #FCA5A5; }
+  .met-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; flex-shrink: 0; }
+  .met-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 16px 18px; }
+  .met-mc-label { font-size: 0.7rem; color: #64748B; font-weight: 500; margin-bottom: 8px; line-height: 1.4; }
+  .met-mc-scores { display: flex; align-items: baseline; gap: 4px; margin-bottom: 5px; }
+  .met-mc-val { font-size: 1.5rem; font-weight: 800; color: #1E293B; }
+  .met-mc-max { font-size: 0.76rem; color: #94A3B8; }
+  .met-mc-bar { height: 5px; background: #F1F5F9; border-radius: 3px; overflow: hidden; margin-bottom: 5px; }
+  .met-mc-fill { height: 100%; border-radius: 3px; }
+  .met-mc-fill.high { background: linear-gradient(90deg,#1A3DAA,#29ABE2); }
+  .met-mc-fill.mid  { background: linear-gradient(90deg,#F59E0B,#FCD34D); }
+  .met-mc-fill.low  { background: linear-gradient(90deg,#DC2626,#F87171); }
+  .met-mc-tag { font-size: 0.63rem; font-weight: 700; }
+  .met-mc-tag.high { color: #16A34A; }
+  .met-mc-tag.mid  { color: #B45309; }
+  .met-mc-tag.low  { color: #DC2626; }
+  .met-charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; flex-shrink: 0; }
+  .met-chart-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 22px; }
+  .met-chart-title { font-size: 0.82rem; font-weight: 700; color: #1E293B; margin-bottom: 3px; }
+  .met-chart-sub   { font-size: 0.68rem; color: #94A3B8; margin-bottom: 16px; }
+  .met-hist-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 22px; flex-shrink: 0; }
+  .met-periodo-tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+  .met-periodo-tab { padding: 5px 11px; border-radius: 6px; font-size: 0.7rem; font-weight: 600; cursor: pointer; border: 1px solid #E2E8F0; background: white; color: #64748B; font-family: inherit; transition: all 0.15s; }
+  .met-periodo-tab.active { background: #1A3DAA; color: white; border-color: #1A3DAA; }
+  .met-hist-table { width: 100%; border-collapse: collapse; }
+  .met-hist-table th { font-size: 0.63rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 10px; text-align: left; border-bottom: 1px solid #F1F5F9; }
+  .met-hist-table td { font-size: 0.76rem; color: #374151; padding: 9px 10px; border-bottom: 1px solid #F8FAFC; }
+  .met-hist-table tr:last-child td { border-bottom: none; }
+  .met-hist-table tr:hover td { background: #F8FAFC; }
+  .met-spill { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; }
+  .met-spill.high { background: #F0FDF4; color: #16A34A; }
+  .met-spill.mid  { background: #FFFBEB; color: #B45309; }
+  .met-spill.low  { background: #FEF2F2; color: #DC2626; }
+
   /* ===== MI TURNO ===== */
   .turno-banner { background: #0F2070; border-radius: 10px; padding: 20px 26px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
   .tb-left .tb-label   { font-size: 0.6rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 2px; }
@@ -447,6 +494,10 @@
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
       Tiempo real
     </div>
+    <div class="nav-item" id="navMetricas" onclick="switchVista('metricas')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Métricas del equipo
+    </div>
     <div class="nav-item" id="navFlash" onclick="switchVista('flash')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 000-4H4v4z"/><path d="M18 18V2H6a2 2 0 00-2 2v14"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="13" y2="11"/></svg>
       Flash informativos
@@ -589,6 +640,58 @@
           <div id="svDetailCard"></div>
         </div>
       </div>
+    </div>
+
+    <!-- MÉTRICAS DEL EQUIPO -->
+    <div class="content-area" id="vistaMetricas" style="display:none">
+
+      <div class="met-selector-row">
+        <label>Ver métricas de:</label>
+        <select class="met-select" id="metAgenteSel" onchange="metCambiarAgente()">
+          <option value="todos">Promedio del equipo</option>
+        </select>
+      </div>
+
+      <div class="met-general" id="metGeneralCard"></div>
+      <div class="met-grid" id="metGrid"></div>
+
+      <div class="met-charts-row">
+        <div class="met-chart-card">
+          <div class="met-chart-title">Perfil de calidad</div>
+          <div class="met-chart-sub">Promedio por métrica (normalizado 0–100)</div>
+          <div style="display:flex;justify-content:center">
+            <canvas id="metRadar" width="240" height="240"></canvas>
+          </div>
+        </div>
+        <div class="met-chart-card">
+          <div class="met-chart-title">Promedio mensual</div>
+          <div class="met-chart-sub">Últimos 6 meses — Escala 0–100</div>
+          <canvas id="metBar" height="100"></canvas>
+        </div>
+      </div>
+
+      <div class="met-hist-card">
+        <div class="met-chart-title">Historial de evaluaciones</div>
+        <div class="met-chart-sub" id="metHistSub">Todas las evaluaciones</div>
+        <div class="met-periodo-tabs" id="metPeriodoTabs">
+          <button class="met-periodo-tab active" onclick="metFiltrar('todos',this)">Todos</button>
+          <button class="met-periodo-tab" onclick="metFiltrar('2026-06',this)">Jun 2026</button>
+          <button class="met-periodo-tab" onclick="metFiltrar('2026-05',this)">May 2026</button>
+          <button class="met-periodo-tab" onclick="metFiltrar('2026-04',this)">Abr 2026</button>
+        </div>
+        <table class="met-hist-table">
+          <thead><tr>
+            <th id="metHistCol0">Agente</th>
+            <th>Expresión y personalización <span style="font-weight:400">(/ 30)</span></th>
+            <th>Registro y complementación <span style="font-weight:400">(/ 30)</span></th>
+            <th>Gestión de la llamada <span style="font-weight:400">(/ 30)</span></th>
+            <th>Gestión del tiempo <span style="font-weight:400">(/ 10)</span></th>
+            <th>Total <span style="font-weight:400">(/ 100)</span></th>
+          </tr></thead>
+          <tbody id="metHistBody"></tbody>
+        </table>
+      </div>
+
     </div>
 
     <!-- MI TURNO -->
@@ -784,6 +887,7 @@
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -1151,18 +1255,232 @@
 
   // ===== SWITCH VISTAS =====
   function switchVista(vista) {
-    var vistas = ['vistaJornada','vistaMonitoreo','vistaFlash','vistaBiblioteca','vistaSolicitudes','vistaTurno'];
-    var claves  = ['jornada','monitoreo','flash','biblioteca','solicitudes','turno'];
+    var vistas = ['vistaJornada','vistaMonitoreo','vistaMetricas','vistaFlash','vistaBiblioteca','vistaSolicitudes','vistaTurno'];
+    var claves  = ['jornada','monitoreo','metricas','flash','biblioteca','solicitudes','turno'];
     vistas.forEach(function(id,i){ document.getElementById(id).style.display = (claves[i]===vista)?'flex':'none'; });
-    ['navJornada','navMonitoreo','navFlash','navBiblioteca','navSolicitudes','navTurno'].forEach(function(id,i){
+    ['navJornada','navMonitoreo','navMetricas','navFlash','navBiblioteca','navSolicitudes','navTurno'].forEach(function(id,i){
       document.getElementById(id).classList.toggle('active', claves[i]===vista);
     });
-    var subs = { jornada:'Mi jornada', monitoreo:'Tiempo real', flash:'Flash informativos', biblioteca:'Biblioteca', solicitudes:'Solicitudes', turno:'Mi turno' };
+    var subs = { jornada:'Mi jornada', monitoreo:'Tiempo real', metricas:'Métricas del equipo', flash:'Flash informativos', biblioteca:'Biblioteca', solicitudes:'Solicitudes', turno:'Mi turno' };
     document.querySelector('.topbar-sub').textContent = subs[vista] || '';
     if (vista !== 'monitoreo') document.getElementById('histPanel').classList.remove('open');
-    if (vista === 'flash'       && !flashCargado)  iniciarFlash();
-    if (vista === 'solicitudes' && !solCargado)    iniciarSolicitudes();
-    if (vista === 'turno'       && !turnoCargado)  iniciarTurno();
+    if (vista === 'flash'       && !flashCargado)   iniciarFlash();
+    if (vista === 'solicitudes' && !solCargado)     iniciarSolicitudes();
+    if (vista === 'turno'       && !turnoCargado)   iniciarTurno();
+    if (vista === 'metricas'    && !metCargado)     iniciarMetricas();
+  }
+
+  // ===== MÉTRICAS DEL EQUIPO =====
+  var metCargado = false;
+  var metAgentes = [];       // [{uid, nombre, evals:[]}]
+  var metSelUid  = 'todos';
+  var metPeriodo = 'todos';
+  var metRInst = null, metBInst = null;
+
+  var MET_METRICAS = [
+    { label:'Expresión y personalización', max:30 },
+    { label:'Registro y complementación',  max:30 },
+    { label:'Gestión de la llamada',       max:30 },
+    { label:'Gestión del tiempo',          max:10 }
+  ];
+
+  // Generador de datos demo con semilla por agente
+  function metGenerar(seed) {
+    var r = seed >>> 0;
+    function rnd(lo, hi) { r = (Math.imul(r, 1664525) + 1013904223) >>> 0; return lo + (r % (hi - lo + 1)); }
+    var meses = ['2026-04','2026-05','2026-06'];
+    var evs = [];
+    meses.forEach(function(m) {
+      var n = 3 + rnd(0,1);
+      for (var i = 0; i < n; i++) {
+        var dia = pad(rnd(1,27));
+        evs.push({ fecha: m+'-'+dia, vals: [rnd(18,29), rnd(18,29), rnd(18,29), rnd(7,10)] });
+      }
+    });
+    return evs.sort(function(a,b){ return b.fecha.localeCompare(a.fecha); });
+  }
+
+  function metSum(ev)  { return ev.vals.reduce(function(a,v){ return a+v; }, 0); }
+  function metCls(pct) { return pct>=0.8?'high':pct>=0.6?'mid':'low'; }
+  function metTag(pct) { return pct>=0.8?'Buen desempeño':pct>=0.6?'En desarrollo':'Requiere atención'; }
+
+  // Promedios por métrica de un array de evals
+  function metPromMet(evs) {
+    return MET_METRICAS.map(function(m,i){
+      var s = evs.reduce(function(a,e){ return a+e.vals[i]; },0);
+      return evs.length ? Math.round(s/evs.length) : 0;
+    });
+  }
+  function metPromTotal(evs) {
+    return evs.length ? Math.round(evs.reduce(function(a,e){ return a+metSum(e); },0)/evs.length) : 0;
+  }
+
+  // Para "todos": agrega todos los evals de todos los agentes
+  function metEvsFiltrados() {
+    var evs;
+    if (metSelUid === 'todos') {
+      evs = metAgentes.reduce(function(a,ag){ return a.concat(ag.evals); }, []);
+    } else {
+      var ag = metAgentes.find(function(a){ return a.uid===metSelUid; });
+      evs = ag ? ag.evals : [];
+    }
+    if (metPeriodo !== 'todos') evs = evs.filter(function(e){ return e.fecha.substring(0,7)===metPeriodo; });
+    return evs;
+  }
+
+  function metRenderGeneral(evs) {
+    var p = metPromTotal(evs), c = metCls(p/100);
+    document.getElementById('metGeneralCard').innerHTML =
+      '<div class="met-gc-label">'+(metSelUid==='todos'?'Promedio del equipo':'Promedio del agente')+'</div>'
+      +'<div class="met-gc-val">'+p+'<span class="met-gc-unit">/ 100</span></div>'
+      +'<span class="met-gc-tag '+c+'">'+metTag(p/100)+'</span>';
+  }
+
+  function metRenderGrid(evs) {
+    var ps = metPromMet(evs), html = '';
+    MET_METRICAS.forEach(function(m,i){
+      var v=ps[i], pct=v/m.max, c=metCls(pct);
+      html += '<div class="met-card">'
+        +'<div class="met-mc-label">'+m.label+'</div>'
+        +'<div class="met-mc-scores"><span class="met-mc-val">'+v+'</span><span class="met-mc-max">/ '+m.max+'</span></div>'
+        +'<div class="met-mc-bar"><div class="met-mc-fill '+c+'" style="width:'+Math.round(pct*100)+'%"></div></div>'
+        +'<div class="met-mc-tag '+c+'">'+metTag(pct)+'</div>'
+        +'</div>';
+    });
+    document.getElementById('metGrid').innerHTML = html;
+  }
+
+  function metRenderRadar(evs) {
+    var ps = metPromMet(evs);
+    var norm = MET_METRICAS.map(function(m,i){ return Math.round((ps[i]/m.max)*100); });
+    if (metRInst) { metRInst.destroy(); metRInst = null; }
+    metRInst = new Chart(document.getElementById('metRadar').getContext('2d'), {
+      type:'radar',
+      data:{
+        labels:['Expresión','Registro','Gest. llamada','Tiempo'],
+        datasets:[{data:norm,backgroundColor:'rgba(26,61,170,0.12)',borderColor:'#1A3DAA',borderWidth:2,pointBackgroundColor:'#29ABE2',pointBorderColor:'#fff',pointBorderWidth:2,pointRadius:5}]
+      },
+      options:{responsive:true,scales:{r:{min:0,max:100,ticks:{stepSize:10,font:{size:9},color:'#94A3B8',backdropColor:'transparent'},grid:{color:'#F1F5F9'},angleLines:{color:'#E2E8F0'},pointLabels:{font:{size:10,family:'Inter',weight:'600'},color:'#374151'}}},plugins:{legend:{display:false}}}
+    });
+  }
+
+  function metRenderBar(evs) {
+    var meses = {};
+    evs.forEach(function(e){
+      var m = e.fecha.substring(0,7);
+      if (!meses[m]) meses[m]=[];
+      meses[m].push(metSum(e));
+    });
+    var keys = Object.keys(meses).sort().slice(-6), labels = [], data = [];
+    keys.forEach(function(k){
+      var d = new Date(k+'-02');
+      labels.push(d.toLocaleDateString('es-SV',{month:'short',year:'2-digit'}));
+      var arr = meses[k], s = arr.reduce(function(a,v){return a+v;},0);
+      data.push(Math.round(s/arr.length));
+    });
+    if (metBInst) { metBInst.destroy(); metBInst = null; }
+    var labelPlugin = { id:'lp', afterDraw:function(chart){
+      var ctx=chart.ctx, meta=chart.getDatasetMeta(0);
+      meta.data.forEach(function(bar,i){
+        var val=chart.data.datasets[0].data[i];
+        ctx.save(); ctx.font='bold 11px sans-serif'; ctx.fillStyle='#1A3DAA';
+        ctx.textAlign='center'; ctx.textBaseline='bottom';
+        ctx.fillText(val,bar.x,bar.y-4); ctx.restore();
+      });
+    }};
+    metBInst = new Chart(document.getElementById('metBar').getContext('2d'), {
+      type:'bar',
+      data:{labels:labels,datasets:[{data:data,backgroundColor:'rgba(26,61,170,0.15)',borderColor:'#1A3DAA',borderWidth:2,borderRadius:6,borderSkipped:false}]},
+      options:{responsive:true,layout:{padding:{top:24}},scales:{y:{min:0,max:100,ticks:{stepSize:20,font:{size:11},color:'#94A3B8'},grid:{color:'#F1F5F9'}},x:{ticks:{font:{size:11},color:'#374151'},grid:{display:false}}},plugins:{legend:{display:false}}},
+      plugins:[labelPlugin]
+    });
+  }
+
+  function metRenderHist(evs) {
+    var esModo = metSelUid === 'todos' && metPeriodo === 'todos';
+    document.getElementById('metHistCol0').textContent = metSelUid==='todos' ? 'Agente' : 'Fecha';
+    if (evs.length === 0) {
+      document.getElementById('metHistBody').innerHTML = '<tr><td colspan="6" style="text-align:center;color:#94A3B8;padding:20px">Sin evaluaciones en este período</td></tr>';
+      return;
+    }
+    var html = '';
+    if (metSelUid === 'todos') {
+      // Una fila por agente con su promedio
+      metAgentes.forEach(function(ag) {
+        var agEvs = ag.evals;
+        if (metPeriodo !== 'todos') agEvs = agEvs.filter(function(e){ return e.fecha.substring(0,7)===metPeriodo; });
+        if (agEvs.length === 0) return;
+        var ps = metPromMet(agEvs), t = metPromTotal(agEvs);
+        html += '<tr><td style="font-weight:600">'+ag.nombre+'</td>';
+        MET_METRICAS.forEach(function(m,i){
+          var c = metCls(ps[i]/m.max);
+          html += '<td><span class="met-spill '+c+'">'+ps[i]+' / '+m.max+'</span></td>';
+        });
+        html += '<td><span class="met-spill '+metCls(t/100)+'" style="font-weight:800">'+t+' / 100</span></td></tr>';
+      });
+    } else {
+      // Una fila por evaluación del agente seleccionado
+      evs.forEach(function(e){
+        var t = metSum(e);
+        html += '<tr><td style="font-weight:600">'+e.fecha+'</td>';
+        MET_METRICAS.forEach(function(m,i){
+          var c = metCls(e.vals[i]/m.max);
+          html += '<td><span class="met-spill '+c+'">'+e.vals[i]+' / '+m.max+'</span></td>';
+        });
+        html += '<td><span class="met-spill '+metCls(t/100)+'" style="font-weight:800">'+t+' / 100</span></td></tr>';
+      });
+    }
+    document.getElementById('metHistBody').innerHTML = html || '<tr><td colspan="6" style="text-align:center;color:#94A3B8;padding:20px">Sin evaluaciones en este período</td></tr>';
+  }
+
+  function metRenderTodo() {
+    var evs = metEvsFiltrados();
+    metRenderGeneral(evs);
+    metRenderGrid(evs);
+    metRenderRadar(evs);
+    metRenderBar(metSelUid==='todos'
+      ? metAgentes.reduce(function(a,ag){ return a.concat(ag.evals); },[])
+      : (metAgentes.find(function(a){return a.uid===metSelUid;})||{evals:[]}).evals);
+    metRenderHist(evs);
+  }
+
+  function metCambiarAgente() {
+    metSelUid = document.getElementById('metAgenteSel').value;
+    metPeriodo = 'todos';
+    document.querySelectorAll('.met-periodo-tab').forEach(function(b,i){ b.classList.toggle('active',i===0); });
+    metRenderTodo();
+  }
+
+  function metFiltrar(periodo, btn) {
+    metPeriodo = periodo;
+    document.querySelectorAll('.met-periodo-tab').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    metRenderTodo();
+  }
+
+  function iniciarMetricas() {
+    metCargado = true;
+    db.collection('usuarios').where('emailSupervisor','==',currentUser.email).get()
+      .then(function(snap) {
+        var sel = document.getElementById('metAgenteSel');
+        sel.innerHTML = '<option value="todos">Promedio del equipo</option>';
+        var i = 0;
+        snap.forEach(function(doc) {
+          var d = doc.data();
+          var nombre = d.nombre || d.email || '?';
+          // Semilla basada en posición para datos demo distintos por agente
+          var seed = 0;
+          for (var c = 0; c < doc.id.length; c++) seed = (seed*31 + doc.id.charCodeAt(c)) >>> 0;
+          metAgentes.push({ uid: doc.id, nombre: nombre, evals: metGenerar(seed + i) });
+          sel.innerHTML += '<option value="'+doc.id+'">'+nombre+'</option>';
+          i++;
+        });
+        if (metAgentes.length === 0) {
+          document.getElementById('metGeneralCard').innerHTML = '<div class="met-gc-label" style="color:rgba(255,255,255,0.6)">Sin agentes asignados</div>';
+          return;
+        }
+        metRenderTodo();
+      });
   }
 
   // ===== MI TURNO =====
