@@ -605,7 +605,7 @@
     lista.forEach(function(a) {
       var online = !!a.enLinea;
       var cfg    = estadoConfig(a.estadoActual || 'Fuera');
-      var nombre = (a.nombre || a.email || '?').split(' ').slice(0, 2).join(' ');
+      var nombre = a.nombre || a.email || '?';
       var pLabel = LABELS_PROY[a.proyecto] || '';
 
       // Calcular alerta inicial
