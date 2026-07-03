@@ -195,6 +195,69 @@
   .btn-flash-marcar.done:hover { opacity: 1; }
   .flash-badge { background: #EF4444; color: white; font-size: 0.58rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: auto; display: none; }
 
+  /* ===== SOLICITUDES ===== */
+  #vistaSolicitudes { flex-direction: column !important; gap: 0 !important; padding: 0 !important; overflow: hidden !important; }
+  .sv-sol-tabs { display: flex; gap: 0; padding: 0 20px; border-bottom: 1px solid #E2E8F0; background: white; flex-shrink: 0; }
+  .sv-sol-tab { padding: 12px 18px; font-size: 0.82rem; font-weight: 600; color: #64748B; border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; font-family: inherit; transition: all 0.15s; display: flex; align-items: center; gap: 7px; }
+  .sv-sol-tab.active { color: #1A3DAA; border-bottom-color: #1A3DAA; }
+  .sv-sol-tab:hover { color: #374151; }
+  .sv-pending-badge { background: #EF4444; color: white; font-size: 0.58rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; display: none; }
+  .sv-sol-body { flex: 1; display: flex; overflow: hidden; }
+  .sv-sol-list { width: 290px; flex-shrink: 0; overflow-y: auto; padding: 14px; border-right: 1px solid #E2E8F0; display: flex; flex-direction: column; gap: 8px; }
+  .sv-sol-detail { flex: 1; overflow-y: auto; padding: 20px 24px; }
+  .sv-sol-card { background: white; border-radius: 9px; border: 1px solid #E2E8F0; padding: 12px 14px; cursor: pointer; transition: all 0.15s; }
+  .sv-sol-card:hover { border-color: #CBD5E1; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .sv-sol-card.active { border-color: #1A3DAA; }
+  .sv-sol-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; gap: 6px; }
+  .sv-tipo { font-size: 0.59rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 2px 7px; border-radius: 3px; background: #EEF2FF; color: #1A3DAA; }
+  .sv-estado { font-size: 0.59rem; font-weight: 700; padding: 2px 7px; border-radius: 3px; }
+  .sv-estado.borrador        { background: #F1F5F9; color: #64748B; }
+  .sv-estado.pendiente-sup   { background: #FFFBEB; color: #B45309; }
+  .sv-estado.pendiente-admin { background: #FFF7ED; color: #C2410C; }
+  .sv-estado.aprobada        { background: #F0FDF4; color: #16A34A; }
+  .sv-estado.rechazada       { background: #FEF2F2; color: #DC2626; }
+  .sv-sol-agente { font-size: 0.77rem; font-weight: 700; color: #1E293B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sv-sol-meta   { font-size: 0.65rem; color: #94A3B8; margin-top: 3px; }
+  .sv-detail-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 280px; gap: 10px; color: #94A3B8; font-size: 0.82rem; text-align: center; background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 40px; }
+  .sv-detail-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; }
+  .sv-dh { padding: 18px 22px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .sv-dh-title { font-size: 0.9rem; font-weight: 700; color: #1E293B; }
+  .sv-dh-sub   { font-size: 0.7rem; color: #94A3B8; margin-top: 3px; }
+  .sv-db { padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; }
+  .sv-df { padding: 14px 22px; border-top: 1px solid #F1F5F9; display: flex; justify-content: flex-end; gap: 8px; }
+  .sv-info-row { display: flex; flex-direction: column; gap: 2px; }
+  .sv-info-label { font-size: 0.66rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; }
+  .sv-info-val   { font-size: 0.84rem; font-weight: 600; color: #1E293B; }
+  .sv-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .sv-field-label { font-size: 0.73rem; font-weight: 600; color: #374151; margin-bottom: 5px; display: block; }
+  .sv-req { color: #DC2626; }
+  .sv-input { width: 100%; padding: 9px 13px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.84rem; color: #1E293B; background: #F8FAFC; outline: none; transition: border 0.2s; font-family: inherit; }
+  .sv-input:focus { border-color: #1A3DAA; box-shadow: 0 0 0 3px rgba(26,61,170,0.07); background: white; }
+  textarea.sv-input { resize: vertical; min-height: 80px; line-height: 1.6; }
+  .btn-sv-aprobar  { padding: 9px 16px; background: #16A34A; color: white; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+  .btn-sv-aprobar:hover { opacity: 0.88; }
+  .btn-sv-rechazar { padding: 9px 16px; background: #FEF2F2; color: #DC2626; border: 1.5px solid #FECACA; border-radius: 7px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-sv-rechazar:hover { background: #FEE2E2; }
+  .btn-sv-sec { padding: 9px 16px; border: 1.5px solid #E2E8F0; border-radius: 7px; background: white; font-size: 0.8rem; font-weight: 600; color: #374151; cursor: pointer; font-family: inherit; }
+  .btn-sv-sec:hover { border-color: #CBD5E1; }
+  .btn-sv-pri { padding: 9px 16px; border: none; border-radius: 7px; background: #1A3DAA; color: white; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+  .btn-sv-pri:hover { opacity: 0.88; }
+  .sv-nota-wrap { background: #FEF2F2; border: 1px solid #FECACA; border-radius: 8px; padding: 13px; display: flex; flex-direction: column; gap: 7px; }
+  .sv-nota-wrap label { font-size: 0.74rem; font-weight: 700; color: #DC2626; }
+  .sv-tl { display: flex; flex-direction: column; }
+  .sv-tl-step { display: flex; gap: 11px; }
+  .sv-tl-line { display: flex; flex-direction: column; align-items: center; }
+  .sv-tl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .sv-tl-dot.done    { background: #16A34A; }
+  .sv-tl-dot.active  { background: #1A3DAA; box-shadow: 0 0 0 3px rgba(26,61,170,0.15); }
+  .sv-tl-dot.pending { background: #E2E8F0; }
+  .sv-tl-conn      { width: 2px; height: 24px; background: #E2E8F0; margin: 3px 0; }
+  .sv-tl-conn.done { background: #16A34A; }
+  .sv-tl-text { padding-bottom: 16px; }
+  .sv-tl-label { font-size: 0.76rem; font-weight: 700; color: #1E293B; }
+  .sv-tl-sub   { font-size: 0.66rem; color: #94A3B8; margin-top: 2px; }
+  .sv-tl-nota  { font-size: 0.7rem; color: #DC2626; margin-top: 3px; background: #FEF2F2; padding: 5px 8px; border-radius: 5px; }
+
   /* ===== BIBLIOTECA ===== */
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
   #vistaBiblioteca { gap: 14px !important; }
@@ -338,6 +401,11 @@
       Flash informativos
       <span class="flash-badge" id="flashBadge"></span>
     </div>
+    <div class="nav-item" id="navSolicitudes" onclick="switchVista('solicitudes')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>
+      Solicitudes
+      <span class="sv-pending-badge" id="svNavBadge"></span>
+    </div>
     <div class="nav-item" id="navBiblioteca" onclick="switchVista('biblioteca')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
       Biblioteca
@@ -445,6 +513,36 @@
       <!-- TARJETAS AGENTES -->
       <div class="agentes-grid" id="agentesGrid"></div>
 
+    </div>
+
+    <!-- SOLICITUDES -->
+    <div class="content-area" id="vistaSolicitudes" style="display:none">
+      <div class="sv-sol-tabs">
+        <button class="sv-sol-tab active" id="svTabEquipo" onclick="switchSolTab('equipo')">
+          Mi equipo
+          <span class="sv-pending-badge" id="svPendingBadge"></span>
+        </button>
+        <button class="sv-sol-tab" id="svTabMias" onclick="switchSolTab('mias')">Mis solicitudes</button>
+      </div>
+      <div class="sv-sol-body">
+        <div class="sv-sol-list" id="svSolList">
+          <div id="svEquipoLista"></div>
+          <div id="svMiasLista" style="display:none">
+            <button class="btn-sv-pri" style="width:100%;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:6px" onclick="svNuevaSolicitud()">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nueva solicitud
+            </button>
+            <div id="svMiasItems"></div>
+          </div>
+        </div>
+        <div class="sv-sol-detail" id="svSolDetail">
+          <div class="sv-detail-empty" id="svDetailEmpty">
+            <svg width="36" height="36" fill="none" stroke="#CBD5E1" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>
+            <span>Selecciona una solicitud para revisarla</span>
+          </div>
+          <div id="svDetailCard"></div>
+        </div>
+      </div>
     </div>
 
     <!-- BIBLIOTECA -->
@@ -622,8 +720,10 @@
   }
 
   // ===== AUTH =====
+  var currentUser = null;
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = 'login.html'; return; }
+    currentUser = user;
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
       if (!doc.exists || !['wfm','admin','superadmin','supervisor'].includes(doc.data().rol)) {
         auth.signOut(); window.location.href = 'login.html'; return;
@@ -941,18 +1041,332 @@
 
   // ===== SWITCH VISTAS =====
   function switchVista(vista) {
-    document.getElementById('vistaJornada').style.display    = vista === 'jornada'    ? 'flex' : 'none';
-    document.getElementById('vistaMonitoreo').style.display  = vista === 'monitoreo'  ? 'flex' : 'none';
-    document.getElementById('vistaFlash').style.display      = vista === 'flash'      ? 'flex' : 'none';
-    document.getElementById('vistaBiblioteca').style.display = vista === 'biblioteca' ? 'flex' : 'none';
-    document.getElementById('navJornada').classList.toggle('active',    vista === 'jornada');
-    document.getElementById('navMonitoreo').classList.toggle('active',  vista === 'monitoreo');
-    document.getElementById('navFlash').classList.toggle('active',      vista === 'flash');
-    document.getElementById('navBiblioteca').classList.toggle('active', vista === 'biblioteca');
-    var subs = { jornada: 'Mi jornada', monitoreo: 'Tiempo real', flash: 'Flash informativos', biblioteca: 'Biblioteca' };
+    var vistas = ['vistaJornada','vistaMonitoreo','vistaFlash','vistaBiblioteca','vistaSolicitudes'];
+    var claves  = ['jornada','monitoreo','flash','biblioteca','solicitudes'];
+    vistas.forEach(function(id,i){ document.getElementById(id).style.display = (claves[i]===vista)?'flex':'none'; });
+    ['navJornada','navMonitoreo','navFlash','navBiblioteca','navSolicitudes'].forEach(function(id,i){
+      document.getElementById(id).classList.toggle('active', claves[i]===vista);
+    });
+    var subs = { jornada:'Mi jornada', monitoreo:'Tiempo real', flash:'Flash informativos', biblioteca:'Biblioteca', solicitudes:'Solicitudes' };
     document.querySelector('.topbar-sub').textContent = subs[vista] || '';
     if (vista !== 'monitoreo') document.getElementById('histPanel').classList.remove('open');
-    if (vista === 'flash' && !flashCargado) iniciarFlash();
+    if (vista === 'flash'       && !flashCargado) iniciarFlash();
+    if (vista === 'solicitudes' && !solCargado)   iniciarSolicitudes();
+  }
+
+  // ===== SOLICITUDES =====
+  var solCargado = false, svTabActual = 'equipo';
+  var svEquipoSols = [], svMiasSols = [];
+  var svSolActualId = null, svSolArchivos = [];
+  var svEquipoNombres = {}; // uid → nombre agente
+
+  var SV_ESTADOS = {
+    borrador:'Borrador', 'pendiente-sup':'Pendiente — Supervisor',
+    'pendiente-admin':'Pendiente — Admin', aprobada:'Aprobada', rechazada:'Rechazada'
+  };
+
+  function iniciarSolicitudes() {
+    solCargado = true;
+    // Obtener agentes de mi equipo
+    db.collection('usuarios').where('emailSupervisor','==',currentUser.email).get()
+      .then(function(snap) {
+        var uids = [];
+        snap.forEach(function(doc) {
+          uids.push(doc.id);
+          svEquipoNombres[doc.id] = doc.data().nombre || doc.data().email || '?';
+        });
+        if (uids.length > 0) {
+          db.collection('solicitudes').where('agenteUid','in',uids)
+            .orderBy('fechaCreacion','desc').onSnapshot(function(s) {
+              svEquipoSols = [];
+              s.forEach(function(d){ svEquipoSols.push(Object.assign({id:d.id},d.data())); });
+              renderSvEquipo();
+              svActualizarBadge();
+            });
+        } else {
+          document.getElementById('svEquipoLista').innerHTML =
+            '<div style="font-size:0.78rem;color:#94A3B8;padding:8px 0">No tienes agentes asignados.</div>';
+        }
+        // Mis propias solicitudes
+        db.collection('solicitudes').where('agenteUid','==',currentUser.uid)
+          .orderBy('fechaCreacion','desc').onSnapshot(function(s) {
+            svMiasSols = [];
+            s.forEach(function(d){ svMiasSols.push(Object.assign({id:d.id},d.data())); });
+            renderSvMias();
+          });
+      });
+  }
+
+  function svActualizarBadge() {
+    var n = svEquipoSols.filter(function(s){ return s.estado==='pendiente-sup'; }).length;
+    ['svPendingBadge','svNavBadge'].forEach(function(id){
+      var el = document.getElementById(id);
+      el.textContent = n; el.style.display = n > 0 ? 'inline' : 'none';
+    });
+  }
+
+  function switchSolTab(tab) {
+    svTabActual = tab;
+    svSolActualId = null;
+    document.getElementById('svTabEquipo').classList.toggle('active', tab==='equipo');
+    document.getElementById('svTabMias').classList.toggle('active',   tab==='mias');
+    document.getElementById('svEquipoLista').style.display = tab==='equipo' ? 'flex' : 'none';
+    document.getElementById('svMiasLista').style.display   = tab==='mias'   ? 'flex' : 'none';
+    document.getElementById('svEquipoLista').style.flexDirection = 'column';
+    document.getElementById('svEquipoLista').style.gap = '8px';
+    document.getElementById('svMiasLista').style.flexDirection = 'column';
+    document.getElementById('svMiasLista').style.gap = '8px';
+    document.getElementById('svDetailEmpty').style.display = 'flex';
+    document.getElementById('svDetailCard').innerHTML = '';
+  }
+
+  function renderSvEquipo() {
+    var sorted = svEquipoSols.slice().sort(function(a,b){
+      var pa = a.estado==='pendiente-sup'?0:1, pb = b.estado==='pendiente-sup'?0:1;
+      return pa-pb;
+    });
+    if (sorted.length === 0) {
+      document.getElementById('svEquipoLista').innerHTML =
+        '<div style="font-size:0.78rem;color:#94A3B8;padding:8px 0">Sin solicitudes de tu equipo.</div>';
+      return;
+    }
+    var html = '';
+    sorted.forEach(function(s) {
+      var nombre = svEquipoNombres[s.agenteUid] || s.agenteNombre || '?';
+      var fecha  = s.fechaCreacion ? new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
+      html += '<div class="sv-sol-card'+(svSolActualId===s.id?' active':'')+'" onclick="verSvEquipo(\''+s.id+'\')">'
+        +'<div class="sv-sol-card-top">'
+        +'<span class="sv-tipo">Permiso</span>'
+        +'<span class="sv-estado '+s.estado+'">'+(SV_ESTADOS[s.estado]||s.estado)+'</span>'
+        +'</div>'
+        +'<div class="sv-sol-agente">'+nombre+'</div>'
+        +'<div class="sv-sol-meta">'+fecha+(s.fechaInicio?' · '+s.fechaInicio:'')+'</div>'
+        +'</div>';
+    });
+    document.getElementById('svEquipoLista').innerHTML = html;
+  }
+
+  function renderSvMias() {
+    var el = document.getElementById('svMiasItems');
+    if (svMiasSols.length === 0) {
+      el.innerHTML = '<div style="font-size:0.78rem;color:#94A3B8;padding:8px 0">Sin solicitudes aún.</div>';
+      return;
+    }
+    var html = '';
+    svMiasSols.forEach(function(s) {
+      var fecha = s.fechaCreacion ? new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
+      html += '<div class="sv-sol-card'+(svSolActualId===s.id?' active':'')+'" onclick="verSvMia(\''+s.id+'\')">'
+        +'<div class="sv-sol-card-top">'
+        +'<span class="sv-tipo">Permiso</span>'
+        +'<span class="sv-estado '+s.estado+'">'+(SV_ESTADOS[s.estado]||s.estado)+'</span>'
+        +'</div>'
+        +'<div class="sv-sol-agente">'+(s.comentarios?s.comentarios.substring(0,40)+'...':'Sin comentarios')+'</div>'
+        +'<div class="sv-sol-meta">'+fecha+(s.fechaInicio?' · '+s.fechaInicio:'')+'</div>'
+        +'</div>';
+    });
+    el.innerHTML = html;
+  }
+
+  function svTimeline(s, esMia) {
+    var pasos = [
+      { label:'Solicitud enviada', sub: s.fechaCreacion?new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV'):'', estado:'done' },
+      { label:'Revisión del supervisor', sub: s.estado==='pendiente-sup'?'En espera':(s.estado==='borrador'?'Pendiente de envío':'Revisado'),
+        estado: s.estado==='pendiente-sup'?'active':(s.estado==='borrador'?'pending':'done') },
+      { label:'Revisión del administrador', sub: s.estado==='pendiente-admin'?'En espera':(s.estado==='aprobada'||s.estado==='rechazada'?'Revisado':'Pendiente'),
+        estado: s.estado==='pendiente-admin'?'active':(s.estado==='aprobada'||s.estado==='rechazada'?'done':'pending') },
+      { label: s.estado==='aprobada'?'Aprobada':s.estado==='rechazada'?'Rechazada':'Resolución final',
+        sub: s.estado==='aprobada'?'Solicitud aprobada':s.estado==='rechazada'?'Solicitud rechazada':'Pendiente',
+        estado: s.estado==='aprobada'||s.estado==='rechazada'?'done':'pending', nota: s.notaRechazo||'' }
+    ];
+    // Para solicitudes propias del supervisor, el paso de supervisor se salta
+    if (esMia) pasos[1] = { label:'Revisión del supervisor', sub:'N/A — enviado directo', estado:'done' };
+    var h = '<div class="sv-tl">';
+    pasos.forEach(function(p,i){
+      h += '<div class="sv-tl-step"><div class="sv-tl-line"><div class="sv-tl-dot '+p.estado+'"></div>'
+        +(i<pasos.length-1?'<div class="sv-tl-conn'+(p.estado==='done'?' done':'')+'"></div>':'')+'</div>'
+        +'<div class="sv-tl-text"><div class="sv-tl-label">'+p.label+'</div><div class="sv-tl-sub">'+p.sub+'</div>'
+        +(p.nota?'<div class="sv-tl-nota">'+p.nota+'</div>':'')+'</div></div>';
+    });
+    return h + '</div>';
+  }
+
+  function verSvEquipo(id) {
+    svSolActualId = id;
+    renderSvEquipo();
+    var s = svEquipoSols.find(function(x){ return x.id===id; });
+    if (!s) return;
+    var nombre   = svEquipoNombres[s.agenteUid] || s.agenteNombre || '?';
+    var pendiente = s.estado === 'pendiente-sup';
+    document.getElementById('svDetailEmpty').style.display = 'none';
+    var dc = document.getElementById('svDetailCard');
+    dc.innerHTML =
+      '<div class="sv-detail-card">'
+      +'<div class="sv-dh"><div>'
+      +'<div class="sv-dh-title">Permiso — '+nombre+'</div>'
+      +'<div class="sv-dh-sub"><span class="sv-estado '+s.estado+'" style="font-size:0.62rem">'+(SV_ESTADOS[s.estado]||s.estado)+'</span></div>'
+      +'</div></div>'
+      +'<div class="sv-db">'
+      +'<div class="sv-field-row">'
+      +'<div class="sv-info-row"><span class="sv-info-label">Fecha inicio</span><span class="sv-info-val">'+(s.fechaInicio||'—')+'</span></div>'
+      +'<div class="sv-info-row"><span class="sv-info-label">Fecha fin</span><span class="sv-info-val">'+(s.fechaFin||'—')+'</span></div>'
+      +'</div>'
+      +'<div class="sv-field-row">'
+      +'<div class="sv-info-row"><span class="sv-info-label">Hora inicio</span><span class="sv-info-val">'+(s.horaInicio||'—')+'</span></div>'
+      +'<div class="sv-info-row"><span class="sv-info-label">Hora fin</span><span class="sv-info-val">'+(s.horaFin||'—')+'</span></div>'
+      +'</div>'
+      +'<div class="sv-info-row"><span class="sv-info-label">Comentarios</span>'
+      +'<div style="font-size:0.83rem;color:#374151;line-height:1.6;background:#F8FAFC;padding:10px 13px;border-radius:8px;border:1px solid #F1F5F9;margin-top:4px">'+(s.comentarios||'—')+'</div></div>'
+      +'<div><span class="sv-info-label" style="display:block;margin-bottom:10px">Estado de la solicitud</span>'
+      +svTimeline(s,false)+'</div>'
+      +(pendiente?'<div class="sv-nota-wrap" id="svNotaWrap" style="display:none"><label>Motivo de rechazo <span class="sv-req">*</span></label>'
+        +'<textarea class="sv-input" id="svNotaTexto" placeholder="Indica el motivo del rechazo..." rows="3"></textarea>'
+        +'<div style="display:flex;gap:8px;justify-content:flex-end">'
+        +'<button class="btn-sv-sec" onclick="svCancelarRechazo()">Cancelar</button>'
+        +'<button class="btn-sv-rechazar" onclick="svConfirmarRechazo(\''+id+'\')">Confirmar rechazo</button>'
+        +'</div></div>':'')
+      +'</div>'
+      +(pendiente?'<div class="sv-df">'
+        +'<button class="btn-sv-rechazar" onclick="svMostrarRechazo()">Rechazar</button>'
+        +'<button class="btn-sv-aprobar"  onclick="svAprobar(\''+id+'\')">Aprobar</button>'
+        +'</div>':'')
+      +'</div>';
+  }
+
+  function svAprobar(id) {
+    db.collection('solicitudes').doc(id).update({
+      estado: 'pendiente-admin',
+      supervisorUid:    currentUser.uid,
+      supervisorEmail:  currentUser.email,
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){ showToast('Solicitud aprobada — enviada al administrador.'); })
+      .catch(function(e){ showToast('Error: '+e.message); });
+  }
+
+  function svMostrarRechazo() {
+    var w = document.getElementById('svNotaWrap');
+    if (w) w.style.display = 'flex';
+    var df = document.querySelector('.sv-df');
+    if (df) df.style.display = 'none';
+  }
+
+  function svCancelarRechazo() {
+    var w = document.getElementById('svNotaWrap');
+    if (w) w.style.display = 'none';
+    var df = document.querySelector('.sv-df');
+    if (df) df.style.display = 'flex';
+  }
+
+  function svConfirmarRechazo(id) {
+    var nota = (document.getElementById('svNotaTexto').value||'').trim();
+    if (!nota) { showToast('Escribe el motivo del rechazo.'); return; }
+    db.collection('solicitudes').doc(id).update({
+      estado: 'rechazada',
+      notaRechazo: nota,
+      supervisorUid:   currentUser.uid,
+      supervisorEmail: currentUser.email,
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){ showToast('Solicitud rechazada.'); })
+      .catch(function(e){ showToast('Error: '+e.message); });
+  }
+
+  function verSvMia(id) {
+    svSolActualId = id;
+    renderSvMias();
+    var s = svMiasSols.find(function(x){ return x.id===id; });
+    if (!s) return;
+    var editable = s.estado==='borrador' || s.estado==='rechazada';
+    document.getElementById('svDetailEmpty').style.display = 'none';
+    var dc = document.getElementById('svDetailCard');
+    dc.innerHTML =
+      '<div class="sv-detail-card">'
+      +'<div class="sv-dh"><div>'
+      +'<div class="sv-dh-title">Permiso</div>'
+      +'<div class="sv-dh-sub"><span class="sv-estado '+s.estado+'" style="font-size:0.62rem">'+(SV_ESTADOS[s.estado]||s.estado)+'</span></div>'
+      +'</div>'+(editable?'<button class="btn-sv-sec" onclick="svEditarMia(\''+s.id+'\')">Editar</button>':'')+'</div>'
+      +'<div class="sv-db">'
+      +'<div class="sv-field-row">'
+      +'<div class="sv-info-row"><span class="sv-info-label">Fecha inicio</span><span class="sv-info-val">'+(s.fechaInicio||'—')+'</span></div>'
+      +'<div class="sv-info-row"><span class="sv-info-label">Fecha fin</span><span class="sv-info-val">'+(s.fechaFin||'—')+'</span></div>'
+      +'</div>'
+      +'<div class="sv-field-row">'
+      +'<div class="sv-info-row"><span class="sv-info-label">Hora inicio</span><span class="sv-info-val">'+(s.horaInicio||'—')+'</span></div>'
+      +'<div class="sv-info-row"><span class="sv-info-label">Hora fin</span><span class="sv-info-val">'+(s.horaFin||'—')+'</span></div>'
+      +'</div>'
+      +'<div class="sv-info-row"><span class="sv-info-label">Comentarios</span>'
+      +'<div style="font-size:0.83rem;color:#374151;line-height:1.6;background:#F8FAFC;padding:10px 13px;border-radius:8px;border:1px solid #F1F5F9;margin-top:4px">'+(s.comentarios||'—')+'</div></div>'
+      +'<div><span class="sv-info-label" style="display:block;margin-bottom:10px">Estado de la solicitud</span>'
+      +svTimeline(s,true)+'</div>'
+      +'</div></div>';
+  }
+
+  function svNuevaSolicitud() { svMostrarFormulario(null); }
+  function svEditarMia(id) {
+    var s = svMiasSols.find(function(x){ return x.id===id; });
+    svMostrarFormulario(s);
+  }
+
+  function svMostrarFormulario(s) {
+    svSolActualId = s ? s.id : null;
+    svSolArchivos = [];
+    document.getElementById('svDetailEmpty').style.display = 'none';
+    document.getElementById('svDetailCard').innerHTML =
+      '<div class="sv-detail-card">'
+      +'<div class="sv-dh"><div>'
+      +'<div class="sv-dh-title">'+(s?'Editar solicitud':'Nueva solicitud')+'</div>'
+      +'<div class="sv-dh-sub">Se enviará directamente al administrador para revisión</div>'
+      +'</div></div>'
+      +'<div class="sv-db">'
+      +'<div><label class="sv-field-label">Tipo <span class="sv-req">*</span></label>'
+      +'<select class="sv-input" id="svFTipo"><option value="permiso">Permiso</option></select></div>'
+      +'<div class="sv-field-row">'
+      +'<div><label class="sv-field-label">Fecha inicio <span class="sv-req">*</span></label><input type="date" class="sv-input" id="svFFechaInicio" value="'+(s&&s.fechaInicio?s.fechaInicio:'')+'"></div>'
+      +'<div><label class="sv-field-label">Fecha fin <span class="sv-req">*</span></label><input type="date" class="sv-input" id="svFFechaFin" value="'+(s&&s.fechaFin?s.fechaFin:'')+'"></div>'
+      +'</div>'
+      +'<div class="sv-field-row">'
+      +'<div><label class="sv-field-label">Hora inicio <span class="sv-req">*</span></label><input type="time" class="sv-input" id="svFHoraInicio" value="'+(s&&s.horaInicio?s.horaInicio:'')+'"></div>'
+      +'<div><label class="sv-field-label">Hora fin <span class="sv-req">*</span></label><input type="time" class="sv-input" id="svFHoraFin" value="'+(s&&s.horaFin?s.horaFin:'')+'"></div>'
+      +'</div>'
+      +'<div><label class="sv-field-label">Comentarios <span class="sv-req">*</span></label>'
+      +'<textarea class="sv-input" id="svFComentarios" placeholder="Describe el motivo de tu solicitud...">'+(s&&s.comentarios?s.comentarios:'')+'</textarea></div>'
+      +'</div>'
+      +'<div class="sv-df">'
+      +'<button class="btn-sv-sec" onclick="svGuardarMia(\'borrador\')">Guardar borrador</button>'
+      +'<button class="btn-sv-pri" onclick="svGuardarMia(\'pendiente-admin\')">Enviar al administrador</button>'
+      +'</div></div>';
+  }
+
+  function svGuardarMia(estado) {
+    var fi  = (document.getElementById('svFFechaInicio')||{}).value||'';
+    var ff  = (document.getElementById('svFFechaFin')||{}).value||'';
+    var hi  = (document.getElementById('svFHoraInicio')||{}).value||'';
+    var hf  = (document.getElementById('svFHoraFin')||{}).value||'';
+    var com = ((document.getElementById('svFComentarios')||{}).value||'').trim();
+    if (!fi||!ff) { showToast('Selecciona las fechas.'); return; }
+    if (!hi||!hf) { showToast('Selecciona la hora de inicio y fin.'); return; }
+    if (!com)     { showToast('Agrega un comentario.'); return; }
+    var data = {
+      agenteUid: currentUser.uid, agenteEmail: currentUser.email,
+      agenteNombre: currentUser.displayName || currentUser.email.split('@')[0],
+      tipo:'permiso', fechaInicio:fi, fechaFin:ff, horaInicio:hi, horaFin:hf,
+      comentarios:com, estado:estado, archivos:[],
+      esSupervisor: true,
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    if (!svSolActualId) {
+      data.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
+      db.collection('solicitudes').add(data)
+        .then(function(ref){
+          svSolActualId = ref.id;
+          showToast(estado==='borrador'?'Borrador guardado.':'Solicitud enviada al administrador.');
+          if (estado!=='borrador') verSvMia(ref.id);
+        }).catch(function(e){ showToast('Error: '+e.message); });
+    } else {
+      db.collection('solicitudes').doc(svSolActualId).update(data)
+        .then(function(){
+          showToast(estado==='borrador'?'Borrador actualizado.':'Solicitud enviada al administrador.');
+          if (estado!=='borrador') verSvMia(svSolActualId);
+        }).catch(function(e){ showToast('Error: '+e.message); });
+    }
   }
 
   // ===== BIBLIOTECA =====
