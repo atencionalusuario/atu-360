@@ -1984,7 +1984,7 @@
   var jEstado = 'fuera', jEntradaTime = null, jJornIv = null, jCamStream = null;
   var jAuxActivo = null, jAuxInicio = null, jAuxIv = null, jAuxBtnActivo = null;
 
-  // Nombre del supervisor en el saludo
+  // Nombre + recuperar estado del día al cargar
   auth.onAuthStateChanged(function(user) {
     if (!user) return;
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
@@ -1993,6 +1993,76 @@
         document.getElementById('jGreetName').textContent = n;
       }
     });
+    // Recuperar marcajes de hoy
+    var hoy = new Date().toLocaleDateString('es-SV');
+    db.collection('marcajes')
+      .where('uid', '==', user.uid)
+      .where('fecha', '==', hoy)
+      .get().then(function(snap) {
+        var entrada = null, salida = null;
+        snap.forEach(function(doc) {
+          var d = doc.data();
+          if (d.tipo === 'entrada') entrada = d;
+          if (d.tipo === 'salida')  salida  = d;
+        });
+        if (!entrada) return; // sin marcajes hoy
+        // Reconstruir hora de entrada (aproximada) para el timer
+        var partes = entrada.hora ? entrada.hora.split(':') : null;
+        if (partes && partes.length >= 2) {
+          var ahora = new Date();
+          jEntradaTime = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(),
+            parseInt(partes[0]), parseInt(partes[1]), parseInt(partes[2]||0));
+        } else {
+          jEntradaTime = new Date();
+        }
+        document.getElementById('jEntradaInfo').textContent = 'Entrada registrada a las ' + entrada.hora;
+        if (salida) {
+          // Jornada finalizada
+          jEstado = 'terminado';
+          jSetBadge('done', 'Jornada finalizada');
+          document.getElementById('jEntradaInfo').textContent = 'Entrada: ' + entrada.hora + '  ·  Salida: ' + salida.hora;
+          document.getElementById('jBtnMarcaje').className = 'btn-marcaje done';
+          document.getElementById('jBtnIcon').innerHTML = '<svg width="22" height="22" fill="none" stroke="#94A3B8" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+          document.getElementById('jBtnLabel').textContent = 'Jornada completa';
+          document.getElementById('jAuxCard').style.display = 'block';
+          document.querySelectorAll('#jAuxBtns .aux-btn').forEach(function(b) { b.disabled = true; });
+          document.getElementById('jAuxSub').textContent = 'La jornada ha finalizado.';
+        } else {
+          // Entrada activa
+          jEstado = 'dentro';
+          jSetBadge('in', 'En turno activo');
+          document.getElementById('jBtnMarcaje').className = 'btn-marcaje salida';
+          document.getElementById('jBtnIcon').innerHTML = '<svg width="22" height="22" fill="white" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>';
+          document.getElementById('jBtnLabel').textContent = 'Marcar salida';
+          document.getElementById('jTimerWrap').style.display = 'block';
+          jJornIv = setInterval(function() {
+            var d = Math.floor((new Date() - jEntradaTime) / 1000);
+            document.getElementById('jTimerVal').textContent = pad(Math.floor(d/3600)) + ':' + pad(Math.floor((d%3600)/60)) + ':' + pad(d%60);
+          }, 1000);
+          document.getElementById('jAuxCard').style.display = 'block';
+          document.getElementById('jAuxSub').textContent = 'Selecciona el auxiliar correspondiente a tu actividad actual.';
+        }
+        // Recuperar auxiliares de hoy
+        db.collection('auxiliares')
+          .where('uid', '==', user.uid)
+          .where('fecha', '==', hoy)
+          .get().then(function(aSnap) {
+            var rows = [];
+            aSnap.forEach(function(doc) { rows.push(doc.data()); });
+            rows.sort(function(a,b){ return (a.inicio||'').localeCompare(b.inicio||''); });
+            var empty = document.getElementById('jAuxLogEmpty');
+            if (rows.length && empty) empty.remove();
+            rows.forEach(function(r) {
+              var dur = r.duracion_seg ? (pad(Math.floor(r.duracion_seg/60))+':'+pad(r.duracion_seg%60)) : '--';
+              var row = document.createElement('div');
+              row.className = 'aux-log-row';
+              row.innerHTML = '<span class="aux-log-nombre">'+r.auxiliar+'</span>'
+                +'<span class="aux-log-dur">'+r.inicio+' – '+r.fin+'</span>'
+                +'<span class="aux-log-dur right">'+dur+'</span>';
+              document.getElementById('jAuxLog').appendChild(row);
+            });
+          });
+      });
   });
 
   document.getElementById('jBtnMarcaje').addEventListener('click', function() {
