@@ -195,6 +195,53 @@
   .btn-flash-marcar.done:hover { opacity: 1; }
   .flash-badge { background: #EF4444; color: white; font-size: 0.58rem; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-left: auto; display: none; }
 
+  /* ===== MI TURNO ===== */
+  .turno-banner { background: #0F2070; border-radius: 10px; padding: 20px 26px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .tb-left .tb-label   { font-size: 0.6rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 2px; }
+  .tb-left .tb-nombre  { font-size: 1.05rem; font-weight: 800; color: white; margin-top: 4px; }
+  .tb-left .tb-horario { font-size: 0.8rem; color: rgba(255,255,255,0.65); margin-top: 3px; }
+  .tb-stats { display: flex; gap: 24px; }
+  .tb-stat { text-align: center; }
+  .tb-stat-val { font-size: 1.05rem; font-weight: 800; color: white; }
+  .tb-stat-key { font-size: 0.6rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+  .tb-divider { width: 1px; background: rgba(255,255,255,0.1); align-self: stretch; }
+  .cal-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 22px; flex-shrink: 0; }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .cal-mes { font-size: 0.95rem; font-weight: 700; color: #1E293B; }
+  .cal-nav { display: flex; align-items: center; gap: 8px; }
+  .cal-nav-btn { width: 28px; height: 28px; border-radius: 6px; border: 1px solid #E2E8F0; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: #64748B; transition: all 0.15s; }
+  .cal-nav-btn:hover { border-color: #1A3DAA; color: #1A3DAA; background: #EEF2FF; }
+  .cal-leyenda { display: flex; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; }
+  .ley-item { display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: #64748B; }
+  .ley-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .ley-dot.laboral  { background: #1A3DAA; }
+  .ley-dot.descanso { background: #F1F5F9; border: 1px solid #E2E8F0; }
+  .ley-dot.hoy      { background: #29ABE2; }
+  .cal-dias-semana { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 4px; }
+  .cal-dia-semana  { text-align: center; font-size: 0.65rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; padding: 4px 0; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 5px; }
+  .cal-dia { border-radius: 7px; padding: 8px 4px; text-align: center; min-height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
+  .cal-dia.vacio    { background: transparent; }
+  .cal-dia.descanso { background: #F8FAFC; border: 1px solid #F1F5F9; }
+  .cal-dia.laboral  { background: #EEF2FF; border: 1px solid #C7D2FE; }
+  .cal-dia.hoy      { background: #1A3DAA !important; border-color: #1A3DAA !important; }
+  .cal-dia.hoy .dia-num { color: white; }
+  .cal-dia.hoy .dia-tag { color: rgba(255,255,255,0.8); }
+  .cal-dia.pasado   { opacity: 0.5; }
+  .dia-num { font-size: 0.85rem; font-weight: 700; color: #1E293B; line-height: 1; }
+  .cal-dia.laboral .dia-num  { color: #1A3DAA; }
+  .cal-dia.descanso .dia-num { color: #94A3B8; }
+  .dia-tag { font-size: 0.57rem; font-weight: 600; text-transform: uppercase; }
+  .cal-dia.laboral .dia-tag  { color: #4F6EF7; }
+  .cal-dia.descanso .dia-tag { color: #CBD5E1; }
+  .turno-resumen { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; flex-shrink: 0; }
+  .res-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 14px 18px; }
+  .res-label { font-size: 0.68rem; color: #64748B; font-weight: 500; margin-bottom: 5px; }
+  .res-val   { font-size: 1.35rem; font-weight: 800; color: #1E293B; }
+  .res-sub   { font-size: 0.65rem; color: #94A3B8; margin-top: 2px; }
+  .res-bar   { height: 4px; background: #F1F5F9; border-radius: 2px; margin-top: 8px; overflow: hidden; }
+  .res-bar-fill { height: 100%; border-radius: 2px; }
+
   /* ===== SOLICITUDES ===== */
   #vistaSolicitudes { flex-direction: column !important; gap: 0 !important; padding: 0 !important; overflow: hidden !important; }
   .sv-sol-tabs { display: flex; gap: 0; padding: 0 20px; border-bottom: 1px solid #E2E8F0; background: white; flex-shrink: 0; }
@@ -391,6 +438,10 @@
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       Mi jornada
     </div>
+    <div class="nav-item" id="navTurno" onclick="switchVista('turno')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Mi turno
+    </div>
     <div class="nav-section-label">Panel</div>
     <div class="nav-item active" id="navMonitoreo" onclick="switchVista('monitoreo')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
@@ -543,6 +594,70 @@
           <div id="svDetailCard"></div>
         </div>
       </div>
+    </div>
+
+    <!-- MI TURNO -->
+    <div class="content-area" id="vistaTurno" style="display:none">
+
+      <div class="turno-banner">
+        <div class="tb-left">
+          <div class="tb-label">Turno asignado</div>
+          <div class="tb-nombre" id="tNombre">Cargando...</div>
+          <div class="tb-horario" id="tHorario">—</div>
+        </div>
+        <div class="tb-stats">
+          <div class="tb-stat"><div class="tb-stat-val" id="tStatLab">—</div><div class="tb-stat-key">Días laborales</div></div>
+          <div class="tb-divider"></div>
+          <div class="tb-stat"><div class="tb-stat-val" id="tStatDesc">—</div><div class="tb-stat-key">Días descanso</div></div>
+          <div class="tb-divider"></div>
+          <div class="tb-stat"><div class="tb-stat-val" id="tStatRest">—</div><div class="tb-stat-key">Días restantes</div></div>
+        </div>
+      </div>
+
+      <div class="cal-card">
+        <div class="cal-header">
+          <div class="cal-mes" id="tCalMes">—</div>
+          <div class="cal-nav">
+            <button class="cal-nav-btn" onclick="tCambiarMes(-1)">&#8249;</button>
+            <button class="cal-nav-btn" onclick="tIrHoy()">Hoy</button>
+            <button class="cal-nav-btn" onclick="tCambiarMes(1)">&#8250;</button>
+          </div>
+        </div>
+        <div class="cal-leyenda">
+          <div class="ley-item"><div class="ley-dot laboral"></div>Día laboral</div>
+          <div class="ley-item"><div class="ley-dot descanso"></div>Descanso</div>
+          <div class="ley-item"><div class="ley-dot hoy"></div>Hoy</div>
+        </div>
+        <div class="cal-dias-semana">
+          <div class="cal-dia-semana">Dom</div><div class="cal-dia-semana">Lun</div>
+          <div class="cal-dia-semana">Mar</div><div class="cal-dia-semana">Mié</div>
+          <div class="cal-dia-semana">Jue</div><div class="cal-dia-semana">Vie</div>
+          <div class="cal-dia-semana">Sáb</div>
+        </div>
+        <div class="cal-grid" id="tCalGrid"><div style="text-align:center;padding:24px;color:#94A3B8;font-size:0.8rem">Cargando turno...</div></div>
+      </div>
+
+      <div class="turno-resumen">
+        <div class="res-card">
+          <div class="res-label">Días laborales este mes</div>
+          <div class="res-val" id="tResLab">—</div>
+          <div class="res-sub">días de trabajo</div>
+          <div class="res-bar"><div class="res-bar-fill" id="tBarLab" style="width:0%;background:#1A3DAA"></div></div>
+        </div>
+        <div class="res-card">
+          <div class="res-label">Días de descanso este mes</div>
+          <div class="res-val" id="tResDesc">—</div>
+          <div class="res-sub">días libres</div>
+          <div class="res-bar"><div class="res-bar-fill" id="tBarDesc" style="width:0%;background:#E2E8F0"></div></div>
+        </div>
+        <div class="res-card">
+          <div class="res-label">Horas laborales este mes</div>
+          <div class="res-val" id="tResHoras">—</div>
+          <div class="res-sub">horas totales (8h/día)</div>
+          <div class="res-bar"><div class="res-bar-fill" id="tBarHoras" style="width:0%;background:#29ABE2"></div></div>
+        </div>
+      </div>
+
     </div>
 
     <!-- BIBLIOTECA -->
@@ -1041,18 +1156,92 @@
 
   // ===== SWITCH VISTAS =====
   function switchVista(vista) {
-    var vistas = ['vistaJornada','vistaMonitoreo','vistaFlash','vistaBiblioteca','vistaSolicitudes'];
-    var claves  = ['jornada','monitoreo','flash','biblioteca','solicitudes'];
+    var vistas = ['vistaJornada','vistaMonitoreo','vistaFlash','vistaBiblioteca','vistaSolicitudes','vistaTurno'];
+    var claves  = ['jornada','monitoreo','flash','biblioteca','solicitudes','turno'];
     vistas.forEach(function(id,i){ document.getElementById(id).style.display = (claves[i]===vista)?'flex':'none'; });
-    ['navJornada','navMonitoreo','navFlash','navBiblioteca','navSolicitudes'].forEach(function(id,i){
+    ['navJornada','navMonitoreo','navFlash','navBiblioteca','navSolicitudes','navTurno'].forEach(function(id,i){
       document.getElementById(id).classList.toggle('active', claves[i]===vista);
     });
-    var subs = { jornada:'Mi jornada', monitoreo:'Tiempo real', flash:'Flash informativos', biblioteca:'Biblioteca', solicitudes:'Solicitudes' };
+    var subs = { jornada:'Mi jornada', monitoreo:'Tiempo real', flash:'Flash informativos', biblioteca:'Biblioteca', solicitudes:'Solicitudes', turno:'Mi turno' };
     document.querySelector('.topbar-sub').textContent = subs[vista] || '';
     if (vista !== 'monitoreo') document.getElementById('histPanel').classList.remove('open');
-    if (vista === 'flash'       && !flashCargado) iniciarFlash();
-    if (vista === 'solicitudes' && !solCargado)   iniciarSolicitudes();
+    if (vista === 'flash'       && !flashCargado)  iniciarFlash();
+    if (vista === 'solicitudes' && !solCargado)    iniciarSolicitudes();
+    if (vista === 'turno'       && !turnoCargado)  iniciarTurno();
   }
+
+  // ===== MI TURNO =====
+  var turnoCargado = false;
+  var tHoy = new Date();
+  var tMesVista = new Date(tHoy.getFullYear(), tHoy.getMonth(), 1);
+  var tDias = {};
+  var MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  function iniciarTurno() {
+    turnoCargado = true;
+    db.collection('turnos').doc(currentUser.uid).get()
+      .then(function(doc) {
+        if (doc.exists) {
+          var d = doc.data();
+          document.getElementById('tNombre').textContent  = d.nombre  || 'Turno asignado';
+          document.getElementById('tHorario').textContent = d.horario || '—';
+          tDias = d.dias || {};
+        } else {
+          document.getElementById('tNombre').textContent  = 'Turno A — Mañana';
+          document.getElementById('tHorario').textContent = '07:00 AM — 03:00 PM · 8h por jornada';
+          tDias = tGenerarEjemplo();
+        }
+        tRenderCalendario();
+      })
+      .catch(function() {
+        document.getElementById('tNombre').textContent  = 'Turno A — Mañana';
+        document.getElementById('tHorario').textContent = '07:00 AM — 03:00 PM · 8h por jornada';
+        tDias = tGenerarEjemplo();
+        tRenderCalendario();
+      });
+  }
+
+  function tGenerarEjemplo() {
+    var dias = {}, d = new Date(tHoy.getFullYear(), 0, 1), fin = new Date(tHoy.getFullYear(), 11, 31);
+    while (d <= fin) {
+      var dow = d.getDay();
+      var key = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+      dias[key] = (dow >= 1 && dow <= 5) ? 'laboral' : 'descanso';
+      d.setDate(d.getDate()+1);
+    }
+    return dias;
+  }
+
+  function tRenderCalendario() {
+    var año = tMesVista.getFullYear(), mes = tMesVista.getMonth();
+    var primerDia = new Date(año, mes, 1).getDay();
+    var totalDias = new Date(año, mes+1, 0).getDate();
+    document.getElementById('tCalMes').textContent = MESES[mes] + ' ' + año;
+    var lab = 0, desc = 0, rest = 0, html = '';
+    for (var i = 0; i < primerDia; i++) html += '<div class="cal-dia vacio"></div>';
+    for (var d = 1; d <= totalDias; d++) {
+      var fecha  = año+'-'+pad(mes+1)+'-'+pad(d);
+      var tipo   = tDias[fecha] || 'descanso';
+      var esHoy  = año===tHoy.getFullYear() && mes===tHoy.getMonth() && d===tHoy.getDate();
+      var pasado = new Date(año,mes,d) < new Date(tHoy.getFullYear(),tHoy.getMonth(),tHoy.getDate());
+      if (tipo==='laboral') lab++; else desc++;
+      if (tipo==='laboral' && !pasado) rest++;
+      html += '<div class="cal-dia '+tipo+(esHoy?' hoy':'')+(pasado&&!esHoy?' pasado':'')+'"><span class="dia-num">'+d+'</span><span class="dia-tag">'+(tipo==='laboral'?'Laboral':'Descanso')+'</span></div>';
+    }
+    document.getElementById('tCalGrid').innerHTML = html;
+    document.getElementById('tStatLab').textContent  = lab;
+    document.getElementById('tStatDesc').textContent = desc;
+    document.getElementById('tStatRest').textContent = rest;
+    document.getElementById('tResLab').textContent   = lab;
+    document.getElementById('tResDesc').textContent  = desc;
+    document.getElementById('tResHoras').textContent = (lab*8)+'h';
+    document.getElementById('tBarLab').style.width   = Math.round((lab/totalDias)*100)+'%';
+    document.getElementById('tBarDesc').style.width  = Math.round((desc/totalDias)*100)+'%';
+    document.getElementById('tBarHoras').style.width = Math.min(100,Math.round((lab*8/200)*100))+'%';
+  }
+
+  function tCambiarMes(dir) { tMesVista.setMonth(tMesVista.getMonth()+dir); tRenderCalendario(); }
+  function tIrHoy() { tMesVista = new Date(tHoy.getFullYear(), tHoy.getMonth(), 1); tRenderCalendario(); }
 
   // ===== SOLICITUDES =====
   var solCargado = false, svTabActual = 'equipo';
