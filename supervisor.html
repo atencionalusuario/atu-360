@@ -152,6 +152,12 @@
   .agente-card.selected { border-color: #1A3DAA; }
   .agente-card.card-activo { background: #F0FDF4; }
   .agente-card.card-fuera  { background: #E2E8F0; }
+  .agente-card.card-alerta-roja    { border-color: #DC2626 !important; }
+  .agente-card.card-alerta-naranja { border-color: #EA580C !important; }
+  .alert-badge { display:none; border-radius:6px; padding:5px 8px; font-size:0.68rem; font-weight:700; text-align:center; margin-top:2px; }
+  .alert-badge.alerta-roja    { display:block; background:#FEE2E2; color:#DC2626; animation:pulse-alerta 1.4s ease-in-out infinite; }
+  .alert-badge.alerta-naranja { display:block; background:#FFF3E0; color:#EA580C; animation:pulse-alerta 1.4s ease-in-out infinite; }
+  @keyframes pulse-alerta { 0%,100%{opacity:1} 50%{opacity:0.5} }
   .ac-top { display: flex; align-items: center; gap: 9px; }
   .ac-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: white; flex-shrink: 0; }
   .ac-avatar.online  { background: #16A34A; }
@@ -454,6 +460,12 @@
 
   var LABELS_PROY = { doctorsv:'DoctorSV', educacion:'Educación', marn:'MARN', global:'Global' };
 
+  var ALERTAS = {
+    'Comida':               { minutos: 60, nivel: 'roja',    label: '⚠ Comida > 1h' },
+    'Baño':                 { minutos: 10, nivel: 'naranja', label: '⚠ Baño > 10min' },
+    'Pausa administrativa': { minutos: 5,  nivel: 'naranja', label: '⚠ Pausa > 5min' }
+  };
+
   function estadoConfig(e) {
     return ESTADOS[e] || { color: '#F1F5F9', dot: '#94A3B8', text: '#64748B' };
   }
@@ -594,7 +606,20 @@
       var cfg    = estadoConfig(a.estadoActual || 'Fuera');
       var nombre = (a.nombre || a.email || '?').split(' ').slice(0, 2).join(' ');
       var pLabel = LABELS_PROY[a.proyecto] || '';
-      html += '<div class="agente-card '+(online ? 'card-activo' : 'card-fuera')+(seleccionado===a.id?' selected':'')+'" onclick="verHistorial(\''+a.id+'\')">'
+
+      // Calcular alerta inicial
+      var alertaClass = ''; var alertaCardClass = ''; var alertaTexto = '';
+      var cfgAlerta = online && a.estadoActual ? ALERTAS[a.estadoActual] : null;
+      if (cfgAlerta && a.estadoDesde) {
+        var desdeInit = a.estadoDesde.toDate ? a.estadoDesde.toDate() : new Date(a.estadoDesde);
+        if (Math.floor((new Date() - desdeInit) / 60000) >= cfgAlerta.minutos) {
+          alertaClass     = 'alerta-'+cfgAlerta.nivel;
+          alertaCardClass = ' card-alerta-'+cfgAlerta.nivel;
+          alertaTexto     = cfgAlerta.label;
+        }
+      }
+
+      html += '<div class="agente-card '+(online ? 'card-activo' : 'card-fuera')+alertaCardClass+(seleccionado===a.id?' selected':'')+'" onclick="verHistorial(\''+a.id+'\')">'
         + '<div class="ac-indicator '+(online?'online':'offline')+'"></div>'
         + '<div class="ac-top">'
         +   '<div class="ac-avatar '+(online?'online':'offline')+'">'+iniciales(a.nombre||a.email)+'</div>'
@@ -605,6 +630,7 @@
               + '<div class="ac-estado-nombre" style="color:'+cfg.text+'">'+(a.estadoActual||'En línea')+'</div>'
               + '<div class="ac-timer" style="color:'+cfg.text+'" id="timer-'+a.id+'">00:00:00</div>'
               + '</div>'
+              + '<div class="alert-badge '+alertaClass+'" id="alert-'+a.id+'">'+alertaTexto+'</div>'
             : '<div class="ac-sin-entrada">Sin entrada hoy</div>')
         + '</div>';
     });
@@ -619,6 +645,22 @@
         if (!el) { clearInterval(timers[a.id]); return; }
         var seg = Math.floor((new Date() - desde) / 1000);
         el.textContent = pad(Math.floor(seg/3600))+':'+pad(Math.floor((seg%3600)/60))+':'+pad(seg%60);
+
+        // Actualizar alerta en tiempo real
+        var cfgA = ALERTAS[a.estadoActual];
+        var alertEl = document.getElementById('alert-'+a.id);
+        if (cfgA && alertEl) {
+          var mins = Math.floor(seg / 60);
+          if (mins >= cfgA.minutos) {
+            var nivel = 'alerta-'+cfgA.nivel;
+            if (!alertEl.classList.contains(nivel)) {
+              alertEl.className = 'alert-badge '+nivel;
+              alertEl.textContent = cfgA.label;
+              var cardEl = alertEl.parentElement;
+              if (cardEl) cardEl.classList.add('card-alerta-'+cfgA.nivel);
+            }
+          }
+        }
       }, 1000);
     });
   }
