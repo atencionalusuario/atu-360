@@ -180,11 +180,20 @@
   function cargarSolicitudes() {
     db.collection('solicitudes')
       .where('agenteUid', '==', currentUser.uid)
-      .orderBy('fechaCreacion', 'desc')
       .onSnapshot(function(snap) {
         solicitudes = [];
         snap.forEach(function(doc){ solicitudes.push(Object.assign({ id: doc.id }, doc.data())); });
+        // Ordenar por fecha de creación descendente (cliente)
+        solicitudes.sort(function(a,b){
+          var ta = a.fechaCreacion ? a.fechaCreacion.seconds : 0;
+          var tb = b.fechaCreacion ? b.fechaCreacion.seconds : 0;
+          return tb - ta;
+        });
         renderLista();
+      }, function(err) {
+        console.error('Error cargando solicitudes:', err);
+        document.getElementById('solLista').innerHTML =
+          '<div class="loading" style="color:#DC2626">Error al cargar solicitudes.<br><small>'+err.message+'</small></div>';
       });
   }
 
@@ -361,20 +370,20 @@
           showToast(estado==='borrador' ? 'Borrador guardado.' : 'Solicitud enviada al supervisor.');
           if (estado !== 'borrador') verSolicitud(ref.id);
         })
-        .catch(function(e){ showToast('Error al guardar.'); console.error(e); });
+        .catch(function(e){ showToast('Error: ' + e.message); console.error(e); });
     } else {
       db.collection('solicitudes').doc(solActual).update(data)
         .then(function(){
           showToast(estado==='borrador' ? 'Borrador actualizado.' : 'Solicitud enviada al supervisor.');
           if (estado !== 'borrador') verSolicitud(solActual);
         })
-        .catch(function(e){ showToast('Error al guardar.'); console.error(e); });
+        .catch(function(e){ showToast('Error: ' + e.message); console.error(e); });
     }
   }
 
   function showToast(msg) {
     var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
-    setTimeout(function(){ t.classList.remove('show'); }, 3000);
+    setTimeout(function(){ t.classList.remove('show'); }, 5000);
   }
 </script>
 </body>

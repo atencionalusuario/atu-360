@@ -1077,23 +1077,25 @@
         });
         if (uids.length > 0) {
           db.collection('solicitudes').where('agenteUid','in',uids)
-            .orderBy('fechaCreacion','desc').onSnapshot(function(s) {
+            .onSnapshot(function(s) {
               svEquipoSols = [];
               s.forEach(function(d){ svEquipoSols.push(Object.assign({id:d.id},d.data())); });
+              svEquipoSols.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0)-(a.fechaCreacion?a.fechaCreacion.seconds:0); });
               renderSvEquipo();
               svActualizarBadge();
-            });
+            }, function(err){ console.error('Error equipo sols:', err); showToast('Error al cargar solicitudes del equipo: '+err.message); });
         } else {
           document.getElementById('svEquipoLista').innerHTML =
             '<div style="font-size:0.78rem;color:#94A3B8;padding:8px 0">No tienes agentes asignados.</div>';
         }
         // Mis propias solicitudes
         db.collection('solicitudes').where('agenteUid','==',currentUser.uid)
-          .orderBy('fechaCreacion','desc').onSnapshot(function(s) {
+          .onSnapshot(function(s) {
             svMiasSols = [];
             s.forEach(function(d){ svMiasSols.push(Object.assign({id:d.id},d.data())); });
+            svMiasSols.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0)-(a.fechaCreacion?a.fechaCreacion.seconds:0); });
             renderSvMias();
-          });
+          }, function(err){ console.error('Error mis sols:', err); });
       });
   }
 
