@@ -939,7 +939,7 @@
     if (!user) { window.location.href = 'login.html'; return; }
     currentUser = user;
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
-      if (!doc.exists || !['wfm','admin','superadmin','supervisor'].includes(doc.data().rol)) {
+      if (!doc.exists || !['jefe','wfm','admin','superadmin','supervisor'].includes(doc.data().rol)) {
         auth.signOut(); window.location.href = 'login.html'; return;
       }
       var d = doc.data();

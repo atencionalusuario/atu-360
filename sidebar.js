@@ -155,6 +155,9 @@ function initSidebar() {
       var nombre = doc.exists ? doc.data().nombre : user.email.split('@')[0];
       document.getElementById('sbName').textContent   = nombre;
       document.getElementById('sbAvatar').textContent = nombre.substring(0, 2).toUpperCase();
+      var LABELS_ROL = { agente:'Agente', supervisor:'Supervisor', editor:'Editor', admin:'Admin', wfm:'Jefe', jefe:'Jefe', superadmin:'Superadmin' };
+      var rolEl = document.querySelector('.sb-user-role');
+      if (rolEl && doc.exists) rolEl.textContent = LABELS_ROL[doc.data().rol] || 'Agente';
     });
     cargarBadges(user.uid, db);
     cargarFlashBadge(user.uid, db);
