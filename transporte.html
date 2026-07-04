@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="sidebar.css">
+<base href="/atu-360/">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATU 360 — Transporte</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+
+  /* CONTENT */
+  .tp-wrap { padding: 24px 28px; display: flex; flex-direction: column; gap: 16px; max-width: 780px; }
+
+  /* TABS */
+  .tp-tabs { display: flex; gap: 4px; background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 6px; width: fit-content; }
+  .tp-tab { padding: 8px 20px; border-radius: 7px; font-size: 0.82rem; font-weight: 600; cursor: pointer; border: none; background: none; color: #64748B; font-family: inherit; transition: all 0.15s; display: flex; align-items: center; gap: 7px; }
+  .tp-tab.active { background: #0F2070; color: white; }
+  .tp-tab svg { flex-shrink: 0; }
+
+  /* RUTA LABEL */
+  .tp-ruta-label { background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 10px 16px; font-size: 0.8rem; color: #1A3DAA; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+
+  /* FORM CARD */
+  .tp-form-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 22px 24px; display: flex; flex-direction: column; gap: 18px; }
+  .tp-form-title { font-size: 0.8rem; font-weight: 700; color: #0F2070; text-transform: uppercase; letter-spacing: .5px; padding-bottom: 12px; border-bottom: 2px solid #F1F5F9; }
+
+  /* HORA */
+  .tp-field label { font-size: 0.75rem; font-weight: 600; color: #374151; display: block; margin-bottom: 6px; }
+  .tp-select { padding: 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.83rem; font-family: inherit; color: #1E293B; background: #F8FAFC; outline: none; min-width: 160px; }
+  .tp-select:focus { border-color: #1A3DAA; background: white; }
+
+  /* CALENDARIO */
+  .tp-cal { border: 1.5px solid #E2E8F0; border-radius: 10px; overflow: hidden; }
+  .tp-cal-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; }
+  .tp-cal-mes { font-size: 0.85rem; font-weight: 700; color: #1E293B; text-transform: capitalize; }
+  .tp-cal-nav { background: none; border: none; cursor: pointer; color: #64748B; padding: 4px 8px; border-radius: 6px; font-size: 1rem; }
+  .tp-cal-nav:hover { background: #F1F5F9; color: #1A3DAA; }
+  .tp-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+  .tp-cal-dow { text-align: center; font-size: 0.65rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; padding: 8px 0; background: #FAFAFA; }
+  .tp-cal-day { text-align: center; padding: 7px 4px; font-size: 0.78rem; cursor: pointer; border-radius: 6px; margin: 2px; transition: all 0.1s; color: #374151; }
+  .tp-cal-day:hover:not(.vacio):not(.pasado) { background: #EFF6FF; color: #1A3DAA; }
+  .tp-cal-day.vacio { cursor: default; }
+  .tp-cal-day.pasado { color: #CBD5E1; cursor: not-allowed; }
+  .tp-cal-day.hoy { font-weight: 700; color: #1A3DAA; }
+  .tp-cal-day.seleccionado { background: #0F2070; color: white; font-weight: 700; border-radius: 6px; }
+  .tp-cal-day.seleccionado:hover { background: #1A3DAA; }
+  .tp-sel-count { font-size: 0.73rem; color: #64748B; margin-top: 8px; }
+  .tp-sel-count span { font-weight: 700; color: #1A3DAA; }
+
+  /* BOTÓN */
+  .btn-tp-enviar { background: #0F2070; color: white; border: none; border-radius: 8px; padding: 11px 24px; font-size: 0.83rem; font-weight: 700; cursor: pointer; font-family: inherit; align-self: flex-end; transition: all 0.15s; }
+  .btn-tp-enviar:hover { background: #1A3DAA; }
+  .btn-tp-enviar:disabled { background: #94A3B8; cursor: not-allowed; }
+
+  /* LISTA */
+  .tp-lista-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 22px 24px; }
+  .tp-lista-title { font-size: 0.8rem; font-weight: 700; color: #0F2070; text-transform: uppercase; letter-spacing: .5px; padding-bottom: 12px; border-bottom: 2px solid #F1F5F9; margin-bottom: 14px; }
+  .tp-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #F8FAFC; }
+  .tp-item:last-child { border-bottom: none; }
+  .tp-item-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .tp-item-icon.entrada { background: #EFF6FF; color: #1A3DAA; }
+  .tp-item-icon.salida  { background: #F0FDF4; color: #16A34A; }
+  .tp-item-body { flex: 1; min-width: 0; }
+  .tp-item-ruta { font-size: 0.8rem; font-weight: 600; color: #1E293B; }
+  .tp-item-fechas { font-size: 0.73rem; color: #64748B; margin-top: 3px; }
+  .tp-item-hora { font-size: 0.73rem; color: #374151; font-weight: 600; margin-top: 2px; }
+  .tp-item-meta { font-size: 0.68rem; color: #94A3B8; margin-top: 3px; }
+  .tp-estado { font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 10px; }
+  .tp-estado.pendiente  { background: #FEF3C7; color: #D97706; }
+  .tp-estado.confirmado { background: #F0FDF4; color: #16A34A; }
+  .tp-estado.cancelado  { background: #FEF2F2; color: #DC2626; }
+  .tp-empty { text-align: center; font-size: 0.82rem; color: #94A3B8; padding: 24px 0; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1E293B; color: white; padding: 10px 20px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 999; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="sidebar"></div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Transporte</h2>
+      <span class="topbar-sep">/</span>
+      <p id="topbarSub">Rutas de entrada</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="tp-wrap">
+
+    <!-- TABS -->
+    <div class="tp-tabs">
+      <button class="tp-tab active" id="tabEntrada" onclick="switchTipo('entrada')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+        Ruta de entrada
+      </button>
+      <button class="tp-tab" id="tabSalida" onclick="switchTipo('salida')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+        Ruta de salida
+      </button>
+    </div>
+
+    <!-- RUTA ACTIVA -->
+    <div class="tp-ruta-label" id="rutaLabel">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      <span id="rutaTexto">Salvador del Mundo → Tuscania</span>
+    </div>
+
+    <!-- FORMULARIO -->
+    <div class="tp-form-card">
+      <div class="tp-form-title">Nueva reserva</div>
+
+      <!-- HORA -->
+      <div class="tp-field">
+        <label>Hora de transporte</label>
+        <select class="tp-select" id="horaSelect"></select>
+      </div>
+
+      <!-- CALENDARIO -->
+      <div class="tp-field">
+        <label>Fechas del transporte <span style="color:#94A3B8;font-weight:400">(selección múltiple)</span></label>
+        <div class="tp-cal">
+          <div class="tp-cal-header">
+            <button class="tp-cal-nav" onclick="calMes(-1)">&#8249;</button>
+            <span class="tp-cal-mes" id="calMesLabel"></span>
+            <button class="tp-cal-nav" onclick="calMes(1)">&#8250;</button>
+          </div>
+          <div class="tp-cal-grid" id="calDow"></div>
+          <div class="tp-cal-grid" id="calGrid"></div>
+        </div>
+        <div class="tp-sel-count" id="selCount">Ninguna fecha seleccionada</div>
+      </div>
+
+      <button class="btn-tp-enviar" id="btnEnviar" onclick="enviarSolicitud()">Reservar transporte</button>
+    </div>
+
+    <!-- MIS RESERVAS -->
+    <div class="tp-lista-card">
+      <div class="tp-lista-title">Mis reservas</div>
+      <div id="tpLista"><div class="tp-empty">Cargando...</div></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var auth = firebase.auth();
+  var db   = firebase.firestore();
+
+  // RELOJ
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  // ESTADO
+  var tipoActivo  = 'entrada';
+  var fechasSeleccionadas = []; // ['2026-07-10', ...]
+  var calVista    = new Date();
+  calVista.setDate(1);
+  var currentUser = null;
+  var nombreUsuario = '';
+
+  var RUTAS = {
+    entrada: 'Salvador del Mundo → Tuscania',
+    salida:  'Tuscania → Salvador del Mundo'
+  };
+
+  // ===== TABS =====
+  function switchTipo(tipo) {
+    tipoActivo = tipo;
+    document.getElementById('tabEntrada').classList.toggle('active', tipo === 'entrada');
+    document.getElementById('tabSalida').classList.toggle('active',  tipo === 'salida');
+    document.getElementById('rutaTexto').textContent = RUTAS[tipo];
+    document.getElementById('topbarSub').textContent = tipo === 'entrada' ? 'Rutas de entrada' : 'Rutas de salida';
+    fechasSeleccionadas = [];
+    renderCal();
+    actualizarConteo();
+  }
+
+  // ===== HORA SELECT =====
+  (function() {
+    var sel = document.getElementById('horaSelect');
+    for (var h = 0; h < 24; h++) {
+      var opt = document.createElement('option');
+      opt.value = pad(h) + ':00';
+      opt.textContent = pad(h) + ':00';
+      sel.appendChild(opt);
+    }
+  })();
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  // ===== CALENDARIO =====
+  var DIAS_SEMANA = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  var MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  function calMes(dir) {
+    calVista.setMonth(calVista.getMonth() + dir);
+    renderCal();
+  }
+
+  function toISO(d) {
+    return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+  }
+
+  function renderCal() {
+    var hoy     = new Date(); hoy.setHours(0,0,0,0);
+    var anio    = calVista.getFullYear();
+    var mes     = calVista.getMonth();
+    var primerDia = new Date(anio, mes, 1).getDay();
+    var diasMes   = new Date(anio, mes+1, 0).getDate();
+    var hoyISO    = toISO(hoy);
+
+    document.getElementById('calMesLabel').textContent = MESES[mes] + ' ' + anio;
+
+    // Encabezados días
+    var dowHtml = DIAS_SEMANA.map(function(d){ return '<div class="tp-cal-dow">'+d+'</div>'; }).join('');
+    document.getElementById('calDow').innerHTML = dowHtml;
+
+    var html = '';
+    for (var i = 0; i < primerDia; i++) html += '<div class="tp-cal-day vacio"></div>';
+    for (var d = 1; d <= diasMes; d++) {
+      var fecha = anio + '-' + pad(mes+1) + '-' + pad(d);
+      var dObj  = new Date(anio, mes, d);
+      var clases = ['tp-cal-day'];
+      if (dObj < hoy) clases.push('pasado');
+      if (fecha === hoyISO) clases.push('hoy');
+      if (fechasSeleccionadas.indexOf(fecha) > -1) clases.push('seleccionado');
+      var pasado = dObj < hoy;
+      html += '<div class="' + clases.join(' ') + '"'
+        + (pasado ? '' : ' onclick="toggleFecha(\'' + fecha + '\')"')
+        + '>' + d + '</div>';
+    }
+    document.getElementById('calGrid').innerHTML = html;
+  }
+
+  function toggleFecha(fecha) {
+    var idx = fechasSeleccionadas.indexOf(fecha);
+    if (idx > -1) fechasSeleccionadas.splice(idx, 1);
+    else fechasSeleccionadas.push(fecha);
+    fechasSeleccionadas.sort();
+    renderCal();
+    actualizarConteo();
+  }
+
+  function actualizarConteo() {
+    var n = fechasSeleccionadas.length;
+    document.getElementById('selCount').innerHTML = n === 0
+      ? 'Ninguna fecha seleccionada'
+      : '<span>' + n + '</span> fecha' + (n > 1 ? 's' : '') + ' seleccionada' + (n > 1 ? 's' : '');
+  }
+
+  renderCal();
+
+  // ===== ENVIAR SOLICITUD =====
+  function enviarSolicitud() {
+    if (!currentUser) { showToast('Debes iniciar sesión.'); return; }
+    if (fechasSeleccionadas.length === 0) { showToast('Selecciona al menos una fecha.'); return; }
+    var hora = document.getElementById('horaSelect').value;
+    var btn  = document.getElementById('btnEnviar');
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    db.collection('transporte').add({
+      uid:            currentUser.uid,
+      email:          currentUser.email,
+      nombre:         nombreUsuario,
+      tipo:           tipoActivo,
+      ruta:           RUTAS[tipoActivo],
+      fechas:         fechasSeleccionadas,
+      hora:           hora,
+      estado:         'pendiente',
+      fechaSolicitud: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function() {
+      showToast('Reserva enviada correctamente.');
+      fechasSeleccionadas = [];
+      renderCal();
+      actualizarConteo();
+      btn.disabled = false;
+      btn.textContent = 'Reservar transporte';
+    }).catch(function(e) {
+      showToast('Error: ' + e.message);
+      btn.disabled = false;
+      btn.textContent = 'Reservar transporte';
+    });
+  }
+
+  // ===== CARGAR MIS RESERVAS =====
+  function cargarReservas(uid) {
+    db.collection('transporte')
+      .where('uid', '==', uid)
+      .onSnapshot(function(snap) {
+        var items = [];
+        snap.forEach(function(d){ items.push(Object.assign({ id: d.id }, d.data())); });
+        items.sort(function(a,b){
+          var ta = a.fechaSolicitud ? a.fechaSolicitud.seconds : 0;
+          var tb = b.fechaSolicitud ? b.fechaSolicitud.seconds : 0;
+          return tb - ta;
+        });
+        renderLista(items);
+      }, function(e){ console.error(e); });
+  }
+
+  function renderLista(items) {
+    var el = document.getElementById('tpLista');
+    if (items.length === 0) { el.innerHTML = '<div class="tp-empty">Sin reservas aún</div>'; return; }
+    var html = '';
+    items.forEach(function(r) {
+      var fechasStr = r.fechas && r.fechas.length
+        ? r.fechas.map(function(f){ return formatFecha(f); }).join(', ')
+        : '—';
+      var ts = r.fechaSolicitud ? r.fechaSolicitud.toDate().toLocaleString('es-SV',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
+      html += '<div class="tp-item">'
+        + '<div class="tp-item-icon ' + r.tipo + '">'
+        + (r.tipo === 'entrada'
+          ? '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>'
+          : '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>')
+        + '</div>'
+        + '<div class="tp-item-body">'
+        + '<div class="tp-item-ruta">' + (r.ruta || RUTAS[r.tipo] || r.tipo) + '</div>'
+        + '<div class="tp-item-fechas">' + fechasStr + '</div>'
+        + '<div class="tp-item-hora">&#x1F552; ' + (r.hora || '—') + '</div>'
+        + '<div class="tp-item-meta">Solicitado: ' + ts + '</div>'
+        + '</div>'
+        + '<span class="tp-estado ' + (r.estado||'pendiente') + '">' + ucFirst(r.estado||'pendiente') + '</span>'
+        + '</div>';
+    });
+    el.innerHTML = html;
+  }
+
+  function formatFecha(iso) {
+    var p = iso.split('-');
+    return p[2] + '/' + p[1] + '/' + p[0];
+  }
+
+  function ucFirst(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  // ===== AUTH =====
+  auth.onAuthStateChanged(function(user) {
+    if (!user) return;
+    currentUser = user;
+    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      nombreUsuario = doc.exists ? (doc.data().nombre || user.email.split('@')[0]) : user.email.split('@')[0];
+    });
+    cargarReservas(user.uid);
+  });
+
+  // ===== TOAST =====
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3500);
+  }
+</script>
+<script src="notif.js"></script>
+<script src="sidebar.js"></script>
+<script>
+  initSidebar();
+  auth.onAuthStateChanged(function(user){ if (user) initNotif(db, auth); });
+</script>
+</body>
+</html>
