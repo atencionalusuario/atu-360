@@ -128,12 +128,6 @@
     <div class="tp-form-card">
       <div class="tp-form-title">Nueva reserva</div>
 
-      <!-- HORA -->
-      <div class="tp-field">
-        <label>Hora de transporte</label>
-        <select class="tp-select" id="horaSelect"></select>
-      </div>
-
       <!-- CALENDARIO -->
       <div class="tp-field">
         <label>Fechas del transporte <span style="color:#94A3B8;font-weight:400">(selección múltiple)</span></label>
@@ -147,6 +141,12 @@
           <div class="tp-cal-grid" id="calGrid"></div>
         </div>
         <div class="tp-sel-count" id="selCount">Ninguna fecha seleccionada</div>
+      </div>
+
+      <!-- HORA -->
+      <div class="tp-field">
+        <label>Hora de transporte</label>
+        <select class="tp-select" id="horaSelect"></select>
       </div>
 
       <button class="btn-tp-enviar" id="btnEnviar" onclick="enviarSolicitud()">Reservar transporte</button>
