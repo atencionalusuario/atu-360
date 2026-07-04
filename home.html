@@ -232,9 +232,11 @@
   var auth = firebase.auth();
   var db   = firebase.firestore();
 </script>
+<script src="notif.js"></script>
 <script src="sidebar.js"></script>
 <script>
   initSidebar();
+  initNotif(db, auth);
 
   // Cargar nombre del agente
   firebase.auth().onAuthStateChanged(function(user) {

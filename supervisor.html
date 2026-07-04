@@ -1737,13 +1737,24 @@
   }
 
   function svAprobar(id) {
+    var sol = svEquipoSols.find(function(s){ return s.id===id; });
     db.collection('solicitudes').doc(id).update({
       estado: 'pendiente-admin',
       supervisorUid:    currentUser.uid,
       supervisorEmail:  currentUser.email,
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(function(){ showToast('Solicitud aprobada — enviada al administrador.'); })
-      .catch(function(e){ showToast('Error: '+e.message); });
+    }).then(function(){
+      showToast('Solicitud aprobada — enviada al administrador.');
+      if (sol && sol.agenteUid) {
+        ntfEnviar(db, {
+          uid: sol.agenteUid,
+          titulo: 'Solicitud aprobada por supervisor',
+          mensaje: 'Tu solicitud "' + (sol.tipo||'solicitud') + '" fue aprobada y está en revisión del administrador.',
+          tipo: 'solicitud', subTipo: 'aprobada',
+          remitenteNombre: currentUser.displayName || currentUser.email.split('@')[0]
+        });
+      }
+    }).catch(function(e){ showToast('Error: '+e.message); });
   }
 
   function svMostrarRechazo() {
@@ -1763,14 +1774,25 @@
   function svConfirmarRechazo(id) {
     var nota = (document.getElementById('svNotaTexto').value||'').trim();
     if (!nota) { showToast('Escribe el motivo del rechazo.'); return; }
+    var sol = svEquipoSols.find(function(s){ return s.id===id; });
     db.collection('solicitudes').doc(id).update({
       estado: 'rechazada',
       notaRechazo: nota,
       supervisorUid:   currentUser.uid,
       supervisorEmail: currentUser.email,
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(function(){ showToast('Solicitud rechazada.'); })
-      .catch(function(e){ showToast('Error: '+e.message); });
+    }).then(function(){
+      showToast('Solicitud rechazada.');
+      if (sol && sol.agenteUid) {
+        ntfEnviar(db, {
+          uid: sol.agenteUid,
+          titulo: 'Solicitud rechazada',
+          mensaje: 'Tu solicitud "' + (sol.tipo||'solicitud') + '" fue rechazada. Motivo: ' + nota,
+          tipo: 'solicitud', subTipo: 'rechazada',
+          remitenteNombre: currentUser.displayName || currentUser.email.split('@')[0]
+        });
+      }
+    }).catch(function(e){ showToast('Error: '+e.message); });
   }
 
   function verSvMia(id) {
@@ -2244,6 +2266,10 @@
       enLinea:      estadoNombre !== 'Fuera' && estadoNombre !== 'Jornada finalizada'
     }).catch(function(e) { console.error('Error estado:', e); });
   }
+</script>
+<script src="notif.js"></script>
+<script>
+  initNotif(db, auth);
 </script>
 </body>
 </html>

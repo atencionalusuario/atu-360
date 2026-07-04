@@ -210,9 +210,11 @@
     grid.style.display = visibles.length === 0 ? 'none' : 'grid';
   }
 </script>
+<script src="notif.js"></script>
 <script src="sidebar.js"></script>
 <script>
   initSidebar();
+  initNotif(db, auth);
 </script>
 </body>
 </html>

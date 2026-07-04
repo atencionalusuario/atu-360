@@ -142,9 +142,11 @@
   var auth = firebase.auth();
   var db   = firebase.firestore();
 </script>
+<script src="notif.js"></script>
 <script src="sidebar.js"></script>
 <script>
   initSidebar();
+  initNotif(db, auth);
 
   setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');

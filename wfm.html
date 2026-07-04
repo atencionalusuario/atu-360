@@ -196,9 +196,13 @@
   </div>
   <div class="sb-nav">
     <div class="nav-section-label">Gestión</div>
-    <div class="nav-item active">
+    <div class="nav-item active" id="navUsuarios" onclick="wfmSwitch('usuarios')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
       Usuarios
+    </div>
+    <div class="nav-item" id="navNotif" onclick="wfmSwitch('notif')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      Notificaciones
     </div>
   </div>
   <div class="sb-bottom">
@@ -238,7 +242,37 @@
     </div>
   </div>
 
-  <div class="body-wrap">
+  <!-- VISTA NOTIFICACIONES -->
+  <div id="vistaNotif" style="display:none;padding:24px 28px;max-width:620px;display:none;flex-direction:column;gap:16px">
+    <div style="background:white;border-radius:10px;border:1px solid #E2E8F0;padding:24px">
+      <div style="font-size:0.82rem;font-weight:700;color:#0F2070;text-transform:uppercase;letter-spacing:.5px;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid #F1F5F9">Enviar notificación</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div>
+          <label style="font-size:0.75rem;font-weight:600;color:#374151;display:block;margin-bottom:4px">Destinatario</label>
+          <select id="wfmNotifDest" style="width:100%;padding:9px 12px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:0.83rem;font-family:inherit;color:#1E293B;background:#F8FAFC;outline:none">
+            <option value="todos">Todos (agentes y supervisores)</option>
+            <option value="agente">Solo agentes</option>
+            <option value="supervisor">Solo supervisores</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.75rem;font-weight:600;color:#374151;display:block;margin-bottom:4px">Título</label>
+          <input id="wfmNotifTitulo" type="text" maxlength="80" placeholder="Ej: Actualización de sistema" style="width:100%;padding:9px 12px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:0.83rem;font-family:inherit;color:#1E293B;background:#F8FAFC;outline:none">
+        </div>
+        <div>
+          <label style="font-size:0.75rem;font-weight:600;color:#374151;display:block;margin-bottom:4px">Mensaje</label>
+          <textarea id="wfmNotifMsg" rows="3" maxlength="300" placeholder="Escribe el mensaje aquí..." style="width:100%;padding:9px 12px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:0.83rem;font-family:inherit;color:#1E293B;background:#F8FAFC;outline:none;resize:vertical"></textarea>
+        </div>
+        <button onclick="wfmEnviarNotif()" style="background:#0F2070;color:white;border:none;border-radius:8px;padding:10px 20px;font-size:0.82rem;font-weight:700;cursor:pointer;font-family:inherit;align-self:flex-end">Enviar notificación</button>
+      </div>
+    </div>
+    <div style="background:white;border-radius:10px;border:1px solid #E2E8F0;padding:24px">
+      <div style="font-size:0.82rem;font-weight:700;color:#0F2070;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid #F1F5F9">Historial enviadas</div>
+      <div id="wfmNotifHistorial" style="font-size:0.8rem;color:#94A3B8">Cargando...</div>
+    </div>
+  </div>
+
+  <div class="body-wrap" id="vistaUsuarios">
     <div class="table-area">
 
       <!-- STATS -->
@@ -994,6 +1028,78 @@
   }
 
   // La carga inicial la dispara onAuthStateChanged → cargarUsuarios()
+
+  // ===== SWITCH DE VISTAS WFM =====
+  function wfmSwitch(vista) {
+    document.getElementById('vistaUsuarios').style.display = vista === 'usuarios' ? 'flex' : 'none';
+    document.getElementById('vistaNotif').style.display    = vista === 'notif'    ? 'flex' : 'none';
+    document.getElementById('navUsuarios').classList.toggle('active', vista === 'usuarios');
+    document.getElementById('navNotif').classList.toggle('active',    vista === 'notif');
+    if (vista === 'notif') wfmCargarHistorial();
+  }
+
+  // ===== NOTIFICACIONES BROADCAST =====
+  function wfmEnviarNotif() {
+    var dest   = document.getElementById('wfmNotifDest').value;
+    var titulo = (document.getElementById('wfmNotifTitulo').value || '').trim();
+    var msg    = (document.getElementById('wfmNotifMsg').value || '').trim();
+    if (!titulo || !msg) { showToast('Completa el título y el mensaje.'); return; }
+    var user = auth.currentUser;
+    db.collection('notificaciones').add({
+      uid:             dest,
+      titulo:          titulo,
+      mensaje:         msg,
+      tipo:            'admin',
+      subTipo:         'admin',
+      remitenteNombre: user ? (user.displayName || user.email.split('@')[0]) : 'WFM',
+      leidaPor:        [],
+      timestamp:       firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function() {
+      showToast('Notificación enviada.');
+      document.getElementById('wfmNotifTitulo').value = '';
+      document.getElementById('wfmNotifMsg').value = '';
+      wfmCargarHistorial();
+    }).catch(function(e) { showToast('Error: ' + e.message); });
+  }
+
+  function wfmCargarHistorial() {
+    var el = document.getElementById('wfmNotifHistorial');
+    el.textContent = 'Cargando...';
+    db.collection('notificaciones')
+      .where('tipo', '==', 'admin')
+      .get().then(function(snap) {
+        var rows = [];
+        snap.forEach(function(d) { rows.push(Object.assign({ id: d.id }, d.data())); });
+        rows.sort(function(a, b) {
+          return (b.timestamp ? b.timestamp.seconds : 0) - (a.timestamp ? a.timestamp.seconds : 0);
+        });
+        if (rows.length === 0) { el.textContent = 'Sin notificaciones enviadas aún.'; return; }
+        var DEST = { todos: 'Todos', agente: 'Agentes', supervisor: 'Supervisores' };
+        var html = '<table style="width:100%;border-collapse:collapse;font-size:0.78rem">'
+          + '<thead><tr style="color:#94A3B8;text-align:left"><th style="padding:6px 8px">Título</th><th style="padding:6px 8px">Destinatario</th><th style="padding:6px 8px">Leídas</th><th style="padding:6px 8px">Fecha</th></tr></thead><tbody>';
+        rows.forEach(function(n) {
+          var ts = n.timestamp ? n.timestamp.toDate().toLocaleString('es-SV', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '—';
+          html += '<tr style="border-top:1px solid #F1F5F9">'
+            + '<td style="padding:8px;color:#1E293B;font-weight:600">' + escHtml(n.titulo) + '<div style="font-weight:400;color:#64748B;margin-top:2px">' + escHtml(n.mensaje) + '</div></td>'
+            + '<td style="padding:8px;color:#374151">' + (DEST[n.uid] || n.uid) + '</td>'
+            + '<td style="padding:8px;color:#374151">' + (n.leidaPor ? n.leidaPor.length : 0) + '</td>'
+            + '<td style="padding:8px;color:#94A3B8;white-space:nowrap">' + ts + '</td>'
+            + '</tr>';
+        });
+        html += '</tbody></table>';
+        el.innerHTML = html;
+      }).catch(function(e) { el.textContent = 'Error al cargar: ' + e.message; });
+  }
+
+  function escHtml(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+</script>
+<script src="notif.js"></script>
+<script>
+  auth.onAuthStateChanged(function(user) {
+    if (user) initNotif(db, auth);
+  });
 </script>
 </body>
 </html>
