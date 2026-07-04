@@ -83,6 +83,23 @@
   .tp-estado.cancelado  { background: #FEF2F2; color: #DC2626; }
   .tp-empty { text-align: center; font-size: 0.82rem; color: #94A3B8; padding: 24px 0; }
 
+  /* MODAL CONFIRMACIÓN */
+  .tp-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; display: none; align-items: center; justify-content: center; }
+  .tp-modal-overlay.open { display: flex; }
+  .tp-modal { background: white; border-radius: 14px; padding: 28px 28px 24px; max-width: 420px; width: 90%; box-shadow: 0 8px 40px rgba(0,0,0,0.16); }
+  .tp-modal-icon { width: 48px; height: 48px; background: #EFF6FF; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; color: #1A3DAA; }
+  .tp-modal-title { font-size: 0.95rem; font-weight: 700; color: #1E293B; margin-bottom: 6px; }
+  .tp-modal-sub { font-size: 0.8rem; color: #64748B; margin-bottom: 18px; line-height: 1.5; }
+  .tp-modal-resumen { background: #F8FAFC; border-radius: 8px; border: 1px solid #E2E8F0; padding: 12px 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 6px; }
+  .tp-modal-fila { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; font-size: 0.78rem; }
+  .tp-modal-fila span:first-child { color: #94A3B8; font-weight: 500; flex-shrink: 0; }
+  .tp-modal-fila span:last-child { color: #1E293B; font-weight: 600; text-align: right; }
+  .tp-modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn-modal-cancel { padding: 9px 18px; border: 1.5px solid #E2E8F0; border-radius: 8px; background: white; color: #64748B; font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-modal-cancel:hover { background: #F8FAFC; }
+  .btn-modal-confirm { padding: 9px 18px; border: none; border-radius: 8px; background: #0F2070; color: white; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-modal-confirm:hover { background: #1A3DAA; }
+
   /* TOAST */
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1E293B; color: white; padding: 10px 20px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 999; white-space: nowrap; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -158,6 +175,27 @@
       <div id="tpLista"><div class="tp-empty">Cargando...</div></div>
     </div>
 
+  </div>
+</div>
+
+<!-- MODAL CONFIRMACIÓN -->
+<div class="tp-modal-overlay" id="tpModalOverlay">
+  <div class="tp-modal">
+    <div class="tp-modal-icon">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    </div>
+    <div class="tp-modal-title">Confirmar reserva</div>
+    <div class="tp-modal-sub">¿Está seguro que desea reservar este servicio de transporte?</div>
+    <div class="tp-modal-resumen">
+      <div class="tp-modal-fila"><span>Ruta</span><span id="mRuta">—</span></div>
+      <div class="tp-modal-fila"><span>Fechas</span><span id="mFechas">—</span></div>
+      <div class="tp-modal-fila"><span>Hora</span><span id="mHora">—</span></div>
+      <div class="tp-modal-fila"><span>Colaborador</span><span id="mNombre">—</span></div>
+    </div>
+    <div class="tp-modal-btns">
+      <button class="btn-modal-cancel" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-modal-confirm" id="btnConfirmar" onclick="confirmarReserva()">Sí, reservar</button>
+    </div>
   </div>
 </div>
 
@@ -282,12 +320,26 @@
 
   renderCal();
 
-  // ===== ENVIAR SOLICITUD =====
+  // ===== MODAL CONFIRMACIÓN =====
   function enviarSolicitud() {
     if (!currentUser) { showToast('Debes iniciar sesión.'); return; }
     if (fechasSeleccionadas.length === 0) { showToast('Selecciona al menos una fecha.'); return; }
     var hora = document.getElementById('horaSelect').value;
-    var btn  = document.getElementById('btnEnviar');
+    var fechasStr = fechasSeleccionadas.map(function(f){ return formatFecha(f); }).join(', ');
+    document.getElementById('mRuta').textContent   = RUTAS[tipoActivo];
+    document.getElementById('mFechas').textContent = fechasStr;
+    document.getElementById('mHora').textContent   = hora;
+    document.getElementById('mNombre').textContent = nombreUsuario;
+    document.getElementById('tpModalOverlay').classList.add('open');
+  }
+
+  function cerrarModal() {
+    document.getElementById('tpModalOverlay').classList.remove('open');
+  }
+
+  function confirmarReserva() {
+    var hora = document.getElementById('horaSelect').value;
+    var btn  = document.getElementById('btnConfirmar');
     btn.disabled = true;
     btn.textContent = 'Enviando...';
 
@@ -302,16 +354,17 @@
       estado:         'pendiente',
       fechaSolicitud: firebase.firestore.FieldValue.serverTimestamp()
     }).then(function() {
+      cerrarModal();
       showToast('Reserva enviada correctamente.');
       fechasSeleccionadas = [];
       renderCal();
       actualizarConteo();
       btn.disabled = false;
-      btn.textContent = 'Reservar transporte';
+      btn.textContent = 'Sí, reservar';
     }).catch(function(e) {
       showToast('Error: ' + e.message);
       btn.disabled = false;
-      btn.textContent = 'Reservar transporte';
+      btn.textContent = 'Sí, reservar';
     });
   }
 
