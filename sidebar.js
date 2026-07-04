@@ -88,9 +88,8 @@ function renderSidebar(paginaActiva, rol) {
     + '<div class="sb-tagline">by DoctorSV</div>'
     + '</div>'
     + '<div class="sb-nav">'
-    + '<div class="nav-section-label">Principal</div>'
     + navHtml
-    + (repHtml ? '<div class="nav-section-label">Reportes</div>' + repHtml : '')
+    + repHtml
     + '</div>'
     + (conBadges
       ? '<div class="sb-badges"><div class="sb-badges-label">Mis badges</div><div class="badges-grid" id="badgesGrid"></div></div>'
