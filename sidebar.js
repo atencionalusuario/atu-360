@@ -46,6 +46,22 @@ var NAV_POR_ROL = {
     principal: ['editor', 'solicitudes', 'biblioteca', 'miturno'],
     reportes:  ['transporte']
   },
+  admin: {
+    principal: ['transporte'],
+    reportes:  []
+  },
+  jefe: {
+    principal: ['transporte'],
+    reportes:  []
+  },
+  wfm: {
+    principal: ['transporte'],
+    reportes:  []
+  },
+  superadmin: {
+    principal: ['transporte'],
+    reportes:  []
+  },
   // Fallback para cualquier otro rol que use sidebar.js
   _default: {
     principal: ['home', 'flash', 'solicitudes', 'biblioteca', 'miturno'],
@@ -185,7 +201,7 @@ function initSidebar() {
     var db = firebase.firestore();
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
       var rol    = doc.exists ? (doc.data().rol || 'agente') : 'agente';
-      var nombre = doc.exists ? doc.data().nombre : user.email.split('@')[0];
+      var nombre = (doc.exists && doc.data().nombre) ? doc.data().nombre : user.email.split('@')[0];
       renderSidebar(paginaActiva, rol);
       document.getElementById('sbName').textContent   = nombre;
       document.getElementById('sbAvatar').textContent = nombre.substring(0, 2).toUpperCase();
