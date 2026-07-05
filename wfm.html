@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATU 360 — WFM</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+
+  /* SIDEBAR */
+  .sidebar { width: 220px; flex-shrink: 0; background: #0F2070; display: flex; flex-direction: column; min-height: 100vh; position: sticky; top: 0; height: 100vh; }
+  .sb-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .sb-name { font-size: 1.25rem; font-weight: 800; color: white; }
+  .sb-name span { color: #29ABE2; }
+  .sb-tagline { font-size: 0.62rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 2px; margin-top: 3px; }
+  .sb-nav { padding: 20px 12px; flex: 1; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 6px; font-size: 0.8rem; color: rgba(255,255,255,0.55); cursor: pointer; transition: all 0.15s; margin-bottom: 1px; }
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+  .nav-item.active { background: rgba(41,171,226,0.15); color: white; font-weight: 600; border-left: 2px solid #29ABE2; }
+  .sb-bottom { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .sb-user-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .sb-avatar { width: 32px; height: 32px; border-radius: 50%; background: #29ABE2; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: white; font-weight: 700; flex-shrink: 0; }
+  .sb-user-name { font-size: 0.76rem; font-weight: 600; color: white; }
+  .sb-user-role { font-size: 0.62rem; color: #29ABE2; font-weight: 600; margin-top: 1px; }
+  .btn-logout { width: 100%; padding: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: rgba(255,255,255,0.5); font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-logout:hover { background: rgba(255,255,255,0.1); color: white; }
+
+  /* MAIN */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; flex-shrink: 0; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .topbar-right { display: flex; align-items: center; gap: 8px; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+
+  /* CONTROLES */
+  .controles { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; flex-shrink: 0; }
+  .ctrl-input { padding: 8px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.78rem; font-family: inherit; color: #1E293B; background: white; outline: none; width: 200px; }
+  .ctrl-input:focus { border-color: #1A3DAA; }
+  .ctrl-select { padding: 8px 10px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.78rem; font-family: inherit; color: #1E293B; background: white; outline: none; cursor: pointer; }
+  .ctrl-select:focus { border-color: #1A3DAA; }
+  .btn-dir { width: 30px; height: 30px; border: 1.5px solid #E2E8F0; border-radius: 6px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #64748B; transition: all 0.15s; }
+  .btn-dir:hover { border-color: #1A3DAA; color: #1A3DAA; }
+
+  /* STATS */
+  .stats-row { display: flex; gap: 10px; flex-shrink: 0; }
+  .stat-chip { background: white; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
+  .stat-chip-val { font-size: 1.3rem; font-weight: 800; color: #1A3DAA; line-height: 1; }
+  .stat-chip-label { font-size: 0.68rem; color: #94A3B8; font-weight: 500; }
+  .stat-chip.activos .stat-chip-val  { color: #16A34A; }
+  .stat-chip.inactivos .stat-chip-val { color: #DC2626; }
+
+  /* PANEL DETALLE */
+  .dp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+  .dp-field { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
+  .dp-label { font-size: 0.65rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; }
+  .dp-val { font-size: 0.8rem; color: #1E293B; font-weight: 500; }
+  .dp-section-title { font-size: 0.62rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #F1F5F9; }
+  .btn-sec { padding: 8px 14px; border: 1.5px solid #E2E8F0; border-radius: 7px; background: white; font-size: 0.78rem; font-weight: 600; color: #374151; cursor: pointer; font-family: inherit; flex: 1; }
+  .btn-sec:hover { border-color: #CBD5E1; }
+  .btn-pri { padding: 8px 14px; border: none; border-radius: 7px; background: #1A3DAA; color: white; font-size: 0.78rem; font-weight: 700; cursor: pointer; font-family: inherit; flex: 1; }
+  .btn-pri:hover { opacity: 0.88; }
+
+  /* SOLICITUDES */
+  .sol-tab { padding: 7px 16px; border-radius: 7px; font-size: 0.78rem; font-weight: 600; cursor: pointer; border: 1.5px solid #E2E8F0; background: white; color: #64748B; font-family: inherit; transition: all 0.15s; }
+  .sol-tab.active { background: #1A3DAA; color: white; border-color: #1A3DAA; }
+  .sol-item { background: white; border: 1.5px solid #F1F5F9; border-radius: 9px; padding: 11px 13px; cursor: pointer; transition: all 0.15s; }
+  .sol-item:hover { border-color: #29ABE2; }
+  .sol-item.active { border-color: #1A3DAA; background: #EEF2FF; }
+  .sol-item-nombre { font-size: 0.82rem; font-weight: 700; color: #1E293B; }
+  .sol-item-tipo { font-size: 0.7rem; color: #64748B; margin-top: 1px; }
+  .sol-item-fecha { font-size: 0.67rem; color: #94A3B8; white-space: nowrap; margin-top: 3px; }
+  .sol-estado { font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 3px; text-transform: uppercase; white-space: nowrap; }
+  .sol-estado.pendiente-admin { background: #FFF7ED; color: #C2410C; }
+  .sol-estado.aprobada  { background: #F0FDF4; color: #16A34A; }
+  .sol-estado.rechazada { background: #FEF2F2; color: #DC2626; }
+  .sol-nota-area { display: none; flex-direction: column; gap: 8px; padding: 14px; background: #FFF7ED; border-radius: 8px; border: 1px solid #FDE68A; }
+  .sol-nota-area.show { display: flex; }
+
+  /* TIEMPO REAL */
+  .rt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; overflow-y: auto; flex: 1; align-content: start; }
+  .ac-card { background: white; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 12px; }
+  .ac-card.offline { opacity: 0.55; }
+  .ac-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .ac-indicator { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .ac-indicator.on  { background: #16A34A; box-shadow: 0 0 0 2px rgba(22,163,74,0.2); }
+  .ac-indicator.off { background: #CBD5E1; }
+  .ac-av { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; color: white; font-weight: 700; flex-shrink: 0; }
+  .ac-av.online  { background: #1A3DAA; }
+  .ac-av.offline { background: #94A3B8; }
+  .ac-nombre   { font-size: 0.78rem; font-weight: 700; color: #1E293B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ac-proyecto { font-size: 0.65rem; color: #94A3B8; }
+  .ac-estado-badge { font-size: 0.68rem; font-weight: 600; padding: 4px 8px; border-radius: 5px; text-align: center; }
+  .ac-sin-marcaje { font-size: 0.72rem; color: #94A3B8; padding: 4px 0; }
+  .ac-rt-timer { font-size: 0.68rem; font-variant-numeric: tabular-nums; font-weight: 700; text-align: right; margin-top: 2px; }
+
+  /* TURNO */
+  .turno-agent-item { background: white; border: 1.5px solid #E2E8F0; border-radius: 9px; padding: 10px 12px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 9px; }
+  .turno-agent-item:hover { border-color: #29ABE2; }
+  .turno-agent-item.active { border-color: #1A3DAA; background: #EEF2FF; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+  .cal-dia { border-radius: 5px; padding: 4px 2px; text-align: center; font-size: 0.65rem; }
+  .cal-dia.laboral  { background: #EEF2FF; color: #1A3DAA; }
+  .cal-dia.descanso { background: #F1F5F9; color: #94A3B8; }
+  .cal-dia.hoy      { outline: 2px solid #1A3DAA; outline-offset: 1px; }
+  .cal-dia.vacio    { background: transparent; }
+  .dia-num { display: block; font-weight: 700; font-size: 0.72rem; }
+  .dia-tag { display: block; font-size: 0.52rem; text-transform: uppercase; margin-top: 1px; opacity: 0.7; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-name">ATU <span>360</span></div>
+    <div class="sb-tagline">WFM</div>
+  </div>
+  <div class="sb-nav">
+    <div class="nav-item active" id="navSolicitudes" onclick="wfmSwitch('solicitudes')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Solicitudes
+    </div>
+    <div class="nav-item" id="navTiempoReal" onclick="wfmSwitch('tiemporeal')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Tiempo Real
+    </div>
+    <div class="nav-item" id="navTurno" onclick="wfmSwitch('turno')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Gestión de Turnos
+    </div>
+    <div class="nav-item" id="navTransporte" onclick="window.location.href='https://atencionalusuario.github.io/atu-360/transporte.html'">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      Transporte
+    </div>
+  </div>
+  <div class="sb-bottom">
+    <div class="sb-user-wrap">
+      <div class="sb-avatar" id="sbAvatar">WF</div>
+      <div>
+        <div class="sb-user-name" id="sbName">WFM</div>
+        <div class="sb-user-role">WFM</div>
+      </div>
+    </div>
+    <button class="btn-logout" id="btnLogout">Cerrar sesión</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2 id="topbarTitle">Solicitudes</h2>
+      <span class="topbar-sep" id="topbarSep">/</span>
+      <p id="totalLabel">Aprobación final</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <!-- VISTA SOLICITUDES -->
+  <div id="vistaSolicitudes" style="display:flex;flex:1;overflow:hidden;padding:20px 24px;flex-direction:column;gap:12px">
+    <div style="display:flex;gap:6px;flex-shrink:0">
+      <button class="sol-tab active" id="wfmSolTabPend" onclick="wfmSolCambiarTab('pendientes')">Por aprobar <span id="wfmSolBadge" style="color:#DC2626;font-weight:800"></span></button>
+      <button class="sol-tab" id="wfmSolTabHist" onclick="wfmSolCambiarTab('historial')">Historial</button>
+    </div>
+    <div style="display:flex;flex:1;overflow:hidden;background:white;border-radius:10px;border:1px solid #E2E8F0">
+      <div style="width:340px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;padding:12px;border-right:1px solid #F1F5F9;gap:5px">
+        <div id="wfmSolLista" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:5px">
+          <div style="font-size:0.8rem;color:#94A3B8">Cargando...</div>
+        </div>
+      </div>
+      <div id="wfmSolDetalle" style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:0.82rem">Selecciona una solicitud para ver el detalle.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISTA TIEMPO REAL -->
+  <div id="vistaTiempoReal" style="display:none;flex:1;overflow:hidden;padding:20px 24px;flex-direction:column;gap:12px">
+    <div class="stats-row" id="wfmRTStats"></div>
+    <div class="controles">
+      <input class="ctrl-input" id="wfmRTBusq" placeholder="Buscar agente..." oninput="wfmRenderRT()">
+      <select class="ctrl-select" id="wfmRTFiltProy" onchange="wfmRenderRT()">
+        <option value="">Todos los proyectos</option>
+        <option value="doctorsv">DoctorSV</option>
+        <option value="educacion">Educación</option>
+        <option value="marn">MARN</option>
+        <option value="global">Global</option>
+      </select>
+      <select class="ctrl-select" id="wfmRTFiltEst" onchange="wfmRenderRT()">
+        <option value="">Todos los estados</option>
+      </select>
+      <span id="wfmRTCount" style="font-size:0.75rem;color:#94A3B8;margin-left:4px"></span>
+    </div>
+    <div class="rt-grid" id="wfmRTGrid">
+      <div style="font-size:0.8rem;color:#94A3B8;grid-column:1/-1">Cargando...</div>
+    </div>
+  </div>
+
+  <!-- VISTA TURNO -->
+  <div id="vistaTurno" style="display:none;flex:1;overflow:hidden;padding:20px 24px;flex-direction:column;gap:12px">
+    <div style="display:flex;flex:1;overflow:hidden;background:white;border-radius:10px;border:1px solid #E2E8F0">
+      <div style="width:280px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;padding:12px;border-right:1px solid #F1F5F9;gap:8px">
+        <input class="ctrl-input" id="wfmTurnoBusq" placeholder="Buscar agente..." oninput="wfmRenderTurnoLista()" style="width:100%">
+        <div id="wfmTurnoLista" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:5px">
+          <div style="font-size:0.8rem;color:#94A3B8">Cargando...</div>
+        </div>
+      </div>
+      <div id="wfmTurnoDetalle" style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:0.82rem">Selecciona un agente para ver su turno.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var auth = firebase.auth();
+  var db   = firebase.firestore();
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+
+  var currentUser = null;
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  var LABELS_PROY = { doctorsv:'DoctorSV', educacion:'Educación', marn:'MARN', global:'Global' };
+
+  function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function wfmInic(n){ return (n||'?').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase(); }
+  function wfmPad(n){ return String(n).padStart(2,'0'); }
+  function dpField(label,val){ return '<div class="dp-field"><div class="dp-label">'+label+'</div><div class="dp-val">'+val+'</div></div>'; }
+  function showToast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},3000); }
+
+  // ===== AUTH =====
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = BASE+'login.html'; return; }
+    currentUser = user;
+    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      if (!doc.exists || !['wfm'].includes(doc.data().rol)) {
+        auth.signOut(); window.location.href = BASE+'login.html'; return;
+      }
+      var d = doc.data();
+      var nombre = d.nombre || user.email.split('@')[0];
+      document.getElementById('sbName').textContent   = nombre;
+      document.getElementById('sbAvatar').textContent = wfmInic(nombre);
+      wfmIniciarSolicitudes();
+    });
+  });
+
+  document.getElementById('btnLogout').addEventListener('click', function() {
+    auth.signOut().then(function() { window.location.href = BASE+'login.html'; });
+  });
+
+  // ===== SWITCH DE VISTAS =====
+  var WFM_VISTAS  = ['vistaSolicitudes','vistaTiempoReal','vistaTurno'];
+  var WFM_CLAVES  = ['solicitudes','tiemporeal','turno'];
+  var WFM_NAVIDS  = ['navSolicitudes','navTiempoReal','navTurno'];
+  var WFM_TITULOS = { solicitudes:'Solicitudes', tiemporeal:'Tiempo Real', turno:'Gestión de Turnos' };
+  var WFM_SUBS    = { solicitudes:'Aprobación final', tiemporeal:'Todos los agentes', turno:'Turnos asignados' };
+
+  function wfmSwitch(vista) {
+    WFM_VISTAS.forEach(function(id,i){ var el=document.getElementById(id); if(el) el.style.display=(WFM_CLAVES[i]===vista)?'flex':'none'; });
+    WFM_NAVIDS.forEach(function(id,i){ var el=document.getElementById(id); if(el) el.classList.toggle('active',WFM_CLAVES[i]===vista); });
+    var tEl=document.getElementById('topbarTitle'); if(tEl) tEl.textContent=WFM_TITULOS[vista]||'WFM';
+    var sEl=document.getElementById('totalLabel');  if(sEl) sEl.textContent=WFM_SUBS[vista]||'';
+    if (vista==='tiemporeal' && !wfmRTCargado)   wfmIniciarRT();
+    if (vista==='turno'      && !wfmTurnoCargado) wfmIniciarTurno();
+  }
+
+  // ===== SOLICITUDES =====
+  var wfmSolCargado    = false;
+  var wfmSolPendientes = [];
+  var wfmSolHistorial  = [];
+  var wfmSolTab        = 'pendientes';
+  var wfmSolSel        = null;
+  var SOL_TIPOS = { vacaciones:'Vacaciones', permiso:'Permiso', capacitacion:'Capacitación', ajuste:'Ajuste de marcaje', otro:'Otro' };
+
+  function wfmSolEstadoLabel(e){ var m={'pendiente-admin':'Por aprobar',aprobada:'Aprobada',rechazada:'Rechazada','pendiente-sup':'En supervisor',borrador:'Borrador'}; return m[e]||e; }
+
+  function wfmIniciarSolicitudes() {
+    wfmSolCargado = true;
+    db.collection('solicitudes').where('estado','==','pendiente-admin')
+      .onSnapshot(function(snap) {
+        wfmSolPendientes=[];
+        snap.forEach(function(d){ wfmSolPendientes.push(Object.assign({id:d.id},d.data())); });
+        wfmSolPendientes.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0)-(a.fechaCreacion?a.fechaCreacion.seconds:0); });
+        if (wfmSolTab==='pendientes') wfmRenderSolLista();
+      }, function(e){ console.error('sol',e); });
+  }
+
+  function wfmCargarHistSols() {
+    db.collection('solicitudes').where('estado','in',['aprobada','rechazada']).get()
+      .then(function(snap){
+        wfmSolHistorial=[];
+        snap.forEach(function(d){ wfmSolHistorial.push(Object.assign({id:d.id},d.data())); });
+        wfmSolHistorial.sort(function(a,b){ return (b.fechaActualizacion?b.fechaActualizacion.seconds:0)-(a.fechaActualizacion?a.fechaActualizacion.seconds:0); });
+        wfmRenderSolLista();
+      });
+  }
+
+  function wfmSolCambiarTab(tab) {
+    wfmSolTab=tab; wfmSolSel=null;
+    document.getElementById('wfmSolTabPend').classList.toggle('active',tab==='pendientes');
+    document.getElementById('wfmSolTabHist').classList.toggle('active',tab==='historial');
+    if (tab==='historial') wfmCargarHistSols(); else wfmRenderSolLista();
+    wfmLimpiarSolDetalle();
+  }
+
+  function wfmRenderSolLista() {
+    var el=document.getElementById('wfmSolLista'); if(!el) return;
+    var lista=wfmSolTab==='pendientes'?wfmSolPendientes:wfmSolHistorial;
+    var badge=document.getElementById('wfmSolBadge');
+    if(badge) badge.textContent=wfmSolPendientes.length>0?'('+wfmSolPendientes.length+')':'';
+    if(lista.length===0){ el.innerHTML='<div style="font-size:0.8rem;color:#94A3B8;padding:8px 0">'+(wfmSolTab==='pendientes'?'Sin solicitudes pendientes.':'Sin historial.')+'</div>'; return; }
+    var html='';
+    lista.forEach(function(s){
+      var fecha=s.fechaCreacion?new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV',{day:'2-digit',month:'short'}):'—';
+      html+='<div class="sol-item'+(wfmSolSel===s.id?' active':'')+'" onclick="wfmVerSol(\''+s.id+'\')">'
+        +'<div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px">'
+        +'<div><div class="sol-item-nombre">'+escHtml(s.agente||s.nombre||'Agente')+'</div>'
+        +'<div class="sol-item-tipo">'+(SOL_TIPOS[s.tipo]||s.tipo||'—')+'</div></div>'
+        +'<span class="sol-estado '+s.estado+'">'+wfmSolEstadoLabel(s.estado)+'</span></div>'
+        +'<div class="sol-item-fecha">'+fecha+'</div>'
+        +'</div>';
+    });
+    el.innerHTML=html;
+  }
+
+  function wfmVerSol(id) {
+    wfmSolSel=id;
+    var lista=wfmSolTab==='pendientes'?wfmSolPendientes:wfmSolHistorial;
+    var s=lista.find(function(x){return x.id===id;}); if(!s) return;
+    wfmRenderSolLista();
+    var isPending=s.estado==='pendiente-admin';
+    var fechaCrea=s.fechaCreacion?new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV',{day:'2-digit',month:'long',year:'numeric'}):'—';
+    var det=document.getElementById('wfmSolDetalle');
+    det.innerHTML=
+      '<div style="font-size:0.78rem;font-weight:700;color:#0F2070;text-transform:uppercase;letter-spacing:.5px;padding-bottom:10px;border-bottom:2px solid #F1F5F9">Detalle de solicitud</div>'
+      +'<div class="dp-grid">'
+      +dpField('Agente',escHtml(s.agente||s.nombre||'—'))
+      +dpField('Tipo',SOL_TIPOS[s.tipo]||s.tipo||'—')
+      +dpField('Fecha envío',fechaCrea)
+      +dpField('Estado','<span class="sol-estado '+s.estado+'">'+wfmSolEstadoLabel(s.estado)+'</span>')
+      +(s.fechaInicio?dpField('Período',(s.fechaInicio||'—')+' — '+(s.fechaFin||'—')):'')
+      +(s.diasSolicitados?dpField('Días solicitados',s.diasSolicitados):'')
+      +'</div>'
+      +'<div><div class="dp-section-title">Descripción</div>'
+      +'<div style="font-size:0.8rem;color:#374151;line-height:1.6">'+escHtml(s.descripcion||'Sin descripción.')+'</div></div>'
+      +(s.notaRechazo?'<div style="background:#FEF2F2;border-radius:8px;padding:12px 14px;font-size:0.78rem;color:#DC2626"><strong>Motivo de rechazo:</strong> '+escHtml(s.notaRechazo)+'</div>':'')
+      +(isPending
+        ?'<div style="margin-top:auto;display:flex;flex-direction:column;gap:8px">'
+          +'<div id="wfmSolNotaArea" class="sol-nota-area">'
+          +'<label style="font-size:0.73rem;font-weight:600;color:#374151">Motivo del rechazo <span style="color:#DC2626">*</span></label>'
+          +'<textarea id="wfmSolNotaTxt" rows="3" placeholder="Escribe el motivo..." style="width:100%;padding:8px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.8rem;font-family:inherit;resize:vertical;outline:none"></textarea>'
+          +'<div style="display:flex;gap:8px;justify-content:flex-end">'
+          +'<button onclick="wfmSolCancelarRechazo()" class="btn-sec" style="flex:unset;padding:7px 14px">Cancelar</button>'
+          +'<button onclick="wfmSolConfirmarRechazo(\''+id+'\')" style="padding:7px 14px;border:none;border-radius:7px;background:#DC2626;color:white;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit">Rechazar</button>'
+          +'</div></div>'
+          +'<div style="display:flex;gap:8px">'
+          +'<button onclick="wfmSolMostrarRechazo()" class="btn-sec" style="flex:1">Rechazar</button>'
+          +'<button onclick="wfmSolAprobar(\''+id+'\')" class="btn-pri" style="flex:1">Aprobar</button>'
+          +'</div></div>'
+        :'');
+  }
+
+  function wfmLimpiarSolDetalle() {
+    var det=document.getElementById('wfmSolDetalle');
+    if(det) det.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:0.82rem">Selecciona una solicitud para ver el detalle.</div>';
+  }
+  function wfmSolMostrarRechazo(){ var w=document.getElementById('wfmSolNotaArea'); if(w){ w.classList.add('show'); w.scrollIntoView({behavior:'smooth'}); } }
+  function wfmSolCancelarRechazo(){ var w=document.getElementById('wfmSolNotaArea'); if(w) w.classList.remove('show'); }
+
+  function wfmSolAprobar(id) {
+    var s=wfmSolPendientes.find(function(x){return x.id===id;});
+    db.collection('solicitudes').doc(id).update({ estado:'aprobada', jefeUid:currentUser.uid, jefeEmail:currentUser.email, fechaActualizacion:firebase.firestore.FieldValue.serverTimestamp() })
+      .then(function(){
+        if(s&&s.agenteUid) ntfEnviar(db,{uid:s.agenteUid,titulo:'Solicitud aprobada',mensaje:'Tu solicitud de '+(SOL_TIPOS[s.tipo]||s.tipo||'permiso')+' fue aprobada.',tipo:'solicitud',subTipo:'aprobada',remitenteNombre:currentUser.displayName||currentUser.email.split('@')[0]});
+        showToast('Solicitud aprobada.'); wfmSolSel=null; wfmLimpiarSolDetalle();
+      }).catch(function(e){ showToast('Error: '+e.message); });
+  }
+
+  function wfmSolConfirmarRechazo(id) {
+    var nota=(document.getElementById('wfmSolNotaTxt').value||'').trim();
+    if(!nota){ showToast('Escribe el motivo del rechazo.'); return; }
+    var s=wfmSolPendientes.find(function(x){return x.id===id;});
+    db.collection('solicitudes').doc(id).update({ estado:'rechazada', notaRechazo:nota, jefeUid:currentUser.uid, jefeEmail:currentUser.email, fechaActualizacion:firebase.firestore.FieldValue.serverTimestamp() })
+      .then(function(){
+        if(s&&s.agenteUid) ntfEnviar(db,{uid:s.agenteUid,titulo:'Solicitud rechazada',mensaje:'Tu solicitud de '+(SOL_TIPOS[s.tipo]||s.tipo||'permiso')+' fue rechazada. Motivo: '+nota,tipo:'solicitud',subTipo:'rechazada',remitenteNombre:currentUser.displayName||currentUser.email.split('@')[0]});
+        showToast('Solicitud rechazada.'); wfmSolSel=null; wfmLimpiarSolDetalle();
+      }).catch(function(e){ showToast('Error: '+e.message); });
+  }
+
+  // ===== TIEMPO REAL =====
+  var wfmRTCargado = false;
+  var wfmRTAgentes = [];
+  var wfmRTTimers  = {};
+
+  var RT_ESTADOS = {
+    'Inbound':              { bg:'#EEF2FF', text:'#1A3DAA' },
+    'Outbound':             { bg:'#F0F9FF', text:'#0284C7' },
+    'Pausa administrativa': { bg:'#F5F3FF', text:'#7C3AED' },
+    'Break':                { bg:'#FFF7ED', text:'#C2410C' },
+    'Baño':                 { bg:'#F0FDF4', text:'#15803D' },
+    'Comida':               { bg:'#FEF9C3', text:'#92400E' },
+    'Capacitación':         { bg:'#F0FDF4', text:'#065F46' },
+    'Feedback':             { bg:'#FDF4FF', text:'#86198F' },
+    'Jornada finalizada':   { bg:'#F1F5F9', text:'#64748B' },
+    'Fuera':                { bg:'#F1F5F9', text:'#94A3B8' }
+  };
+
+  function wfmIniciarRT() {
+    wfmRTCargado = true;
+    db.collection('usuarios').where('rol','in',['agente','agente-inmersion','supervisor'])
+      .onSnapshot(function(snap){
+        wfmRTAgentes=[];
+        snap.forEach(function(d){ wfmRTAgentes.push(Object.assign({id:d.id},d.data())); });
+        wfmRenderRT();
+      }, function(e){ console.error('rt',e); });
+  }
+
+  function wfmRenderRT() {
+    var busq  = (document.getElementById('wfmRTBusq')||{}).value||'';
+    var fProy = (document.getElementById('wfmRTFiltProy')||{}).value||'';
+    var fEst  = (document.getElementById('wfmRTFiltEst')||{}).value||'';
+
+    var lista = wfmRTAgentes.filter(function(a){
+      if(busq && !(a.nombre||'').toLowerCase().includes(busq.toLowerCase()) && !(a.email||'').toLowerCase().includes(busq.toLowerCase())) return false;
+      if(fProy && a.proyecto!==fProy) return false;
+      if(fEst  && (a.estadoActual||'Fuera')!==fEst) return false;
+      return true;
+    });
+    lista.sort(function(a,b){ if(a.enLinea&&!b.enLinea)return -1; if(!a.enLinea&&b.enLinea)return 1; return (a.nombre||'').localeCompare(b.nombre||'','es'); });
+
+    var enLinea=wfmRTAgentes.filter(function(a){return !!a.enLinea;}).length, total=wfmRTAgentes.length;
+    var sEl=document.getElementById('wfmRTStats');
+    if(sEl) sEl.innerHTML=
+      '<div class="stat-chip activos"><div class="stat-chip-val">'+enLinea+'</div><div class="stat-chip-label">En línea</div></div>'
+      +'<div class="stat-chip inactivos"><div class="stat-chip-val">'+(total-enLinea)+'</div><div class="stat-chip-label">Fuera</div></div>'
+      +'<div class="stat-chip"><div class="stat-chip-val">'+total+'</div><div class="stat-chip-label">Total agentes</div></div>';
+
+    Object.keys(wfmRTTimers).forEach(function(k){ clearInterval(wfmRTTimers[k]); });
+    wfmRTTimers={};
+
+    var countEl=document.getElementById('wfmRTCount');
+    if(countEl) countEl.textContent=lista.length+' de '+total+' agentes';
+
+    var grid=document.getElementById('wfmRTGrid'); if(!grid) return;
+    if(lista.length===0){ grid.innerHTML='<div style="font-size:0.8rem;color:#94A3B8;grid-column:1/-1">Sin agentes para los filtros seleccionados.</div>'; return; }
+
+    var html='';
+    lista.forEach(function(a){
+      var online=!!a.enLinea, estado=a.estadoActual||'Fuera', cfg=RT_ESTADOS[estado]||RT_ESTADOS['Fuera'];
+      var pLabel=LABELS_PROY[a.proyecto]||'';
+      html+='<div class="ac-card'+(online?'':' offline')+'">'
+        +'<div class="ac-card-top">'
+        +'<div class="ac-indicator '+(online?'on':'off')+'"></div>'
+        +'<div class="ac-av '+(online?'online':'offline')+'">'+wfmInic(a.nombre||a.email||'?')+'</div>'
+        +'<div style="min-width:0"><div class="ac-nombre">'+(a.nombre||a.email||'?')+'</div>'+(pLabel?'<div class="ac-proyecto">'+pLabel+'</div>':'')+'</div>'
+        +'</div>'
+        +(online
+          ?'<div class="ac-estado-badge" style="background:'+cfg.bg+';color:'+cfg.text+'">'+estado+'</div>'
+           +'<div class="ac-rt-timer" style="color:'+cfg.text+'" id="wrt-'+a.id+'">00:00:00</div>'
+          :'<div class="ac-sin-marcaje">Sin entrada hoy</div>')
+        +'</div>';
+    });
+    grid.innerHTML=html;
+
+    lista.filter(function(a){return !!a.enLinea&&!!a.estadoDesde;}).forEach(function(a){
+      wfmRTTimers[a.id]=setInterval(function(){
+        var el=document.getElementById('wrt-'+a.id); if(!el){clearInterval(wfmRTTimers[a.id]);return;}
+        var desde=a.estadoDesde.toDate?a.estadoDesde.toDate():new Date(a.estadoDesde);
+        var seg=Math.floor((new Date()-desde)/1000);
+        el.textContent=wfmPad(Math.floor(seg/3600))+':'+wfmPad(Math.floor((seg%3600)/60))+':'+wfmPad(seg%60);
+      },1000);
+    });
+
+    var filtEl=document.getElementById('wfmRTFiltEst');
+    if(filtEl){
+      var estados={}, prevVal=filtEl.value;
+      wfmRTAgentes.forEach(function(a){var e=a.estadoActual||'Fuera'; estados[e]=(estados[e]||0)+1;});
+      filtEl.innerHTML='<option value="">Todos los estados</option>';
+      Object.keys(estados).forEach(function(e){ filtEl.innerHTML+='<option value="'+e+'">'+e+' ('+estados[e]+')</option>'; });
+      filtEl.value=prevVal;
+    }
+  }
+
+  // ===== TURNO =====
+  var wfmTurnoCargado = false;
+  var wfmTurnoAgentes = [];
+  var wfmTurnoSel     = null;
+  var wfmTurnoDias    = {};
+  var wfmTurnoMesVista= (function(){ var h=new Date(); return new Date(h.getFullYear(),h.getMonth(),1); })();
+  var WFM_MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  function wfmIniciarTurno() {
+    wfmTurnoCargado=true;
+    db.collection('usuarios').where('rol','in',['agente','agente-inmersion','supervisor']).get()
+      .then(function(snap){
+        wfmTurnoAgentes=[];
+        snap.forEach(function(doc){ wfmTurnoAgentes.push(Object.assign({id:doc.id},doc.data())); });
+        wfmTurnoAgentes.sort(function(a,b){return (a.nombre||'').localeCompare(b.nombre||'','es');});
+        wfmRenderTurnoLista();
+      });
+  }
+
+  function wfmRenderTurnoLista() {
+    var busq=((document.getElementById('wfmTurnoBusq')||{}).value||'').toLowerCase();
+    var lista=wfmTurnoAgentes.filter(function(a){ return !busq||(a.nombre||'').toLowerCase().includes(busq)||(a.email||'').toLowerCase().includes(busq); });
+    var html='';
+    lista.forEach(function(a){
+      html+='<div class="turno-agent-item'+(wfmTurnoSel===a.id?' active':'')+'" onclick="wfmVerTurno(\''+a.id+'\')">'
+        +'<div class="ac-av online" style="width:28px;height:28px;font-size:0.62rem">'+wfmInic(a.nombre||a.email||'?')+'</div>'
+        +'<div style="min-width:0"><div style="font-size:0.78rem;font-weight:600;color:#1E293B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(a.nombre||a.email||'?')+'</div>'
+        +'<div style="font-size:0.65rem;color:#94A3B8">'+(LABELS_PROY[a.proyecto]||a.proyecto||'—')+'</div></div>'
+        +'</div>';
+    });
+    var el=document.getElementById('wfmTurnoLista');
+    if(el) el.innerHTML=html||'<div style="font-size:0.8rem;color:#94A3B8">Sin resultados.</div>';
+  }
+
+  function wfmVerTurno(uid) {
+    wfmTurnoSel=uid; wfmRenderTurnoLista();
+    var a=wfmTurnoAgentes.find(function(x){return x.id===uid;}); if(!a) return;
+    var det=document.getElementById('wfmTurnoDetalle'); if(!det) return;
+    det.innerHTML='<div style="font-size:0.8rem;color:#94A3B8">Cargando turno...</div>';
+    db.collection('turnos').doc(uid).get().then(function(doc){
+      var d=doc.exists?doc.data():null;
+      wfmTurnoDias=d?(d.dias||{}):wfmTurnoGenerarEjemplo();
+      var nombre=d?(d.nombre||'Turno asignado'):'Sin turno asignado';
+      var horario=d?(d.horario||'—'):'—';
+      det.innerHTML=
+        '<div style="font-size:0.78rem;font-weight:700;color:#0F2070;text-transform:uppercase;letter-spacing:.5px;padding-bottom:10px;border-bottom:2px solid #F1F5F9">'+escHtml(a.nombre||'Agente')+'</div>'
+        +'<div class="dp-grid">'+dpField('Turno',escHtml(nombre))+dpField('Horario',escHtml(horario))+'</div>'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+        +'<div id="wfmTurnoCalMes" style="font-size:0.82rem;font-weight:700;color:#1E293B"></div>'
+        +'<div style="display:flex;gap:4px">'
+        +'<button onclick="wfmTurnoCambiarMes(-1)" class="btn-dir" style="width:26px;height:26px">&#8249;</button>'
+        +'<button onclick="wfmTurnoIrHoy()" class="btn-dir" style="width:auto;padding:0 8px;font-size:0.68rem">Hoy</button>'
+        +'<button onclick="wfmTurnoCambiarMes(1)" class="btn-dir" style="width:26px;height:26px">&#8250;</button>'
+        +'</div></div>'
+        +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;font-size:0.62rem;color:#94A3B8;text-align:center;margin-bottom:3px">'
+        +['D','L','M','X','J','V','S'].map(function(d){return '<div>'+d+'</div>';}).join('')
+        +'</div>'
+        +'<div class="cal-grid" id="wfmTurnoCal"></div>'
+        +'<div style="display:flex;gap:12px;margin-top:10px;font-size:0.72rem;color:#64748B">'
+        +'<div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:#EEF2FF;border:1px solid #C7D2FE"></div>Laboral</div>'
+        +'<div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:#F1F5F9;border:1px solid #E2E8F0"></div>Descanso</div>'
+        +'</div>';
+      wfmTurnoRenderCal();
+    });
+  }
+
+  function wfmTurnoGenerarEjemplo() {
+    var dias={}, hoy=new Date(), d=new Date(hoy.getFullYear(),0,1), fin=new Date(hoy.getFullYear(),11,31);
+    while(d<=fin){ var dow=d.getDay(); var key=d.getFullYear()+'-'+wfmPad(d.getMonth()+1)+'-'+wfmPad(d.getDate()); dias[key]=(dow>=1&&dow<=5)?'laboral':'descanso'; d.setDate(d.getDate()+1); }
+    return dias;
+  }
+
+  function wfmTurnoRenderCal() {
+    var hoy=new Date(), año=wfmTurnoMesVista.getFullYear(), mes=wfmTurnoMesVista.getMonth();
+    var primerDia=new Date(año,mes,1).getDay(), totalDias=new Date(año,mes+1,0).getDate();
+    var calMesEl=document.getElementById('wfmTurnoCalMes');
+    if(calMesEl) calMesEl.textContent=WFM_MESES[mes]+' '+año;
+    var html='';
+    for(var i=0;i<primerDia;i++) html+='<div class="cal-dia vacio"></div>';
+    for(var d=1;d<=totalDias;d++){
+      var fecha=año+'-'+wfmPad(mes+1)+'-'+wfmPad(d);
+      var tipo=wfmTurnoDias[fecha]||'descanso';
+      var esHoy=año===hoy.getFullYear()&&mes===hoy.getMonth()&&d===hoy.getDate();
+      html+='<div class="cal-dia '+tipo+(esHoy?' hoy':'')+'"><span class="dia-num">'+d+'</span><span class="dia-tag">'+(tipo==='laboral'?'L':'D')+'</span></div>';
+    }
+    var calEl=document.getElementById('wfmTurnoCal'); if(calEl) calEl.innerHTML=html;
+  }
+
+  function wfmTurnoCambiarMes(dir){ wfmTurnoMesVista.setMonth(wfmTurnoMesVista.getMonth()+dir); wfmTurnoRenderCal(); }
+  function wfmTurnoIrHoy(){ var h=new Date(); wfmTurnoMesVista=new Date(h.getFullYear(),h.getMonth(),1); wfmTurnoRenderCal(); }
+</script>
+<script src="notif.js"></script>
+<script>
+  auth.onAuthStateChanged(function(user) {
+    if (user) initNotif(db, auth);
+  });
+</script>
+</body>
+</html>
