@@ -531,6 +531,7 @@
           <option value="editor">Editor</option>
           <option value="admin">Admin</option>
           <option value="jefe">Jefe</option>
+          <option value="wfm">WFM</option>
         </select>
         <select class="ctrl-select" id="filtroEstado" onchange="aplicarFiltros()">
           <option value="">Todos</option>
@@ -715,7 +716,7 @@
         auth.signOut(); window.location.href = 'login.html'; return;
       }
       var d = doc.data();
-      var LABELS_ROL = { agente:'Agente', supervisor:'Supervisor', editor:'Editor', admin:'Admin', wfm:'Jefe', jefe:'Jefe', superadmin:'Superadmin' };
+      var LABELS_ROL = { agente:'Agente', supervisor:'Supervisor', editor:'Editor', admin:'Admin', wfm:'WFM', jefe:'Jefe', superadmin:'Superadmin' };
       document.getElementById('sbName').textContent   = d.nombre || user.email.split('@')[0];
       document.getElementById('sbAvatar').textContent = iniciales(d.nombre || user.email);
       var rolEl = document.querySelector('.sb-user-role');
@@ -755,7 +756,7 @@
   var modoForm = null;
   var dir1 = 'asc', dir2 = 'asc';
 
-  var LABELS_ROL     = { agente:'Agente', supervisor:'Supervisor', editor:'Editor', admin:'Admin', wfm:'Jefe', jefe:'Jefe', superadmin:'Superadmin' };
+  var LABELS_ROL     = { agente:'Agente', supervisor:'Supervisor', editor:'Editor', admin:'Admin', wfm:'WFM', jefe:'Jefe', superadmin:'Superadmin' };
   var LABELS_PROY    = { doctorsv:'DoctorSV', educacion:'Educación', marn:'MARN', global:'Global' };
   var SORT_CAMPOS    = { nombre:'nombre', proyecto:'proyecto', rol:'rol', cargo:'cargo', fechaIngreso:'fechaIngreso', antiguedad:'diasIngreso', horasConGoce:'horasConGoce', horasSinGoce:'horasSinGoce', estado:'activo' };
 
@@ -976,7 +977,8 @@
       +'<option value="supervisor"'+(u&&u.rol==='supervisor'?' selected':'')+'>Supervisor</option>'
       +'<option value="editor"'+(u&&u.rol==='editor'?' selected':'')+'>Editor</option>'
       +'<option value="admin"'+(u&&u.rol==='admin'?' selected':'')+'>Admin</option>'
-      +'<option value="jefe"'+(u&&(u.rol==='jefe'||u.rol==='wfm')?' selected':'')+'>Jefe</option>'
+      +'<option value="jefe"'+(u&&u.rol==='jefe'?' selected':'')+'>Jefe</option>'
+      +'<option value="wfm"'+(u&&u.rol==='wfm'?' selected':'')+'>WFM</option>'
       +'</select></div>'
       +'<div class="field"><label>Supervisor</label><select id="fSupervisor"><option value="">— Sin supervisor —</option>'
       +supervisores().map(function(s){return '<option value="'+s.id+'"'+(u&&u.emailSupervisor===s.email?' selected':'')+'>'+s.nombre+' ('+s.email+')</option>';}).join('')
