@@ -65,21 +65,23 @@
   .btn-pri { padding: 8px 14px; border: none; border-radius: 7px; background: #1A3DAA; color: white; font-size: 0.78rem; font-weight: 700; cursor: pointer; font-family: inherit; flex: 1; }
   .btn-pri:hover { opacity: 0.88; }
 
-  /* SOLICITUDES */
-  .sol-tab { padding: 7px 16px; border-radius: 7px; font-size: 0.78rem; font-weight: 600; cursor: pointer; border: 1.5px solid #E2E8F0; background: white; color: #64748B; font-family: inherit; transition: all 0.15s; }
-  .sol-tab.active { background: #1A3DAA; color: white; border-color: #1A3DAA; }
-  .sol-item { background: white; border: 1.5px solid #F1F5F9; border-radius: 9px; padding: 11px 13px; cursor: pointer; transition: all 0.15s; }
-  .sol-item:hover { border-color: #29ABE2; }
-  .sol-item.active { border-color: #1A3DAA; background: #EEF2FF; }
-  .sol-item-nombre { font-size: 0.82rem; font-weight: 700; color: #1E293B; }
-  .sol-item-tipo { font-size: 0.7rem; color: #64748B; margin-top: 1px; }
-  .sol-item-fecha { font-size: 0.67rem; color: #94A3B8; white-space: nowrap; margin-top: 3px; }
-  .sol-estado { font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 3px; text-transform: uppercase; white-space: nowrap; }
-  .sol-estado.pendiente-admin { background: #FFF7ED; color: #C2410C; }
-  .sol-estado.aprobada  { background: #F0FDF4; color: #16A34A; }
-  .sol-estado.rechazada { background: #FEF2F2; color: #DC2626; }
-  .sol-nota-area { display: none; flex-direction: column; gap: 8px; padding: 14px; background: #FFF7ED; border-radius: 8px; border: 1px solid #FDE68A; }
-  .sol-nota-area.show { display: flex; }
+  /* SOLICITUDES CALENDARIO */
+  .sol-cal-wrap { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; align-content: start; }
+  .sol-cal-hdr  { text-align: center; font-size: 0.62rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 0; }
+  .sol-cal-cell { background: white; border: 1.5px solid #F1F5F9; border-radius: 7px; padding: 6px 7px; min-height: 76px; cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; gap: 3px; }
+  .sol-cal-cell:hover { border-color: #29ABE2; }
+  .sol-cal-cell.sel  { border-color: #1A3DAA; background: #EEF2FF; }
+  .sol-cal-cell.hoy  { outline: 2px solid #1A3DAA; outline-offset: 1px; }
+  .sol-cal-cell.vacio{ background: transparent; border-color: transparent; cursor: default; min-height: 76px; }
+  .sol-cal-cell.vacio:hover { border-color: transparent; }
+  .sol-cal-num  { font-size: 0.72rem; font-weight: 700; color: #374151; }
+  .sol-cal-total{ font-size: 0.65rem; font-weight: 800; color: white; background: #1A3DAA; padding: 1px 6px; border-radius: 10px; display: inline-block; align-self: flex-start; }
+  .sol-cal-dots { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 2px; }
+  .sol-cal-dot  { height: 5px; border-radius: 2px; flex-shrink: 0; }
+  /* Panel detalle dia */
+  .sol-det-entry { display: flex; flex-direction: column; gap: 2px; padding: 9px 10px; background: #F8FAFC; border-radius: 7px; border-left: 3px solid #E2E8F0; }
+  .sol-det-nombre { font-size: 0.8rem; font-weight: 700; color: #1E293B; }
+  .sol-det-meta   { font-size: 0.68rem; color: #64748B; }
 
   /* TIEMPO REAL */
   .rt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; overflow-y: auto; flex: 1; align-content: start; }
@@ -166,18 +168,45 @@
 
   <!-- VISTA SOLICITUDES -->
   <div id="vistaSolicitudes" style="display:flex;flex:1;overflow:hidden;padding:20px 24px;flex-direction:column;gap:12px">
-    <div style="display:flex;gap:6px;flex-shrink:0">
-      <button class="sol-tab active" id="wfmSolTabPend" onclick="wfmSolCambiarTab('pendientes')">Por aprobar <span id="wfmSolBadge" style="color:#DC2626;font-weight:800"></span></button>
-      <button class="sol-tab" id="wfmSolTabHist" onclick="wfmSolCambiarTab('historial')">Historial</button>
+    <!-- STATS -->
+    <div class="stats-row" id="wfmSolStats" style="flex-shrink:0"></div>
+    <!-- CONTROLES -->
+    <div class="controles" style="flex-shrink:0">
+      <button class="btn-dir" onclick="wfmSolCambiarMes(-1)" style="width:28px;height:28px">&#8249;</button>
+      <span id="wfmSolMesLabel" style="font-size:0.85rem;font-weight:700;color:#1E293B;min-width:148px;text-align:center"></span>
+      <button class="btn-dir" onclick="wfmSolCambiarMes(1)"  style="width:28px;height:28px">&#8250;</button>
+      <button class="btn-dir" onclick="wfmSolIrHoy()" style="width:auto;padding:0 10px;font-size:0.72rem">Hoy</button>
+      <div style="width:1px;height:24px;background:#E2E8F0;margin:0 4px"></div>
+      <select class="ctrl-select" id="wfmSolFiltProy" onchange="wfmSolRenderCal()">
+        <option value="">Todos los proyectos</option>
+        <option value="doctorsv">DoctorSV</option>
+        <option value="educacion">Educación</option>
+        <option value="marn">MARN</option>
+        <option value="global">Global</option>
+      </select>
+      <select class="ctrl-select" id="wfmSolFiltTipo" onchange="wfmSolRenderCal()">
+        <option value="">Todos los tipos</option>
+        <option value="vacaciones">Vacaciones</option>
+        <option value="permiso">Permiso</option>
+        <option value="capacitacion">Capacitación</option>
+        <option value="ajuste">Ajuste de marcaje</option>
+        <option value="otro">Otro</option>
+      </select>
     </div>
-    <div style="display:flex;flex:1;overflow:hidden;background:white;border-radius:10px;border:1px solid #E2E8F0">
-      <div style="width:340px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;padding:12px;border-right:1px solid #F1F5F9;gap:5px">
-        <div id="wfmSolLista" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:5px">
-          <div style="font-size:0.8rem;color:#94A3B8">Cargando...</div>
+    <!-- CUERPO: CALENDARIO + DETALLE -->
+    <div style="display:flex;flex:1;overflow:hidden;gap:14px">
+      <!-- CALENDARIO -->
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px;overflow:hidden">
+        <div class="sol-cal-wrap" style="flex-shrink:0">
+          <div class="sol-cal-hdr">Dom</div><div class="sol-cal-hdr">Lun</div><div class="sol-cal-hdr">Mar</div>
+          <div class="sol-cal-hdr">Mié</div><div class="sol-cal-hdr">Jue</div><div class="sol-cal-hdr">Vie</div>
+          <div class="sol-cal-hdr">Sáb</div>
         </div>
+        <div class="sol-cal-wrap" id="wfmSolCal" style="flex:1;overflow-y:auto;align-content:start"></div>
       </div>
-      <div id="wfmSolDetalle" style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px">
-        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:0.82rem">Selecciona una solicitud para ver el detalle.</div>
+      <!-- PANEL DETALLE DÍA -->
+      <div id="wfmSolDetalle" style="width:260px;flex-shrink:0;background:white;border-radius:10px;border:1px solid #E2E8F0;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:0.82rem;text-align:center">Selecciona un día para ver las solicitudes activas.</div>
       </div>
     </div>
   </div>
@@ -288,127 +317,180 @@
     if (vista==='turno'      && !wfmTurnoCargado) wfmIniciarTurno();
   }
 
-  // ===== SOLICITUDES =====
-  var wfmSolCargado    = false;
-  var wfmSolPendientes = [];
-  var wfmSolHistorial  = [];
-  var wfmSolTab        = 'pendientes';
-  var wfmSolSel        = null;
-  var SOL_TIPOS = { vacaciones:'Vacaciones', permiso:'Permiso', capacitacion:'Capacitación', ajuste:'Ajuste de marcaje', otro:'Otro' };
-
-  function wfmSolEstadoLabel(e){ var m={'pendiente-admin':'Por aprobar',aprobada:'Aprobada',rechazada:'Rechazada','pendiente-sup':'En supervisor',borrador:'Borrador'}; return m[e]||e; }
+  // ===== SOLICITUDES — CALENDARIO =====
+  var wfmSolDatos    = [];   // solicitudes aprobadas enriquecidas con proyecto del agente
+  var wfmSolUsuarios = {};   // uid → { proyecto }
+  var wfmSolMes      = (function(){ var h=new Date(); return new Date(h.getFullYear(),h.getMonth(),1); })();
+  var wfmSolDiaSel   = null;
+  var WFM_SOL_MESES  = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var SOL_TIPOS      = { vacaciones:'Vacaciones', permiso:'Permiso', capacitacion:'Capacitación', ajuste:'Ajuste de marcaje', otro:'Otro' };
+  var SOL_TIPO_COLOR = { vacaciones:'#1A3DAA', permiso:'#16A34A', capacitacion:'#7C3AED', ajuste:'#D97706', otro:'#64748B' };
+  var SOL_PROY_COLOR = { doctorsv:'#1A3DAA', educacion:'#15803D', marn:'#B45309', global:'#475569' };
 
   function wfmIniciarSolicitudes() {
-    wfmSolCargado = true;
-    db.collection('solicitudes').where('estado','==','pendiente-admin')
-      .onSnapshot(function(snap) {
-        wfmSolPendientes=[];
-        snap.forEach(function(d){ wfmSolPendientes.push(Object.assign({id:d.id},d.data())); });
-        wfmSolPendientes.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0)-(a.fechaCreacion?a.fechaCreacion.seconds:0); });
-        if (wfmSolTab==='pendientes') wfmRenderSolLista();
-      }, function(e){ console.error('sol',e); });
-  }
-
-  function wfmCargarHistSols() {
-    db.collection('solicitudes').where('estado','in',['aprobada','rechazada']).get()
-      .then(function(snap){
-        wfmSolHistorial=[];
-        snap.forEach(function(d){ wfmSolHistorial.push(Object.assign({id:d.id},d.data())); });
-        wfmSolHistorial.sort(function(a,b){ return (b.fechaActualizacion?b.fechaActualizacion.seconds:0)-(a.fechaActualizacion?a.fechaActualizacion.seconds:0); });
-        wfmRenderSolLista();
-      });
-  }
-
-  function wfmSolCambiarTab(tab) {
-    wfmSolTab=tab; wfmSolSel=null;
-    document.getElementById('wfmSolTabPend').classList.toggle('active',tab==='pendientes');
-    document.getElementById('wfmSolTabHist').classList.toggle('active',tab==='historial');
-    if (tab==='historial') wfmCargarHistSols(); else wfmRenderSolLista();
-    wfmLimpiarSolDetalle();
-  }
-
-  function wfmRenderSolLista() {
-    var el=document.getElementById('wfmSolLista'); if(!el) return;
-    var lista=wfmSolTab==='pendientes'?wfmSolPendientes:wfmSolHistorial;
-    var badge=document.getElementById('wfmSolBadge');
-    if(badge) badge.textContent=wfmSolPendientes.length>0?'('+wfmSolPendientes.length+')':'';
-    if(lista.length===0){ el.innerHTML='<div style="font-size:0.8rem;color:#94A3B8;padding:8px 0">'+(wfmSolTab==='pendientes'?'Sin solicitudes pendientes.':'Sin historial.')+'</div>'; return; }
-    var html='';
-    lista.forEach(function(s){
-      var fecha=s.fechaCreacion?new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV',{day:'2-digit',month:'short'}):'—';
-      html+='<div class="sol-item'+(wfmSolSel===s.id?' active':'')+'" onclick="wfmVerSol(\''+s.id+'\')">'
-        +'<div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:3px">'
-        +'<div><div class="sol-item-nombre">'+escHtml(s.agente||s.nombre||'Agente')+'</div>'
-        +'<div class="sol-item-tipo">'+(SOL_TIPOS[s.tipo]||s.tipo||'—')+'</div></div>'
-        +'<span class="sol-estado '+s.estado+'">'+wfmSolEstadoLabel(s.estado)+'</span></div>'
-        +'<div class="sol-item-fecha">'+fecha+'</div>'
-        +'</div>';
+    // Carga usuarios primero para obtener proyecto de cada agente
+    db.collection('usuarios').get().then(function(snap) {
+      snap.forEach(function(d){ wfmSolUsuarios[d.id] = d.data(); });
+      // Luego carga todas las solicitudes aprobadas
+      db.collection('solicitudes').where('estado','==','aprobada').get()
+        .then(function(snap2) {
+          wfmSolDatos = [];
+          snap2.forEach(function(d) {
+            var s = Object.assign({ id: d.id }, d.data());
+            // Enriquecer con proyecto del agente
+            var u = wfmSolUsuarios[s.agenteUid] || {};
+            s.proyecto = u.proyecto || '';
+            wfmSolDatos.push(s);
+          });
+          wfmSolRenderStats();
+          wfmSolRenderCal();
+        });
     });
-    el.innerHTML=html;
   }
 
-  function wfmVerSol(id) {
-    wfmSolSel=id;
-    var lista=wfmSolTab==='pendientes'?wfmSolPendientes:wfmSolHistorial;
-    var s=lista.find(function(x){return x.id===id;}); if(!s) return;
-    wfmRenderSolLista();
-    var isPending=s.estado==='pendiente-admin';
-    var fechaCrea=s.fechaCreacion?new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV',{day:'2-digit',month:'long',year:'numeric'}):'—';
-    var det=document.getElementById('wfmSolDetalle');
-    det.innerHTML=
-      '<div style="font-size:0.78rem;font-weight:700;color:#0F2070;text-transform:uppercase;letter-spacing:.5px;padding-bottom:10px;border-bottom:2px solid #F1F5F9">Detalle de solicitud</div>'
-      +'<div class="dp-grid">'
-      +dpField('Agente',escHtml(s.agente||s.nombre||'—'))
-      +dpField('Tipo',SOL_TIPOS[s.tipo]||s.tipo||'—')
-      +dpField('Fecha envío',fechaCrea)
-      +dpField('Estado','<span class="sol-estado '+s.estado+'">'+wfmSolEstadoLabel(s.estado)+'</span>')
-      +(s.fechaInicio?dpField('Período',(s.fechaInicio||'—')+' — '+(s.fechaFin||'—')):'')
-      +(s.diasSolicitados?dpField('Días solicitados',s.diasSolicitados):'')
-      +'</div>'
-      +'<div><div class="dp-section-title">Descripción</div>'
-      +'<div style="font-size:0.8rem;color:#374151;line-height:1.6">'+escHtml(s.descripcion||'Sin descripción.')+'</div></div>'
-      +(s.notaRechazo?'<div style="background:#FEF2F2;border-radius:8px;padding:12px 14px;font-size:0.78rem;color:#DC2626"><strong>Motivo de rechazo:</strong> '+escHtml(s.notaRechazo)+'</div>':'')
-      +(isPending
-        ?'<div style="margin-top:auto;display:flex;flex-direction:column;gap:8px">'
-          +'<div id="wfmSolNotaArea" class="sol-nota-area">'
-          +'<label style="font-size:0.73rem;font-weight:600;color:#374151">Motivo del rechazo <span style="color:#DC2626">*</span></label>'
-          +'<textarea id="wfmSolNotaTxt" rows="3" placeholder="Escribe el motivo..." style="width:100%;padding:8px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.8rem;font-family:inherit;resize:vertical;outline:none"></textarea>'
-          +'<div style="display:flex;gap:8px;justify-content:flex-end">'
-          +'<button onclick="wfmSolCancelarRechazo()" class="btn-sec" style="flex:unset;padding:7px 14px">Cancelar</button>'
-          +'<button onclick="wfmSolConfirmarRechazo(\''+id+'\')" style="padding:7px 14px;border:none;border-radius:7px;background:#DC2626;color:white;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit">Rechazar</button>'
-          +'</div></div>'
-          +'<div style="display:flex;gap:8px">'
-          +'<button onclick="wfmSolMostrarRechazo()" class="btn-sec" style="flex:1">Rechazar</button>'
-          +'<button onclick="wfmSolAprobar(\''+id+'\')" class="btn-pri" style="flex:1">Aprobar</button>'
-          +'</div></div>'
-        :'');
+  function wfmSolFechaStr(ts) {
+    // Convierte Timestamp o string YYYY-MM-DD a Date
+    if (!ts) return null;
+    if (ts.seconds) return new Date(ts.seconds * 1000);
+    if (typeof ts === 'string') { var p = ts.split('-'); return new Date(p[0], p[1]-1, p[2]); }
+    return null;
   }
 
-  function wfmLimpiarSolDetalle() {
-    var det=document.getElementById('wfmSolDetalle');
-    if(det) det.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:0.82rem">Selecciona una solicitud para ver el detalle.</div>';
+  function wfmSolActivosEnDia(fechaKey) {
+    // Retorna solicitudes cuyo rango [fechaInicio, fechaFin] incluye este día
+    var fProy = (document.getElementById('wfmSolFiltProy')||{}).value||'';
+    var fTipo = (document.getElementById('wfmSolFiltTipo')||{}).value||'';
+    return wfmSolDatos.filter(function(s) {
+      if (fProy && s.proyecto !== fProy) return false;
+      if (fTipo && s.tipo !== fTipo) return false;
+      var ini = wfmSolFechaStr(s.fechaInicio);
+      var fin = wfmSolFechaStr(s.fechaFin || s.fechaInicio);
+      if (!ini) return false;
+      // Normalizar a solo fecha (sin hora)
+      var d = new Date(fechaKey + 'T00:00:00');
+      ini.setHours(0,0,0,0); fin.setHours(0,0,0,0);
+      return d >= ini && d <= fin;
+    });
   }
-  function wfmSolMostrarRechazo(){ var w=document.getElementById('wfmSolNotaArea'); if(w){ w.classList.add('show'); w.scrollIntoView({behavior:'smooth'}); } }
-  function wfmSolCancelarRechazo(){ var w=document.getElementById('wfmSolNotaArea'); if(w) w.classList.remove('show'); }
 
-  function wfmSolAprobar(id) {
-    var s=wfmSolPendientes.find(function(x){return x.id===id;});
-    db.collection('solicitudes').doc(id).update({ estado:'aprobada', jefeUid:currentUser.uid, jefeEmail:currentUser.email, fechaActualizacion:firebase.firestore.FieldValue.serverTimestamp() })
-      .then(function(){
-        if(s&&s.agenteUid) ntfEnviar(db,{uid:s.agenteUid,titulo:'Solicitud aprobada',mensaje:'Tu solicitud de '+(SOL_TIPOS[s.tipo]||s.tipo||'permiso')+' fue aprobada.',tipo:'solicitud',subTipo:'aprobada',remitenteNombre:currentUser.displayName||currentUser.email.split('@')[0]});
-        showToast('Solicitud aprobada.'); wfmSolSel=null; wfmLimpiarSolDetalle();
-      }).catch(function(e){ showToast('Error: '+e.message); });
+  function wfmSolRenderStats() {
+    var el = document.getElementById('wfmSolStats'); if (!el) return;
+    var año = wfmSolMes.getFullYear(), mes = wfmSolMes.getMonth();
+    var fProy = (document.getElementById('wfmSolFiltProy')||{}).value||'';
+    var fTipo = (document.getElementById('wfmSolFiltTipo')||{}).value||'';
+    // Solicitudes con al menos un día en el mes visible
+    var enMes = wfmSolDatos.filter(function(s) {
+      if (fProy && s.proyecto !== fProy) return false;
+      if (fTipo && s.tipo !== fTipo) return false;
+      var ini = wfmSolFechaStr(s.fechaInicio);
+      var fin = wfmSolFechaStr(s.fechaFin || s.fechaInicio);
+      if (!ini) return false;
+      var mesIni = new Date(año, mes, 1);
+      var mesFin = new Date(año, mes+1, 0);
+      ini.setHours(0,0,0,0); fin.setHours(0,0,0,0);
+      return ini <= mesFin && fin >= mesIni;
+    });
+    // Conteo por tipo
+    var porTipo = {};
+    enMes.forEach(function(s){ porTipo[s.tipo] = (porTipo[s.tipo]||0) + 1; });
+    var tiposHtml = Object.keys(porTipo).map(function(t) {
+      var c = SOL_TIPO_COLOR[t]||'#64748B';
+      return '<div class="stat-chip" style="border-left:3px solid '+c+'">'
+        +'<div class="stat-chip-val" style="color:'+c+';font-size:1rem">'+porTipo[t]+'</div>'
+        +'<div class="stat-chip-label">'+(SOL_TIPOS[t]||t)+'</div></div>';
+    }).join('');
+    el.innerHTML = '<div class="stat-chip"><div class="stat-chip-val">'+enMes.length+'</div><div class="stat-chip-label">Aprobadas este mes</div></div>' + tiposHtml;
   }
 
-  function wfmSolConfirmarRechazo(id) {
-    var nota=(document.getElementById('wfmSolNotaTxt').value||'').trim();
-    if(!nota){ showToast('Escribe el motivo del rechazo.'); return; }
-    var s=wfmSolPendientes.find(function(x){return x.id===id;});
-    db.collection('solicitudes').doc(id).update({ estado:'rechazada', notaRechazo:nota, jefeUid:currentUser.uid, jefeEmail:currentUser.email, fechaActualizacion:firebase.firestore.FieldValue.serverTimestamp() })
-      .then(function(){
-        if(s&&s.agenteUid) ntfEnviar(db,{uid:s.agenteUid,titulo:'Solicitud rechazada',mensaje:'Tu solicitud de '+(SOL_TIPOS[s.tipo]||s.tipo||'permiso')+' fue rechazada. Motivo: '+nota,tipo:'solicitud',subTipo:'rechazada',remitenteNombre:currentUser.displayName||currentUser.email.split('@')[0]});
-        showToast('Solicitud rechazada.'); wfmSolSel=null; wfmLimpiarSolDetalle();
-      }).catch(function(e){ showToast('Error: '+e.message); });
+  function wfmSolRenderCal() {
+    var mesEl = document.getElementById('wfmSolMesLabel');
+    var año   = wfmSolMes.getFullYear(), mes = wfmSolMes.getMonth();
+    if (mesEl) mesEl.textContent = WFM_SOL_MESES[mes] + ' ' + año;
+    wfmSolRenderStats();
+
+    var primerDia  = new Date(año, mes, 1).getDay();
+    var totalDias  = new Date(año, mes+1, 0).getDate();
+    var hoy        = new Date();
+    var cal        = document.getElementById('wfmSolCal'); if (!cal) return;
+    var html = '';
+
+    // Celdas vacías al inicio
+    for (var i = 0; i < primerDia; i++) html += '<div class="sol-cal-cell vacio"></div>';
+
+    for (var d = 1; d <= totalDias; d++) {
+      var key    = año + '-' + wfmPad(mes+1) + '-' + wfmPad(d);
+      var activos = wfmSolActivosEnDia(key);
+      var esHoy  = año===hoy.getFullYear() && mes===hoy.getMonth() && d===hoy.getDate();
+      var esSel  = wfmSolDiaSel === key;
+      var clases = 'sol-cal-cell' + (esHoy?' hoy':'') + (esSel?' sel':'');
+
+      // Puntos por tipo (canal)
+      var porTipo = {};
+      activos.forEach(function(s){ porTipo[s.tipo] = (porTipo[s.tipo]||0)+1; });
+      var dotsHtml = Object.keys(porTipo).map(function(t){
+        var c = SOL_TIPO_COLOR[t]||'#94A3B8';
+        var w = Math.min(porTipo[t] * 8, 32);
+        return '<div class="sol-cal-dot" style="width:'+w+'px;background:'+c+'"></div>';
+      }).join('');
+
+      // Puntos por proyecto
+      var porProy = {};
+      activos.forEach(function(s){ if(s.proyecto) porProy[s.proyecto] = (porProy[s.proyecto]||0)+1; });
+      var proyHtml = Object.keys(porProy).map(function(p){
+        var c = SOL_PROY_COLOR[p]||'#94A3B8';
+        return '<div class="sol-cal-dot" style="width:8px;background:'+c+';opacity:0.5"></div>';
+      }).join('');
+
+      html += '<div class="'+clases+'" onclick="wfmSolVerDia(\''+key+'\')">'
+        + '<div class="sol-cal-num">'+d+'</div>'
+        + (activos.length ? '<div class="sol-cal-total">'+activos.length+'</div>' : '')
+        + (dotsHtml ? '<div class="sol-cal-dots">'+dotsHtml+'</div>' : '')
+        + (proyHtml ? '<div class="sol-cal-dots">'+proyHtml+'</div>' : '')
+        + '</div>';
+    }
+    cal.innerHTML = html;
+  }
+
+  function wfmSolVerDia(key) {
+    wfmSolDiaSel = key;
+    wfmSolRenderCal();
+    var activos = wfmSolActivosEnDia(key);
+    var det = document.getElementById('wfmSolDetalle'); if (!det) return;
+    var partes = key.split('-');
+    var fechaLabel = parseInt(partes[2]) + ' de ' + WFM_SOL_MESES[parseInt(partes[1])-1] + ' ' + partes[0];
+    if (activos.length === 0) {
+      det.innerHTML = '<div style="font-size:0.75rem;font-weight:700;color:#0F2070;text-transform:uppercase;letter-spacing:.5px;padding-bottom:8px;border-bottom:2px solid #F1F5F9;margin-bottom:8px">'+fechaLabel+'</div>'
+        + '<div style="font-size:0.8rem;color:#94A3B8;padding:20px 0;text-align:center">Sin solicitudes aprobadas.</div>';
+      return;
+    }
+    var html = '<div style="font-size:0.75rem;font-weight:700;color:#0F2070;text-transform:uppercase;letter-spacing:.5px;padding-bottom:8px;border-bottom:2px solid #F1F5F9;margin-bottom:8px">'
+      + fechaLabel + ' <span style="color:#1A3DAA;font-size:0.72rem">('+activos.length+')</span></div>';
+    activos.forEach(function(s) {
+      var c  = SOL_TIPO_COLOR[s.tipo]||'#94A3B8';
+      var cp = SOL_PROY_COLOR[s.proyecto]||'#94A3B8';
+      var ini = s.fechaInicio || '—', fin = s.fechaFin || s.fechaInicio || '—';
+      html += '<div class="sol-det-entry" style="border-left-color:'+c+'">'
+        + '<div class="sol-det-nombre">'+escHtml(s.agente||s.nombre||'Agente')+'</div>'
+        + '<div class="sol-det-meta" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">'
+        + '<span style="color:'+c+';font-weight:700">'+(SOL_TIPOS[s.tipo]||s.tipo)+'</span>'
+        + (s.proyecto ? '<span style="color:'+cp+';font-weight:600">'+escHtml(LABELS_PROY[s.proyecto]||s.proyecto)+'</span>' : '')
+        + '</div>'
+        + '<div class="sol-det-meta">'+escHtml(ini)+' — '+escHtml(fin)+'</div>'
+        + '</div>';
+    });
+    det.innerHTML = html;
+  }
+
+  function wfmSolCambiarMes(dir) {
+    wfmSolMes.setMonth(wfmSolMes.getMonth() + dir);
+    wfmSolDiaSel = null;
+    wfmSolRenderCal();
+    document.getElementById('wfmSolDetalle').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:0.82rem;text-align:center">Selecciona un día para ver las solicitudes activas.</div>';
+  }
+  function wfmSolIrHoy() {
+    var h = new Date(); wfmSolMes = new Date(h.getFullYear(), h.getMonth(), 1);
+    wfmSolDiaSel = null; wfmSolRenderCal();
+    document.getElementById('wfmSolDetalle').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:0.82rem;text-align:center">Selecciona un día para ver las solicitudes activas.</div>';
   }
 
   // ===== TIEMPO REAL =====
