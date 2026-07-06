@@ -104,6 +104,32 @@
   /* TOAST */
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1E293B; color: white; padding: 10px 20px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 999; white-space: nowrap; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* BOTÓN REPORTE */
+  .btn-reporte { display: none; align-items: center; gap: 6px; padding: 8px 16px; background: #0F2070; color: white; border: none; border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+  .btn-reporte:hover { background: #1A3DAA; }
+  .btn-reporte.visible { display: flex; }
+  .btn-reporte svg { flex-shrink: 0; }
+
+  /* MODAL REPORTE */
+  .rp-overlay { position: fixed; inset: 0; background: rgba(15,32,112,0.45); backdrop-filter: blur(4px); z-index: 300; display: none; align-items: center; justify-content: center; }
+  .rp-overlay.open { display: flex; }
+  .rp-card { background: white; border-radius: 16px; padding: 32px 28px; width: 100%; max-width: 420px; box-shadow: 0 24px 64px rgba(0,0,0,0.18); }
+  .rp-title { font-size: 1rem; font-weight: 800; color: #1E293B; margin-bottom: 4px; }
+  .rp-sub { font-size: 0.78rem; color: #64748B; margin-bottom: 22px; }
+  .rp-field { margin-bottom: 14px; }
+  .rp-field label { display: block; font-size: 0.74rem; font-weight: 600; color: #374151; margin-bottom: 5px; }
+  .rp-row { display: flex; gap: 10px; }
+  .rp-input { flex: 1; padding: 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.83rem; font-family: inherit; color: #1E293B; background: #F8FAFC; outline: none; }
+  .rp-input:focus { border-color: #1A3DAA; background: white; }
+  .rp-opts { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+  .rp-opt { padding: 6px 12px; border: 1.5px solid #E2E8F0; border-radius: 20px; font-size: 0.73rem; font-weight: 600; cursor: pointer; background: white; color: #64748B; font-family: inherit; transition: all 0.15s; }
+  .rp-opt.active { background: #0F2070; color: white; border-color: #0F2070; }
+  .rp-btns { display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; }
+  .btn-rp-cancel { padding: 9px 18px; border: 1.5px solid #E2E8F0; border-radius: 8px; background: white; color: #64748B; font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-rp-ok { padding: 9px 20px; border: none; border-radius: 8px; background: #0F2070; color: white; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; }
+  .btn-rp-ok:hover { background: #1A3DAA; }
+  .btn-rp-ok:disabled { opacity: 0.6; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -118,6 +144,10 @@
       <p id="topbarSub">Rutas de entrada</p>
     </div>
     <div class="topbar-right">
+      <button class="btn-reporte" id="btnReporte" onclick="abrirModalReporte()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Descargar reporte
+      </button>
       <div class="tb-clock" id="clock">--:--:--</div>
     </div>
   </div>
@@ -198,6 +228,34 @@
     <div class="tp-modal-btns">
       <button class="btn-modal-cancel" onclick="cerrarModal()">Cancelar</button>
       <button class="btn-modal-confirm" id="btnConfirmar" onclick="confirmarReserva()">Sí, reservar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL REPORTE -->
+<div class="rp-overlay" id="rpOverlay">
+  <div class="rp-card">
+    <div class="rp-title">Descargar reporte de transporte</div>
+    <div class="rp-sub">Selecciona el rango de fechas para el reporte.</div>
+    <div class="rp-opts" id="rpOpts">
+      <button class="rp-opt active" onclick="rpPreset('semana')">Esta semana</button>
+      <button class="rp-opt" onclick="rpPreset('mes')">Este mes</button>
+      <button class="rp-opt" onclick="rpPreset('anterior')">Mes anterior</button>
+      <button class="rp-opt" onclick="rpPreset('custom')">Personalizado</button>
+    </div>
+    <div class="rp-field" id="rpCustomField" style="display:none">
+      <label>Rango personalizado</label>
+      <div class="rp-row">
+        <input type="date" class="rp-input" id="rpDesde" />
+        <input type="date" class="rp-input" id="rpHasta" />
+      </div>
+    </div>
+    <div class="rp-btns">
+      <button class="btn-rp-cancel" onclick="cerrarModalReporte()">Cancelar</button>
+      <button class="btn-rp-ok" id="btnDescargaOk" onclick="generarReporte()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Generar Excel
+      </button>
     </div>
   </div>
 </div>
@@ -438,11 +496,158 @@
     setTimeout(function(){ t.classList.remove('show'); }, 3500);
   }
 </script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 <script src="notif.js"></script>
 <script src="sidebar.js"></script>
 <script>
   initSidebar();
-  auth.onAuthStateChanged(function(user){ if (user) initNotif(db, auth); });
+  auth.onAuthStateChanged(function(user){
+    if (user) {
+      initNotif(db, auth);
+      // Mostrar botón de reporte solo a roles admin
+      db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+        if (!doc.exists) return;
+        var r = doc.data().rol || '';
+        var rolesAdmin = ['admin','jefe','wfm','superadmin'];
+        if (rolesAdmin.indexOf(r) > -1) {
+          document.getElementById('btnReporte').classList.add('visible');
+        }
+      });
+    }
+  });
+
+  // ===== REPORTE =====
+  var rpModo = 'semana';
+
+  function abrirModalReporte() {
+    rpPreset('semana');
+    document.getElementById('rpOverlay').classList.add('open');
+  }
+
+  function cerrarModalReporte() {
+    document.getElementById('rpOverlay').classList.remove('open');
+  }
+
+  function rpPreset(modo) {
+    rpModo = modo;
+    document.querySelectorAll('.rp-opt').forEach(function(b){ b.classList.remove('active'); });
+    var idx = { semana:0, mes:1, anterior:2, custom:3 };
+    document.querySelectorAll('.rp-opt')[idx[modo]].classList.add('active');
+    document.getElementById('rpCustomField').style.display = modo === 'custom' ? '' : 'none';
+
+    var hoy   = new Date(); hoy.setHours(0,0,0,0);
+    var desde, hasta;
+    if (modo === 'semana') {
+      var dow = hoy.getDay();
+      desde = new Date(hoy); desde.setDate(hoy.getDate() - dow);
+      hasta = new Date(desde); hasta.setDate(desde.getDate() + 6);
+    } else if (modo === 'mes') {
+      desde = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+      hasta = new Date(hoy.getFullYear(), hoy.getMonth()+1, 0);
+    } else if (modo === 'anterior') {
+      desde = new Date(hoy.getFullYear(), hoy.getMonth()-1, 1);
+      hasta = new Date(hoy.getFullYear(), hoy.getMonth(), 0);
+    }
+    if (modo !== 'custom') {
+      document.getElementById('rpDesde').value = toISO(desde);
+      document.getElementById('rpHasta').value = toISO(hasta);
+    }
+  }
+
+  function generarReporte() {
+    var desde = document.getElementById('rpDesde').value;
+    var hasta = document.getElementById('rpHasta').value;
+    if (!desde || !hasta || desde > hasta) {
+      showToast('Selecciona un rango válido.'); return;
+    }
+    var btn = document.getElementById('btnDescargaOk');
+    btn.disabled = true;
+    btn.innerHTML = '<span style="display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:5px"></span>Generando...';
+
+    db.collection('transporte').get().then(function(snap) {
+      var solicitudes = [];
+      snap.forEach(function(d){ solicitudes.push(Object.assign({ id: d.id }, d.data())); });
+
+      // Expandir: una fila por (solicitud × fecha) dentro del rango
+      var filas = [];
+      solicitudes.forEach(function(s) {
+        var fechas = s.fechas || [];
+        fechas.forEach(function(f) {
+          if (f >= desde && f <= hasta) {
+            filas.push({
+              Fecha:            formatFecha(f),
+              Fecha_ISO:        f,
+              Nombre:           s.nombre  || '—',
+              Correo:           s.email   || '—',
+              Tipo:             s.tipo === 'entrada' ? 'Entrada' : 'Salida',
+              Ruta:             s.ruta    || RUTAS[s.tipo] || '—',
+              Hora:             s.hora    || '—',
+              Estado:           ucFirst(s.estado || 'pendiente'),
+              Solicitado:       s.fechaSolicitud
+                                  ? s.fechaSolicitud.toDate().toLocaleString('es-SV',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})
+                                  : '—'
+            });
+          }
+        });
+      });
+
+      // Ordenar por fecha, luego por nombre
+      filas.sort(function(a,b){
+        if (a.Fecha_ISO !== b.Fecha_ISO) return a.Fecha_ISO < b.Fecha_ISO ? -1 : 1;
+        return a.Nombre.localeCompare(b.Nombre);
+      });
+
+      if (filas.length === 0) {
+        showToast('No hay solicitudes en ese rango.');
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Generar Excel';
+        return;
+      }
+
+      // Construir hoja resumen por día
+      var porDia = {};
+      filas.forEach(function(f){
+        if (!porDia[f.Fecha_ISO]) porDia[f.Fecha_ISO] = { total:0, entrada:0, salida:0 };
+        porDia[f.Fecha_ISO].total++;
+        if (f.Tipo === 'Entrada') porDia[f.Fecha_ISO].entrada++;
+        else porDia[f.Fecha_ISO].salida++;
+      });
+
+      var resumen = Object.keys(porDia).sort().map(function(iso){
+        var d = porDia[iso];
+        return { Fecha: formatFecha(iso), Total: d.total, Entrada: d.entrada, Salida: d.salida };
+      });
+
+      // Quitar columna auxiliar antes de escribir
+      var filasSalida = filas.map(function(f){
+        return { Fecha:f.Fecha, Nombre:f.Nombre, Correo:f.Correo, Tipo:f.Tipo, Ruta:f.Ruta, Hora:f.Hora, Estado:f.Estado, 'Fecha solicitud':f.Solicitado };
+      });
+
+      var wb = XLSX.utils.book_new();
+
+      // Hoja 1: Resumen por día
+      var wsRes = XLSX.utils.json_to_sheet(resumen);
+      wsRes['!cols'] = [{wch:14},{wch:8},{wch:10},{wch:8}];
+      XLSX.utils.book_append_sheet(wb, wsRes, 'Resumen por día');
+
+      // Hoja 2: Detalle completo
+      var wsDet = XLSX.utils.json_to_sheet(filasSalida);
+      wsDet['!cols'] = [{wch:14},{wch:28},{wch:30},{wch:10},{wch:34},{wch:8},{wch:12},{wch:20}];
+      XLSX.utils.book_append_sheet(wb, wsDet, 'Detalle');
+
+      var nombreArchivo = 'reporte_transporte_' + desde + '_' + hasta + '.xlsx';
+      XLSX.writeFile(wb, nombreArchivo);
+
+      cerrarModalReporte();
+      showToast('Reporte descargado correctamente.');
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Generar Excel';
+    }).catch(function(e){
+      showToast('Error al obtener datos: ' + e.message);
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Generar Excel';
+    });
+  }
 </script>
 </body>
 </html>
