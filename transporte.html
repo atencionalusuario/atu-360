@@ -608,35 +608,64 @@
         return;
       }
 
-      // Construir hoja resumen por día
-      var porDia = {};
+      // Agrupar: fecha → tipo → hora → conteo
+      var porFecha = {};
       filas.forEach(function(f){
-        if (!porDia[f.Fecha_ISO]) porDia[f.Fecha_ISO] = { total:0, entrada:0, salida:0 };
-        porDia[f.Fecha_ISO].total++;
-        if (f.Tipo === 'Entrada') porDia[f.Fecha_ISO].entrada++;
-        else porDia[f.Fecha_ISO].salida++;
+        if (!porFecha[f.Fecha_ISO]) porFecha[f.Fecha_ISO] = { entrada:{}, salida:{} };
+        var tipo = f.Tipo === 'Entrada' ? 'entrada' : 'salida';
+        porFecha[f.Fecha_ISO][tipo][f.Hora] = (porFecha[f.Fecha_ISO][tipo][f.Hora] || 0) + 1;
       });
 
-      var resumen = Object.keys(porDia).sort().map(function(iso){
-        var d = porDia[iso];
-        return { Fecha: formatFecha(iso), Total: d.total, Entrada: d.entrada, Salida: d.salida };
+      // Construir hoja principal como array de arrays (AOA)
+      var aoa = [];
+      var merges = [];
+      var rowIdx = 0;
+
+      Object.keys(porFecha).sort().forEach(function(iso, di){
+        var d = porFecha[iso];
+        var fechaFmt = formatFecha(iso);
+
+        // -- ENTRADA --
+        aoa.push(['Rutas de entrada (Salvador del Mundo - Tuscania)', null]);
+        merges.push({ s:{r:rowIdx,c:0}, e:{r:rowIdx,c:1} }); rowIdx++;
+        aoa.push([fechaFmt, null]);
+        merges.push({ s:{r:rowIdx,c:0}, e:{r:rowIdx,c:1} }); rowIdx++;
+        aoa.push(['Hora', 'Total personas']); rowIdx++;
+        var hEnt = Object.keys(d.entrada).sort();
+        if (hEnt.length === 0) { aoa.push(['—', 0]); rowIdx++; }
+        hEnt.forEach(function(h){ aoa.push([h, d.entrada[h]]); rowIdx++; });
+
+        aoa.push([null, null]); rowIdx++; // separador
+
+        // -- SALIDA --
+        aoa.push(['Rutas de salida (Tuscania - Salvador del Mundo)', null]);
+        merges.push({ s:{r:rowIdx,c:0}, e:{r:rowIdx,c:1} }); rowIdx++;
+        aoa.push([fechaFmt, null]);
+        merges.push({ s:{r:rowIdx,c:0}, e:{r:rowIdx,c:1} }); rowIdx++;
+        aoa.push(['Hora', 'Total personas']); rowIdx++;
+        var hSal = Object.keys(d.salida).sort();
+        if (hSal.length === 0) { aoa.push(['—', 0]); rowIdx++; }
+        hSal.forEach(function(h){ aoa.push([h, d.salida[h]]); rowIdx++; });
+
+        aoa.push([null, null]); rowIdx++;
+        aoa.push([null, null]); rowIdx++;
       });
 
-      // Quitar columna auxiliar antes de escribir
+      var wsMain = XLSX.utils.aoa_to_sheet(aoa);
+      wsMain['!cols'] = [{wch:14},{wch:16}];
+      wsMain['!merges'] = merges;
+
+      // Hoja de detalle (lista completa de personas)
       var filasSalida = filas.map(function(f){
-        return { Fecha:f.Fecha, Nombre:f.Nombre, Correo:f.Correo, Tipo:f.Tipo, Ruta:f.Ruta, Hora:f.Hora, Estado:f.Estado, 'Fecha solicitud':f.Solicitado };
+        return { Fecha:f.Fecha, Nombre:f.Nombre, Correo:f.Correo, Tipo:f.Tipo, Hora:f.Hora, Estado:f.Estado, 'Fecha solicitud':f.Solicitado };
       });
 
       var wb = XLSX.utils.book_new();
-
-      // Hoja 1: Resumen por día
-      var wsRes = XLSX.utils.json_to_sheet(resumen);
-      wsRes['!cols'] = [{wch:14},{wch:8},{wch:10},{wch:8}];
-      XLSX.utils.book_append_sheet(wb, wsRes, 'Resumen por día');
+      XLSX.utils.book_append_sheet(wb, wsMain, 'Reporte por hora');
 
       // Hoja 2: Detalle completo
       var wsDet = XLSX.utils.json_to_sheet(filasSalida);
-      wsDet['!cols'] = [{wch:14},{wch:28},{wch:30},{wch:10},{wch:34},{wch:8},{wch:12},{wch:20}];
+      wsDet['!cols'] = [{wch:14},{wch:28},{wch:30},{wch:10},{wch:8},{wch:12},{wch:20}];
       XLSX.utils.book_append_sheet(wb, wsDet, 'Detalle');
 
       var nombreArchivo = 'reporte_transporte_' + desde + '_' + hasta + '.xlsx';
