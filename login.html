@@ -38,6 +38,30 @@
   .footer-note strong { color:#1A3DAA; }
   .spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.4); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; vertical-align:middle; margin-right:6px; }
   @keyframes spin { to { transform:rotate(360deg); } }
+  /* MODAL CAMBIO DE CONTRASEÑA */
+  .cp-overlay { position:fixed; inset:0; background:rgba(15,32,112,0.45); display:flex; align-items:center; justify-content:center; z-index:200; opacity:0; pointer-events:none; transition:opacity 0.2s; backdrop-filter:blur(4px); }
+  .cp-overlay.show { opacity:1; pointer-events:all; }
+  .cp-card { background:white; border-radius:20px; padding:36px 32px; width:100%; max-width:380px; box-shadow:0 24px 64px rgba(0,0,0,0.18); }
+  .cp-icon { width:48px; height:48px; border-radius:12px; background:linear-gradient(135deg,#1A3DAA,#29ABE2); display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+  .cp-title { font-size:1.15rem; font-weight:800; color:#1E293B; margin-bottom:6px; }
+  .cp-sub { font-size:0.8rem; color:#64748B; line-height:1.5; margin-bottom:24px; }
+  .cp-field { margin-bottom:14px; }
+  .cp-field label { display:block; font-size:0.75rem; font-weight:600; color:#374151; margin-bottom:5px; }
+  .cp-input-wrap { position:relative; }
+  .cp-input { width:100%; padding:11px 40px 11px 14px; border:1.5px solid #E2E8F0; border-radius:10px; font-size:0.88rem; color:#1E293B; background:#F8FAFC; outline:none; transition:border 0.2s; font-family:inherit; }
+  .cp-input:focus { border-color:#1A3DAA; box-shadow:0 0 0 3px rgba(26,61,170,0.08); background:white; }
+  .cp-eye { position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; color:#94A3B8; }
+  .cp-req { font-size:0.7rem; color:#94A3B8; margin-top:10px; margin-bottom:18px; }
+  .cp-req span { color:#16A34A; font-weight:700; }
+  .cp-err { background:#FEF2F2; border:1px solid #FECACA; border-radius:8px; padding:9px 13px; font-size:0.77rem; color:#DC2626; margin-bottom:14px; display:none; }
+  .cp-err.show { display:block; }
+  .btn-cp { width:100%; padding:13px; background:linear-gradient(135deg,#1A3DAA,#29ABE2); color:white; border:none; border-radius:10px; font-size:0.92rem; font-weight:700; cursor:pointer; transition:opacity 0.2s; font-family:inherit; }
+  .btn-cp:hover { opacity:0.9; }
+  .btn-cp:disabled { opacity:0.6; cursor:not-allowed; }
+  .cp-strength { height:4px; border-radius:2px; margin-top:6px; transition:all 0.3s; background:#E2E8F0; }
+  .cp-strength.weak   { background:#EF4444; width:33%; }
+  .cp-strength.medium { background:#F59E0B; width:66%; }
+  .cp-strength.strong { background:#16A34A; width:100%; }
 </style>
 </head>
 <body>
@@ -79,6 +103,39 @@
   </div>
 </div>
 
+<!-- MODAL: Cambio de contraseña en primer acceso -->
+<div class="cp-overlay" id="cpOverlay">
+  <div class="cp-card">
+    <div class="cp-icon">
+      <svg width="22" height="22" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+    </div>
+    <div class="cp-title">Crea tu contraseña</div>
+    <div class="cp-sub">Es tu primer acceso. Debes establecer una contraseña personal antes de continuar.</div>
+    <div class="cp-field">
+      <label>Nueva contraseña</label>
+      <div class="cp-input-wrap">
+        <input type="password" id="cpPass1" class="cp-input" placeholder="Mínimo 8 caracteres" />
+        <span class="cp-eye" id="cpToggle1">
+          <svg width="17" height="17" fill="none" stroke="#94A3B8" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </span>
+      </div>
+      <div class="cp-strength" id="cpStrength"></div>
+    </div>
+    <div class="cp-field">
+      <label>Confirmar contraseña</label>
+      <div class="cp-input-wrap">
+        <input type="password" id="cpPass2" class="cp-input" placeholder="Repite la contraseña" />
+        <span class="cp-eye" id="cpToggle2">
+          <svg width="17" height="17" fill="none" stroke="#94A3B8" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </span>
+      </div>
+    </div>
+    <div class="cp-req">La contraseña debe tener al menos <span>8 caracteres</span>.</div>
+    <div class="cp-err" id="cpErr"></div>
+    <button class="btn-cp" id="btnCambiarPass" onclick="confirmarCambioPass()">Guardar y continuar</button>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -98,8 +155,16 @@
   var auth = firebase.auth();
   var db   = firebase.firestore();
 
-  var SVG_OJO_ABIERTO = '<svg width="18" height="18" fill="none" stroke="#64748B" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
-  var SVG_OJO_CERRADO = '<svg width="18" height="18" fill="none" stroke="#64748B" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+  // Estado para el flujo de primer acceso
+  var _cpUser  = null;
+  var _cpRuta  = null;
+  var _cpRol   = null;
+  var _cpNombre= null;
+
+  var SVG_OJO_ABIERTO = '<svg width="17" height="17" fill="none" stroke="#94A3B8" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var SVG_OJO_CERRADO = '<svg width="17" height="17" fill="none" stroke="#94A3B8" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+  // Toggle ojo en el login
   document.getElementById('togglePass').addEventListener('click', function(){
     var p = document.getElementById('pass');
     var mostrar = p.type === 'password';
@@ -107,8 +172,41 @@
     document.getElementById('togglePass').innerHTML = mostrar ? SVG_OJO_CERRADO : SVG_OJO_ABIERTO;
   });
 
+  // Toggles ojo en el modal
+  document.getElementById('cpToggle1').addEventListener('click', function(){
+    var p = document.getElementById('cpPass1');
+    var show = p.type === 'password';
+    p.type = show ? 'text' : 'password';
+    document.getElementById('cpToggle1').innerHTML = show ? SVG_OJO_CERRADO : SVG_OJO_ABIERTO;
+  });
+  document.getElementById('cpToggle2').addEventListener('click', function(){
+    var p = document.getElementById('cpPass2');
+    var show = p.type === 'password';
+    p.type = show ? 'text' : 'password';
+    document.getElementById('cpToggle2').innerHTML = show ? SVG_OJO_CERRADO : SVG_OJO_ABIERTO;
+  });
+
+  // Barra de fortaleza de contraseña
+  document.getElementById('cpPass1').addEventListener('input', function(){
+    var v = this.value;
+    var bar = document.getElementById('cpStrength');
+    bar.className = 'cp-strength';
+    if (v.length === 0) return;
+    var score = 0;
+    if (v.length >= 8)  score++;
+    if (/[A-Z]/.test(v)) score++;
+    if (/[0-9]/.test(v)) score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+    if (score <= 1)      bar.classList.add('weak');
+    else if (score <= 2) bar.classList.add('medium');
+    else                 bar.classList.add('strong');
+  });
+
   document.getElementById('pass').addEventListener('keydown', function(e){
     if (e.key === 'Enter') doLogin();
+  });
+  document.getElementById('cpPass2').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') confirmarCambioPass();
   });
 
   document.getElementById('btnLogin').addEventListener('click', doLogin);
@@ -128,8 +226,10 @@
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>Ingresando...';
 
+    var loggedUser = null;
     auth.signInWithEmailAndPassword(email, pass)
       .then(function(cred) {
+        loggedUser = cred.user;
         return db.collection('usuarios').doc(cred.user.uid).get();
       })
       .then(function(doc) {
@@ -137,6 +237,19 @@
         var rol  = doc.data().rol;
         var ruta = RUTAS[rol];
         if (!ruta) throw { code: 'auth/unknown-role' };
+
+        if (doc.data().primerAcceso) {
+          _cpUser   = loggedUser;
+          _cpRuta   = ruta;
+          _cpRol    = rol;
+          _cpNombre = doc.data().nombre || '';
+          btn.disabled = false;
+          btn.innerHTML = 'Iniciar sesión';
+          document.getElementById('cpOverlay').classList.add('show');
+          document.getElementById('cpPass1').focus();
+          return;
+        }
+
         sessionStorage.setItem('atu_rol',    rol);
         sessionStorage.setItem('atu_nombre', doc.data().nombre || '');
         window.location.href = ruta;
@@ -151,6 +264,42 @@
         err.classList.add('show');
         btn.disabled = false;
         btn.innerHTML = 'Iniciar sesión';
+      });
+  }
+
+  function confirmarCambioPass() {
+    var np1  = document.getElementById('cpPass1').value;
+    var np2  = document.getElementById('cpPass2').value;
+    var errEl = document.getElementById('cpErr');
+    var btn  = document.getElementById('btnCambiarPass');
+    errEl.classList.remove('show');
+
+    if (np1.length < 8) {
+      errEl.textContent = 'La contraseña debe tener al menos 8 caracteres.';
+      errEl.classList.add('show'); return;
+    }
+    if (np1 !== np2) {
+      errEl.textContent = 'Las contraseñas no coinciden.';
+      errEl.classList.add('show'); return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Guardando...';
+
+    _cpUser.updatePassword(np1)
+      .then(function() {
+        return db.collection('usuarios').doc(_cpUser.uid).update({ primerAcceso: false });
+      })
+      .then(function() {
+        sessionStorage.setItem('atu_rol',    _cpRol);
+        sessionStorage.setItem('atu_nombre', _cpNombre);
+        window.location.href = _cpRuta;
+      })
+      .catch(function(e) {
+        errEl.textContent = 'Error al guardar: ' + (e.message || e.code);
+        errEl.classList.add('show');
+        btn.disabled = false;
+        btn.innerHTML = 'Guardar y continuar';
       });
   }
 </script>
