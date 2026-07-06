@@ -527,6 +527,7 @@
         <select class="ctrl-select" id="filtroRol" onchange="aplicarFiltros()">
           <option value="">Todos los roles</option>
           <option value="agente">Agente</option>
+          <option value="agente-inmersion">Agente Inmersión</option>
           <option value="supervisor">Supervisor</option>
           <option value="editor">Editor</option>
           <option value="admin">Admin</option>
@@ -974,6 +975,7 @@
       +'<div class="field"><label>Rol <span class="field-req">*</span></label><select id="fRol">'
       +'<option value="">— Selecciona —</option>'
       +'<option value="agente"'+(u&&u.rol==='agente'?' selected':'')+'>Agente</option>'
+      +'<option value="agente-inmersion"'+(u&&u.rol==='agente-inmersion'?' selected':'')+'>Agente Inmersión</option>'
       +'<option value="supervisor"'+(u&&u.rol==='supervisor'?' selected':'')+'>Supervisor</option>'
       +'<option value="editor"'+(u&&u.rol==='editor'?' selected':'')+'>Editor</option>'
       +'<option value="admin"'+(u&&u.rol==='admin'?' selected':'')+'>Admin</option>'
