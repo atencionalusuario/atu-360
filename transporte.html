@@ -238,7 +238,8 @@
     <div class="rp-title">Descargar reporte de transporte</div>
     <div class="rp-sub">Selecciona el rango de fechas para el reporte.</div>
     <div class="rp-opts" id="rpOpts">
-      <button class="rp-opt active" onclick="rpPreset('semana')">Esta semana</button>
+      <button class="rp-opt active" onclick="rpPreset('manana')">Mañana</button>
+      <button class="rp-opt" onclick="rpPreset('semana')">Esta semana</button>
       <button class="rp-opt" onclick="rpPreset('mes')">Este mes</button>
       <button class="rp-opt" onclick="rpPreset('anterior')">Mes anterior</button>
       <button class="rp-opt" onclick="rpPreset('custom')">Personalizado</button>
@@ -531,13 +532,16 @@
   function rpPreset(modo) {
     rpModo = modo;
     document.querySelectorAll('.rp-opt').forEach(function(b){ b.classList.remove('active'); });
-    var idx = { semana:0, mes:1, anterior:2, custom:3 };
+    var idx = { manana:0, semana:1, mes:2, anterior:3, custom:4 };
     document.querySelectorAll('.rp-opt')[idx[modo]].classList.add('active');
     document.getElementById('rpCustomField').style.display = modo === 'custom' ? '' : 'none';
 
     var hoy   = new Date(); hoy.setHours(0,0,0,0);
     var desde, hasta;
-    if (modo === 'semana') {
+    if (modo === 'manana') {
+      desde = new Date(hoy); desde.setDate(hoy.getDate() + 1);
+      hasta = new Date(desde);
+    } else if (modo === 'semana') {
       var dow = hoy.getDay();
       desde = new Date(hoy); desde.setDate(hoy.getDate() - dow);
       hasta = new Date(desde); hasta.setDate(desde.getDate() + 6);
