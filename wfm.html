@@ -84,7 +84,9 @@
   .sol-det-meta   { font-size: 0.68rem; color: #64748B; }
 
   /* TIEMPO REAL */
-  .rt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; overflow-y: auto; flex: 1; align-content: start; }
+  .rt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; align-content: start; }
+  .rt-group { display:flex; flex-direction:column; gap:8px; }
+  .rt-group-hdr { display:flex; align-items:center; gap:10px; background:white; border:1.5px solid #E2E8F0; border-radius:10px; padding:10px 14px; }
   .ac-card { background: white; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 12px; }
   .ac-card.offline { opacity: 0.55; }
   .ac-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
@@ -896,6 +898,7 @@
     var busq  = (document.getElementById('wfmRTBusq')||{}).value||'';
     var fProy = (document.getElementById('wfmRTFiltProy')||{}).value||'';
     var fEst  = (document.getElementById('wfmRTFiltEst')||{}).value||'';
+    var hayFiltro = !!(busq||fProy||fEst);
 
     var lista = wfmRTAgentes.filter(function(a){
       if(busq && !(a.nombre||'').toLowerCase().includes(busq.toLowerCase()) && !(a.email||'').toLowerCase().includes(busq.toLowerCase())) return false;
@@ -903,9 +906,14 @@
       if(fEst  && (a.estadoActual||'Fuera')!==fEst) return false;
       return true;
     });
-    lista.sort(function(a,b){ if(a.enLinea&&!b.enLinea)return -1; if(!a.enLinea&&b.enLinea)return 1; return (a.nombre||'').localeCompare(b.nombre||'','es'); });
 
-    var enLinea=wfmRTAgentes.filter(function(a){return !!a.enLinea;}).length, total=wfmRTAgentes.length;
+    var todosSupes = wfmRTAgentes.filter(function(a){ return a.rol==='supervisor'; });
+    todosSupes.sort(function(a,b){ return (a.nombre||'').localeCompare(b.nombre||'','es'); });
+    var soloAgentes = lista.filter(function(a){ return a.rol!=='supervisor'; });
+    soloAgentes.sort(function(a,b){ if(a.enLinea&&!b.enLinea)return -1; if(!a.enLinea&&b.enLinea)return 1; return (a.nombre||'').localeCompare(b.nombre||'','es'); });
+
+    var enLinea=wfmRTAgentes.filter(function(a){return !!a.enLinea&&a.rol!=='supervisor';}).length;
+    var total=wfmRTAgentes.filter(function(a){return a.rol!=='supervisor';}).length;
     var sEl=document.getElementById('wfmRTStats');
     if(sEl) sEl.innerHTML=
       '<div class="stat-chip activos"><div class="stat-chip-val">'+enLinea+'</div><div class="stat-chip-label">En línea</div></div>'
@@ -916,16 +924,23 @@
     wfmRTTimers={};
 
     var countEl=document.getElementById('wfmRTCount');
-    if(countEl) countEl.textContent=lista.length+' de '+total+' agentes';
+    if(countEl) countEl.textContent=soloAgentes.length+' de '+total+' agentes';
 
     var grid=document.getElementById('wfmRTGrid'); if(!grid) return;
-    if(lista.length===0){ grid.innerHTML='<div style="font-size:0.8rem;color:#94A3B8;grid-column:1/-1">Sin agentes para los filtros seleccionados.</div>'; return; }
+    grid.style.cssText='display:flex;flex-direction:column;gap:16px;overflow-y:auto;flex:1;';
 
-    var html='';
-    lista.forEach(function(a){
+    // Agrupar agentes por emailSupervisor
+    var grupos={};
+    soloAgentes.forEach(function(a){
+      var key=a.emailSupervisor||'__sin__';
+      if(!grupos[key]) grupos[key]=[];
+      grupos[key].push(a);
+    });
+
+    function cardHtml(a){
       var online=!!a.enLinea, estado=a.estadoActual||'Fuera', cfg=RT_ESTADOS[estado]||RT_ESTADOS['Fuera'];
       var pLabel=LABELS_PROY[a.proyecto]||'';
-      html+='<div class="ac-card'+(online?'':' offline')+'">'
+      return '<div class="ac-card'+(online?'':' offline')+'">'
         +'<div class="ac-card-top">'
         +'<div class="ac-indicator '+(online?'on':'off')+'"></div>'
         +'<div class="ac-av '+(online?'online':'offline')+'">'+wfmInic(a.nombre||a.email||'?')+'</div>'
@@ -936,10 +951,52 @@
            +'<div class="ac-rt-timer" style="color:'+cfg.text+'" id="wrt-'+a.id+'">00:00:00</div>'
           :'<div class="ac-sin-marcaje">Sin entrada hoy</div>')
         +'</div>';
+    }
+
+    var html='';
+
+    todosSupes.forEach(function(sup){
+      var grp=grupos[sup.email]||[];
+      if(hayFiltro && grp.length===0) return;
+      var supOnline=!!sup.enLinea;
+      var enLinGrp=grp.filter(function(a){return !!a.enLinea;}).length;
+      html+='<div class="rt-group">'
+        +'<div class="rt-group-hdr">'
+        +'<div class="ac-indicator '+(supOnline?'on':'off')+'" style="width:10px;height:10px"></div>'
+        +'<div class="ac-av '+(supOnline?'online':'offline')+'" style="width:28px;height:28px;font-size:0.62rem">'+wfmInic(sup.nombre||sup.email||'?')+'</div>'
+        +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:0.82rem;font-weight:700;color:#1E293B">'+escHtml(sup.nombre||sup.email||'?')+'</div>'
+        +'<div style="font-size:0.68rem;color:#94A3B8">Supervisor · '+(supOnline?'<span style="color:#16A34A;font-weight:700">En línea</span>':'Fuera')+'</div>'
+        +'</div>'
+        +'<div style="font-size:0.72rem;font-weight:700;color:#1A3DAA;background:#EEF2FF;padding:3px 10px;border-radius:20px">'+enLinGrp+' / '+grp.length+'</div>'
+        +'</div>';
+      if(grp.length>0){
+        html+='<div class="rt-grid" style="padding-left:12px">';
+        grp.forEach(function(a){ html+=cardHtml(a); });
+        html+='</div>';
+      } else {
+        html+='<div style="font-size:0.78rem;color:#94A3B8;padding:6px 12px">Sin agentes asignados.</div>';
+      }
+      html+='</div>';
     });
+
+    var sinSup=grupos['__sin__']||[];
+    if(sinSup.length>0){
+      var enLinSin=sinSup.filter(function(a){return !!a.enLinea;}).length;
+      html+='<div class="rt-group">'
+        +'<div class="rt-group-hdr">'
+        +'<div style="flex:1;font-size:0.82rem;font-weight:700;color:#94A3B8">Sin supervisor asignado</div>'
+        +'<div style="font-size:0.72rem;font-weight:700;color:#94A3B8;background:#F1F5F9;padding:3px 10px;border-radius:20px">'+enLinSin+' / '+sinSup.length+'</div>'
+        +'</div>'
+        +'<div class="rt-grid" style="padding-left:12px">';
+      sinSup.forEach(function(a){ html+=cardHtml(a); });
+      html+='</div></div>';
+    }
+
+    if(!html) html='<div style="font-size:0.8rem;color:#94A3B8">Sin agentes para los filtros seleccionados.</div>';
     grid.innerHTML=html;
 
-    lista.filter(function(a){return !!a.enLinea&&!!a.estadoDesde;}).forEach(function(a){
+    soloAgentes.filter(function(a){return !!a.enLinea&&!!a.estadoDesde;}).forEach(function(a){
       wfmRTTimers[a.id]=setInterval(function(){
         var el=document.getElementById('wrt-'+a.id); if(!el){clearInterval(wfmRTTimers[a.id]);return;}
         var desde=a.estadoDesde.toDate?a.estadoDesde.toDate():new Date(a.estadoDesde);
