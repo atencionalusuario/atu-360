@@ -105,6 +105,26 @@
   .turno-agent-item:hover { border-color: #29ABE2; }
   .turno-agent-item.active { border-color: #1A3DAA; background: #EEF2FF; }
   .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+  /* TURNO SUB-TABS */
+  .turno-stab-wrap { display:flex; gap:4px; background:#F1F5F9; border-radius:9px; padding:4px; margin-bottom:16px; width:fit-content; }
+  .turno-stab { padding:7px 18px; border-radius:6px; font-size:0.78rem; font-weight:600; cursor:pointer; border:none; background:none; color:#64748B; font-family:inherit; transition:all 0.15s; }
+  .turno-stab.active { background:white; color:#0F2070; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .pt-card { display:flex; align-items:center; gap:12px; background:white; border:1.5px solid #E2E8F0; border-radius:10px; padding:13px 16px; }
+  .pt-dot { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
+  .pt-nombre { font-size:0.83rem; font-weight:700; color:#1E293B; }
+  .pt-horario { font-size:0.72rem; color:#64748B; margin-top:1px; }
+  .btn-icon-sm { width:28px; height:28px; border-radius:6px; border:1.5px solid #E2E8F0; background:white; color:#64748B; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all 0.15s; }
+  .btn-icon-sm:hover { background:#F1F5F9; }
+  .btn-icon-sm.danger { border-color:#FECACA; background:#FEF2F2; color:#DC2626; }
+  .pt-form { background:#F8FAFC; border:1.5px solid #E2E8F0; border-radius:10px; padding:16px; display:flex; flex-direction:column; gap:12px; }
+  .pt-form-row { display:flex; gap:10px; }
+  .pt-input { width:100%; padding:8px 10px; border:1.5px solid #E2E8F0; border-radius:7px; font-size:0.83rem; font-family:inherit; color:#1E293B; background:white; outline:none; }
+  .pt-input:focus { border-color:#1A3DAA; }
+  .as-section { background:white; border:1px solid #E2E8F0; border-radius:10px; padding:18px; display:flex; flex-direction:column; gap:14px; }
+  .as-title { font-size:0.75rem; font-weight:700; color:#0F2070; text-transform:uppercase; letter-spacing:.5px; padding-bottom:10px; border-bottom:2px solid #F1F5F9; }
+  .turno-check-item { display:flex; align-items:center; gap:8px; padding:8px 10px; border:1.5px solid #E2E8F0; border-radius:8px; cursor:pointer; transition:all 0.15s; }
+  .turno-check-item:hover { border-color:#CBD5E1; }
+  .turno-check-item.sel { border-color:#1A3DAA; background:#EEF2FF; }
   .cal-dia { border-radius: 5px; padding: 4px 2px; text-align: center; font-size: 0.65rem; }
   .cal-dia.laboral  { background: #EEF2FF; color: #1A3DAA; }
   .cal-dia.descanso { background: #F1F5F9; color: #94A3B8; }
@@ -234,16 +254,84 @@
   </div>
 
   <!-- VISTA TURNO -->
-  <div id="vistaTurno" style="display:none;flex:1;overflow:hidden;padding:20px 24px;flex-direction:column;gap:12px">
-    <div style="display:flex;flex:1;overflow:hidden;background:white;border-radius:10px;border:1px solid #E2E8F0">
-      <div style="width:280px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;padding:12px;border-right:1px solid #F1F5F9;gap:8px">
-        <input class="ctrl-input" id="wfmTurnoBusq" placeholder="Buscar agente..." oninput="wfmRenderTurnoLista()" style="width:100%">
-        <div id="wfmTurnoLista" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:5px">
-          <div style="font-size:0.8rem;color:#94A3B8">Cargando...</div>
+  <div id="vistaTurno" style="display:none;flex:1;overflow-y:auto;padding:20px 24px;flex-direction:column;gap:12px">
+    <div class="turno-stab-wrap">
+      <button class="turno-stab active" onclick="turnoMostrarStab('plantillas',this)">Plantillas de turno</button>
+      <button class="turno-stab" onclick="turnoMostrarStab('asignar',this)">Asignar turno</button>
+      <button class="turno-stab" onclick="turnoMostrarStab('agentes',this)">Ver agentes</button>
+    </div>
+    <!-- SUB-TAB: Plantillas -->
+    <div id="turnoStabPlantillas" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:0.82rem;font-weight:700;color:#0F2070;text-transform:uppercase;letter-spacing:.5px">Plantillas de turno</div>
+        <button onclick="turnoMostrarFormPt()" style="background:#0F2070;color:white;border:none;border-radius:8px;padding:8px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit">+ Nueva plantilla</button>
+      </div>
+      <div id="ptForm" class="pt-form" style="display:none">
+        <input type="hidden" id="ptFormId">
+        <div class="pt-form-row">
+          <input class="pt-input" id="ptNombre" placeholder="Nombre del turno (ej: Turno Mañana)">
+          <input type="color" id="ptColor" value="#1A3DAA" style="width:48px;height:38px;border:1.5px solid #E2E8F0;border-radius:7px;cursor:pointer;padding:2px;flex-shrink:0">
+        </div>
+        <div class="pt-form-row">
+          <div style="flex:1"><label style="font-size:0.72rem;color:#64748B;display:block;margin-bottom:4px">Hora inicio</label><input class="pt-input" type="time" id="ptHoraInicio"></div>
+          <div style="flex:1"><label style="font-size:0.72rem;color:#64748B;display:block;margin-bottom:4px">Hora fin</label><input class="pt-input" type="time" id="ptHoraFin"></div>
+        </div>
+        <input class="pt-input" id="ptDesc" placeholder="Descripción (opcional)">
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button onclick="turnoOcultarFormPt()" style="background:white;color:#64748B;border:1.5px solid #E2E8F0;border-radius:7px;padding:8px 16px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit">Cancelar</button>
+          <button onclick="turnoGuardarPt()" style="background:#0F2070;color:white;border:none;border-radius:7px;padding:8px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit">Guardar</button>
         </div>
       </div>
-      <div id="wfmTurnoDetalle" style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px">
-        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:0.82rem">Selecciona un agente para ver su turno.</div>
+      <div id="ptLista" style="display:flex;flex-direction:column;gap:8px"><div style="font-size:0.8rem;color:#94A3B8">Cargando...</div></div>
+    </div>
+    <!-- SUB-TAB: Asignar -->
+    <div id="turnoStabAsignar" style="display:none;flex-direction:column;gap:16px">
+      <div class="as-section">
+        <div class="as-title">Paso 1 — Plantilla</div>
+        <select id="asPlantilla" class="pt-input" style="max-width:360px"><option value="">Selecciona una plantilla...</option></select>
+      </div>
+      <div class="as-section">
+        <div class="as-title">Paso 2 — Rango de fechas</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+          <div><label style="font-size:0.72rem;color:#64748B;display:block;margin-bottom:4px">Desde</label><input class="pt-input" type="date" id="asDesde" style="width:160px"></div>
+          <div><label style="font-size:0.72rem;color:#64748B;display:block;margin-bottom:4px">Hasta</label><input class="pt-input" type="date" id="asHasta" style="width:160px"></div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#374151;cursor:pointer">
+          <input type="checkbox" id="asFdS" checked style="width:16px;height:16px;accent-color:#1A3DAA"> Marcar fines de semana como descanso
+        </label>
+      </div>
+      <div class="as-section">
+        <div class="as-title">Paso 3 — Personas</div>
+        <div style="display:flex;gap:8px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;color:#374151;cursor:pointer"><input type="radio" name="asModo" value="individual" onclick="turnoAsModo('individual')" style="accent-color:#1A3DAA"> Individual</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;color:#374151;cursor:pointer"><input type="radio" name="asModo" value="grupal" onclick="turnoAsModo('grupal')" style="accent-color:#1A3DAA" checked> Grupal</label>
+        </div>
+        <div id="asPanelIndividual" style="display:none;flex-direction:column;gap:8px">
+          <input class="pt-input" id="asIndBusq" placeholder="Buscar agente..." oninput="turnoAsRenderIndividual()">
+          <div id="asIndLista" style="display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto"></div>
+        </div>
+        <div id="asPanelGrupal" style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="turno-check-item sel" id="asGrpPresetTodos" onclick="turnoAsPreset('todos')">Todos</button>
+            <button class="turno-check-item" id="asGrpPresetAgentes" onclick="turnoAsPreset('agentes')">Solo agentes</button>
+            <button class="turno-check-item" id="asGrpPresetSupervisores" onclick="turnoAsPreset('supervisores')">Solo supervisores</button>
+          </div>
+          <input class="pt-input" id="asGrpBusq" placeholder="Buscar para selección manual..." oninput="turnoAsRenderGrupal()">
+          <div id="asGrpLista" style="display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto"></div>
+        </div>
+      </div>
+      <div><button onclick="turnoAsignar()" style="background:#0F2070;color:white;border:none;border-radius:8px;padding:10px 24px;font-size:0.82rem;font-weight:700;cursor:pointer;font-family:inherit">Asignar turno</button></div>
+    </div>
+    <!-- SUB-TAB: Ver agentes -->
+    <div id="turnoStabAgentes" style="display:none;flex:1;overflow:hidden;background:white;border-radius:10px;border:1px solid #E2E8F0">
+      <div style="display:flex;height:500px">
+        <div style="width:280px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;padding:12px;border-right:1px solid #F1F5F9;gap:8px">
+          <input class="ctrl-input" id="wfmTurnoBusq" placeholder="Buscar agente..." oninput="wfmRenderTurnoLista()" style="width:100%">
+          <div id="wfmTurnoLista" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:5px"><div style="font-size:0.8rem;color:#94A3B8">Cargando...</div></div>
+        </div>
+        <div id="wfmTurnoDetalle" style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#94A3B8;font-size:0.82rem">Selecciona un agente para ver su turno.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -603,7 +691,218 @@
         snap.forEach(function(doc){ wfmTurnoAgentes.push(Object.assign({id:doc.id},doc.data())); });
         wfmTurnoAgentes.sort(function(a,b){return (a.nombre||'').localeCompare(b.nombre||'','es');});
         wfmRenderTurnoLista();
+        turnoAsRenderIndividual();
+        turnoAsRenderGrupal();
       });
+    turnoCargarPlantillas();
+    turnoAsModo('grupal');
+    document.querySelector('input[name="asModo"][value="grupal"]').checked=true;
+  }
+
+  // ===== TURNO SUB-TABS =====
+  function turnoMostrarStab(stab, btn) {
+    ['plantillas','asignar','agentes'].forEach(function(s){
+      var el=document.getElementById('turnoStab'+s.charAt(0).toUpperCase()+s.slice(1));
+      if(el) el.style.display='none';
+    });
+    var target=document.getElementById('turnoStab'+stab.charAt(0).toUpperCase()+stab.slice(1));
+    if(target) target.style.display=(stab==='agentes'?'block':'flex');
+    document.querySelectorAll('.turno-stab').forEach(function(b){b.classList.remove('active');});
+    if(btn) btn.classList.add('active');
+  }
+
+  // ===== PLANTILLAS =====
+  var turnoPtList=[];
+
+  function turnoCargarPlantillas() {
+    db.collection('turnos_plantillas').get().then(function(snap){
+      turnoPtList=[];
+      snap.forEach(function(doc){ turnoPtList.push(Object.assign({id:doc.id},doc.data())); });
+      turnoPtList.sort(function(a,b){return (a.nombre||'').localeCompare(b.nombre||'','es');});
+      turnoRenderPtLista();
+      turnoRenderPtSelect();
+    });
+  }
+
+  function turnoRenderPtLista() {
+    var html='';
+    turnoPtList.forEach(function(p){
+      html+='<div class="pt-card">'
+        +'<div class="pt-dot" style="background:'+escHtml(p.color||'#1A3DAA')+'"></div>'
+        +'<div style="flex:1;min-width:0">'
+        +'<div class="pt-nombre">'+escHtml(p.nombre||'Sin nombre')+'</div>'
+        +'<div class="pt-horario">'+(p.horaInicio&&p.horaFin?escHtml(p.horaInicio)+' – '+escHtml(p.horaFin):'Sin horario')+(p.descripcion?' · '+escHtml(p.descripcion):'')+'</div>'
+        +'</div>'
+        +'<button class="btn-icon-sm" onclick="turnoEditarPt(\''+escHtml(p.id)+'\')" title="Editar">✏️</button>'
+        +'<button class="btn-icon-sm danger" onclick="turnoEliminarPt(\''+escHtml(p.id)+'\')" title="Eliminar">🗑</button>'
+        +'</div>';
+    });
+    var el=document.getElementById('ptLista');
+    if(el) el.innerHTML=html||'<div style="font-size:0.8rem;color:#94A3B8">No hay plantillas. Crea una nueva.</div>';
+  }
+
+  function turnoRenderPtSelect() {
+    var sel=document.getElementById('asPlantilla'); if(!sel) return;
+    var val=sel.value;
+    sel.innerHTML='<option value="">Selecciona una plantilla...</option>';
+    turnoPtList.forEach(function(p){
+      var o=document.createElement('option'); o.value=p.id; o.textContent=(p.nombre||'Sin nombre')+(p.horaInicio?' ('+p.horaInicio+' – '+p.horaFin+')':'');
+      sel.appendChild(o);
+    });
+    sel.value=val;
+  }
+
+  function turnoMostrarFormPt(pt) {
+    document.getElementById('ptFormId').value=pt?pt.id:'';
+    document.getElementById('ptNombre').value=pt?pt.nombre||'':'';
+    document.getElementById('ptColor').value=pt?pt.color||'#1A3DAA':'#1A3DAA';
+    document.getElementById('ptHoraInicio').value=pt?pt.horaInicio||'':'';
+    document.getElementById('ptHoraFin').value=pt?pt.horaFin||'':'';
+    document.getElementById('ptDesc').value=pt?pt.descripcion||'':'';
+    document.getElementById('ptForm').style.display='flex';
+  }
+
+  function turnoOcultarFormPt() { document.getElementById('ptForm').style.display='none'; }
+
+  function turnoEditarPt(id) {
+    var pt=turnoPtList.find(function(p){return p.id===id;}); if(!pt) return;
+    turnoMostrarFormPt(pt);
+    document.getElementById('ptForm').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+
+  function turnoEliminarPt(id) {
+    var pt=turnoPtList.find(function(p){return p.id===id;}); if(!pt) return;
+    if(!confirm('¿Eliminar plantilla "'+pt.nombre+'"?')) return;
+    db.collection('turnos_plantillas').doc(id).delete().then(function(){ turnoCargarPlantillas(); });
+  }
+
+  function turnoGuardarPt() {
+    var id=document.getElementById('ptFormId').value;
+    var nombre=document.getElementById('ptNombre').value.trim();
+    var color=document.getElementById('ptColor').value;
+    var horaInicio=document.getElementById('ptHoraInicio').value;
+    var horaFin=document.getElementById('ptHoraFin').value;
+    var descripcion=document.getElementById('ptDesc').value.trim();
+    if(!nombre){ alert('El nombre es obligatorio.'); return; }
+    var data={nombre:nombre,color:color,horaInicio:horaInicio,horaFin:horaFin,descripcion:descripcion};
+    var prom=id?db.collection('turnos_plantillas').doc(id).update(data):db.collection('turnos_plantillas').add(data);
+    prom.then(function(){ turnoOcultarFormPt(); turnoCargarPlantillas(); });
+  }
+
+  // ===== ASIGNAR TURNO =====
+  var asGrpSelManual=[];
+  var asGrpPreset='todos';
+  var asIndSel=null;
+
+  function turnoAsModo(modo) {
+    document.getElementById('asPanelIndividual').style.display=modo==='individual'?'flex':'none';
+    document.getElementById('asPanelGrupal').style.display=modo==='grupal'?'flex':'none';
+  }
+
+  function turnoAsPreset(preset) {
+    asGrpPreset=preset; asGrpSelManual=[];
+    document.getElementById('asGrpPresetTodos').classList.toggle('sel',preset==='todos');
+    document.getElementById('asGrpPresetAgentes').classList.toggle('sel',preset==='agentes');
+    document.getElementById('asGrpPresetSupervisores').classList.toggle('sel',preset==='supervisores');
+    turnoAsRenderGrupal();
+  }
+
+  function turnoAsRenderIndividual() {
+    var busq=((document.getElementById('asIndBusq')||{}).value||'').toLowerCase();
+    var lista=wfmTurnoAgentes.filter(function(a){ return !busq||(a.nombre||'').toLowerCase().includes(busq)||(a.email||'').toLowerCase().includes(busq); });
+    var html='';
+    lista.forEach(function(a){
+      var sel=asIndSel===a.id;
+      html+='<div class="turno-check-item'+(sel?' sel':'')+'" onclick="turnoAsSelInd(\''+a.id+'\')">'
+        +'<div class="ac-av" style="width:24px;height:24px;font-size:0.58rem">'+wfmInic(a.nombre||a.email||'?')+'</div>'
+        +'<div style="font-size:0.8rem;font-weight:600;color:#1E293B;flex:1">'+escHtml(a.nombre||a.email||'?')+'</div>'
+        +'<div style="font-size:0.68rem;color:#94A3B8">'+escHtml(a.rol||'')+'</div>'
+        +'</div>';
+    });
+    var el=document.getElementById('asIndLista');
+    if(el) el.innerHTML=html||'<div style="font-size:0.8rem;color:#94A3B8">Sin resultados.</div>';
+  }
+
+  function turnoAsSelInd(id) { asIndSel=(asIndSel===id?null:id); turnoAsRenderIndividual(); }
+
+  function turnoAsRenderGrupal() {
+    var busq=((document.getElementById('asGrpBusq')||{}).value||'').toLowerCase();
+    var lista=wfmTurnoAgentes.filter(function(a){ return !busq||(a.nombre||'').toLowerCase().includes(busq)||(a.email||'').toLowerCase().includes(busq); });
+    var html='';
+    lista.forEach(function(a){
+      var sel=asGrpSelManual.indexOf(a.id)>=0;
+      html+='<div class="turno-check-item'+(sel?' sel':'')+'" onclick="turnoAsToggleGrp(\''+a.id+'\')">'
+        +'<input type="checkbox" '+(sel?'checked':'')+' style="accent-color:#1A3DAA;width:15px;height:15px" onclick="event.stopPropagation();turnoAsToggleGrp(\''+a.id+'\')">'
+        +'<div class="ac-av" style="width:24px;height:24px;font-size:0.58rem">'+wfmInic(a.nombre||a.email||'?')+'</div>'
+        +'<div style="font-size:0.8rem;font-weight:600;color:#1E293B;flex:1">'+escHtml(a.nombre||a.email||'?')+'</div>'
+        +'<div style="font-size:0.68rem;color:#94A3B8">'+escHtml(a.rol||'')+'</div>'
+        +'</div>';
+    });
+    var el=document.getElementById('asGrpLista');
+    if(el) el.innerHTML=html||'<div style="font-size:0.8rem;color:#94A3B8">Sin resultados.</div>';
+  }
+
+  function turnoAsToggleGrp(id) {
+    var idx=asGrpSelManual.indexOf(id);
+    if(idx>=0) asGrpSelManual.splice(idx,1); else asGrpSelManual.push(id);
+    if(asGrpSelManual.length>0){
+      asGrpPreset=null;
+      document.getElementById('asGrpPresetTodos').classList.remove('sel');
+      document.getElementById('asGrpPresetAgentes').classList.remove('sel');
+      document.getElementById('asGrpPresetSupervisores').classList.remove('sel');
+    }
+    turnoAsRenderGrupal();
+  }
+
+  function turnoAsignar() {
+    var ptId=document.getElementById('asPlantilla').value;
+    var desde=document.getElementById('asDesde').value;
+    var hasta=document.getElementById('asHasta').value;
+    var fds=document.getElementById('asFdS').checked;
+    var modo=document.querySelector('input[name="asModo"]:checked');
+    if(!modo){alert('Selecciona un modo.'); return;} modo=modo.value;
+    if(!ptId){alert('Selecciona una plantilla.'); return;}
+    if(!desde||!hasta||desde>hasta){alert('Rango de fechas inválido.'); return;}
+    var pt=turnoPtList.find(function(p){return p.id===ptId;}); if(!pt){alert('Plantilla no encontrada.'); return;}
+    var uids=[];
+    if(modo==='individual'){
+      if(!asIndSel){alert('Selecciona un agente.'); return;}
+      uids=[asIndSel];
+    } else {
+      if(asGrpSelManual.length>0){ uids=asGrpSelManual.slice(); }
+      else {
+        var preset=asGrpPreset||'todos';
+        wfmTurnoAgentes.forEach(function(a){
+          var rol=a.rol||'';
+          if(preset==='todos') uids.push(a.id);
+          else if(preset==='agentes'&&(rol==='agente'||rol==='agente-inmersion')) uids.push(a.id);
+          else if(preset==='supervisores'&&rol==='supervisor') uids.push(a.id);
+        });
+      }
+    }
+    if(uids.length===0){alert('No hay personas seleccionadas.'); return;}
+    var dias={};
+    var cur=new Date(desde+'T00:00:00'), end=new Date(hasta+'T00:00:00');
+    while(cur<=end){
+      var dow=cur.getDay();
+      var key=cur.getFullYear()+'-'+wfmPad(cur.getMonth()+1)+'-'+wfmPad(cur.getDate());
+      dias[key]=(fds&&(dow===0||dow===6))?'descanso':'laboral';
+      cur.setDate(cur.getDate()+1);
+    }
+    var horario=(pt.horaInicio&&pt.horaFin)?pt.horaInicio+' – '+pt.horaFin:'—';
+    var data={plantillaId:ptId,nombre:pt.nombre,horario:horario,dias:dias};
+    function chunk(arr,size){ var r=[]; for(var i=0;i<arr.length;i+=size) r.push(arr.slice(i,i+size)); return r; }
+    var chunks=chunk(uids,500), promise=Promise.resolve();
+    chunks.forEach(function(ch){
+      promise=promise.then(function(){
+        var batch=db.batch();
+        ch.forEach(function(uid){ batch.set(db.collection('turnos').doc(uid),data,{merge:true}); });
+        return batch.commit();
+      });
+    });
+    promise.then(function(){
+      alert('Turno asignado a '+uids.length+' persona'+(uids.length!==1?'s':'')+' correctamente.');
+    }).catch(function(e){ alert('Error: '+e.message); });
   }
 
   function wfmRenderTurnoLista() {
