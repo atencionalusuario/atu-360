@@ -670,8 +670,6 @@
             <option value="cargo">Cargo</option>
             <option value="fechaIngreso">Fecha ingreso</option>
             <option value="antiguedad">Antigüedad</option>
-            <option value="horasConGoce">Horas c/goce</option>
-            <option value="horasSinGoce">Horas s/goce</option>
             <option value="estado">Estado</option>
           </select>
           <button class="btn-dir asc" id="btnDir1" onclick="toggleDir(1)"></button>
@@ -687,8 +685,6 @@
             <option value="cargo">Cargo</option>
             <option value="fechaIngreso">Fecha ingreso</option>
             <option value="antiguedad">Antigüedad</option>
-            <option value="horasConGoce">Horas c/goce</option>
-            <option value="horasSinGoce">Horas s/goce</option>
             <option value="estado">Estado</option>
           </select>
           <button class="btn-dir asc" id="btnDir2" onclick="toggleDir(2)"></button>
@@ -708,8 +704,6 @@
               <th class="sortable" data-col="supervisor"   onclick="sortByCol('supervisor')">Supervisor</th>
               <th class="sortable" data-col="fechaIngreso" onclick="sortByCol('fechaIngreso')">Ingreso</th>
               <th class="sortable" data-col="antiguedad"   onclick="sortByCol('antiguedad')">Antigüedad</th>
-              <th class="sortable" data-col="horasConGoce" onclick="sortByCol('horasConGoce')">H. c/goce</th>
-              <th class="sortable" data-col="horasSinGoce" onclick="sortByCol('horasSinGoce')">H. s/goce</th>
               <th>Vehículo</th>
               <th class="sortable" data-col="estado"       onclick="sortByCol('estado')">Estado</th>
             </tr>
@@ -878,7 +872,7 @@
 
   var LABELS_ROL     = { agente:'Agente', supervisor:'Supervisor', editor:'Editor', admin:'Admin', wfm:'WFM', jefe:'Jefe', superadmin:'Superadmin' };
   var LABELS_PROY    = { doctorsv:'DoctorSV', educacion:'Educación', marn:'MARN', global:'Global' };
-  var SORT_CAMPOS    = { nombre:'nombre', proyecto:'proyecto', rol:'rol', cargo:'cargo', fechaIngreso:'fechaIngreso', antiguedad:'diasIngreso', horasConGoce:'horasConGoce', horasSinGoce:'horasSinGoce', estado:'activo' };
+  var SORT_CAMPOS    = { nombre:'nombre', proyecto:'proyecto', rol:'rol', cargo:'cargo', fechaIngreso:'fechaIngreso', antiguedad:'diasIngreso', estado:'activo' };
 
   function iniciales(n){ return n.split(' ').map(function(w){return w[0];}).join('').substring(0,2).toUpperCase(); }
 
@@ -981,8 +975,6 @@
         +'<td>'+(u.supervisor||'—')+'</td>'
         +'<td class="td-mono">'+fmtFecha(u.fechaIngreso)+'</td>'
         +'<td class="td-mono">'+fmtAntiguedad(dias)+'</td>'
-        +'<td class="td-hrs"><span>'+u.horasConGoce+'</span> h</td>'
-        +'<td class="td-hrs"><span>'+u.horasSinGoce+'</span> h</td>'
         +'<td><span class="tag '+(u.vehiculo?'si':'no')+'">'+(u.vehiculo?'Sí':'No')+'</span></td>'
         +'<td><span class="tag '+(u.activo?'activo':'inactivo')+'">'+(u.activo?'Activo':'Inactivo')+'</span></td>'
         +'</tr>';
@@ -1022,11 +1014,7 @@
       +dpField('Fecha ingreso', fmtFecha(u.fechaIngreso))
       +dpField('Antigüedad', fmtAntiguedad(dias))
       +'</div></div>'
-      +'<div><div class="dp-section-title">Horas</div>'
-      +'<div class="dp-grid">'
-      +dpField('Con goce', u.horasConGoce+' h')
-      +dpField('Sin goce', u.horasSinGoce+' h')
-      +'</div></div>'
+      +'<div id="dpAsignaciones"></div>'
       +(u.vehiculo
         ? '<div><div class="dp-section-title">Vehículo</div>'
           +'<div class="dp-grid">'
@@ -1044,10 +1032,115 @@
         : '<button class="btn-pri"    onclick="cambiarEstado(\''+u.id+'\',true)">Activar</button>');
 
     document.getElementById('detailPanel').classList.add('open');
+    dpActualizarAsignaciones(u);
   }
 
   function dpField(label, val){
     return '<div class="dp-field"><div class="dp-label">'+label+'</div><div class="dp-val">'+val+'</div></div>';
+  }
+
+  function dpActualizarAsignaciones(u) {
+    var el=document.getElementById('dpAsignaciones'); if(!el) return;
+    var uid=escHtml(u.id);
+    var supOpts='<option value="">— Sin supervisor —</option>'
+      +usuarios.filter(function(x){return x.rol==='supervisor';})
+        .map(function(s){return '<option value="'+escHtml(s.id)+'"'+(u.emailSupervisor===s.email?' selected':'')+'>'+escHtml(s.nombre)+'</option>';}).join('');
+    var ptOpts='<option value="">— Selecciona plantilla —</option>'
+      +turnoPtList.map(function(p){return '<option value="'+escHtml(p.id)+'">'+escHtml(p.nombre)+'</option>';}).join('');
+    var hoy=new Date(), dow=hoy.getDay(), diffL=dow===0?-6:1-dow;
+    var lunes=new Date(hoy); lunes.setDate(hoy.getDate()+diffL);
+    var domingo=new Date(lunes); domingo.setDate(lunes.getDate()+6);
+    function fmtISO(d){return d.getFullYear()+'-'+jefPad(d.getMonth()+1)+'-'+jefPad(d.getDate());}
+    el.innerHTML=
+      '<div class="dp-section-title" style="margin-top:4px">Asignaciones rápidas</div>'
+      +'<div style="margin-bottom:14px">'
+      +'<div style="font-size:0.68rem;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Supervisor</div>'
+      +'<div style="display:flex;gap:6px;align-items:center">'
+      +'<select id="dpSupSel" style="flex:1;padding:7px 8px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">'+supOpts+'</select>'
+      +'<button onclick="dpGuardarSup(\''+uid+'\')" style="padding:7px 12px;background:#1A3DAA;color:white;border:none;border-radius:7px;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">Guardar</button>'
+      +'</div></div>'
+      +'<div>'
+      +'<div style="font-size:0.68rem;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Turno</div>'
+      +'<select id="dpTurnoSel" style="width:100%;padding:7px 8px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;margin-bottom:8px">'+ptOpts+'</select>'
+      +'<div style="display:flex;gap:5px;margin-bottom:8px">'
+      +'<button onclick="dpTurnoPreset(\'semana\')" id="dpPreSemana" style="flex:1;padding:5px 0;border:1.5px solid #1A3DAA;border-radius:6px;background:#EEF2FF;color:#1A3DAA;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Esta semana</button>'
+      +'<button onclick="dpTurnoPreset(\'proxima\')" id="dpPreProxima" style="flex:1;padding:5px 0;border:1.5px solid #E2E8F0;border-radius:6px;background:white;color:#374151;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Próx. semana</button>'
+      +'<button onclick="dpTurnoPreset(\'quincena\')" id="dpPreQuincena" style="flex:1;padding:5px 0;border:1.5px solid #E2E8F0;border-radius:6px;background:white;color:#374151;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Quincena</button>'
+      +'</div>'
+      +'<div style="display:flex;gap:6px;margin-bottom:8px">'
+      +'<input type="date" id="dpTurnoDesde" value="'+fmtISO(lunes)+'" style="flex:1;padding:7px 8px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">'
+      +'<input type="date" id="dpTurnoHasta" value="'+fmtISO(domingo)+'" style="flex:1;padding:7px 8px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">'
+      +'</div>'
+      +'<button onclick="dpAsignarTurno(\''+uid+'\')" style="width:100%;padding:8px;background:#0F2070;color:white;border:none;border-radius:7px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit">Asignar turno</button>'
+      +'</div>';
+  }
+
+  function dpGuardarSup(uid) {
+    var id=document.getElementById('dpSupSel').value;
+    var s=usuarios.find(function(x){return x.id===id;})||{};
+    db.collection('usuarios').doc(uid).update({supervisor:s.nombre||'',emailSupervisor:s.email||''})
+      .then(function(){ showToast('Supervisor actualizado.'); })
+      .catch(function(e){ showToast('Error: '+e.message); });
+  }
+
+  function dpTurnoPreset(preset) {
+    var hoy=new Date(), dow=hoy.getDay();
+    var desde=new Date(hoy), hasta=new Date(hoy);
+    if(preset==='semana'){
+      var diffL=dow===0?-6:1-dow;
+      desde.setDate(hoy.getDate()+diffL);
+      hasta.setDate(desde.getDate()+6);
+    } else if(preset==='proxima'){
+      var diffL2=dow===0?1:8-dow;
+      desde.setDate(hoy.getDate()+diffL2);
+      hasta.setDate(desde.getDate()+6);
+    } else if(preset==='quincena'){
+      var d=hoy.getDate();
+      if(d<=15){ desde=new Date(hoy.getFullYear(),hoy.getMonth(),1); hasta=new Date(hoy.getFullYear(),hoy.getMonth(),15); }
+      else{ desde=new Date(hoy.getFullYear(),hoy.getMonth(),16); hasta=new Date(hoy.getFullYear(),hoy.getMonth()+1,0); }
+    }
+    function fmtISO(d){return d.getFullYear()+'-'+jefPad(d.getMonth()+1)+'-'+jefPad(d.getDate());}
+    document.getElementById('dpTurnoDesde').value=fmtISO(desde);
+    document.getElementById('dpTurnoHasta').value=fmtISO(hasta);
+    ['dpPreSemana','dpPreProxima','dpPreQuincena'].forEach(function(id,i){
+      var el=document.getElementById(id); if(!el) return;
+      var active=(['semana','proxima','quincena'][i]===preset);
+      el.style.borderColor=active?'#1A3DAA':'#E2E8F0';
+      el.style.background=active?'#EEF2FF':'white';
+      el.style.color=active?'#1A3DAA':'#374151';
+    });
+  }
+
+  function dpAsignarTurno(uid) {
+    var ptId=document.getElementById('dpTurnoSel').value;
+    var desde=document.getElementById('dpTurnoDesde').value;
+    var hasta=document.getElementById('dpTurnoHasta').value;
+    if(!ptId){showToast('Selecciona una plantilla.');return;}
+    if(!desde||!hasta){showToast('Selecciona el rango de fechas.');return;}
+    if(desde>hasta){showToast('"Desde" debe ser anterior a "hasta".');return;}
+    var pt=turnoPtList.find(function(p){return p.id===ptId;});
+    if(!pt){showToast('Plantilla no encontrada.');return;}
+    var dias={};
+    var cur=new Date(desde+'T00:00:00'), end=new Date(hasta+'T00:00:00');
+    var DOW=['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
+    while(cur<=end){
+      var key=cur.getFullYear()+'-'+jefPad(cur.getMonth()+1)+'-'+jefPad(cur.getDate());
+      var dowKey=DOW[cur.getDay()];
+      var diaInfo=pt.diasSemana?pt.diasSemana[dowKey]:null;
+      dias[key]=diaInfo?(diaInfo.activo?'laboral':'descanso'):'laboral';
+      cur.setDate(cur.getDate()+1);
+    }
+    var horario=pt.diasSemana?(function(){
+      var activos=['lunes','martes','miercoles','jueves','viernes','sabado','domingo']
+        .filter(function(d){return pt.diasSemana[d]&&pt.diasSemana[d].activo;});
+      if(!activos.length) return '—';
+      var d0=pt.diasSemana[activos[0]];
+      return activos.map(function(d){return {lunes:'L',martes:'M',miercoles:'X',jueves:'J',viernes:'V',sabado:'S',domingo:'D'}[d];}).join(' ')
+        +(d0&&d0.horaInicio?' · '+d0.horaInicio+' – '+d0.horaFin:'');
+    })():(pt.horaInicio&&pt.horaFin?pt.horaInicio+' – '+pt.horaFin:'—');
+    db.collection('turnos').doc(uid).set({plantillaId:ptId,nombre:pt.nombre,horario:horario,dias:dias},{merge:true})
+      .then(function(){ showToast('Turno asignado: '+pt.nombre); })
+      .catch(function(e){ showToast('Error: '+e.message); });
   }
 
   function cerrarPanel(){
