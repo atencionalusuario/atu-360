@@ -272,11 +272,19 @@
           <input class="pt-input" id="ptNombre" placeholder="Nombre del turno (ej: Turno Mañana)">
           <input type="color" id="ptColor" value="#1A3DAA" style="width:48px;height:38px;border:1.5px solid #E2E8F0;border-radius:7px;cursor:pointer;padding:2px;flex-shrink:0">
         </div>
-        <div class="pt-form-row">
-          <div style="flex:1"><label style="font-size:0.72rem;color:#64748B;display:block;margin-bottom:4px">Hora inicio</label><input class="pt-input" type="time" id="ptHoraInicio"></div>
-          <div style="flex:1"><label style="font-size:0.72rem;color:#64748B;display:block;margin-bottom:4px">Hora fin</label><input class="pt-input" type="time" id="ptHoraFin"></div>
-        </div>
         <input class="pt-input" id="ptDesc" placeholder="Descripción (opcional)">
+        <div style="border:1px solid #E2E8F0;border-radius:8px;overflow:hidden;font-size:0.78rem">
+          <div style="display:grid;grid-template-columns:110px 52px 1fr 1fr;background:#F8FAFC;padding:7px 12px;font-size:0.68rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #E2E8F0">
+            <div>Día</div><div style="text-align:center">Activo</div><div style="text-align:center;padding-left:4px">Entrada</div><div style="text-align:center;padding-left:4px">Salida</div>
+          </div>
+          <div style="display:grid;grid-template-columns:110px 52px 1fr 1fr;align-items:center;padding:5px 12px;border-bottom:1px solid #F8FAFC"><span style="font-weight:600;color:#374151">Lunes</span><div style="text-align:center"><input type="checkbox" id="ptAct_lunes" checked style="width:15px;height:15px;accent-color:#1A3DAA"></div><input class="pt-input" type="time" id="ptIni_lunes" style="padding:5px 7px"><input class="pt-input" type="time" id="ptFin_lunes" style="padding:5px 7px"></div>
+          <div style="display:grid;grid-template-columns:110px 52px 1fr 1fr;align-items:center;padding:5px 12px;border-bottom:1px solid #F8FAFC"><span style="font-weight:600;color:#374151">Martes</span><div style="text-align:center"><input type="checkbox" id="ptAct_martes" checked style="width:15px;height:15px;accent-color:#1A3DAA"></div><input class="pt-input" type="time" id="ptIni_martes" style="padding:5px 7px"><input class="pt-input" type="time" id="ptFin_martes" style="padding:5px 7px"></div>
+          <div style="display:grid;grid-template-columns:110px 52px 1fr 1fr;align-items:center;padding:5px 12px;border-bottom:1px solid #F8FAFC"><span style="font-weight:600;color:#374151">Miércoles</span><div style="text-align:center"><input type="checkbox" id="ptAct_miercoles" checked style="width:15px;height:15px;accent-color:#1A3DAA"></div><input class="pt-input" type="time" id="ptIni_miercoles" style="padding:5px 7px"><input class="pt-input" type="time" id="ptFin_miercoles" style="padding:5px 7px"></div>
+          <div style="display:grid;grid-template-columns:110px 52px 1fr 1fr;align-items:center;padding:5px 12px;border-bottom:1px solid #F8FAFC"><span style="font-weight:600;color:#374151">Jueves</span><div style="text-align:center"><input type="checkbox" id="ptAct_jueves" checked style="width:15px;height:15px;accent-color:#1A3DAA"></div><input class="pt-input" type="time" id="ptIni_jueves" style="padding:5px 7px"><input class="pt-input" type="time" id="ptFin_jueves" style="padding:5px 7px"></div>
+          <div style="display:grid;grid-template-columns:110px 52px 1fr 1fr;align-items:center;padding:5px 12px;border-bottom:1px solid #F8FAFC"><span style="font-weight:600;color:#374151">Viernes</span><div style="text-align:center"><input type="checkbox" id="ptAct_viernes" checked style="width:15px;height:15px;accent-color:#1A3DAA"></div><input class="pt-input" type="time" id="ptIni_viernes" style="padding:5px 7px"><input class="pt-input" type="time" id="ptFin_viernes" style="padding:5px 7px"></div>
+          <div style="display:grid;grid-template-columns:110px 52px 1fr 1fr;align-items:center;padding:5px 12px;border-bottom:1px solid #F8FAFC"><span style="font-weight:600;color:#374151">Sábado</span><div style="text-align:center"><input type="checkbox" id="ptAct_sabado" style="width:15px;height:15px;accent-color:#1A3DAA"></div><input class="pt-input" type="time" id="ptIni_sabado" style="padding:5px 7px"><input class="pt-input" type="time" id="ptFin_sabado" style="padding:5px 7px"></div>
+          <div style="display:grid;grid-template-columns:110px 52px 1fr 1fr;align-items:center;padding:5px 12px"><span style="font-weight:600;color:#374151">Domingo</span><div style="text-align:center"><input type="checkbox" id="ptAct_domingo" style="width:15px;height:15px;accent-color:#1A3DAA"></div><input class="pt-input" type="time" id="ptIni_domingo" style="padding:5px 7px"><input class="pt-input" type="time" id="ptFin_domingo" style="padding:5px 7px"></div>
+        </div>
         <div style="display:flex;gap:8px;justify-content:flex-end">
           <button onclick="turnoOcultarFormPt()" style="background:white;color:#64748B;border:1.5px solid #E2E8F0;border-radius:7px;padding:8px 16px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit">Cancelar</button>
           <button onclick="turnoGuardarPt()" style="background:#0F2070;color:white;border:none;border-radius:7px;padding:8px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit">Guardar</button>
@@ -713,6 +721,17 @@
 
   // ===== PLANTILLAS =====
   var turnoPtList=[];
+  var TURNO_DAYS=['lunes','martes','miercoles','jueves','viernes','sabado','domingo'];
+  var TURNO_DOW=['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
+  var TURNO_DAY_LBL={lunes:'L',martes:'M',miercoles:'X',jueves:'J',viernes:'V',sabado:'S',domingo:'D'};
+  function turnoResumenHorario(pt){
+    if(!pt.diasSemana) return (pt.horaInicio&&pt.horaFin)?pt.horaInicio+' – '+pt.horaFin:'Sin horario';
+    var activos=TURNO_DAYS.filter(function(d){return pt.diasSemana[d]&&pt.diasSemana[d].activo;});
+    if(!activos.length) return 'Sin días activos';
+    var d0=pt.diasSemana[activos[0]];
+    var horas=(d0&&d0.horaInicio)?d0.horaInicio+' – '+d0.horaFin:'';
+    return activos.map(function(d){return TURNO_DAY_LBL[d];}).join(' ')+(horas?' · '+horas:'');
+  }
 
   function turnoCargarPlantillas() {
     db.collection('turnos_plantillas').get().then(function(snap){
@@ -731,7 +750,7 @@
         +'<div class="pt-dot" style="background:'+escHtml(p.color||'#1A3DAA')+'"></div>'
         +'<div style="flex:1;min-width:0">'
         +'<div class="pt-nombre">'+escHtml(p.nombre||'Sin nombre')+'</div>'
-        +'<div class="pt-horario">'+(p.horaInicio&&p.horaFin?escHtml(p.horaInicio)+' – '+escHtml(p.horaFin):'Sin horario')+(p.descripcion?' · '+escHtml(p.descripcion):'')+'</div>'
+        +'<div class="pt-horario">'+escHtml(turnoResumenHorario(p))+(p.descripcion?' · '+escHtml(p.descripcion):'')+'</div>'
         +'</div>'
         +'<button class="btn-icon-sm" onclick="turnoEditarPt(\''+escHtml(p.id)+'\')" title="Editar">✏️</button>'
         +'<button class="btn-icon-sm danger" onclick="turnoEliminarPt(\''+escHtml(p.id)+'\')" title="Eliminar">🗑</button>'
@@ -746,7 +765,7 @@
     var val=sel.value;
     sel.innerHTML='<option value="">Selecciona una plantilla...</option>';
     turnoPtList.forEach(function(p){
-      var o=document.createElement('option'); o.value=p.id; o.textContent=(p.nombre||'Sin nombre')+(p.horaInicio?' ('+p.horaInicio+' – '+p.horaFin+')':'');
+      var o=document.createElement('option'); o.value=p.id; o.textContent=(p.nombre||'Sin nombre');
       sel.appendChild(o);
     });
     sel.value=val;
@@ -756,9 +775,15 @@
     document.getElementById('ptFormId').value=pt?pt.id:'';
     document.getElementById('ptNombre').value=pt?pt.nombre||'':'';
     document.getElementById('ptColor').value=pt?pt.color||'#1A3DAA':'#1A3DAA';
-    document.getElementById('ptHoraInicio').value=pt?pt.horaInicio||'':'';
-    document.getElementById('ptHoraFin').value=pt?pt.horaFin||'':'';
     document.getElementById('ptDesc').value=pt?pt.descripcion||'':'';
+    var ds=pt&&pt.diasSemana?pt.diasSemana:{};
+    var defaultActivo={lunes:true,martes:true,miercoles:true,jueves:true,viernes:true,sabado:false,domingo:false};
+    TURNO_DAYS.forEach(function(d){
+      var info=ds[d]||{};
+      document.getElementById('ptAct_'+d).checked=(d in ds)?!!info.activo:defaultActivo[d];
+      document.getElementById('ptIni_'+d).value=info.horaInicio||'';
+      document.getElementById('ptFin_'+d).value=info.horaFin||'';
+    });
     document.getElementById('ptForm').style.display='flex';
   }
 
@@ -780,11 +805,13 @@
     var id=document.getElementById('ptFormId').value;
     var nombre=document.getElementById('ptNombre').value.trim();
     var color=document.getElementById('ptColor').value;
-    var horaInicio=document.getElementById('ptHoraInicio').value;
-    var horaFin=document.getElementById('ptHoraFin').value;
     var descripcion=document.getElementById('ptDesc').value.trim();
     if(!nombre){ alert('El nombre es obligatorio.'); return; }
-    var data={nombre:nombre,color:color,horaInicio:horaInicio,horaFin:horaFin,descripcion:descripcion};
+    var diasSemana={};
+    TURNO_DAYS.forEach(function(d){
+      diasSemana[d]={activo:document.getElementById('ptAct_'+d).checked, horaInicio:document.getElementById('ptIni_'+d).value, horaFin:document.getElementById('ptFin_'+d).value};
+    });
+    var data={nombre:nombre,color:color,diasSemana:diasSemana,descripcion:descripcion};
     var prom=id?db.collection('turnos_plantillas').doc(id).update(data):db.collection('turnos_plantillas').add(data);
     prom.then(function(){ turnoOcultarFormPt(); turnoCargarPlantillas(); });
   }
@@ -885,11 +912,17 @@
     var cur=new Date(desde+'T00:00:00'), end=new Date(hasta+'T00:00:00');
     while(cur<=end){
       var dow=cur.getDay();
+      var dowKey=TURNO_DOW[dow];
       var key=cur.getFullYear()+'-'+wfmPad(cur.getMonth()+1)+'-'+wfmPad(cur.getDate());
-      dias[key]=(fds&&(dow===0||dow===6))?'descanso':'laboral';
+      var diaInfo=pt.diasSemana?pt.diasSemana[dowKey]:null;
+      if(diaInfo!==undefined&&diaInfo!==null){
+        dias[key]=diaInfo.activo?'laboral':'descanso';
+      } else {
+        dias[key]=(fds&&(dow===0||dow===6))?'descanso':'laboral';
+      }
       cur.setDate(cur.getDate()+1);
     }
-    var horario=(pt.horaInicio&&pt.horaFin)?pt.horaInicio+' – '+pt.horaFin:'—';
+    var horario=turnoResumenHorario(pt);
     var data={plantillaId:ptId,nombre:pt.nombre,horario:horario,dias:dias};
     function chunk(arr,size){ var r=[]; for(var i=0;i<arr.length;i+=size) r.push(arr.slice(i,i+size)); return r; }
     var chunks=chunk(uids,500), promise=Promise.resolve();
