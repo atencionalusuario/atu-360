@@ -535,8 +535,6 @@
                 <th class="sortable" data-col="supervisor" onclick="sortByCol('supervisor')">Supervisor</th>
                 <th class="sortable" data-col="fechaIngreso" onclick="sortByCol('fechaIngreso')">Ingreso</th>
                 <th class="sortable" data-col="antiguedad" onclick="sortByCol('antiguedad')">Antigüedad</th>
-                <th class="sortable" data-col="horasConGoce" onclick="sortByCol('horasConGoce')">H. c/goce</th>
-                <th class="sortable" data-col="horasSinGoce" onclick="sortByCol('horasSinGoce')">H. s/goce</th>
                 <th>Vehículo</th>
                 <th class="sortable" data-col="estado" onclick="sortByCol('estado')">Estado</th>
               </tr>
@@ -1385,7 +1383,7 @@
     document.getElementById('statInactivos').textContent=total-activos;
     document.getElementById('totalLabel').textContent=lista.length+' de '+total+' usuarios';
     if(!lista.length){
-      document.getElementById('tbodyUsuarios').innerHTML='<tr><td colspan="12" class="no-resultados">Sin resultados para los filtros aplicados</td></tr>';
+      document.getElementById('tbodyUsuarios').innerHTML='<tr><td colspan="10" class="no-resultados">Sin resultados para los filtros aplicados</td></tr>';
       return;
     }
     var html='';
@@ -1401,8 +1399,6 @@
         +'<td>'+escHtml(u.supervisor||'—')+'</td>'
         +'<td class="td-mono">'+fmtFecha(u.fechaIngreso)+'</td>'
         +'<td class="td-mono">'+fmtAntiguedad(dias)+'</td>'
-        +'<td class="td-hrs"><span>'+(u.horasConGoce||0)+'</span> h</td>'
-        +'<td class="td-hrs"><span>'+(u.horasSinGoce||0)+'</span> h</td>'
         +'<td><span class="tag '+(u.vehiculo?'si':'no')+'">'+(u.vehiculo?'Sí':'No')+'</span></td>'
         +'<td><span class="tag '+(u.activo?'activo':'inactivo-tag')+'">'+(u.activo?'Activo':'Inactivo')+'</span></td>'
         +'</tr>';
