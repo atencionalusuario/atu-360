@@ -261,6 +261,10 @@
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
       Usuarios
     </div>
+    <div class="nav-item" id="navReportes" onclick="wfmSwitch('reportes')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Reportes
+    </div>
     <div class="nav-item" id="navTransporte" onclick="window.location.href='https://atencionalusuario.github.io/atu-360/transporte.html'">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
       Transporte
@@ -612,6 +616,63 @@
   </div>
 </div>
 
+<!-- VISTA REPORTES -->
+<div id="vistaReportes" style="display:none;flex:1;overflow-y:auto;padding:24px;flex-direction:column;gap:20px;background:#F8FAFC">
+
+  <div style="background:white;border-radius:12px;border:1.5px solid #E2E8F0;overflow:hidden">
+    <div style="padding:16px 20px;border-bottom:1.5px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:0.88rem;font-weight:700;color:#0F2070">Marcajes</div>
+        <div style="font-size:0.75rem;color:#64748B;margin-top:2px">Registros de entrada y salida</div>
+      </div>
+      <button onclick="rptDescargar('marcajes')" style="padding:8px 16px;background:#0F2070;color:white;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Descargar CSV
+      </button>
+    </div>
+    <div style="padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid #F1F5F9">
+      <div style="display:flex;gap:5px">
+        <button onclick="rptPreset('m','hoy')" id="rpHoyM" style="padding:5px 10px;border:1.5px solid #1A3DAA;border-radius:6px;background:#EEF2FF;color:#1A3DAA;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Hoy</button>
+        <button onclick="rptPreset('m','semana')" id="rpSemM" style="padding:5px 10px;border:1.5px solid #E2E8F0;border-radius:6px;background:white;color:#374151;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Esta semana</button>
+        <button onclick="rptPreset('m','mes')" id="rpMesM" style="padding:5px 10px;border:1.5px solid #E2E8F0;border-radius:6px;background:white;color:#374151;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Este mes</button>
+      </div>
+      <input type="date" id="rptMDesde" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">
+      <input type="date" id="rptMHasta" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">
+      <select id="rptMAgente" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;flex:1;min-width:160px">
+        <option value="">Todos los agentes</option>
+      </select>
+    </div>
+    <div id="rptMInfo" style="padding:12px 20px;font-size:0.78rem;color:#64748B">Selecciona un rango de fechas y descarga.</div>
+  </div>
+
+  <div style="background:white;border-radius:12px;border:1.5px solid #E2E8F0;overflow:hidden">
+    <div style="padding:16px 20px;border-bottom:1.5px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:0.88rem;font-weight:700;color:#0F2070">Auxiliares</div>
+        <div style="font-size:0.75rem;color:#64748B;margin-top:2px">Tiempos de auxiliar por agente</div>
+      </div>
+      <button onclick="rptDescargar('auxiliares')" style="padding:8px 16px;background:#0F2070;color:white;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Descargar CSV
+      </button>
+    </div>
+    <div style="padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid #F1F5F9">
+      <div style="display:flex;gap:5px">
+        <button onclick="rptPreset('a','hoy')" id="rpHoyA" style="padding:5px 10px;border:1.5px solid #1A3DAA;border-radius:6px;background:#EEF2FF;color:#1A3DAA;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Hoy</button>
+        <button onclick="rptPreset('a','semana')" id="rpSemA" style="padding:5px 10px;border:1.5px solid #E2E8F0;border-radius:6px;background:white;color:#374151;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Esta semana</button>
+        <button onclick="rptPreset('a','mes')" id="rpMesA" style="padding:5px 10px;border:1.5px solid #E2E8F0;border-radius:6px;background:white;color:#374151;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Este mes</button>
+      </div>
+      <input type="date" id="rptADesde" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">
+      <input type="date" id="rptAHasta" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">
+      <select id="rptAAgente" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;flex:1;min-width:160px">
+        <option value="">Todos los agentes</option>
+      </select>
+    </div>
+    <div id="rptAInfo" style="padding:12px 20px;font-size:0.78rem;color:#64748B">Selecciona un rango de fechas y descarga.</div>
+  </div>
+
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -673,11 +734,11 @@
   });
 
   // ===== SWITCH DE VISTAS =====
-  var WFM_VISTAS  = ['vistaSolicitudes','vistaTiempoReal','vistaTurno','vistaUsuarios'];
-  var WFM_CLAVES  = ['solicitudes','tiemporeal','turno','usuarios'];
-  var WFM_NAVIDS  = ['navSolicitudes','navTiempoReal','navTurno','navUsuarios'];
-  var WFM_TITULOS = { solicitudes:'Solicitudes', tiemporeal:'Tiempo Real', turno:'Gestión de Turnos', usuarios:'Usuarios' };
-  var WFM_SUBS    = { solicitudes:'Aprobación final', tiemporeal:'Todos los agentes', turno:'Turnos asignados', usuarios:'' };
+  var WFM_VISTAS  = ['vistaSolicitudes','vistaTiempoReal','vistaTurno','vistaUsuarios','vistaReportes'];
+  var WFM_CLAVES  = ['solicitudes','tiemporeal','turno','usuarios','reportes'];
+  var WFM_NAVIDS  = ['navSolicitudes','navTiempoReal','navTurno','navUsuarios','navReportes'];
+  var WFM_TITULOS = { solicitudes:'Solicitudes', tiemporeal:'Tiempo Real', turno:'Gestión de Turnos', usuarios:'Usuarios', reportes:'Reportes' };
+  var WFM_SUBS    = { solicitudes:'Aprobación final', tiemporeal:'Todos los agentes', turno:'Turnos asignados', usuarios:'', reportes:'Marcajes y auxiliares' };
 
   function wfmSwitch(vista) {
     WFM_VISTAS.forEach(function(id,i){ var el=document.getElementById(id); if(el) el.style.display=(WFM_CLAVES[i]===vista)?'flex':'none'; });
@@ -688,6 +749,7 @@
     if (vista==='tiemporeal' && !wfmRTCargado)    wfmIniciarRT();
     if (vista==='turno'      && !wfmTurnoCargado)  wfmIniciarTurno();
     if (vista==='usuarios'   && !wfmUsuCargado)    wfmIniciarUsuarios();
+    if (vista==='reportes')                        rptIniciar();
   }
 
   // ===== SOLICITUDES — CALENDARIO =====
@@ -1845,6 +1907,105 @@
   }
 
   function cerrarModalCsv(){ document.getElementById('modalCsv').classList.remove('show'); pendientesCSV=[]; }
+
+  // ===== REPORTES =====
+  var rptCargado = false;
+
+  function rptIniciar() {
+    var hoy=new Date(), dow=hoy.getDay(), diffL=dow===0?-6:1-dow;
+    var lunes=new Date(hoy); lunes.setDate(hoy.getDate()+diffL);
+    var domingo=new Date(lunes); domingo.setDate(lunes.getDate()+6);
+    function pad(n){return String(n).padStart(2,'0');}
+    function fmtISO(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+    ['rptMDesde','rptADesde'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=fmtISO(lunes); });
+    ['rptMHasta','rptAHasta'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=fmtISO(domingo); });
+    var opts=usuarios.map(function(u){return '<option value="'+escHtml(u.email)+'">'+escHtml(u.nombre)+'</option>';}).join('');
+    ['rptMAgente','rptAAgente'].forEach(function(id){
+      var el=document.getElementById(id); if(!el) return;
+      el.innerHTML='<option value="">Todos los agentes</option>'+opts;
+    });
+  }
+
+  function rptPreset(tipo, preset) {
+    var hoy=new Date(), dow=hoy.getDay();
+    var desde=new Date(hoy), hasta=new Date(hoy);
+    function pad(n){return String(n).padStart(2,'0');}
+    if(preset==='semana'){
+      var diffL=dow===0?-6:1-dow;
+      desde.setDate(hoy.getDate()+diffL);
+      hasta.setDate(desde.getDate()+6);
+    } else if(preset==='mes'){
+      desde=new Date(hoy.getFullYear(),hoy.getMonth(),1);
+      hasta=new Date(hoy.getFullYear(),hoy.getMonth()+1,0);
+    }
+    function fmtISO(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+    var pfx=tipo==='m'?'M':'A';
+    var el1=document.getElementById('rpt'+pfx+'Desde'); if(el1) el1.value=fmtISO(desde);
+    var el2=document.getElementById('rpt'+pfx+'Hasta'); if(el2) el2.value=fmtISO(hasta);
+    var ids=tipo==='m'?['rpHoyM','rpSemM','rpMesM']:['rpHoyA','rpSemA','rpMesA'];
+    ['hoy','semana','mes'].forEach(function(p,i){
+      var el=document.getElementById(ids[i]); if(!el) return;
+      var active=p===preset;
+      el.style.borderColor=active?'#1A3DAA':'#E2E8F0';
+      el.style.background=active?'#EEF2FF':'white';
+      el.style.color=active?'#1A3DAA':'#374151';
+    });
+  }
+
+  function rptDescargar(tipo) {
+    var pfx=tipo==='marcajes'?'M':'A';
+    var desde=document.getElementById('rpt'+pfx+'Desde').value;
+    var hasta=document.getElementById('rpt'+pfx+'Hasta').value;
+    var emailFilt=document.getElementById('rpt'+pfx+'Agente').value;
+    var infoEl=document.getElementById('rpt'+pfx+'Info');
+    if(!desde||!hasta){showToast('Selecciona el rango de fechas.');return;}
+    if(desde>hasta){showToast('"Desde" debe ser anterior a "hasta".');return;}
+    if(infoEl) infoEl.textContent='Cargando...';
+    var desdeTs=firebase.firestore.Timestamp.fromDate(new Date(desde+'T00:00:00'));
+    var hastaTs=firebase.firestore.Timestamp.fromDate(new Date(hasta+'T23:59:59'));
+    db.collection(tipo)
+      .where('timestamp','>=',desdeTs)
+      .where('timestamp','<=',hastaTs)
+      .orderBy('timestamp')
+      .get()
+      .then(function(snap){
+        var rows=[];
+        snap.forEach(function(doc){
+          var d=doc.data();
+          if(emailFilt && d.email!==emailFilt) return;
+          if(tipo==='marcajes'){
+            rows.push([d.fecha||'',rptNombre(d.email)||d.email||'',d.email||'',d.tipo||'',d.hora||'']);
+          } else {
+            rows.push([d.fecha||'',rptNombre(d.email)||d.email||'',d.email||'',d.auxiliar||'',d.inicio||'',d.fin||'',d.duracion_seg?Math.round(d.duracion_seg/60):'']);
+          }
+        });
+        if(infoEl) infoEl.textContent=rows.length+' registro'+(rows.length===1?'':'s')+' encontrado'+(rows.length===1?'':'s');
+        if(!rows.length){showToast('No hay registros en ese rango.');return;}
+        var headers=tipo==='marcajes'
+          ?['Fecha','Agente','Email','Tipo','Hora']
+          :['Fecha','Agente','Email','Auxiliar','Inicio','Fin','Duración (min)'];
+        rptCSV([headers].concat(rows), tipo+'_'+desde+'_'+hasta+'.csv');
+      })
+      .catch(function(e){ if(infoEl) infoEl.textContent='Error al cargar datos.'; showToast('Error: '+e.message); });
+  }
+
+  function rptNombre(email) {
+    var u=usuarios.find(function(x){return x.email===email;}); return u?u.nombre:'';
+  }
+
+  function rptCSV(rows, filename) {
+    var csv=rows.map(function(r){
+      return r.map(function(v){
+        var s=String(v==null?'':v);
+        if(s.indexOf(',')>-1||s.indexOf('"')>-1||s.indexOf('\n')>-1) s='"'+s.replace(/"/g,'""')+'"';
+        return s;
+      }).join(',');
+    }).join('\r\n');
+    var blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a'); a.href=url; a.download=filename; a.click();
+    URL.revokeObjectURL(url);
+  }
 </script>
 <script src="notif.js"></script>
 <script>
