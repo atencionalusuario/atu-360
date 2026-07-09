@@ -383,6 +383,14 @@
 
   <!-- VISTA FLASH -->
   <div id="vistaFlash" style="display:none;flex:1;overflow:hidden;padding:20px 24px;flex-direction:column;gap:14px">
+    <div style="display:flex;gap:6px;flex-shrink:0">
+      <button id="jefFlTabPend" onclick="jefFlashCambiarTab('pendientes')" style="padding:6px 14px;border:1.5px solid #1A3DAA;border-radius:7px;background:#EEF2FF;color:#1A3DAA;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px">
+        Pendientes <span id="jefFlBadge" style="background:#DC2626;color:white;font-size:0.62rem;font-weight:800;padding:1px 6px;border-radius:10px;display:none">0</span>
+      </button>
+      <button id="jefFlTabPub" onclick="jefFlashCambiarTab('publicados')" style="padding:6px 14px;border:1.5px solid #E2E8F0;border-radius:7px;background:white;color:#374151;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:inherit">
+        Publicados
+      </button>
+    </div>
     <div class="flash-layout">
       <div class="flash-list-wrap" id="jefFlashLista">
         <div style="font-size:0.8rem;color:#94A3B8">Cargando...</div>
@@ -1598,7 +1606,7 @@
   var WFM_CLAVES  = ['usuarios','notif','flash','solicitudes','biblioteca','tiemporeal','metricas','turno','reportes'];
   var WFM_NAVIDS  = ['navUsuarios','navNotif','navFlash','navSolicitudes','navBiblioteca','navTiempoReal','navMetricas','navTurno','navReportes'];
   var WFM_TITULOS = { usuarios:'Usuarios', notif:'Notificaciones', flash:'Flash Informativos', solicitudes:'Solicitudes', biblioteca:'Biblioteca', tiemporeal:'Tiempo Real', metricas:'Métricas', turno:'Turnos', reportes:'Reportes' };
-  var WFM_SUBS    = { usuarios:null, notif:'Enviar y gestionar', flash:'Solo lectura', solicitudes:'Aprobación final', biblioteca:'Documentos y recursos', tiemporeal:'Todos los agentes en tiempo real', metricas:'Vista global de desempeño', turno:'Gestión de turnos', reportes:'Marcajes y auxiliares' };
+  var WFM_SUBS    = { usuarios:null, notif:'Enviar y gestionar', flash:'Pendientes de aprobación', solicitudes:'Aprobación final', biblioteca:'Documentos y recursos', tiemporeal:'Todos los agentes en tiempo real', metricas:'Vista global de desempeño', turno:'Gestión de turnos', reportes:'Marcajes y auxiliares' };
 
   function wfmSwitch(vista) {
     WFM_VISTAS.forEach(function(id,i){ var el=document.getElementById(id); if(el) el.style.display=(WFM_CLAVES[i]===vista)?'flex':'none'; });
@@ -1689,30 +1697,55 @@
   };
 
   // ===== FLASH =====
-  var jefFlashCargado = false;
-  var jefFlashPosts   = [];
-  var jefFlashSel     = null;
+  var jefFlashCargado    = false;
+  var jefFlashPosts      = [];
+  var jefFlashPendientes = [];
+  var jefFlashSel        = null;
+  var jefFlashTab        = 'pendientes';
 
   function jefIniciarFlash() {
     jefFlashCargado = true;
+    db.collection('flash_posts').where('estado','==','pendiente')
+      .onSnapshot(function(snap) {
+        jefFlashPendientes = [];
+        snap.forEach(function(d){ jefFlashPendientes.push(Object.assign({id:d.id},d.data())); });
+        jefFlashPendientes.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0)-(a.fechaCreacion?a.fechaCreacion.seconds:0); });
+        var badge=document.getElementById('jefFlBadge');
+        if(badge){ badge.textContent=jefFlashPendientes.length; badge.style.display=jefFlashPendientes.length?'':'none'; }
+        if(jefFlashTab==='pendientes') { jefRenderFlashLista(); if(!jefFlashSel && jefFlashPendientes.length) jefVerFlash(jefFlashPendientes[0].id); }
+      }, function(e){ console.error('flash-pend',e); });
     db.collection('flash_posts').where('estado','==','publicado')
       .onSnapshot(function(snap) {
         jefFlashPosts = [];
         snap.forEach(function(d){ jefFlashPosts.push(Object.assign({id:d.id},d.data())); });
         jefFlashPosts.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0)-(a.fechaCreacion?a.fechaCreacion.seconds:0); });
-        jefRenderFlashLista();
-        if (!jefFlashSel && jefFlashPosts.length > 0) jefVerFlash(jefFlashPosts[0].id);
-      }, function(e){ console.error('flash',e); });
+        if(jefFlashTab==='publicados') { jefRenderFlashLista(); if(!jefFlashSel && jefFlashPosts.length) jefVerFlash(jefFlashPosts[0].id); }
+      }, function(e){ console.error('flash-pub',e); });
+  }
+
+  function jefFlashCambiarTab(tab) {
+    jefFlashTab=tab; jefFlashSel=null;
+    document.getElementById('jefFlTabPend').style.background = tab==='pendientes'?'#EEF2FF':'white';
+    document.getElementById('jefFlTabPend').style.color      = tab==='pendientes'?'#1A3DAA':'#374151';
+    document.getElementById('jefFlTabPend').style.borderColor= tab==='pendientes'?'#1A3DAA':'#E2E8F0';
+    document.getElementById('jefFlTabPub').style.background  = tab==='publicados'?'#EEF2FF':'white';
+    document.getElementById('jefFlTabPub').style.color       = tab==='publicados'?'#1A3DAA':'#374151';
+    document.getElementById('jefFlTabPub').style.borderColor = tab==='publicados'?'#1A3DAA':'#E2E8F0';
+    document.getElementById('jefFlashDetalle').innerHTML='<span style="color:#94A3B8;font-size:0.82rem">Selecciona un flash para leerlo.</span>';
+    jefRenderFlashLista();
+    var lista = tab==='pendientes' ? jefFlashPendientes : jefFlashPosts;
+    if(lista.length) jefVerFlash(lista[0].id);
   }
 
   function jefRenderFlashLista() {
     var el = document.getElementById('jefFlashLista'); if(!el) return;
-    if (jefFlashPosts.length === 0) { el.innerHTML='<div style="font-size:0.8rem;color:#94A3B8">Sin publicaciones.</div>'; return; }
+    var lista = jefFlashTab==='pendientes' ? jefFlashPendientes : jefFlashPosts;
+    if (!lista.length) { el.innerHTML='<div style="font-size:0.8rem;color:#94A3B8">'+(jefFlashTab==='pendientes'?'Sin pendientes de aprobación.':'Sin publicaciones.')+'</div>'; return; }
     var html='';
-    jefFlashPosts.forEach(function(p){
+    lista.forEach(function(p){
       var cat=p.categoria||'general', c=FLASH_COLORS[cat]||FLASH_COLORS.general;
       var fecha=p.fechaCreacion?new Date(p.fechaCreacion.seconds*1000).toLocaleDateString('es-SV',{day:'2-digit',month:'short',year:'numeric'}):'—';
-      html+='<div class="flash-item'+(jefFlashSel===p.id?' active':'')+'" onclick="jefVerFlash(\''+p.id+'\')">'
+      html+='<div class="flash-item'+(jefFlashSel===p.id?' active':'')+'" onclick="jefVerFlash(\''+escHtml(p.id)+'\')">'
         +'<span class="fi-cat" style="background:'+c.bg+';color:'+c.text+'">'+(FLASH_CATS[cat]||cat)+'</span>'
         +'<div class="fi-titulo">'+escHtml(p.titulo||'Sin título')+'</div>'
         +'<div class="fi-meta">'+escHtml(p.autorNombre||'—')+' · '+fecha+'</div>'
@@ -1723,15 +1756,55 @@
 
   function jefVerFlash(id) {
     jefFlashSel=id;
-    var p=jefFlashPosts.find(function(x){return x.id===id;}); if(!p) return;
+    var lista = jefFlashTab==='pendientes' ? jefFlashPendientes : jefFlashPosts;
+    var p=lista.find(function(x){return x.id===id;}); if(!p) return;
     jefRenderFlashLista();
     var cat=p.categoria||'general', c=FLASH_COLORS[cat]||FLASH_COLORS.general;
     var fecha=p.fechaCreacion?new Date(p.fechaCreacion.seconds*1000).toLocaleString('es-SV',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+    var accionesHtml = p.estado==='pendiente'
+      ? '<div style="display:flex;gap:8px;margin-top:24px;padding-top:16px;border-top:1px solid #F1F5F9">'
+        +'<button onclick="jefAprobarFlash(\''+escHtml(id)+'\')" style="flex:1;padding:9px;background:#16A34A;color:white;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit">✓ Aprobar y publicar</button>'
+        +'<button onclick="jefRechazarFlash(\''+escHtml(id)+'\')" style="flex:1;padding:9px;background:white;color:#DC2626;border:1.5px solid #DC2626;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit">✕ Rechazar</button>'
+        +'</div>'
+        +'<div id="jefFlRechazoCont" style="display:none;margin-top:10px">'
+        +'<textarea id="jefFlNotaRechazo" placeholder="Nota de rechazo (obligatoria)..." style="width:100%;box-sizing:border-box;padding:8px 10px;border:1.5px solid #DC2626;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;resize:vertical;min-height:70px;outline:none"></textarea>'
+        +'<button onclick="jefConfirmarRechazo(\''+escHtml(id)+'\')" style="margin-top:6px;width:100%;padding:8px;background:#DC2626;color:white;border:none;border-radius:7px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit">Confirmar rechazo</button>'
+        +'</div>'
+      : '';
     document.getElementById('jefFlashDetalle').innerHTML=
       '<span class="fd-cat" style="background:'+c.bg+';color:'+c.text+'">'+(FLASH_CATS[cat]||cat)+'</span>'
       +'<div class="fd-titulo">'+escHtml(p.titulo||'Sin título')+'</div>'
       +'<div class="fd-byline">Por <strong>'+escHtml(p.autorNombre||'—')+'</strong> · '+fecha+'</div>'
-      +'<div class="fd-content">'+escHtml(p.contenido||'')+'</div>';
+      +'<div class="fd-content">'+escHtml(p.contenido||'')+'</div>'
+      +accionesHtml;
+  }
+
+  function jefAprobarFlash(id) {
+    db.collection('flash_posts').doc(id).update({
+      estado: 'publicado',
+      jefeUid: currentUser.uid,
+      jefeEmail: currentUser.email,
+      fechaPublicacion: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){ showToast('Flash publicado correctamente.'); })
+      .catch(function(e){ showToast('Error: '+e.message); });
+  }
+
+  function jefRechazarFlash(id) {
+    var cont=document.getElementById('jefFlRechazoCont');
+    if(cont) cont.style.display=cont.style.display==='none'?'block':'none';
+  }
+
+  function jefConfirmarRechazo(id) {
+    var nota=(document.getElementById('jefFlNotaRechazo')||{}).value||'';
+    if(!nota.trim()){showToast('Escribe una nota de rechazo.');return;}
+    db.collection('flash_posts').doc(id).update({
+      estado: 'rechazado',
+      notaRechazo: nota.trim(),
+      jefeUid: currentUser.uid,
+      jefeEmail: currentUser.email,
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){ showToast('Flash rechazado.'); })
+      .catch(function(e){ showToast('Error: '+e.message); });
   }
 
   // ===== SOLICITUDES =====
