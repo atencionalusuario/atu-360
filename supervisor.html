@@ -470,6 +470,16 @@
   .j-btn-confirm.entrada { background: #1A3DAA; }
   .j-btn-confirm.salida  { background: #DC2626; }
   .j-btn-confirm:hover { opacity: 0.88; }
+.bdg-chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; min-height:28px; align-items:center; }
+.bdg-chip { display:inline-flex; align-items:center; gap:5px; padding:4px 10px 4px 8px; border-radius:20px; font-size:0.72rem; font-weight:600; }
+.bdg-chip.gold    { background:#FEF3C7; color:#92400E; }
+.bdg-chip.silver  { background:#F1F5F9; color:#475569; border:1px solid #E2E8F0; }
+.bdg-chip.bronze  { background:#FDF2E9; color:#7C2D12; }
+.bdg-chip.special { background:#EDE9FE; color:#5B21B6; }
+.bdg-chip button  { background:none; border:none; cursor:pointer; font-size:0.85rem; line-height:1; color:inherit; opacity:0.5; padding:0; margin-left:2px; }
+.bdg-chip button:hover { opacity:1; }
+.bdg-assign-row { display:flex; gap:8px; align-items:center; margin-top:8px; }
+.bdg-assign-row select { flex:1; padding:7px 10px; border:1px solid #E2E8F0; border-radius:6px; font-size:0.8rem; font-family:inherit; color:#1E293B; background:white; }
 </style>
 </head>
 <body>
@@ -851,6 +861,9 @@
       <div class="hp-body" id="hpBody">
         <div class="loading-hist">Selecciona un agente</div>
       </div>
+      <div id="hpBadgesSection" style="padding:0 16px 16px;border-top:1px solid #F1F5F9;display:none">
+        <div id="hpBadges"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -1143,6 +1156,8 @@
     document.getElementById('hpSub').textContent   = 'Historial de hoy';
     document.getElementById('hpBody').innerHTML    = '<div class="loading-hist">Cargando...</div>';
     document.getElementById('histPanel').classList.add('open');
+    document.getElementById('hpBadgesSection').style.display = 'block';
+    bdgCargar(id, 'hpBadges');
 
     var hoy = new Date().toLocaleDateString('es-SV');
 
@@ -1241,6 +1256,7 @@
 
   function cerrarPanel() {
     document.getElementById('histPanel').classList.remove('open');
+    document.getElementById('hpBadgesSection').style.display = 'none';
     seleccionado = null;
     renderTabla();
   }
@@ -2270,6 +2286,76 @@
       estadoDesde:  firebase.firestore.FieldValue.serverTimestamp(),
       enLinea:      estadoNombre !== 'Fuera' && estadoNombre !== 'Jornada finalizada'
     }).catch(function(e) { console.error('Error estado:', e); });
+  }
+
+  var BADGES_CAT = [
+    { id: 'puntualidad-oro',    icon: '📅', nivel: 'gold',    label: 'Puntualidad Oro' },
+    { id: 'puntualidad-plata',  icon: '📅', nivel: 'silver',  label: 'Puntualidad Plata' },
+    { id: 'puntualidad-bronce', icon: '📅', nivel: 'bronze',  label: 'Puntualidad Bronce' },
+    { id: 'calidad-oro',        icon: '⭐', nivel: 'gold',    label: 'Calidad Oro' },
+    { id: 'calidad-plata',      icon: '⭐', nivel: 'silver',  label: 'Calidad Plata' },
+    { id: 'calidad-bronce',     icon: '⭐', nivel: 'bronze',  label: 'Calidad Bronce' },
+    { id: 'top-performer',      icon: '🏆', nivel: 'gold',    label: 'Top Performer' },
+    { id: 'top-expresion',      icon: '🎯', nivel: 'gold',    label: 'Top Expresión' },
+    { id: 'top-registro',       icon: '📋', nivel: 'gold',    label: 'Top Registro' },
+    { id: 'top-gestion',        icon: '📞', nivel: 'gold',    label: 'Top Gestión' },
+    { id: 'top-tiempo',         icon: '⏱️', nivel: 'gold',    label: 'Top Tiempo' },
+    { id: 'mvp-semana',         icon: '🌟', nivel: 'special', label: 'MVP de la semana' },
+    { id: 'top-innovador',      icon: '💡', nivel: 'special', label: 'Top Innovador' },
+    { id: 'apoyo-invaluable',   icon: '🤝', nivel: 'special', label: 'Apoyo Invaluable' },
+    { id: 'embajador-atu',      icon: '🎖️', nivel: 'special', label: 'Embajador ATU' }
+  ];
+
+  function bdgCargar(uid, contenedorId) {
+    db.collection('badges').where('uid','==',uid).where('activo','==',true).get()
+      .then(function(snap) {
+        var lista = [];
+        snap.forEach(function(doc) { lista.push({ docId: doc.id, badgeId: doc.data().badgeId }); });
+        bdgRender(uid, contenedorId, lista);
+      })
+      .catch(function(e){ console.error('badges:', e); });
+  }
+
+  function bdgRender(uid, contenedorId, lista) {
+    var el = document.getElementById(contenedorId); if (!el) return;
+    var asignadosIds = lista.map(function(b){ return b.badgeId; });
+    var disponibles  = BADGES_CAT.filter(function(b){ return asignadosIds.indexOf(b.id) === -1; });
+
+    var chipsHtml = lista.length ? lista.map(function(b) {
+      var def = BADGES_CAT.find(function(x){ return x.id === b.badgeId; });
+      if (!def) return '';
+      return '<span class="bdg-chip '+def.nivel+'">'
+        +def.icon+' '+def.label
+        +'<button onclick="bdgQuitar(\''+b.docId+'\',\''+uid+'\',\''+contenedorId+'\')" title="Quitar">&times;</button>'
+        +'</span>';
+    }).join('') : '<span style="font-size:0.75rem;color:#94A3B8">Sin badges asignados</span>';
+
+    var opts = '<option value="">— Selecciona badge —</option>'
+      + disponibles.map(function(b){ return '<option value="'+b.id+'">'+b.icon+' '+b.label+'</option>'; }).join('');
+
+    el.innerHTML = '<div class="dp-section-title">Badges</div>'
+      + '<div class="bdg-chips">'+chipsHtml+'</div>'
+      + (disponibles.length
+        ? '<div class="bdg-assign-row"><select id="bdgSel_'+uid+'">'+opts+'</select>'
+          +'<button class="btn-pri" style="flex-shrink:0;padding:7px 14px;font-size:0.8rem" onclick="bdgAsignar(\''+uid+'\',\''+contenedorId+'\')">Asignar</button></div>'
+        : '<div style="font-size:0.72rem;color:#94A3B8;margin-top:4px">Todos los badges asignados</div>');
+  }
+
+  function bdgAsignar(uid, contenedorId) {
+    var sel = document.getElementById('bdgSel_'+uid);
+    if (!sel || !sel.value) { showToast('Selecciona un badge.'); return; }
+    db.collection('badges').add({
+      uid: uid, badgeId: sel.value, activo: true,
+      asignadoPor: currentUser.uid,
+      fechaAsignacion: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){ showToast('Badge asignado.'); bdgCargar(uid, contenedorId); })
+      .catch(function(e){ showToast('Error: '+e.message); });
+  }
+
+  function bdgQuitar(docId, uid, contenedorId) {
+    db.collection('badges').doc(docId).update({ activo: false })
+      .then(function(){ showToast('Badge removido.'); bdgCargar(uid, contenedorId); })
+      .catch(function(e){ showToast('Error: '+e.message); });
   }
 </script>
 <script src="notif.js"></script>
