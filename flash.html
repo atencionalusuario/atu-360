@@ -147,6 +147,8 @@
     var name = user.email.split('@')[0];
     document.getElementById('sbName').textContent    = name;
     document.getElementById('sbAvatar').textContent  = name.substring(0,2).toUpperCase();
+    // Llamar en paralelo: posts no depende de lecturas
+    cargarPosts();
     cargarMisLecturas();
   });
 
@@ -154,22 +156,21 @@
     auth.signOut().then(function(){ window.location.href = 'login.html'; });
   });
 
-  // 1. Cargar mis lecturas primero
+  // Cargar lecturas previas (no bloquea los posts)
   function cargarMisLecturas() {
     db.collection('flash_lecturas')
       .where('uid', '==', currentUser.uid)
       .get()
       .then(function(snap) {
         snap.forEach(function(doc) { misLecturas[doc.data().postId] = true; });
-        cargarPosts();
+        renderPosts(); // refrescar badges de leído/no leído
       })
       .catch(function(e) {
-        console.warn('flash_lecturas error (ignorado):', e);
-        cargarPosts();
+        console.warn('flash_lecturas:', e.message);
       });
   }
 
-  // 2. Cargar posts publicados en tiempo real
+  // Cargar posts publicados en tiempo real
   function cargarPosts() {
     db.collection('flash_posts')
       .where('estado', '==', 'publicado')
