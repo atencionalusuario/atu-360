@@ -1160,7 +1160,8 @@
       '<button class="btn-sec" onclick="abrirModalForm(\''+u.id+'\')">Editar</button>'
       +(u.activo
         ? '<button class="btn-danger" onclick="pedirConfirm(\''+u.id+'\',false)">Desactivar</button>'
-        : '<button class="btn-pri"    onclick="cambiarEstado(\''+u.id+'\',true)">Activar</button>');
+        : '<button class="btn-pri"    onclick="cambiarEstado(\''+u.id+'\',true)">Activar</button>')
+      +'<button class="btn-danger" onclick="pedirEliminar(\''+u.id+'\')" style="margin-left:auto">Eliminar</button>';
 
     document.getElementById('detailPanel').classList.add('open');
     dpActualizarAsignaciones(u);
@@ -1484,6 +1485,23 @@
   }
 
   function cerrarConfirm(){ document.getElementById('modalConfirm').classList.remove('show'); }
+
+  function pedirEliminar(id){
+    var u = usuarios.find(function(x){return x.id===id;});
+    document.getElementById('confirmTitle').textContent = 'Eliminar usuario';
+    document.getElementById('confirmSub').textContent   = '¿Eliminar permanentemente a '+u.nombre+'? Esta acción no se puede deshacer. La cuenta de autenticación debe eliminarse manualmente desde Firebase Console.';
+    document.getElementById('confirmBtn').onclick = function(){ eliminarUsuario(id); cerrarConfirm(); };
+    document.getElementById('modalConfirm').classList.add('show');
+  }
+
+  function eliminarUsuario(id){
+    db.collection('usuarios').doc(id).delete()
+      .then(function(){
+        cerrarPanel();
+        showToast('Usuario eliminado del sistema.');
+      })
+      .catch(function(err){ showToast('Error al eliminar: '+err.message); console.error(err); });
+  }
 
   // ===== CSV =====
 
