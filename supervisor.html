@@ -962,7 +962,7 @@
 
   function iniciarEscucha() {
     db.collection('usuarios')
-      .where('rol', 'in', ['agente', 'supervisor'])
+      .where('emailSupervisor', '==', currentUser.email)
       .onSnapshot(function(snap) {
         agentes = [];
         snap.forEach(function(doc) {
