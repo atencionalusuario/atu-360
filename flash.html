@@ -162,6 +162,10 @@
       .then(function(snap) {
         snap.forEach(function(doc) { misLecturas[doc.data().postId] = true; });
         cargarPosts();
+      })
+      .catch(function(e) {
+        console.warn('flash_lecturas error (ignorado):', e);
+        cargarPosts();
       });
   }
 
