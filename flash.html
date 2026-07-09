@@ -181,7 +181,11 @@
         });
         posts.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0)-(a.fechaCreacion?a.fechaCreacion.seconds:0); });
         renderPosts();
-      }, function(e){ console.error('flash_posts error:', e); });
+      }, function(e){
+        console.error('flash_posts error:', e);
+        var el = document.getElementById('postsList');
+        if (el) el.innerHTML = '<div style="padding:32px;color:#DC2626;font-size:0.85rem;">Error Firestore: ' + e.code + ' — ' + e.message + '</div>';
+      });
   }
 
   function renderPosts() {
