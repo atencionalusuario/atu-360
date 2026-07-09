@@ -1364,8 +1364,10 @@
   }
 
   function guardarUsuario(){
+    console.log('[guardar] inicio');
     var nombre  = g('fNombre'), email = g('fEmail'), docNum = g('fDocumento');
     var proyecto= g('fProyecto'), rol = g('fRol'), fecha = g('fFecha'), cargo = g('fCargo');
+    console.log('[guardar] campos:', {nombre,email,docNum,proyecto,rol,fecha,cargo});
 
     // Resaltar campos vacíos y hacer scroll al primero
     var req = [{id:'fNombre',v:nombre},{id:'fDocumento',v:docNum},{id:'fEmail',v:email},
@@ -1380,9 +1382,13 @@
     if (primero) {
       primero.scrollIntoView({behavior:'smooth', block:'center'});
       showToast('Completa los campos marcados en rojo.');
+      console.log('[guardar] validación falló, campo:', primero.id);
       return;
     }
-    var veh = document.getElementById('togVeh')._on;
+    console.log('[guardar] validación OK, llamando authSecondary...');
+    var togEl = document.getElementById('togVeh');
+    console.log('[guardar] togVeh:', togEl, '_on:', togEl ? togEl._on : 'NO EXISTE');
+    var veh = togEl ? togEl._on : false;
     var datos = {
       nombre:          nombre,
       email:           email,
