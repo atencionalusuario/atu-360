@@ -144,16 +144,8 @@
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = 'login.html'; return; }
     currentUser = user;
-    var name = user.email.split('@')[0];
-    document.getElementById('sbName').textContent    = name;
-    document.getElementById('sbAvatar').textContent  = name.substring(0,2).toUpperCase();
-    // Llamar en paralelo: posts no depende de lecturas
     cargarPosts();
     cargarMisLecturas();
-  });
-
-  document.getElementById('btnLogout').addEventListener('click', function(){
-    auth.signOut().then(function(){ window.location.href = 'login.html'; });
   });
 
   // Cargar lecturas previas (no bloquea los posts)
