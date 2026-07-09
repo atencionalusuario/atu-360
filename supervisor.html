@@ -1922,16 +1922,19 @@
 
   function iniciarFlash() {
     flashCargado = true;
+    db.collection('flash_posts').where('estado', '==', 'publicado')
+      .onSnapshot(function(snap) {
+        flashPosts = [];
+        snap.forEach(function(doc) { flashPosts.push(Object.assign({ id: doc.id }, doc.data())); });
+        flashPosts.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0)-(a.fechaCreacion?a.fechaCreacion.seconds:0); });
+        renderFlashPosts();
+      }, function(e){ console.error('flash_posts error:', e); });
     db.collection('flash_lecturas').where('uid', '==', currentUser.uid).get()
       .then(function(snap) {
         snap.forEach(function(doc) { flashLecturas[doc.data().postId] = true; });
-        db.collection('flash_posts').where('estado', '==', 'publicado')
-          .orderBy('fechaCreacion', 'desc').onSnapshot(function(snap) {
-            flashPosts = [];
-            snap.forEach(function(doc) { flashPosts.push(Object.assign({ id: doc.id }, doc.data())); });
-            renderFlashPosts();
-          });
-      });
+        renderFlashPosts();
+      })
+      .catch(function(e){ console.warn('flash_lecturas:', e.message); });
   }
 
   function renderFlashPosts() {
