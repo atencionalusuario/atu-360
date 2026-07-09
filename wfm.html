@@ -619,16 +619,11 @@
 <!-- VISTA REPORTES -->
 <div id="vistaReportes" style="display:none;flex:1;overflow-y:auto;padding:24px;flex-direction:column;gap:20px;background:#F8FAFC">
 
+  <!-- Marcajes -->
   <div style="background:white;border-radius:12px;border:1.5px solid #E2E8F0;overflow:hidden">
     <div style="padding:16px 20px;border-bottom:1.5px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between">
-      <div>
-        <div style="font-size:0.88rem;font-weight:700;color:#0F2070">Marcajes</div>
-        <div style="font-size:0.75rem;color:#64748B;margin-top:2px">Registros de entrada y salida</div>
-      </div>
-      <button onclick="rptDescargar('marcajes')" style="padding:8px 16px;background:#0F2070;color:white;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Descargar CSV
-      </button>
+      <div><div style="font-size:0.88rem;font-weight:700;color:#0F2070">Marcajes</div><div style="font-size:0.75rem;color:#64748B;margin-top:2px">Registros de entrada y salida</div></div>
+      <button onclick="rptDescargar('marcajes')" style="padding:8px 16px;background:#0F2070;color:white;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar CSV</button>
     </div>
     <div style="padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid #F1F5F9">
       <div style="display:flex;gap:5px">
@@ -638,23 +633,16 @@
       </div>
       <input type="date" id="rptMDesde" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">
       <input type="date" id="rptMHasta" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">
-      <select id="rptMAgente" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;flex:1;min-width:160px">
-        <option value="">Todos los agentes</option>
-      </select>
+      <select id="rptMAgente" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;flex:1;min-width:160px"><option value="">Todos los agentes</option></select>
     </div>
     <div id="rptMInfo" style="padding:12px 20px;font-size:0.78rem;color:#64748B">Selecciona un rango de fechas y descarga.</div>
   </div>
 
+  <!-- Auxiliares -->
   <div style="background:white;border-radius:12px;border:1.5px solid #E2E8F0;overflow:hidden">
     <div style="padding:16px 20px;border-bottom:1.5px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between">
-      <div>
-        <div style="font-size:0.88rem;font-weight:700;color:#0F2070">Auxiliares</div>
-        <div style="font-size:0.75rem;color:#64748B;margin-top:2px">Tiempos de auxiliar por agente</div>
-      </div>
-      <button onclick="rptDescargar('auxiliares')" style="padding:8px 16px;background:#0F2070;color:white;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Descargar CSV
-      </button>
+      <div><div style="font-size:0.88rem;font-weight:700;color:#0F2070">Auxiliares</div><div style="font-size:0.75rem;color:#64748B;margin-top:2px">Tiempos de auxiliar por agente</div></div>
+      <button onclick="rptDescargar('auxiliares')" style="padding:8px 16px;background:#0F2070;color:white;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar CSV</button>
     </div>
     <div style="padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid #F1F5F9">
       <div style="display:flex;gap:5px">
@@ -664,11 +652,85 @@
       </div>
       <input type="date" id="rptADesde" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">
       <input type="date" id="rptAHasta" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">
-      <select id="rptAAgente" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;flex:1;min-width:160px">
-        <option value="">Todos los agentes</option>
-      </select>
+      <select id="rptAAgente" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;flex:1;min-width:160px"><option value="">Todos los agentes</option></select>
     </div>
     <div id="rptAInfo" style="padding:12px 20px;font-size:0.78rem;color:#64748B">Selecciona un rango de fechas y descarga.</div>
+  </div>
+
+  <!-- Solicitudes -->
+  <div style="background:white;border-radius:12px;border:1.5px solid #E2E8F0;overflow:hidden">
+    <div style="padding:16px 20px;border-bottom:1.5px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-size:0.88rem;font-weight:700;color:#0F2070">Solicitudes</div><div style="font-size:0.75rem;color:#64748B;margin-top:2px">Permisos y solicitudes de los agentes</div></div>
+      <button onclick="rptDescargarSolicitudes()" style="padding:8px 16px;background:#0F2070;color:white;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar CSV</button>
+    </div>
+    <div style="padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid #F1F5F9">
+      <div style="display:flex;gap:5px">
+        <button onclick="rptPreset('s','hoy')" id="rpHoyS" style="padding:5px 10px;border:1.5px solid #1A3DAA;border-radius:6px;background:#EEF2FF;color:#1A3DAA;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Hoy</button>
+        <button onclick="rptPreset('s','semana')" id="rpSemS" style="padding:5px 10px;border:1.5px solid #E2E8F0;border-radius:6px;background:white;color:#374151;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Esta semana</button>
+        <button onclick="rptPreset('s','mes')" id="rpMesS" style="padding:5px 10px;border:1.5px solid #E2E8F0;border-radius:6px;background:white;color:#374151;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Este mes</button>
+      </div>
+      <input type="date" id="rptSDesde" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">
+      <input type="date" id="rptSHasta" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">
+      <select id="rptSEstado" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;min-width:130px">
+        <option value="">Todos los estados</option>
+        <option value="aprobada">Aprobadas</option>
+        <option value="rechazada">Rechazadas</option>
+        <option value="pendiente-admin">Pendientes</option>
+      </select>
+      <select id="rptSAgente" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;flex:1;min-width:160px"><option value="">Todos los agentes</option></select>
+    </div>
+    <div id="rptSInfo" style="padding:12px 20px;font-size:0.78rem;color:#64748B">Selecciona un rango de fechas y descarga.</div>
+  </div>
+
+  <!-- Nómina -->
+  <div style="background:white;border-radius:12px;border:1.5px solid #E2E8F0;overflow:hidden">
+    <div style="padding:16px 20px;border-bottom:1.5px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-size:0.88rem;font-weight:700;color:#0F2070">Nómina de usuarios</div><div style="font-size:0.75rem;color:#64748B;margin-top:2px">Snapshot del estado actual del equipo</div></div>
+      <button onclick="rptDescargarNomina()" style="padding:8px 16px;background:#0F2070;color:white;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar CSV</button>
+    </div>
+    <div style="padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid #F1F5F9">
+      <select id="rptNProy" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;min-width:150px">
+        <option value="">Todos los proyectos</option>
+        <option value="doctorsv">DoctorSV</option>
+        <option value="educacion">Educación</option>
+        <option value="marn">MARN</option>
+        <option value="global">Global</option>
+      </select>
+      <select id="rptNRol" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;min-width:130px">
+        <option value="">Todos los roles</option>
+        <option value="agente">Agente</option>
+        <option value="supervisor">Supervisor</option>
+        <option value="wfm">WFM</option>
+        <option value="jefe">Jefe</option>
+        <option value="editor">Editor</option>
+        <option value="admin">Admin</option>
+      </select>
+      <select id="rptNEstado" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;min-width:120px">
+        <option value="">Activos e inactivos</option>
+        <option value="activo">Solo activos</option>
+        <option value="inactivo">Solo inactivos</option>
+      </select>
+    </div>
+    <div id="rptNInfo" style="padding:12px 20px;font-size:0.78rem;color:#64748B">Sin filtros descarga todos los usuarios.</div>
+  </div>
+
+  <!-- Turnos -->
+  <div style="background:white;border-radius:12px;border:1.5px solid #E2E8F0;overflow:hidden">
+    <div style="padding:16px 20px;border-bottom:1.5px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-size:0.88rem;font-weight:700;color:#0F2070">Turnos asignados</div><div style="font-size:0.75rem;color:#64748B;margin-top:2px">Días laborales y de descanso por agente</div></div>
+      <button onclick="rptDescargarTurnos()" style="padding:8px 16px;background:#0F2070;color:white;border:none;border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar CSV</button>
+    </div>
+    <div style="padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid #F1F5F9">
+      <div style="display:flex;gap:5px">
+        <button onclick="rptPreset('t','hoy')" id="rpHoyT" style="padding:5px 10px;border:1.5px solid #1A3DAA;border-radius:6px;background:#EEF2FF;color:#1A3DAA;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Hoy</button>
+        <button onclick="rptPreset('t','semana')" id="rpSemT" style="padding:5px 10px;border:1.5px solid #E2E8F0;border-radius:6px;background:white;color:#374151;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Esta semana</button>
+        <button onclick="rptPreset('t','mes')" id="rpMesT" style="padding:5px 10px;border:1.5px solid #E2E8F0;border-radius:6px;background:white;color:#374151;font-size:0.7rem;font-weight:700;cursor:pointer;font-family:inherit">Este mes</button>
+      </div>
+      <input type="date" id="rptTDesde" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">
+      <input type="date" id="rptTHasta" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none">
+      <select id="rptTAgente" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;flex:1;min-width:160px"><option value="">Todos los agentes</option></select>
+    </div>
+    <div id="rptTInfo" style="padding:12px 20px;font-size:0.78rem;color:#64748B">Selecciona un rango de fechas y descarga.</div>
   </div>
 
 </div>
@@ -1939,10 +2001,12 @@
       hasta=new Date(hoy.getFullYear(),hoy.getMonth()+1,0);
     }
     function fmtISO(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
-    var pfx=tipo==='m'?'M':'A';
+    var pfxMap={m:'M',a:'A',s:'S',t:'T'};
+    var pfx=pfxMap[tipo]||tipo.toUpperCase();
     var el1=document.getElementById('rpt'+pfx+'Desde'); if(el1) el1.value=fmtISO(desde);
     var el2=document.getElementById('rpt'+pfx+'Hasta'); if(el2) el2.value=fmtISO(hasta);
-    var ids=tipo==='m'?['rpHoyM','rpSemM','rpMesM']:['rpHoyA','rpSemA','rpMesA'];
+    var idMap={m:['rpHoyM','rpSemM','rpMesM'],a:['rpHoyA','rpSemA','rpMesA'],s:['rpHoyS','rpSemS','rpMesS'],t:['rpHoyT','rpSemT','rpMesT']};
+    var ids=idMap[tipo]||[];
     ['hoy','semana','mes'].forEach(function(p,i){
       var el=document.getElementById(ids[i]); if(!el) return;
       var active=p===preset;
@@ -1991,6 +2055,92 @@
 
   function rptNombre(email) {
     var u=usuarios.find(function(x){return x.email===email;}); return u?u.nombre:'';
+  }
+
+  function rptDescargarSolicitudes() {
+    var desde=document.getElementById('rptSDesde').value;
+    var hasta=document.getElementById('rptSHasta').value;
+    var emailFilt=document.getElementById('rptSAgente').value;
+    var estadoFilt=document.getElementById('rptSEstado').value;
+    var infoEl=document.getElementById('rptSInfo');
+    if(!desde||!hasta){showToast('Selecciona el rango de fechas.');return;}
+    if(desde>hasta){showToast('"Desde" debe ser anterior a "hasta".');return;}
+    if(infoEl) infoEl.textContent='Cargando...';
+    var desdeTs=firebase.firestore.Timestamp.fromDate(new Date(desde+'T00:00:00'));
+    var hastaTs=firebase.firestore.Timestamp.fromDate(new Date(hasta+'T23:59:59'));
+    db.collection('solicitudes')
+      .where('fechaCreacion','>=',desdeTs)
+      .where('fechaCreacion','<=',hastaTs)
+      .orderBy('fechaCreacion')
+      .get()
+      .then(function(snap){
+        var rows=[];
+        snap.forEach(function(doc){
+          var d=doc.data();
+          if(emailFilt && d.agenteEmail!==emailFilt) return;
+          if(estadoFilt && d.estado!==estadoFilt) return;
+          var fCreacion=d.fechaCreacion?new Date(d.fechaCreacion.seconds*1000).toLocaleDateString('es-SV'):'';
+          var fResol=d.fechaActualizacion?new Date(d.fechaActualizacion.seconds*1000).toLocaleDateString('es-SV'):'';
+          rows.push([fCreacion,d.agenteNombre||'',d.agenteEmail||'',d.tipo||'',d.fechaInicio||'',d.fechaFin||'',d.horaInicio||'',d.horaFin||'',d.comentarios||'',d.estado||'',d.notaRechazo||'',fResol]);
+        });
+        if(infoEl) infoEl.textContent=rows.length+' registro'+(rows.length===1?'':'s')+' encontrado'+(rows.length===1?'':'s');
+        if(!rows.length){showToast('No hay registros en ese rango.');return;}
+        rptCSV([['Fecha solicitud','Agente','Email','Tipo','Fecha inicio','Fecha fin','Hora inicio','Hora fin','Comentarios','Estado','Nota rechazo','Fecha resolución']].concat(rows),'solicitudes_'+desde+'_'+hasta+'.csv');
+      })
+      .catch(function(e){if(infoEl) infoEl.textContent='Error al cargar datos.'; showToast('Error: '+e.message);});
+  }
+
+  function rptDescargarNomina() {
+    var proyFilt=document.getElementById('rptNProy').value;
+    var rolFilt=document.getElementById('rptNRol').value;
+    var estadoFilt=document.getElementById('rptNEstado').value;
+    var infoEl=document.getElementById('rptNInfo');
+    var lista=usuarios.filter(function(u){
+      if(proyFilt && u.proyecto!==proyFilt) return false;
+      if(rolFilt && u.rol!==rolFilt) return false;
+      if(estadoFilt==='activo' && !u.activo) return false;
+      if(estadoFilt==='inactivo' && u.activo) return false;
+      return true;
+    });
+    if(!lista.length){showToast('No hay usuarios con esos filtros.');return;}
+    var rows=lista.map(function(u){
+      return [u.nombre||'',u.email||'',u.documento||'',u.cargo||'',u.proyecto||'',u.rol||'',u.canal||'',u.supervisor||'',u.fechaIngreso||'',diasDesde(u.fechaIngreso),u.vehiculo?'Sí':'No',u.activo?'Activo':'Inactivo'];
+    });
+    if(infoEl) infoEl.textContent=lista.length+' usuario'+(lista.length===1?'':'s');
+    rptCSV([['Nombre','Email','Documento','Cargo','Proyecto','Rol','Canal','Supervisor','Fecha ingreso','Antigüedad (días)','Vehículo','Estado']].concat(rows),'nomina.csv');
+  }
+
+  function rptDescargarTurnos() {
+    var desde=document.getElementById('rptTDesde').value;
+    var hasta=document.getElementById('rptTHasta').value;
+    var emailFilt=document.getElementById('rptTAgente').value;
+    var infoEl=document.getElementById('rptTInfo');
+    if(!desde||!hasta){showToast('Selecciona el rango de fechas.');return;}
+    if(desde>hasta){showToast('"Desde" debe ser anterior a "hasta".');return;}
+    if(infoEl) infoEl.textContent='Cargando...';
+    var p;
+    if(emailFilt){
+      var uFilt=usuarios.find(function(x){return x.email===emailFilt;});
+      if(!uFilt){showToast('Agente no encontrado.');return;}
+      p=db.collection('turnos').doc(uFilt.id).get().then(function(doc){return doc.exists?[doc]:[];});
+    } else {
+      p=db.collection('turnos').get().then(function(snap){var arr=[];snap.forEach(function(d){arr.push(d);});return arr;});
+    }
+    p.then(function(docs){
+      var rows=[];
+      docs.forEach(function(doc){
+        var d=doc.data(); if(!d.dias) return;
+        var u=usuarios.find(function(x){return x.id===doc.id;})||{};
+        Object.keys(d.dias).sort().forEach(function(fecha){
+          if(fecha<desde||fecha>hasta) return;
+          rows.push([fecha,u.nombre||doc.id,u.email||'',d.nombre||'',d.horario||'',d.dias[fecha]||'']);
+        });
+      });
+      rows.sort(function(a,b){return a[0]<b[0]?-1:a[0]>b[0]?1:0;});
+      if(infoEl) infoEl.textContent=rows.length+' registro'+(rows.length===1?'':'s')+' encontrado'+(rows.length===1?'':'s');
+      if(!rows.length){showToast('No hay registros en ese rango.');return;}
+      rptCSV([['Fecha','Agente','Email','Plantilla','Horario','Estado']].concat(rows),'turnos_'+desde+'_'+hasta+'.csv');
+    }).catch(function(e){if(infoEl) infoEl.textContent='Error al cargar datos.'; showToast('Error: '+e.message);});
   }
 
   function rptCSV(rows, filename) {
