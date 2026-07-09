@@ -169,14 +169,14 @@
   function cargarPosts() {
     db.collection('flash_posts')
       .where('estado', '==', 'publicado')
-      .orderBy('fechaCreacion', 'desc')
       .onSnapshot(function(snap) {
         posts = [];
         snap.forEach(function(doc) {
           posts.push(Object.assign({ id: doc.id }, doc.data()));
         });
+        posts.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0)-(a.fechaCreacion?a.fechaCreacion.seconds:0); });
         renderPosts();
-      });
+      }, function(e){ console.error('flash_posts error:', e); });
   }
 
   function renderPosts() {
