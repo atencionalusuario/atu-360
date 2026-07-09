@@ -184,8 +184,7 @@
     var sinLeer = posts.filter(function(p){ return !misLecturas[p.id]; }).length;
     document.getElementById('sinLeerLabel').textContent = sinLeer > 0 ? sinLeer + ' sin leer' : 'Todo al día';
     var badge = document.getElementById('navBadge');
-    badge.textContent = sinLeer;
-    badge.style.display = sinLeer > 0 ? 'inline' : 'none';
+    if (badge) { badge.textContent = sinLeer; badge.style.display = sinLeer > 0 ? 'inline' : 'none'; }
 
     if (posts.length === 0) {
       document.getElementById('postsList').innerHTML = '<div class="loading">No hay publicaciones disponibles.</div>';
