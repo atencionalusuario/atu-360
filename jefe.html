@@ -1377,10 +1377,8 @@
   }
 
   function guardarUsuario(){
-    console.log('[guardar] inicio');
     var nombre  = g('fNombre'), email = g('fEmail'), docNum = g('fDocumento');
     var proyecto= g('fProyecto'), rol = g('fRol'), fecha = g('fFecha'), cargo = g('fCargo');
-    console.log('[guardar] campos:', {nombre,email,docNum,proyecto,rol,fecha,cargo});
 
     // Resaltar campos vacíos y hacer scroll al primero
     var req = [{id:'fNombre',v:nombre},{id:'fDocumento',v:docNum},{id:'fEmail',v:email},
@@ -1395,12 +1393,9 @@
     if (primero) {
       primero.scrollIntoView({behavior:'smooth', block:'center'});
       showToast('Completa los campos marcados en rojo.');
-      console.log('[guardar] validación falló, campo:', primero.id);
       return;
     }
-    console.log('[guardar] validación OK, llamando authSecondary...');
     var togEl = document.getElementById('togVeh');
-    console.log('[guardar] togVeh:', togEl, '_on:', togEl ? togEl._on : 'NO EXISTE');
     var veh = togEl ? togEl._on : false;
     var datos = {
       nombre:          nombre,
@@ -2799,21 +2794,21 @@
   }
 
   var BADGES_CAT = [
-    { id: 'puntualidad-oro',    icon: '📅', nivel: 'gold',    label: 'Puntualidad Oro' },
-    { id: 'puntualidad-plata',  icon: '📅', nivel: 'silver',  label: 'Puntualidad Plata' },
-    { id: 'puntualidad-bronce', icon: '📅', nivel: 'bronze',  label: 'Puntualidad Bronce' },
-    { id: 'calidad-oro',        icon: '⭐', nivel: 'gold',    label: 'Calidad Oro' },
-    { id: 'calidad-plata',      icon: '⭐', nivel: 'silver',  label: 'Calidad Plata' },
-    { id: 'calidad-bronce',     icon: '⭐', nivel: 'bronze',  label: 'Calidad Bronce' },
-    { id: 'top-performer',      icon: '🏆', nivel: 'gold',    label: 'Top Performer' },
-    { id: 'top-expresion',      icon: '🎯', nivel: 'gold',    label: 'Top Expresión' },
-    { id: 'top-registro',       icon: '📋', nivel: 'gold',    label: 'Top Registro' },
-    { id: 'top-gestion',        icon: '📞', nivel: 'gold',    label: 'Top Gestión' },
-    { id: 'top-tiempo',         icon: '⏱️', nivel: 'gold',    label: 'Top Tiempo' },
-    { id: 'mvp-semana',         icon: '🌟', nivel: 'special', label: 'MVP de la semana' },
-    { id: 'top-innovador',      icon: '💡', nivel: 'special', label: 'Top Innovador' },
-    { id: 'apoyo-invaluable',   icon: '🤝', nivel: 'special', label: 'Apoyo Invaluable' },
-    { id: 'embajador-atu',      icon: '🎖️', nivel: 'special', label: 'Embajador ATU' }
+    { id: 'puntualidad-oro',    icon: '📅', nivel: 'gold',    label: 'Puntualidad Oro',          manual: false },
+    { id: 'puntualidad-plata',  icon: '📅', nivel: 'silver',  label: 'Puntualidad Plata',        manual: false },
+    { id: 'puntualidad-bronce', icon: '📅', nivel: 'bronze',  label: 'Puntualidad Bronce',       manual: false },
+    { id: 'calidad-oro',        icon: '⭐', nivel: 'gold',    label: 'Calidad Oro',              manual: false },
+    { id: 'calidad-plata',      icon: '⭐', nivel: 'silver',  label: 'Calidad Plata',            manual: false },
+    { id: 'calidad-bronce',     icon: '⭐', nivel: 'bronze',  label: 'Calidad Bronce',           manual: false },
+    { id: 'top-performer',      icon: '🏆', nivel: 'gold',    label: 'Top Performer',            manual: false },
+    { id: 'top-expresion',      icon: '🎯', nivel: 'gold',    label: 'Top Expresión',            manual: false },
+    { id: 'top-registro',       icon: '📋', nivel: 'gold',    label: 'Top Registro',             manual: false },
+    { id: 'top-gestion',        icon: '📞', nivel: 'gold',    label: 'Top Gestión',              manual: false },
+    { id: 'top-tiempo',         icon: '⏱️', nivel: 'gold',    label: 'Top Tiempo',               manual: false },
+    { id: 'mvp-semana',         icon: '🌟', nivel: 'special', label: 'MVP de la semana',         manual: true  },
+    { id: 'top-innovador',      icon: '💡', nivel: 'special', label: 'Top Innovador',            manual: true  },
+    { id: 'apoyo-invaluable',   icon: '🤝', nivel: 'special', label: 'Apoyo Invaluable',         manual: true  },
+    { id: 'embajador-atu',      icon: '🎖️', nivel: 'special', label: 'Embajador ATU',            manual: true  }
   ];
 
   function bdgCargar(uid, contenedorId) {
@@ -2829,26 +2824,26 @@
   function bdgRender(uid, contenedorId, lista) {
     var el = document.getElementById(contenedorId); if (!el) return;
     var asignadosIds = lista.map(function(b){ return b.badgeId; });
-    var disponibles  = BADGES_CAT.filter(function(b){ return asignadosIds.indexOf(b.id) === -1; });
+    var manualesDisp = BADGES_CAT.filter(function(b){ return b.manual && asignadosIds.indexOf(b.id) === -1; });
 
     var chipsHtml = lista.length ? lista.map(function(b) {
       var def = BADGES_CAT.find(function(x){ return x.id === b.badgeId; });
       if (!def) return '';
-      return '<span class="bdg-chip '+def.nivel+'">'
-        +def.icon+' '+def.label
-        +'<button onclick="bdgQuitar(\''+b.docId+'\',\''+uid+'\',\''+contenedorId+'\')" title="Quitar">&times;</button>'
-        +'</span>';
+      var quitarBtn = def.manual
+        ? '<button onclick="bdgQuitar(\''+b.docId+'\',\''+uid+'\',\''+contenedorId+'\')" title="Quitar">&times;</button>'
+        : '';
+      return '<span class="bdg-chip '+def.nivel+'" title="'+(def.manual?'Manual':'Automático')+'">'+def.icon+' '+def.label+quitarBtn+'</span>';
     }).join('') : '<span style="font-size:0.75rem;color:#94A3B8">Sin badges asignados</span>';
 
     var opts = '<option value="">— Selecciona badge —</option>'
-      + disponibles.map(function(b){ return '<option value="'+b.id+'">'+b.icon+' '+b.label+'</option>'; }).join('');
+      + manualesDisp.map(function(b){ return '<option value="'+b.id+'">'+b.icon+' '+b.label+'</option>'; }).join('');
 
     el.innerHTML = '<div class="dp-section-title">Badges</div>'
       + '<div class="bdg-chips">'+chipsHtml+'</div>'
-      + (disponibles.length
+      + (manualesDisp.length
         ? '<div class="bdg-assign-row"><select id="bdgSel_'+uid+'">'+opts+'</select>'
           +'<button class="btn-pri" style="flex-shrink:0;padding:7px 14px;font-size:0.8rem" onclick="bdgAsignar(\''+uid+'\',\''+contenedorId+'\')">Asignar</button></div>'
-        : '<div style="font-size:0.72rem;color:#94A3B8;margin-top:4px">Todos los badges asignados</div>');
+        : '<div style="font-size:0.72rem;color:#94A3B8;margin-top:4px">Todos los badges manuales asignados</div>');
   }
 
   function bdgAsignar(uid, contenedorId) {
