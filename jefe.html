@@ -976,6 +976,14 @@
       document.getElementById('sbAvatar').textContent = iniciales(d.nombre || user.email);
       var rolEl = document.querySelector('.sb-user-role');
       if (rolEl) rolEl.textContent = LABELS_ROL[d.rol] || 'Jefe';
+      if (d.rol === 'superadmin') {
+        var navSup = document.createElement('div');
+        navSup.className = 'nav-item';
+        navSup.style.marginTop = '8px';
+        navSup.onclick = function() { window.location.href = 'https://atencionalusuario.github.io/atu-360/supervisor.html'; };
+        navSup.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Panel Supervisor';
+        document.getElementById('navTransporte').insertAdjacentElement('beforebegin', navSup);
+      }
       cargarUsuarios();
     });
   });

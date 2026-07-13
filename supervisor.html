@@ -960,6 +960,14 @@
       var d = doc.data();
       document.getElementById('sbName').textContent   = d.nombre || user.email.split('@')[0];
       document.getElementById('sbAvatar').textContent = iniciales(d.nombre || user.email);
+      if (d.rol === 'superadmin') {
+        var navJefe = document.createElement('div');
+        navJefe.className = 'nav-item';
+        navJefe.style.marginTop = '8px';
+        navJefe.onclick = function() { window.location.href = 'https://atencionalusuario.github.io/atu-360/jefe.html'; };
+        navJefe.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Panel Jefe';
+        document.getElementById('navTransporte').insertAdjacentElement('beforebegin', navJefe);
+      }
       iniciarEscucha();
     });
   });
