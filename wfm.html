@@ -490,7 +490,7 @@
             <option value="agente">Agente</option>
             <option value="agente-inmersion">Agente Inmersión</option>
             <option value="supervisor">Supervisor</option>
-            <option value="editor">Formación</option>
+            <option value="formacion">Formación</option>
             <option value="admin">Admin</option>
             <option value="jefe">Jefe</option>
             <option value="wfm">WFM</option>
@@ -702,7 +702,7 @@
         <option value="supervisor">Supervisor</option>
         <option value="wfm">WFM</option>
         <option value="jefe">Jefe</option>
-        <option value="editor">Formación</option>
+        <option value="formacion">Formación</option>
         <option value="admin">Admin</option>
       </select>
       <select id="rptNEstado" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;min-width:120px">
@@ -1774,7 +1774,7 @@
       +'<option value="agente"'+(u&&u.rol==='agente'?' selected':'')+'>Agente</option>'
       +'<option value="agente-inmersion"'+(u&&u.rol==='agente-inmersion'?' selected':'')+'>Agente Inmersión</option>'
       +'<option value="supervisor"'+(u&&u.rol==='supervisor'?' selected':'')+'>Supervisor</option>'
-      +'<option value="editor"'+(u&&u.rol==='editor'?' selected':'')+'>Formación</option>'
+      +'<option value="formacion"'+(u&&u.rol==='formacion'?' selected':'')+'>Formación</option>'
       +'<option value="admin"'+(u&&u.rol==='admin'?' selected':'')+'>Admin</option>'
       +'<option value="jefe"'+(u&&u.rol==='jefe'?' selected':'')+'>Jefe</option>'
       +'<option value="wfm"'+(u&&u.rol==='wfm'?' selected':'')+'>WFM</option>'
@@ -1885,7 +1885,7 @@
 
   var COLS_CSV=['nombre','documento','email','telefono','cargo','canal','proyecto','rol','supervisor','emailSupervisor','fechaIngreso','vehiculo','tipoVehiculo','marca','modelo','placa'];
   var PROYECTOS_OK=['doctorsv','educacion','marn','global'];
-  var ROLES_OK=['agente','supervisor','editor','admin','wfm','jefe','superadmin','agente-inmersion'];
+  var ROLES_OK=['agente','supervisor','formacion','admin','wfm','jefe','superadmin','agente-inmersion'];
   var pendientesCSV=[];
 
   function descargarPlantilla(){
