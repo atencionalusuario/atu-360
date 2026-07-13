@@ -1497,7 +1497,7 @@
   function cargarUsuarios() {
     db.collection('usuarios').orderBy('nombre','asc').onSnapshot(function(snap){
       usuarios=[];
-      snap.forEach(function(doc){ usuarios.push(Object.assign({id:doc.id},doc.data())); });
+      snap.forEach(function(doc){ var d=doc.data(); if(d.rol==='superadmin') return; usuarios.push(Object.assign({id:doc.id},d)); });
       aplicarFiltros();
       if(usuarioSeleccionado){
         var u=usuarios.find(function(x){return x.id===usuarioSeleccionado;});
