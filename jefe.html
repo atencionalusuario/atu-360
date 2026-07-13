@@ -670,7 +670,7 @@
           <option value="agente">Agente</option>
           <option value="agente-inmersion">Agente Inmersión</option>
           <option value="supervisor">Supervisor</option>
-          <option value="editor">Editor</option>
+          <option value="editor">Formación</option>
           <option value="admin">Admin</option>
           <option value="jefe">Jefe</option>
           <option value="wfm">WFM</option>
@@ -899,7 +899,7 @@
         <option value="supervisor">Supervisor</option>
         <option value="wfm">WFM</option>
         <option value="jefe">Jefe</option>
-        <option value="editor">Editor</option>
+        <option value="editor">Formación</option>
         <option value="admin">Admin</option>
       </select>
       <select id="rptNEstado" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;min-width:120px">
@@ -971,7 +971,7 @@
         auth.signOut(); window.location.href = 'login.html'; return;
       }
       var d = doc.data();
-      var LABELS_ROL = { agente:'Agente', supervisor:'Supervisor', editor:'Editor', admin:'Admin', wfm:'WFM', jefe:'Jefe', superadmin:'Superadmin' };
+      var LABELS_ROL = { agente:'Agente', supervisor:'Supervisor', editor:'Formación', admin:'Admin', wfm:'WFM', jefe:'Jefe', superadmin:'Superadmin' };
       document.getElementById('sbName').textContent   = d.nombre || user.email.split('@')[0];
       document.getElementById('sbAvatar').textContent = iniciales(d.nombre || user.email);
       var rolEl = document.querySelector('.sb-user-role');
@@ -1021,7 +1021,7 @@
   var modoForm = null;
   var dir1 = 'asc', dir2 = 'asc';
 
-  var LABELS_ROL     = { agente:'Agente', supervisor:'Supervisor', editor:'Editor', admin:'Admin', wfm:'WFM', jefe:'Jefe', superadmin:'Superadmin' };
+  var LABELS_ROL     = { agente:'Agente', supervisor:'Supervisor', editor:'Formación', admin:'Admin', wfm:'WFM', jefe:'Jefe', superadmin:'Superadmin' };
   var LABELS_PROY    = { doctorsv:'DoctorSV', educacion:'Educación', marn:'MARN', global:'Global' };
   var SORT_CAMPOS    = { nombre:'nombre', proyecto:'proyecto', rol:'rol', cargo:'cargo', fechaIngreso:'fechaIngreso', antiguedad:'diasIngreso', estado:'activo' };
 
@@ -1343,7 +1343,7 @@
       +'<option value="agente"'+(u&&u.rol==='agente'?' selected':'')+'>Agente</option>'
       +'<option value="agente-inmersion"'+(u&&u.rol==='agente-inmersion'?' selected':'')+'>Agente Inmersión</option>'
       +'<option value="supervisor"'+(u&&u.rol==='supervisor'?' selected':'')+'>Supervisor</option>'
-      +'<option value="editor"'+(u&&u.rol==='editor'?' selected':'')+'>Editor</option>'
+      +'<option value="editor"'+(u&&u.rol==='editor'?' selected':'')+'>Formación</option>'
       +'<option value="admin"'+(u&&u.rol==='admin'?' selected':'')+'>Admin</option>'
       +'<option value="jefe"'+(u&&u.rol==='jefe'?' selected':'')+'>Jefe</option>'
       +'<option value="wfm"'+(u&&u.rol==='wfm'?' selected':'')+'>WFM</option>'

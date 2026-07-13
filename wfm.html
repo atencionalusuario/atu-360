@@ -490,7 +490,7 @@
             <option value="agente">Agente</option>
             <option value="agente-inmersion">Agente Inmersión</option>
             <option value="supervisor">Supervisor</option>
-            <option value="editor">Editor</option>
+            <option value="editor">Formación</option>
             <option value="admin">Admin</option>
             <option value="jefe">Jefe</option>
             <option value="wfm">WFM</option>
@@ -702,7 +702,7 @@
         <option value="supervisor">Supervisor</option>
         <option value="wfm">WFM</option>
         <option value="jefe">Jefe</option>
-        <option value="editor">Editor</option>
+        <option value="editor">Formación</option>
         <option value="admin">Admin</option>
       </select>
       <select id="rptNEstado" style="padding:6px 10px;border:1.5px solid #E2E8F0;border-radius:7px;font-size:0.78rem;font-family:inherit;color:#1E293B;background:white;outline:none;min-width:120px">
@@ -762,7 +762,7 @@
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
 
   var LABELS_PROY = { doctorsv:'DoctorSV', educacion:'Educación', marn:'MARN', global:'Global' };
-  var LABELS_ROL  = { agente:'Agente', 'agente-inmersion':'Ag. Inmersión', supervisor:'Supervisor', editor:'Editor', admin:'Admin', jefe:'Jefe', wfm:'WFM', superadmin:'Superadmin' };
+  var LABELS_ROL  = { agente:'Agente', 'agente-inmersion':'Ag. Inmersión', supervisor:'Supervisor', editor:'Formación', admin:'Admin', jefe:'Jefe', wfm:'WFM', superadmin:'Superadmin' };
 
   function iniciales(n){ return (n||'?').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase(); }
   function diasDesde(f){ if(!f) return 0; var d=new Date(f+'T00:00:00'), h=new Date(); return Math.max(0,Math.floor((h-d)/(1000*60*60*24))); }
@@ -1774,7 +1774,7 @@
       +'<option value="agente"'+(u&&u.rol==='agente'?' selected':'')+'>Agente</option>'
       +'<option value="agente-inmersion"'+(u&&u.rol==='agente-inmersion'?' selected':'')+'>Agente Inmersión</option>'
       +'<option value="supervisor"'+(u&&u.rol==='supervisor'?' selected':'')+'>Supervisor</option>'
-      +'<option value="editor"'+(u&&u.rol==='editor'?' selected':'')+'>Editor</option>'
+      +'<option value="editor"'+(u&&u.rol==='editor'?' selected':'')+'>Formación</option>'
       +'<option value="admin"'+(u&&u.rol==='admin'?' selected':'')+'>Admin</option>'
       +'<option value="jefe"'+(u&&u.rol==='jefe'?' selected':'')+'>Jefe</option>'
       +'<option value="wfm"'+(u&&u.rol==='wfm'?' selected':'')+'>WFM</option>'
