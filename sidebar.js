@@ -29,7 +29,7 @@ var ITEMS_NAV = {
   miturno:     { id: 'miturno',     label: 'Mi Turno',           url: BASE+'miturno.html',     icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>' },
   metricas:    { id: 'metricas',    label: 'Mis Métricas',       url: BASE+'metricas.html',    icon: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' },
   transporte:  { id: 'transporte',  label: 'Transporte',         url: BASE+'transporte.html',  icon: '<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>' },
-  formacion:   { id: 'formacion',   label: 'Formación',  url: BASE+'editor.html',      icon: '<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>' },
+  formacion:   { id: 'formacion',   label: 'Formación',  url: BASE+'formacion.html',      icon: '<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>' },
 };
 
 // Navegación por rol
@@ -45,8 +45,8 @@ var NAV_POR_ROL = {
     reportes:  ['transporte']
   },
   formacion: {
-    principal: ['formacion', 'solicitudes', 'biblioteca', 'miturno'],
-    reportes:  ['transporte']
+    principal: ['home', 'formacion', 'flash', 'solicitudes', 'biblioteca', 'miturno'],
+    reportes:  ['metricas', 'transporte']
   },
   admin: {
     principal: ['panel', 'transporte'],
@@ -186,7 +186,7 @@ function cargarFlashBadge(uid, db) {
 
 function detectarPagina() {
   var url = window.location.pathname;
-  if (url.indexOf('editor') > -1)      return 'formacion';
+  if (url.indexOf('formacion') > -1)   return 'formacion';
   if (url.indexOf('flash') > -1)       return 'flash';
   if (url.indexOf('solicitudes') > -1) return 'solicitudes';
   if (url.indexOf('biblioteca') > -1)  return 'biblioteca';
