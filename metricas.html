@@ -3,71 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ATU 360 — Mis Métricas</title>
+<title>ATU 360 — Métricas</title>
+<base href="/atu-360/">
 <link rel="stylesheet" href="sidebar.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<link rel="stylesheet" href="base.css">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
-  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
-  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
-  .topbar-left { display: flex; align-items: center; gap: 8px; }
-  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
-  .topbar-sep { color: #CBD5E1; }
-  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
-  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
-  .content { padding: 24px 28px; display: flex; flex-direction: column; gap: 20px; }
+  .body-wrap { flex: 1; overflow: hidden; display: flex; flex-direction: column; padding: 20px 24px; gap: 14px; }
 
-  /* GENERAL */
-  .general-card { background: linear-gradient(135deg, #0F2070, #1A3DAA); border-radius: 12px; padding: 24px 32px; }
-  .gc-label { font-size: 0.7rem; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
-  .gc-val { font-size: 3rem; font-weight: 800; color: white; line-height: 1; }
-  .gc-unit { font-size: 1rem; color: rgba(255,255,255,0.5); font-weight: 500; margin-left: 4px; }
-  .gc-tag { margin-top: 8px; display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
-  .gc-tag.high { background: rgba(22,163,74,0.2); color: #4ADE80; }
-  .gc-tag.mid  { background: rgba(245,158,11,0.2); color: #FCD34D; }
-  .gc-tag.low  { background: rgba(220,38,38,0.2); color: #FCA5A5; }
+  /* CONTROLES */
+  .controles { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; flex-shrink: 0; }
+  .ctrl-select { padding: 8px 10px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.78rem; font-family: inherit; color: #1E293B; background: white; outline: none; cursor: pointer; min-width: 180px; }
+  .ctrl-select:focus { border-color: #1A3DAA; }
+  .met-tab { padding: 7px 14px; border-radius: 7px; font-size: 0.75rem; font-weight: 600; cursor: pointer; border: 1.5px solid #E2E8F0; background: white; color: #64748B; font-family: inherit; transition: all 0.15s; }
+  .met-tab.active { background: #1A3DAA; color: white; border-color: #1A3DAA; }
 
-  /* MÉTRICAS */
-  .metricas-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
-  .metrica-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 18px 20px; }
-  .mc-label { font-size: 0.72rem; color: #64748B; font-weight: 500; margin-bottom: 10px; line-height: 1.4; }
-  .mc-scores { display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px; }
-  .mc-val { font-size: 1.6rem; font-weight: 800; color: #1E293B; }
-  .mc-max { font-size: 0.78rem; color: #94A3B8; font-weight: 500; }
-  .mc-bar { height: 6px; background: #F1F5F9; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
-  .mc-fill { height: 100%; border-radius: 3px; }
-  .mc-fill.high { background: linear-gradient(90deg,#1A3DAA,#29ABE2); }
-  .mc-fill.mid  { background: linear-gradient(90deg,#F59E0B,#FCD34D); }
-  .mc-fill.low  { background: linear-gradient(90deg,#DC2626,#F87171); }
-  .mc-tag { font-size: 0.65rem; font-weight: 700; }
-  .mc-tag.high { color: #16A34A; }
-  .mc-tag.mid  { color: #B45309; }
-  .mc-tag.low  { color: #DC2626; }
+  /* KPI */
+  .kpi-card { background: linear-gradient(135deg, #0F2070, #1A3DAA); border-radius: 10px; padding: 18px 22px; flex-shrink: 0; display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+  .kpi-main { display: flex; flex-direction: column; gap: 4px; }
+  .kpi-score { font-size: 2.6rem; font-weight: 800; color: white; line-height: 1; }
+  .kpi-score span { font-size: 1rem; font-weight: 400; opacity: 0.55; }
+  .kpi-sub  { font-size: 0.72rem; color: rgba(255,255,255,0.55); margin-top: 2px; }
+  .kpi-badge { display: inline-block; margin-top: 6px; font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: rgba(255,255,255,0.15); color: white; }
+  .kpi-sep  { width: 1px; background: rgba(255,255,255,0.15); align-self: stretch; }
+  .kpi-cats { display: flex; gap: 20px; flex-wrap: wrap; }
+  .kpi-cat  { display: flex; flex-direction: column; gap: 3px; }
+  .kpi-cat-label { font-size: 0.62rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+  .kpi-cat-val   { font-size: 0.9rem; font-weight: 700; color: white; }
 
-  /* CARDS */
-  .card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 24px; }
-  .card-title { font-size: 0.82rem; font-weight: 700; color: #1E293B; margin-bottom: 4px; }
-  .card-sub   { font-size: 0.7rem; color: #94A3B8; margin-bottom: 20px; }
+  /* CHARTS */
+  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex-shrink: 0; }
+  .chart-card  { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 16px; }
+  .chart-title { font-size: 0.65rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+  .chart-wrap  { height: 200px; }
 
-  /* GRÁFICOS LADO A LADO */
-  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  /* TABLA */
+  .tabla-wrap { flex: 1; overflow: auto; background: white; border-radius: 10px; border: 1px solid #E2E8F0; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  thead tr { background: #F8FAFC; }
+  th { padding: 10px 14px; text-align: left; font-size: 0.65rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.8px; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; background: #F8FAFC; white-space: nowrap; }
+  td { padding: 10px 14px; border-bottom: 1px solid #F8FAFC; color: #374151; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #F8FAFC; }
 
-  /* HISTORIAL */
-  .periodo-tabs { display: flex; gap: 4px; margin-bottom: 14px; }
-  .periodo-tab { padding: 5px 12px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; border: 1px solid #E2E8F0; background: white; color: #64748B; font-family: inherit; transition: all 0.15s; }
-  .periodo-tab.active { background: #1A3DAA; color: white; border-color: #1A3DAA; }
-  .hist-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-  .hist-table th, .hist-table td { width: calc(100% / 6); }
-  .hist-table th { font-size: 0.65rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 10px; text-align: left; border-bottom: 1px solid #F1F5F9; }
-  .hist-table td { font-size: 0.78rem; color: #374151; padding: 10px; border-bottom: 1px solid #F8FAFC; }
-  .hist-table tr:last-child td { border-bottom: none; }
-  .hist-table tr:hover td { background: #F8FAFC; }
-  .score-pill { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; }
-  .score-pill.high { background: #F0FDF4; color: #16A34A; }
-  .score-pill.mid  { background: #FFFBEB; color: #B45309; }
-  .score-pill.low  { background: #FEF2F2; color: #DC2626; }
+  .met-spill { font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 3px; }
+  .met-spill.high { background: #F0FDF4; color: #16A34A; }
+  .met-spill.mid  { background: #FFFBEB; color: #B45309; }
+  .met-spill.low  { background: #FEF2F2; color: #DC2626; }
+
+  .empty-state { text-align: center; padding: 40px; color: #94A3B8; font-size: 0.82rem; }
+  .demo-banner { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px; padding: 8px 14px; font-size: 0.72rem; color: #92400E; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -77,66 +61,78 @@
 <div class="main">
   <div class="topbar">
     <div class="topbar-left">
-      <h2>Mis Métricas</h2>
+      <h2 style="font-size:0.9rem;font-weight:600">Métricas</h2>
       <span class="topbar-sep">/</span>
-      <p>Calidad — Histórico</p>
+      <p class="tb-page-sub" id="totalLabel">—</p>
     </div>
     <div class="topbar-right">
       <div class="tb-clock" id="clock">--:--:--</div>
     </div>
   </div>
 
-  <div class="content">
-    <div class="general-card" id="generalCard"></div>
-    <div class="metricas-grid" id="metricasGrid"></div>
+  <div class="body-wrap">
 
-    <!-- GRÁFICOS LADO A LADO -->
-    <div class="charts-row">
-      <div class="card">
-        <div class="card-title">Perfil de calidad</div>
-        <div class="card-sub">Promedio histórico por métrica (normalizado 0–100)</div>
-        <div style="display:flex;justify-content:center">
-          <canvas id="radarChart" width="260" height="260"></canvas>
-        </div>
+    <div class="demo-banner">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Los datos de evaluación mostrados son simulados hasta integrar el módulo de calidad.
+    </div>
+
+    <div class="controles">
+      <select class="ctrl-select" id="metAgenteSel" onchange="cambiarAgente()">
+        <option value="todos">Promedio global</option>
+      </select>
+      <div style="display:flex;gap:4px" id="tabsPeriodo"></div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-main">
+        <div class="kpi-score" id="kpiScore">—<span>/100</span></div>
+        <div class="kpi-sub"   id="kpiSub">Promedio global</div>
+        <span class="kpi-badge" id="kpiBadge"></span>
       </div>
-      <div class="card">
-        <div class="card-title">Promedio mensual</div>
-        <div class="card-sub">Últimos 6 meses — Escala 0–100</div>
-        <canvas id="barChart" height="100"></canvas>
+      <div class="kpi-sep"></div>
+      <div class="kpi-cats" id="kpiCats"></div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">Radar de métricas</div>
+        <div class="chart-wrap"><canvas id="metRadar"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Promedio mensual</div>
+        <div class="chart-wrap"><canvas id="metBar"></canvas></div>
       </div>
     </div>
 
-    <!-- HISTORIAL -->
-    <div class="card">
-      <div class="card-title">Historial de evaluaciones</div>
-      <div class="card-sub">Todas las evaluaciones registradas</div>
-      <div class="periodo-tabs">
-        <button class="periodo-tab active" onclick="filtrar('todos',this)">Todos</button>
-        <button class="periodo-tab" onclick="filtrar('2026-06',this)">Jun 2026</button>
-        <button class="periodo-tab" onclick="filtrar('2026-05',this)">May 2026</button>
-        <button class="periodo-tab" onclick="filtrar('2026-04',this)">Abr 2026</button>
-      </div>
-      <table class="hist-table">
+    <div class="tabla-wrap">
+      <table>
         <thead>
           <tr>
-            <th>Fecha</th>
-            <th>Expresión y personalización <span style="font-weight:400">(/ 30)</span></th>
-            <th>Registro y complementación <span style="font-weight:400">(/ 30)</span></th>
-            <th>Gestión de la llamada <span style="font-weight:400">(/ 30)</span></th>
-            <th>Gestión del tiempo <span style="font-weight:400">(/ 10)</span></th>
-            <th>Total <span style="font-weight:400">(/ 100)</span></th>
+            <th id="colPrimero">Agente</th>
+            <th>Expresión y personalización</th>
+            <th>Registro y complementación</th>
+            <th>Gestión de la llamada</th>
+            <th>Gestión del tiempo</th>
+            <th>Total</th>
           </tr>
         </thead>
-        <tbody id="histBody"></tbody>
+        <tbody id="metHistBody"></tbody>
       </table>
     </div>
+
   </div>
 </div>
+
+<div id="toast" class="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+
   firebase.initializeApp({
     apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
     authDomain:        "atu-360.firebaseapp.com",
@@ -145,168 +141,199 @@
     messagingSenderId: "820106715923",
     appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
   });
-  var db = firebase.firestore();
+  var db   = firebase.firestore();
+  var auth = firebase.auth();
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  var ROLES_PERMITIDOS = ['jefe','wfm','admin','superadmin'];
+
+  var MESES = [
+    { key:'2026-04', label:'Abr 2026' },
+    { key:'2026-05', label:'May 2026' },
+    { key:'2026-06', label:'Jun 2026' }
+  ];
+
+  var MET = [
+    { label:'Expresión y personalización', max:30 },
+    { label:'Registro y complementación',  max:30 },
+    { label:'Gestión de la llamada',       max:30 },
+    { label:'Gestión del tiempo',          max:10 }
+  ];
+
+  var agentes    = [];
+  var metSel     = 'todos';
+  var metPeriodo = 'todos';
+  var rChart     = null;
+  var bChart     = null;
+
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = BASE + 'login.html'; return; }
+    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
+        auth.signOut(); window.location.href = BASE + 'login.html'; return;
+      }
+      construirTabs();
+      cargarAgentes();
+    });
+  });
+
+  function construirTabs() {
+    var wrap = document.getElementById('tabsPeriodo');
+    var tabs = [{ key:'todos', label:'Todos' }].concat(MESES.slice().reverse());
+    wrap.innerHTML = tabs.map(function(t, i) {
+      return '<button class="met-tab'+(i===0?' active':'')+'" data-periodo="'+t.key+'" onclick="filtrarPeriodo(\''+t.key+'\',this)">'+t.label+'</button>';
+    }).join('');
+  }
+
+  function cargarAgentes() {
+    db.collection('usuarios').where('rol','in',['agente','agente-inmersion']).get()
+      .then(function(snap) {
+        agentes = [];
+        var sel = document.getElementById('metAgenteSel');
+        sel.innerHTML = '<option value="todos">Promedio global</option>';
+        snap.forEach(function(doc) {
+          var d = doc.data(), nombre = d.nombre || d.email || '?';
+          var seed = 0;
+          for (var c = 0; c < doc.id.length; c++) seed = (seed * 31 + doc.id.charCodeAt(c)) >>> 0;
+          agentes.push({ uid: doc.id, nombre: nombre, proyecto: d.proyecto||'', evals: generar(seed) });
+          var o = document.createElement('option'); o.value = doc.id; o.textContent = nombre;
+          sel.appendChild(o);
+        });
+        document.getElementById('totalLabel').textContent = agentes.length + ' agente' + (agentes.length !== 1 ? 's' : '');
+        if (!agentes.length) {
+          document.getElementById('metHistBody').innerHTML = '<tr><td colspan="6" class="empty-state">Sin agentes registrados.</td></tr>';
+          return;
+        }
+        renderTodo();
+      })
+      .catch(function(e) { showToast('Error: ' + e.message); });
+  }
+
+  function generar(seed) {
+    var r = seed >>> 0;
+    function rnd(lo, hi) { r = (Math.imul(r, 1664525) + 1013904223) >>> 0; return lo + (r % (hi - lo + 1)); }
+    var evs = [];
+    MESES.forEach(function(m) {
+      var n = 3 + rnd(0, 1);
+      for (var i = 0; i < n; i++) {
+        evs.push({ fecha: m.key + '-' + pad(rnd(1, 27)), vals: [rnd(18,29), rnd(18,29), rnd(18,29), rnd(7,10)] });
+      }
+    });
+    return evs.sort(function(a,b) { return b.fecha.localeCompare(a.fecha); });
+  }
+
+  function pad(n) { return String(n).padStart(2,'0'); }
+  function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function sum(ev) { return ev.vals.reduce(function(a,v){ return a+v; }, 0); }
+  function cls(pct) { return pct >= 0.8 ? 'high' : pct >= 0.6 ? 'mid' : 'low'; }
+  function promTotal(evs) { if (!evs.length) return 0; return Math.round(evs.reduce(function(a,e){ return a+sum(e); }, 0) / evs.length); }
+  function promMet(evs) {
+    if (!evs.length) return MET.map(function(){ return 0; });
+    return MET.map(function(_,i){ return Math.round(evs.reduce(function(a,e){ return a+e.vals[i]; }, 0) / evs.length); });
+  }
+
+  function evsFiltrados() {
+    var ags = metSel === 'todos' ? agentes : agentes.filter(function(a){ return a.uid === metSel; });
+    var evs = ags.reduce(function(arr,a){ return arr.concat(a.evals.map(function(e){ return Object.assign({nombre:a.nombre}, e); })); }, []);
+    if (metPeriodo !== 'todos') evs = evs.filter(function(e){ return e.fecha.substring(0,7) === metPeriodo; });
+    return evs;
+  }
+
+  function renderTodo() {
+    var evs   = evsFiltrados();
+    var total = promTotal(evs);
+    var pct   = total / 100;
+    var ps    = promMet(evs);
+    var badge = pct >= 0.8 ? 'Buen desempeño' : pct >= 0.6 ? 'En desarrollo' : 'Requiere atención';
+
+    document.getElementById('kpiScore').innerHTML = total + '<span>/100</span>';
+    document.getElementById('kpiSub').textContent  = metSel === 'todos' ? 'Promedio global' : 'Promedio del agente';
+    document.getElementById('kpiBadge').textContent = badge;
+    document.getElementById('kpiCats').innerHTML = MET.map(function(m,i){
+      return '<div class="kpi-cat">'
+        +'<div class="kpi-cat-label">'+escHtml(m.label)+'</div>'
+        +'<div class="kpi-cat-val">'+ps[i]+' <span style="opacity:0.45;font-size:0.72rem">/ '+m.max+'</span></div>'
+        +'</div>';
+    }).join('<div class="kpi-sep"></div>');
+
+    if (rChart) { rChart.destroy(); rChart = null; }
+    rChart = new Chart(document.getElementById('metRadar'), {
+      type: 'radar',
+      data: {
+        labels: MET.map(function(m){ return m.label; }),
+        datasets: [{ data: ps.map(function(v,i){ return Math.round(v/MET[i].max*100); }), backgroundColor:'rgba(26,61,170,0.12)', borderColor:'#1A3DAA', borderWidth:2, pointBackgroundColor:'#1A3DAA', pointRadius:4 }]
+      },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{r:{beginAtZero:true,max:100,grid:{color:'rgba(0,0,0,0.06)'},pointLabels:{font:{size:10}},ticks:{display:false}}} }
+    });
+
+    if (bChart) { bChart.destroy(); bChart = null; }
+    var mKeys   = metPeriodo === 'todos' ? MESES.map(function(m){return m.key;}) : [metPeriodo];
+    var mLabels = {};
+    MESES.forEach(function(m){ mLabels[m.key] = m.label; });
+    var ags = metSel === 'todos' ? agentes : agentes.filter(function(a){ return a.uid === metSel; });
+    var barData = mKeys.map(function(mk) {
+      var ae = ags.reduce(function(a,ag){ return a.concat(ag.evals.filter(function(e){ return e.fecha.substring(0,7)===mk; })); }, []);
+      return ae.length ? Math.round(ae.reduce(function(a,e){ return a+sum(e); }, 0) / ae.length) : 0;
+    });
+    bChart = new Chart(document.getElementById('metBar'), {
+      type: 'bar',
+      data: { labels: mKeys.map(function(mk){ return mLabels[mk]||mk; }), datasets:[{ data:barData, backgroundColor:'#1A3DAA', borderRadius:5 }] },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,max:100,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}} }
+    });
+
+    document.getElementById('colPrimero').textContent = metSel === 'todos' ? 'Agente' : 'Fecha';
+    var html = '';
+    if (metSel === 'todos') {
+      agentes.forEach(function(ag) {
+        var agEvs = ag.evals;
+        if (metPeriodo !== 'todos') agEvs = agEvs.filter(function(e){ return e.fecha.substring(0,7) === metPeriodo; });
+        if (!agEvs.length) return;
+        var ps2 = promMet(agEvs), t2 = promTotal(agEvs);
+        html += '<tr><td style="font-weight:600">'+escHtml(ag.nombre)+'</td>';
+        MET.forEach(function(m,i){ html += '<td><span class="met-spill '+cls(ps2[i]/m.max)+'">'+ps2[i]+' / '+m.max+'</span></td>'; });
+        html += '<td><span class="met-spill '+cls(t2/100)+'" style="font-weight:800">'+t2+' / 100</span></td></tr>';
+      });
+    } else {
+      evs.forEach(function(e) {
+        var t2 = sum(e);
+        html += '<tr><td style="font-weight:600">'+escHtml(e.fecha)+'</td>';
+        MET.forEach(function(m,i){ html += '<td><span class="met-spill '+cls(e.vals[i]/m.max)+'">'+e.vals[i]+' / '+m.max+'</span></td>'; });
+        html += '<td><span class="met-spill '+cls(t2/100)+'" style="font-weight:800">'+t2+' / 100</span></td></tr>';
+      });
+    }
+    document.getElementById('metHistBody').innerHTML = html ||
+      '<tr><td colspan="6" class="empty-state">Sin evaluaciones en este período.</td></tr>';
+  }
+
+  function cambiarAgente() {
+    metSel = document.getElementById('metAgenteSel').value;
+    metPeriodo = 'todos';
+    document.querySelectorAll('.met-tab').forEach(function(b){ b.classList.toggle('active', b.dataset.periodo==='todos'); });
+    renderTodo();
+  }
+
+  function filtrarPeriodo(periodo, btn) {
+    metPeriodo = periodo;
+    document.querySelectorAll('.met-tab').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    renderTodo();
+  }
+
+  var _toastTimer = null;
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
 </script>
 <script src="notif.js"></script>
 <script src="sidebar.js"></script>
 <script>
   initSidebar();
   initNotif(db, auth);
-
-  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
-  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
-
-  var METRICAS = [
-    { label: 'Expresion y personalizacion', max: 30 },
-    { label: 'Registro y complementacion',  max: 30 },
-    { label: 'Gestion de la llamada',        max: 30 },
-    { label: 'Gestion del tiempo',           max: 10 }
-  ];
-
-  var evals = [
-    { fecha: '2026-06-19', vals: [26, 28, 25, 9] },
-    { fecha: '2026-06-12', vals: [24, 26, 24, 8] },
-    { fecha: '2026-06-05', vals: [27, 25, 26, 8] },
-    { fecha: '2026-05-28', vals: [22, 24, 25, 9] },
-    { fecha: '2026-05-21', vals: [23, 21, 24, 8] },
-    { fecha: '2026-05-14', vals: [25, 26, 25, 9] },
-    { fecha: '2026-05-07', vals: [21, 22, 22, 8] },
-    { fecha: '2026-04-30', vals: [20, 21, 21, 7] },
-    { fecha: '2026-04-23', vals: [22, 23, 22, 7] },
-    { fecha: '2026-04-16', vals: [19, 21, 20, 7] }
-  ];
-
-  var rInst = null;
-  var bInst = null;
-
-  function sum(ev) { var t=0; for(var i=0;i<ev.vals.length;i++) t+=ev.vals[i]; return t; }
-
-  function promMet(evs) {
-    return METRICAS.map(function(m,i){
-      var s=0; for(var j=0;j<evs.length;j++) s+=evs[j].vals[i];
-      return Math.round(s/evs.length);
-    });
-  }
-
-  function promTotal(evs) { var s=0; for(var j=0;j<evs.length;j++) s+=sum(evs[j]); return Math.round(s/evs.length); }
-
-  function cls(pct) { return pct>=0.8?'high':pct>=0.6?'mid':'low'; }
-  function tag(pct) { return pct>=0.8?'Buen desempeno':pct>=0.6?'En desarrollo':'Requiere atencion'; }
-
-  function renderGeneral(evs) {
-    var p=promTotal(evs), c=cls(p/100);
-    document.getElementById('generalCard').innerHTML =
-      '<div class="gc-label">Promedio general</div>'
-      +'<div class="gc-val">'+p+'<span class="gc-unit">/ 100</span></div>'
-      +'<span class="gc-tag '+c+'">'+tag(p/100)+'</span>';
-  }
-
-  function renderMetricas(evs) {
-    var ps=promMet(evs), html='';
-    for(var i=0;i<METRICAS.length;i++){
-      var v=ps[i], m=METRICAS[i], pct=v/m.max, c=cls(pct);
-      html+='<div class="metrica-card">'
-        +'<div class="mc-label">'+m.label+'</div>'
-        +'<div class="mc-scores"><span class="mc-val">'+v+'</span><span class="mc-max">/ '+m.max+'</span></div>'
-        +'<div class="mc-bar"><div class="mc-fill '+c+'" style="width:'+Math.round(pct*100)+'%"></div></div>'
-        +'<div class="mc-tag '+c+'">'+tag(pct)+'</div>'
-        +'</div>';
-    }
-    document.getElementById('metricasGrid').innerHTML=html;
-  }
-
-  function renderRadar(evs) {
-    var ps=promMet(evs), norm=[];
-    for(var i=0;i<METRICAS.length;i++) norm.push(Math.round((ps[i]/METRICAS[i].max)*100));
-    if(rInst){rInst.destroy();rInst=null;}
-    rInst=new Chart(document.getElementById('radarChart').getContext('2d'),{
-      type:'radar',
-      data:{
-        labels:['Expresion','Registro','Gestion llamada','Tiempo'],
-        datasets:[{data:norm,backgroundColor:'rgba(26,61,170,0.12)',borderColor:'#1A3DAA',borderWidth:2,pointBackgroundColor:'#29ABE2',pointBorderColor:'#fff',pointBorderWidth:2,pointRadius:5}]
-      },
-      options:{
-        responsive:true,
-        scales:{r:{min:0,max:100,ticks:{stepSize:10,font:{size:9},color:'#94A3B8',backdropColor:'transparent'},grid:{color:'#F1F5F9'},angleLines:{color:'#E2E8F0'},pointLabels:{font:{size:10,family:'Inter',weight:'600'},color:'#374151'}}},
-        plugins:{legend:{display:false}}
-      }
-    });
-  }
-
-  function renderBarras() {
-    var meses={};
-    for(var i=0;i<evals.length;i++){
-      var mes=evals[i].fecha.substring(0,7);
-      if(!meses[mes]) meses[mes]=[];
-      meses[mes].push(sum(evals[i]));
-    }
-    var keys=Object.keys(meses).sort().slice(-6), labels=[], data=[];
-    for(var k=0;k<keys.length;k++){
-      var d=new Date(keys[k]+'-02');
-      labels.push(d.toLocaleDateString('es-SV',{month:'short',year:'2-digit'}));
-      var arr=meses[keys[k]], s=0;
-      for(var j=0;j<arr.length;j++) s+=arr[j];
-      data.push(Math.round(s/arr.length));
-    }
-    if(bInst){bInst.destroy();bInst=null;}
-    var labelPlugin={
-      id:'labelPlugin',
-      afterDraw:function(chart){
-        var ctx=chart.ctx, meta=chart.getDatasetMeta(0);
-        for(var i=0;i<meta.data.length;i++){
-          var bar=meta.data[i], val=chart.data.datasets[0].data[i];
-          ctx.save(); ctx.font='bold 11px sans-serif'; ctx.fillStyle='#1A3DAA';
-          ctx.textAlign='center'; ctx.textBaseline='bottom';
-          ctx.fillText(val,bar.x,bar.y-4); ctx.restore();
-        }
-      }
-    };
-    bInst=new Chart(document.getElementById('barChart').getContext('2d'),{
-      type:'bar',
-      data:{labels:labels,datasets:[{data:data,backgroundColor:'rgba(26,61,170,0.15)',borderColor:'#1A3DAA',borderWidth:2,borderRadius:6,borderSkipped:false}]},
-      options:{
-        responsive:true,
-        layout:{padding:{top:24}},
-        scales:{
-          y:{min:0,max:100,ticks:{stepSize:20,font:{size:11},color:'#94A3B8'},grid:{color:'#F1F5F9'}},
-          x:{ticks:{font:{size:11},color:'#374151'},grid:{display:false}}
-        },
-        plugins:{legend:{display:false}}
-      },
-      plugins:[labelPlugin]
-    });
-  }
-
-  function renderHist(evs) {
-    if(evs.length===0){
-      document.getElementById('histBody').innerHTML='<tr><td colspan="6" style="text-align:center;color:#94A3B8;padding:20px">Sin evaluaciones en este periodo</td></tr>';
-      return;
-    }
-    var html='';
-    for(var i=0;i<evs.length;i++){
-      var e=evs[i], t=sum(e);
-      html+='<tr><td style="font-weight:600">'+e.fecha+'</td>';
-      for(var j=0;j<e.vals.length;j++){
-        var v=e.vals[j], c=cls(v/METRICAS[j].max);
-        html+='<td><span class="score-pill '+c+'">'+v+' / '+METRICAS[j].max+'</span></td>';
-      }
-      html+='<td><span class="score-pill '+cls(t/100)+'" style="font-weight:800">'+t+' / 100</span></td></tr>';
-    }
-    document.getElementById('histBody').innerHTML=html;
-  }
-
-  function filtrar(periodo, btn) {
-    document.querySelectorAll('.periodo-tab').forEach(function(b){b.classList.remove('active');});
-    btn.classList.add('active');
-    var evs=periodo==='todos'?evals:evals.filter(function(e){return e.fecha.substring(0,7)===periodo;});
-    renderGeneral(evs); renderMetricas(evs); renderRadar(evs); renderHist(evs);
-  }
-
-  renderGeneral(evals);
-  renderMetricas(evals);
-  renderRadar(evals);
-  renderBarras();
-  renderHist(evals);
 </script>
 </body>
 </html>
