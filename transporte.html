@@ -334,7 +334,8 @@
   }
 
   function renderCal() {
-    var hoy     = new Date(); hoy.setHours(0,0,0,0);
+    var hoy      = new Date(); hoy.setHours(0,0,0,0);
+    var minFecha = new Date(hoy); minFecha.setDate(minFecha.getDate() + 2); // mínimo: pasado mañana
     var anio    = calVista.getFullYear();
     var mes     = calVista.getMonth();
     var primerDia = new Date(anio, mes, 1).getDay();
@@ -343,7 +344,6 @@
 
     document.getElementById('calMesLabel').textContent = MESES[mes] + ' ' + anio;
 
-    // Encabezados días
     var dowHtml = DIAS_SEMANA.map(function(d){ return '<div class="tp-cal-dow">'+d+'</div>'; }).join('');
     document.getElementById('calDow').innerHTML = dowHtml;
 
@@ -353,12 +353,12 @@
       var fecha = anio + '-' + pad(mes+1) + '-' + pad(d);
       var dObj  = new Date(anio, mes, d);
       var clases = ['tp-cal-day'];
-      if (dObj < hoy) clases.push('pasado');
+      var bloqueado = dObj < minFecha;
+      if (bloqueado) clases.push('pasado');
       if (fecha === hoyISO) clases.push('hoy');
       if (fechasSeleccionadas.indexOf(fecha) > -1) clases.push('seleccionado');
-      var pasado = dObj < hoy;
       html += '<div class="' + clases.join(' ') + '"'
-        + (pasado ? '' : ' onclick="toggleFecha(\'' + fecha + '\')"')
+        + (bloqueado ? '' : ' onclick="toggleFecha(\'' + fecha + '\')"')
         + '>' + d + '</div>';
     }
     document.getElementById('calGrid').innerHTML = html;
