@@ -152,6 +152,44 @@
       <div class="msg-err" id="vehErr"></div>
     </div>
 
+    <!-- CONTACTOS DE EMERGENCIA -->
+    <div class="section-title">Contactos de emergencia</div>
+    <div class="card">
+      <div class="card-title">Contactos de emergencia</div>
+      <div class="card-sub">Se usarán en caso de una emergencia. Agrega dos personas de confianza.</div>
+      <div style="display:flex;flex-direction:column;gap:18px;margin-bottom:18px">
+        <div>
+          <div style="font-size:0.72rem;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Contacto 1</div>
+          <div class="field-row">
+            <div class="field">
+              <label>Nombre completo</label>
+              <input type="text" id="ce1Nombre" placeholder="Ej. María López">
+            </div>
+            <div class="field">
+              <label>Teléfono</label>
+              <input type="text" id="ce1Tel" placeholder="Ej. 7890-1234">
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:0.72rem;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Contacto 2</div>
+          <div class="field-row">
+            <div class="field">
+              <label>Nombre completo</label>
+              <input type="text" id="ce2Nombre" placeholder="Ej. Carlos Pérez">
+            </div>
+            <div class="field">
+              <label>Teléfono</label>
+              <input type="text" id="ce2Tel" placeholder="Ej. 6543-2100">
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-save" id="btnCE" onclick="guardarContactosEmergencia()">Guardar contactos</button>
+      <div class="msg-ok"  id="ceOk">Contactos guardados correctamente.</div>
+      <div class="msg-err" id="ceErr"></div>
+    </div>
+
   </div>
 </div>
 
@@ -214,6 +252,10 @@
       if (d.placa)        document.getElementById('vPlaca').value = d.placa;
       if (d.marca)        document.getElementById('vMarca').value = d.marca;
       if (d.modelo)       document.getElementById('vModelo').value= d.modelo;
+
+      var ce = d.contactosEmergencia || [];
+      if (ce[0]) { document.getElementById('ce1Nombre').value = ce[0].nombre || ''; document.getElementById('ce1Tel').value = ce[0].telefono || ''; }
+      if (ce[1]) { document.getElementById('ce2Nombre').value = ce[1].nombre || ''; document.getElementById('ce2Tel').value = ce[1].telefono || ''; }
     });
   });
 
@@ -341,6 +383,26 @@
       var el = document.getElementById(prefix+s);
       if (el) el.style.display = 'none';
     });
+  }
+
+  // ===== CONTACTOS DE EMERGENCIA =====
+  function guardarContactosEmergencia() {
+    ocultarMsgs('ce');
+    var btn = document.getElementById('btnCE');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    var contactos = [
+      { nombre: document.getElementById('ce1Nombre').value.trim(), telefono: document.getElementById('ce1Tel').value.trim() },
+      { nombre: document.getElementById('ce2Nombre').value.trim(), telefono: document.getElementById('ce2Tel').value.trim() }
+    ];
+    db.collection('usuarios').doc(currentUser.uid).update({ contactosEmergencia: contactos })
+      .then(function() {
+        btn.disabled = false; btn.textContent = 'Guardar contactos';
+        mostrarMsg('ceOk', null);
+        showToast('Contactos guardados.');
+      }).catch(function(e) {
+        btn.disabled = false; btn.textContent = 'Guardar contactos';
+        mostrarMsg('ceErr', 'Error al guardar: ' + e.message);
+      });
   }
 
   function showToast(msg) {
