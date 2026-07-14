@@ -1,4 +1,4 @@
-var BASE = 'https://atencionalusuario.github.io/atu-360/';
+var BASE = 'https://atencionalusuario.github.io/atu-360/'; // v2
 
 var BADGES_DEF = [
   { id: 'puntualidad-oro',    icon: '📅', nivel: 'gold',    label: 'Puntualidad Oro' },
