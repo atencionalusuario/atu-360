@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="sidebar.css">
+<base href="/atu-360/">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATU 360 — Mi Perfil</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; color: #1E293B; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+  .content { padding: 32px 40px; max-width: 780px; width: 100%; }
+  .section-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #94A3B8; margin-bottom: 14px; margin-top: 28px; }
+  .section-title:first-child { margin-top: 0; }
+  .card { background: white; border-radius: 12px; border: 1px solid #E2E8F0; padding: 28px; margin-bottom: 6px; }
+  .card-title { font-size: 0.95rem; font-weight: 700; color: #1E293B; margin-bottom: 4px; }
+  .card-sub { font-size: 0.78rem; color: #94A3B8; margin-bottom: 22px; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 0.75rem; font-weight: 600; color: #374151; margin-bottom: 5px; }
+  .field input[type="text"], .field input[type="password"], .field select {
+    width: 100%; padding: 10px 13px; border: 1.5px solid #E2E8F0; border-radius: 8px;
+    font-size: 0.85rem; font-family: inherit; color: #1E293B; background: #F8FAFC; outline: none; transition: border 0.2s;
+  }
+  .field input:focus, .field select:focus { border-color: #1A3DAA; background: white; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .btn-save { padding: 10px 22px; background: #1A3DAA; color: white; border: none; border-radius: 8px; font-size: 0.83rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+  .btn-save:hover { opacity: 0.88; }
+  .btn-save:disabled { opacity: 0.5; cursor: default; }
+  .photo-wrap { display: flex; align-items: center; gap: 24px; margin-bottom: 22px; }
+  .photo-preview { width: 80px; height: 80px; border-radius: 50%; background: #1A3DAA; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 700; color: white; flex-shrink: 0; border: 3px solid #EEF2FF; overflow: hidden; }
+  .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-info { font-size: 0.78rem; color: #64748B; line-height: 1.6; }
+  .photo-info strong { display: block; font-size: 0.83rem; color: #1E293B; margin-bottom: 2px; }
+  .file-input-wrap { position: relative; }
+  .file-input-wrap input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .btn-file { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; background: #F1F5F9; color: #374151; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  .btn-file:hover { background: #E2E8F0; }
+  .file-name { font-size: 0.75rem; color: #64748B; margin-top: 6px; }
+  .msg-ok  { font-size: 0.78rem; color: #16A34A; font-weight: 600; margin-top: 10px; display: none; }
+  .msg-err { font-size: 0.78rem; color: #DC2626; font-weight: 600; margin-top: 10px; display: none; }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="sidebar"></div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Mi Perfil</h2>
+      <span class="topbar-sep">/</span>
+      <p id="topbarSub">Cargando...</p>
+    </div>
+    <div class="tb-clock" id="clock">--:--:--</div>
+  </div>
+
+  <div class="content">
+
+    <!-- FOTO -->
+    <div class="section-title">Foto de perfil</div>
+    <div class="card">
+      <div class="card-title">Foto de perfil</div>
+      <div class="card-sub">Se mostrará en tu avatar dentro de la plataforma.</div>
+      <div class="photo-wrap">
+        <div class="photo-preview" id="photoPreview"><span id="photoInitials">--</span></div>
+        <div class="photo-info">
+          <strong id="photoName">Cargando...</strong>
+          <span>JPG o PNG · máximo 2 MB</span>
+        </div>
+      </div>
+      <div class="file-input-wrap">
+        <div class="btn-file">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Seleccionar foto
+        </div>
+        <input type="file" id="fotoInput" accept="image/jpeg,image/png" onchange="previsualizarFoto(this)">
+      </div>
+      <div class="file-name" id="fotoNombre"></div>
+      <div style="margin-top:16px">
+        <button class="btn-save" id="btnFoto" onclick="subirFoto()" disabled>Guardar foto</button>
+      </div>
+      <div class="msg-ok"  id="fotoOk">Foto actualizada correctamente.</div>
+      <div class="msg-err" id="fotoErr"></div>
+    </div>
+
+    <!-- CONTRASEÑA -->
+    <div class="section-title">Seguridad</div>
+    <div class="card">
+      <div class="card-title">Cambiar contraseña</div>
+      <div class="card-sub">Elige una contraseña segura de al menos 8 caracteres.</div>
+      <div class="field">
+        <label>Contraseña actual</label>
+        <input type="password" id="passActual" placeholder="Tu contraseña actual">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Nueva contraseña</label>
+          <input type="password" id="passNueva" placeholder="Mínimo 8 caracteres">
+        </div>
+        <div class="field">
+          <label>Confirmar contraseña</label>
+          <input type="password" id="passConfirm" placeholder="Repite la nueva contraseña">
+        </div>
+      </div>
+      <button class="btn-save" id="btnPass" onclick="cambiarPassword()">Actualizar contraseña</button>
+      <div class="msg-ok"  id="passOk">Contraseña actualizada correctamente.</div>
+      <div class="msg-err" id="passErr"></div>
+    </div>
+
+    <!-- VEHÍCULO -->
+    <div class="section-title">Datos del vehículo</div>
+    <div class="card">
+      <div class="card-title">Mi vehículo</div>
+      <div class="card-sub">Esta información se usa para la coordinación de transporte.</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Tipo de vehículo</label>
+          <select id="vTipo">
+            <option value="">— Selecciona —</option>
+            <option value="Automóvil">Automóvil</option>
+            <option value="Motocicleta">Motocicleta</option>
+            <option value="Camioneta">Camioneta</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Placa</label>
+          <input type="text" id="vPlaca" placeholder="Ej. P123456">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Marca</label>
+          <input type="text" id="vMarca" placeholder="Ej. Toyota">
+        </div>
+        <div class="field">
+          <label>Modelo</label>
+          <input type="text" id="vModelo" placeholder="Ej. Corolla">
+        </div>
+      </div>
+      <button class="btn-save" id="btnVehiculo" onclick="guardarVehiculo()">Guardar vehículo</button>
+      <div class="msg-ok"  id="vehOk">Datos guardados correctamente.</div>
+      <div class="msg-err" id="vehErr"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var auth    = firebase.auth();
+  var db      = firebase.firestore();
+  var storage = firebase.storage();
+
+  var currentUser = null;
+  var fotoArchivo = null;
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = 'login.html'; return; }
+    currentUser = user;
+    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      var d = doc.exists ? doc.data() : {};
+      var nombre = d.nombre || user.email.split('@')[0];
+      var iniciales = nombre.substring(0, 2).toUpperCase();
+
+      document.getElementById('topbarSub').textContent = nombre;
+      document.getElementById('photoName').textContent = nombre;
+      document.getElementById('photoInitials').textContent = iniciales;
+
+      if (d.fotoPerfil) {
+        document.getElementById('photoPreview').innerHTML = '<img src="'+d.fotoPerfil+'" alt="foto">';
+      }
+
+      if (d.tipoVehiculo) document.getElementById('vTipo').value  = d.tipoVehiculo;
+      if (d.placa)        document.getElementById('vPlaca').value = d.placa;
+      if (d.marca)        document.getElementById('vMarca').value = d.marca;
+      if (d.modelo)       document.getElementById('vModelo').value= d.modelo;
+    });
+  });
+
+  // ===== FOTO =====
+  function previsualizarFoto(input) {
+    if (!input.files || !input.files[0]) return;
+    var f = input.files[0];
+    if (f.size > 2 * 1024 * 1024) {
+      mostrarMsg('fotoErr', 'La imagen supera los 2 MB.');
+      input.value = ''; fotoArchivo = null;
+      document.getElementById('btnFoto').disabled = true;
+      return;
+    }
+    fotoArchivo = f;
+    document.getElementById('fotoNombre').textContent = f.name;
+    document.getElementById('btnFoto').disabled = false;
+    ocultarMsgs('foto');
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('photoPreview').innerHTML = '<img src="'+e.target.result+'" alt="foto">';
+    };
+    reader.readAsDataURL(f);
+  }
+
+  function subirFoto() {
+    if (!fotoArchivo || !currentUser) return;
+    var btn = document.getElementById('btnFoto');
+    btn.disabled = true; btn.textContent = 'Subiendo...';
+    ocultarMsgs('foto');
+    var ref = storage.ref('profile-photos/' + currentUser.uid);
+    ref.put(fotoArchivo).then(function() {
+      return ref.getDownloadURL();
+    }).then(function(url) {
+      return db.collection('usuarios').doc(currentUser.uid).update({ fotoPerfil: url });
+    }).then(function() {
+      btn.textContent = 'Guardar foto';
+      mostrarMsg('fotoOk', null);
+      showToast('Foto actualizada.');
+    }).catch(function(e) {
+      btn.disabled = false; btn.textContent = 'Guardar foto';
+      mostrarMsg('fotoErr', 'Error al subir la foto: ' + e.message);
+    });
+  }
+
+  // ===== CONTRASEÑA =====
+  function cambiarPassword() {
+    ocultarMsgs('pass');
+    var actual   = document.getElementById('passActual').value;
+    var nueva    = document.getElementById('passNueva').value;
+    var confirma = document.getElementById('passConfirm').value;
+
+    if (!actual || !nueva || !confirma) { mostrarMsg('passErr', 'Completa todos los campos.'); return; }
+    if (nueva.length < 8)               { mostrarMsg('passErr', 'La contraseña debe tener al menos 8 caracteres.'); return; }
+    if (nueva !== confirma)             { mostrarMsg('passErr', 'Las contraseñas no coinciden.'); return; }
+
+    var btn = document.getElementById('btnPass');
+    btn.disabled = true; btn.textContent = 'Actualizando...';
+
+    var credential = firebase.auth.EmailAuthProvider.credential(currentUser.email, actual);
+    currentUser.reauthenticateWithCredential(credential).then(function() {
+      return currentUser.updatePassword(nueva);
+    }).then(function() {
+      btn.disabled = false; btn.textContent = 'Actualizar contraseña';
+      document.getElementById('passActual').value = '';
+      document.getElementById('passNueva').value  = '';
+      document.getElementById('passConfirm').value = '';
+      mostrarMsg('passOk', null);
+      showToast('Contraseña actualizada.');
+    }).catch(function(e) {
+      btn.disabled = false; btn.textContent = 'Actualizar contraseña';
+      var msg = e.code === 'auth/wrong-password' ? 'La contraseña actual es incorrecta.' : 'Error: ' + e.message;
+      mostrarMsg('passErr', msg);
+    });
+  }
+
+  // ===== VEHÍCULO =====
+  function guardarVehiculo() {
+    ocultarMsgs('veh');
+    var btn = document.getElementById('btnVehiculo');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    db.collection('usuarios').doc(currentUser.uid).update({
+      vehiculo:     !!document.getElementById('vTipo').value,
+      tipoVehiculo: document.getElementById('vTipo').value,
+      placa:        document.getElementById('vPlaca').value.trim(),
+      marca:        document.getElementById('vMarca').value.trim(),
+      modelo:       document.getElementById('vModelo').value.trim()
+    }).then(function() {
+      btn.disabled = false; btn.textContent = 'Guardar vehículo';
+      mostrarMsg('vehOk', null);
+      showToast('Vehículo guardado.');
+    }).catch(function(e) {
+      btn.disabled = false; btn.textContent = 'Guardar vehículo';
+      mostrarMsg('vehErr', 'Error al guardar: ' + e.message);
+    });
+  }
+
+  // ===== UTILS =====
+  function mostrarMsg(id, texto) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (texto) el.textContent = texto;
+    el.style.display = 'block';
+  }
+
+  function ocultarMsgs(prefix) {
+    ['Ok','Err'].forEach(function(s){
+      var el = document.getElementById(prefix+s);
+      if (el) el.style.display = 'none';
+    });
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
+</script>
+<script src="notif.js"></script>
+<script src="sidebar.js"></script>
+<script>
+  initSidebar();
+  initNotif(db, auth);
+</script>
+</body>
+</html>

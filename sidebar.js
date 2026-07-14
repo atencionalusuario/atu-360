@@ -30,6 +30,7 @@ var ITEMS_NAV = {
   metricas:    { id: 'metricas',    label: 'Mis Métricas',       url: BASE+'metricas.html',    icon: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' },
   transporte:  { id: 'transporte',  label: 'Transporte',         url: BASE+'transporte.html',  icon: '<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>' },
   formacion:   { id: 'formacion',   label: 'Formación',  url: BASE+'formacion.html',      icon: '<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>' },
+  perfil:      { id: 'perfil',      label: 'Mi Perfil',  url: BASE+'perfil.html',          icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
 };
 
 // Navegación por rol
@@ -38,36 +39,36 @@ var ITEMS_NAV = {
 var NAV_POR_ROL = {
   agente: {
     principal: ['home', 'flash', 'solicitudes', 'biblioteca', 'miturno'],
-    reportes:  ['metricas', 'transporte']
+    reportes:  ['metricas', 'transporte', 'perfil']
   },
   'agente-inmersion': {
     principal: ['home', 'flash', 'biblioteca', 'miturno'],
-    reportes:  ['transporte']
+    reportes:  ['transporte', 'perfil']
   },
   formacion: {
     principal: ['home', 'formacion', 'flash', 'solicitudes', 'biblioteca', 'miturno'],
-    reportes:  ['metricas', 'transporte']
+    reportes:  ['metricas', 'transporte', 'perfil']
   },
   admin: {
-    principal: ['panel', 'transporte'],
+    principal: ['panel', 'transporte', 'perfil'],
     reportes:  []
   },
   jefe: {
-    principal: ['panel', 'transporte'],
+    principal: ['panel', 'transporte', 'perfil'],
     reportes:  []
   },
   wfm: {
-    principal: ['wfm-panel', 'transporte'],
+    principal: ['wfm-panel', 'transporte', 'perfil'],
     reportes:  []
   },
   superadmin: {
-    principal: ['panel', 'transporte'],
+    principal: ['panel', 'transporte', 'perfil'],
     reportes:  []
   },
   // Fallback para cualquier otro rol que use sidebar.js
   _default: {
     principal: ['home', 'flash', 'solicitudes', 'biblioteca', 'miturno'],
-    reportes:  ['metricas', 'transporte']
+    reportes:  ['metricas', 'transporte', 'perfil']
   }
 };
 
@@ -193,6 +194,7 @@ function detectarPagina() {
   if (url.indexOf('miturno') > -1)     return 'miturno';
   if (url.indexOf('metricas') > -1)    return 'metricas';
   if (url.indexOf('transporte') > -1)  return 'transporte';
+  if (url.indexOf('perfil') > -1)      return 'perfil';
   return 'home';
 }
 
