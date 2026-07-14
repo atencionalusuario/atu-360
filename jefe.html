@@ -83,6 +83,10 @@
   th.sort-desc::after { content: ' ↓'; color: #1A3DAA; }
   th.sort-sec-asc::after  { content: ' ↑'; color: #94A3B8; font-size: 0.6rem; }
   th.sort-sec-desc::after { content: ' ↓'; color: #94A3B8; font-size: 0.6rem; }
+  .filter-row th { padding: 6px 8px; background: #F1F5F9; }
+  .cf-input, .cf-select { width: 100%; padding: 5px 8px; border: 1.5px solid #E2E8F0; border-radius: 5px; font-size: 0.72rem; font-family: inherit; color: #1E293B; background: white; outline: none; transition: border 0.15s; }
+  .cf-input:focus, .cf-select:focus { border-color: #1A3DAA; }
+  .cf-input::placeholder { color: #CBD5E1; font-weight: 400; }
   tbody tr { border-bottom: 1px solid #F1F5F9; transition: background 0.1s; cursor: pointer; }
   tbody tr:last-child { border-bottom: none; }
   tbody tr:hover { background: #F8FAFC; }
@@ -729,6 +733,18 @@
               <th>Vehículo</th>
               <th class="sortable" data-col="estado"       onclick="sortByCol('estado')">Estado</th>
             </tr>
+            <tr class="filter-row">
+              <th><select class="cf-select" id="cfNombre"     onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
+              <th><select class="cf-select" id="cfCargo"      onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
+              <th><select class="cf-select" id="cfProyecto"   onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
+              <th><select class="cf-select" id="cfRol"        onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
+              <th><select class="cf-select" id="cfCanal"      onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
+              <th><select class="cf-select" id="cfSupervisor" onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
+              <th></th>
+              <th></th>
+              <th><select class="cf-select" id="cfVehiculo"   onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
+              <th><select class="cf-select" id="cfEstado"     onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
+            </tr>
           </thead>
           <tbody id="tbodyUsuarios"></tbody>
         </table>
@@ -1005,6 +1021,7 @@
           if (d.rol === 'superadmin') return;
           usuarios.push(Object.assign({ id: doc.id }, d));
         });
+        poblarFiltrosColumna();
         aplicarFiltros();
         // Refrescar panel si hay uno abierto
         if (usuarioSeleccionado) {
@@ -1024,6 +1041,32 @@
   var LABELS_ROL     = { agente:'Agente', supervisor:'Supervisor', editor:'Formación', admin:'Admin', wfm:'WFM', jefe:'Jefe', superadmin:'Superadmin' };
   var LABELS_PROY    = { doctorsv:'DoctorSV', educacion:'Educación', marn:'MARN', global:'Global' };
   var SORT_CAMPOS    = { nombre:'nombre', proyecto:'proyecto', rol:'rol', cargo:'cargo', fechaIngreso:'fechaIngreso', antiguedad:'diasIngreso', estado:'activo' };
+
+  function poblarDropdownColumna(id, valores, labelFn) {
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    var actual = sel.value;
+    sel.innerHTML = '<option value="">Todos</option>';
+    valores.sort(function(a,b){ return (a+'').localeCompare(b+'','es'); }).forEach(function(v) {
+      var opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = labelFn ? labelFn(v) : v;
+      sel.appendChild(opt);
+    });
+    if (actual) sel.value = actual;
+  }
+
+  function poblarFiltrosColumna() {
+    var uniq = function(arr) { var s = {}; arr.forEach(function(v){ if(v) s[v]=1; }); return Object.keys(s); };
+    poblarDropdownColumna('cfNombre',     uniq(usuarios.map(function(u){ return u.nombre; })));
+    poblarDropdownColumna('cfCargo',      uniq(usuarios.map(function(u){ return u.cargo||''; })));
+    poblarDropdownColumna('cfProyecto',   uniq(usuarios.map(function(u){ return u.proyecto; })), function(v){ return LABELS_PROY[v]||v; });
+    poblarDropdownColumna('cfRol',        uniq(usuarios.map(function(u){ return u.rol; })),      function(v){ return LABELS_ROL[v]||v; });
+    poblarDropdownColumna('cfCanal',      uniq(usuarios.map(function(u){ return u.canal||''; })));
+    poblarDropdownColumna('cfSupervisor', uniq(usuarios.map(function(u){ return u.supervisor||''; })));
+    poblarDropdownColumna('cfVehiculo',   ['si','no'], function(v){ return v==='si'?'Sí':'No'; });
+    poblarDropdownColumna('cfEstado',     ['activo','inactivo'], function(v){ return v==='activo'?'Activo':'Inactivo'; });
+  }
 
   function iniciales(n){ return n.split(' ').map(function(w){return w[0];}).join('').substring(0,2).toUpperCase(); }
 
@@ -1061,11 +1104,28 @@
     var c1    = document.getElementById('sort1').value;
     var c2    = document.getElementById('sort2').value;
 
+    var cfNombre     = (document.getElementById('cfNombre')     ||{value:''}).value;
+    var cfCargo      = (document.getElementById('cfCargo')      ||{value:''}).value;
+    var cfProyecto   = (document.getElementById('cfProyecto')   ||{value:''}).value;
+    var cfRol        = (document.getElementById('cfRol')        ||{value:''}).value;
+    var cfCanal      = (document.getElementById('cfCanal')      ||{value:''}).value;
+    var cfSupervisor = (document.getElementById('cfSupervisor') ||{value:''}).value;
+    var cfVehiculo   = (document.getElementById('cfVehiculo')   ||{value:''}).value;
+    var cfEstado     = (document.getElementById('cfEstado')     ||{value:''}).value;
+
     var lista = usuarios.filter(function(u){
       if(busq && !u.nombre.toLowerCase().includes(busq) && !u.email.toLowerCase().includes(busq) && !(u.cargo||'').toLowerCase().includes(busq)) return false;
       if(proy && u.proyecto !== proy) return false;
       if(rol  && u.rol !== rol)       return false;
-      if(est  && (est==='activo'?!u.activo:u.activo))   return false;
+      if(est  && (est==='activo'?!u.activo:u.activo)) return false;
+      if(cfNombre     && u.nombre !== cfNombre) return false;
+      if(cfCargo      && (u.cargo||'') !== cfCargo) return false;
+      if(cfProyecto   && u.proyecto !== cfProyecto) return false;
+      if(cfRol        && u.rol !== cfRol) return false;
+      if(cfCanal      && (u.canal||'') !== cfCanal) return false;
+      if(cfSupervisor && (u.supervisor||'') !== cfSupervisor) return false;
+      if(cfVehiculo   && (cfVehiculo==='si' ? !u.vehiculo : u.vehiculo)) return false;
+      if(cfEstado     && (cfEstado==='activo' ? !u.activo : u.activo)) return false;
       return true;
     });
 
