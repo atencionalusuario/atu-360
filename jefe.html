@@ -1403,6 +1403,29 @@
     btnG.disabled = true; btnG.textContent = 'Guardando...';
 
     if (modoForm === 'nuevo') {
+      // Verificar documento duplicado antes de crear
+      db.collection('usuarios').where('documento', '==', docNum).get()
+        .then(function(snap) {
+          if (!snap.empty) {
+            btnG.disabled = false; btnG.textContent = 'Crear usuario';
+            var el = document.getElementById('fDocumento');
+            if (el) el.style.borderColor = '#DC2626';
+            showToast('Ya existe un usuario con ese número de documento.');
+            return;
+          }
+          crearUsuarioAuth(email, datos, btnG);
+        })
+        .catch(function() { crearUsuarioAuth(email, datos, btnG); });
+      return;
+    }
+    // --- edición ---
+    var uid = editUid;
+    db.collection('usuarios').doc(uid).update(datos)
+      .then(function(){ cerrarForm(); cargarUsuarios(); showToast('Usuario actualizado.'); })
+      .catch(function(e){ btnG.disabled=false; btnG.textContent='Guardar cambios'; showToast('Error: '+e.message); });
+  }
+
+  function crearUsuarioAuth(email, datos, btnG) {
       // 1. Crear cuenta en Firebase Auth con app secundaria
       authSecondary.createUserWithEmailAndPassword(email, 'ATU360*')
         .then(function(cred) {
@@ -1425,24 +1448,6 @@
           if (err.code === 'auth/email-already-in-use') showToast('Ese correo ya tiene una cuenta.');
           else { showToast('Error: ' + err.message); console.error(err); }
         });
-    } else {
-      // Editar — solo actualiza Firestore, no toca Auth
-      datos.fechaActualizacion = firebase.firestore.FieldValue.serverTimestamp();
-      try {
-        db.collection('usuarios').doc(usuarioSeleccionado).update(datos)
-          .then(function() {
-            cerrarModalForm();
-            showToast('Cambios guardados.');
-          })
-          .catch(function(err) {
-            btnG.disabled = false; btnG.textContent = 'Guardar cambios';
-            showToast('Error al guardar: ' + err.message); console.error(err);
-          });
-      } catch(err) {
-        btnG.disabled = false; btnG.textContent = 'Guardar cambios';
-        showToast('Error: ' + err.message); console.error(err);
-      }
-    }
   }
 
   function g(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
