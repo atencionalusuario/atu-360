@@ -2166,6 +2166,7 @@
   document.addEventListener('change', function(e) {
     if (e.target.type !== 'date' || !e.target.value) return;
     var year = parseInt(e.target.value.split('-')[0]);
+    if (year < 1000) return;
     if (year < 1900 || year > 2100) e.target.value = '';
   });
 </script>
