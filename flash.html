@@ -36,46 +36,28 @@
   .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
   .topbar-right { display: flex; align-items: center; gap: 16px; }
   .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
-  .content { padding: 24px 28px; display: flex; gap: 24px; align-items: flex-start; }
-  .posts-col { width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px; }
-  .section-title { font-size: 0.72rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
-  .post-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; cursor: pointer; transition: all 0.15s; overflow: hidden; }
-  .post-card:hover { border-color: #CBD5E1; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-  .post-card.active { border-color: #1A3DAA; box-shadow: 0 2px 12px rgba(26,61,170,0.1); }
-  .post-card.leido { opacity: 0.65; }
-  .post-card-inner { padding: 16px 18px; display: flex; gap: 12px; align-items: flex-start; }
-  .post-unread-dot { width: 8px; height: 8px; border-radius: 50%; background: #1A3DAA; flex-shrink: 0; margin-top: 5px; }
-  .post-unread-dot.hidden { visibility: hidden; }
-  .post-meta { flex: 1; }
-  .post-cat { display: inline-block; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 2px 8px; border-radius: 3px; margin-bottom: 5px; }
+  .content { padding: 28px 40px; max-width: 780px; margin: 0 auto; width: 100%; }
+  .post-cat { display: inline-block; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 2px 8px; border-radius: 3px; }
   .post-cat.actualizacion { background: #EEF2FF; color: #1A3DAA; }
   .post-cat.noticia       { background: #F0FDF4; color: #16A34A; }
   .post-cat.cambio        { background: #FFFBEB; color: #B45309; }
   .post-cat.urgente       { background: #FEF2F2; color: #DC2626; }
-  .post-title { font-size: 0.85rem; font-weight: 700; color: #1E293B; line-height: 1.4; }
-  .post-excerpt { font-size: 0.75rem; color: #64748B; margin-top: 4px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .post-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
-  .post-date { font-size: 0.68rem; color: #94A3B8; }
-  .post-leido-badge { font-size: 0.65rem; font-weight: 600; color: #16A34A; display: flex; align-items: center; gap: 4px; }
-  .detail-col { flex: 1; min-width: 0; position: sticky; top: 80px; }
-  .detail-empty { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 48px 24px; text-align: center; }
-  .detail-empty p { font-size: 0.82rem; color: #94A3B8; margin-top: 12px; }
-  .detail-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; overflow: hidden; display: none; }
-  .detail-card.show { display: block; }
-  .detail-header { padding: 24px 28px 20px; border-bottom: 1px solid #F1F5F9; }
-  .detail-cat { display: inline-block; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 2px 8px; border-radius: 3px; margin-bottom: 10px; }
-  .detail-title { font-size: 1.1rem; font-weight: 800; color: #1E293B; line-height: 1.4; }
-  .detail-byline { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
-  .detail-author-av { width: 28px; height: 28px; border-radius: 50%; background: #1A3DAA; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; color: white; font-weight: 700; flex-shrink: 0; }
-  .detail-author-name { font-size: 0.75rem; font-weight: 600; color: #374151; }
-  .detail-author-date { font-size: 0.68rem; color: #94A3B8; }
-  .detail-body { padding: 24px 28px; font-size: 0.85rem; color: #374151; line-height: 1.8; white-space: pre-wrap; }
-  .detail-footer { padding: 20px 28px; border-top: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; }
+  .blog-entry { background: white; border-radius: 12px; border: 1px solid #E2E8F0; margin-bottom: 24px; overflow: hidden; transition: border-color 0.15s; }
+  .blog-entry.unread { border-left: 3px solid #1A3DAA; }
+  .entry-header { padding: 24px 28px 0; display: flex; align-items: center; justify-content: space-between; }
+  .unread-dot { width: 8px; height: 8px; border-radius: 50%; background: #1A3DAA; }
+  .entry-title { padding: 12px 28px 0; font-size: 1.2rem; font-weight: 800; color: #1E293B; line-height: 1.4; }
+  .entry-byline { padding: 12px 28px 0; display: flex; align-items: center; gap: 10px; }
+  .author-av { width: 30px; height: 30px; border-radius: 50%; background: #1A3DAA; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; color: white; font-weight: 700; flex-shrink: 0; }
+  .author-name { font-size: 0.78rem; font-weight: 600; color: #374151; }
+  .entry-date { font-size: 0.7rem; color: #94A3B8; margin-top: 1px; }
+  .entry-body { padding: 20px 28px; font-size: 0.88rem; color: #374151; line-height: 1.85; white-space: pre-wrap; border-bottom: 1px solid #F1F5F9; }
+  .entry-footer { padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; }
   .leido-status { font-size: 0.75rem; color: #94A3B8; display: flex; align-items: center; gap: 6px; }
   .leido-status.done { color: #16A34A; font-weight: 600; }
   .leido-check { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid #CBD5E1; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .leido-check.done { background: #16A34A; border-color: #16A34A; }
-  .btn-marcar { padding: 10px 20px; background: #1A3DAA; color: white; border: none; border-radius: 7px; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.15s; display: flex; align-items: center; gap: 8px; }
+  .btn-marcar { padding: 9px 18px; background: #1A3DAA; color: white; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.15s; display: flex; align-items: center; gap: 7px; }
   .btn-marcar:hover { opacity: 0.88; }
   .btn-marcar.done { background: #F0FDF4; color: #16A34A; cursor: default; border: 1px solid #BBF7D0; }
   .btn-marcar.done:hover { opacity: 1; }
@@ -101,17 +83,7 @@
   </div>
 
   <div class="content">
-    <div class="posts-col">
-      <div class="section-title">Publicaciones recientes</div>
-      <div id="postsList"><div class="loading"><div class="spinner"></div><br>Cargando publicaciones...</div></div>
-    </div>
-    <div class="detail-col">
-      <div class="detail-empty" id="detailEmpty">
-        <svg width="40" height="40" fill="none" stroke="#CBD5E1" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 000-4H4v4z"/><path d="M18 18V2H6a2 2 0 00-2 2v14"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="13" y2="11"/></svg>
-        <p>Selecciona una publicación<br>para leer su contenido</p>
-      </div>
-      <div class="detail-card" id="detailCard"></div>
-    </div>
+    <div id="postsList"><div class="loading"><div class="spinner"></div><br>Cargando publicaciones...</div></div>
   </div>
 </div>
 
@@ -132,8 +104,7 @@
 
   var currentUser = null;
   var posts = [];
-  var misLecturas = {}; // postId → true
-  var postActivo = null;
+  var misLecturas = {};
 
   var CATS = { actualizacion:'Actualización', noticia:'Noticia', cambio:'Cambio', urgente:'Urgente' };
 
@@ -194,73 +165,49 @@
     var html = '';
     posts.forEach(function(p) {
       var leido = !!misLecturas[p.id];
-      var fecha = p.fechaCreacion ? new Date(p.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
-      html += '<div class="post-card'+(leido?' leido':'')+(postActivo===p.id?' active':'')+'" onclick="abrirPost(\''+p.id+'\')">'
-        +'<div class="post-card-inner">'
-        +'<div class="post-unread-dot'+(leido?' hidden':'')+'"></div>'
-        +'<div class="post-meta">'
+      var fecha = p.fechaCreacion ? new Date(p.fechaCreacion.seconds*1000).toLocaleDateString('es-SV', {day:'2-digit', month:'long', year:'numeric'}) : '';
+      var iniciales = p.autorNombre ? p.autorNombre.split(' ').map(function(w){return w[0];}).join('').substring(0,2).toUpperCase() : '--';
+      html += '<article class="blog-entry'+(leido?'':' unread')+'" id="entry-'+p.id+'">'
+        +'<div class="entry-header">'
         +'<span class="post-cat '+p.categoria+'">'+CATS[p.categoria]+'</span>'
-        +'<div class="post-title">'+p.titulo+'</div>'
-        +'<div class="post-excerpt">'+p.contenido.substring(0,120)+'...</div>'
-        +'<div class="post-footer">'
-        +'<span class="post-date">'+fecha+' · '+(p.autorNombre||'')+'</span>'
-        +(leido?'<span class="post-leido-badge"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Leído</span>':'')
-        +'</div></div></div></div>';
+        +(leido?'':'<div class="unread-dot"></div>')
+        +'</div>'
+        +'<div class="entry-title">'+p.titulo+'</div>'
+        +'<div class="entry-byline">'
+        +'<div class="author-av">'+iniciales+'</div>'
+        +'<div><div class="author-name">'+(p.autorNombre||'')+'</div>'
+        +'<div class="entry-date">'+fecha+'</div></div>'
+        +'</div>'
+        +'<div class="entry-body">'+p.contenido+'</div>'
+        +'<div class="entry-footer">'
+        +'<div class="leido-status'+(leido?' done':'')+'">'
+        +'<div class="leido-check'+(leido?' done':'')+'">'+
+          (leido?'<svg width="10" height="10" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>':'')
+        +'</div>'
+        +(leido?'Leído':'Pendiente de lectura')
+        +'</div>'
+        +'<button class="btn-marcar'+(leido?' done':'')+'" '+(leido?'disabled':'')+' onclick="marcarLeido(\''+p.id+'\')">'
+        +(leido
+          ?'<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Ya leído'
+          :'Marcar como leído')
+        +'</button>'
+        +'</div>'
+        +'</article>';
     });
     document.getElementById('postsList').innerHTML = html;
-  }
-
-  function abrirPost(id) {
-    postActivo = id;
-    var p = posts.find(function(x){ return x.id===id; });
-    if (!p) return;
-    document.querySelectorAll('.post-card').forEach(function(c){ c.classList.remove('active'); });
-    var card = document.querySelector('[onclick="abrirPost(\''+id+'\')"]');
-    if (card) card.classList.add('active');
-
-    var leido = !!misLecturas[id];
-    var fecha = p.fechaCreacion ? new Date(p.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
-    var iniciales = p.autorNombre ? p.autorNombre.split(' ').map(function(w){return w[0];}).join('').substring(0,2).toUpperCase() : '--';
-
-    document.getElementById('detailEmpty').style.display = 'none';
-    var dc = document.getElementById('detailCard');
-    dc.className = 'detail-card show';
-    dc.innerHTML =
-      '<div class="detail-header">'
-      +'<span class="detail-cat '+p.categoria+'">'+CATS[p.categoria]+'</span>'
-      +'<div class="detail-title">'+p.titulo+'</div>'
-      +'<div class="detail-byline">'
-      +'<div class="detail-author-av">'+iniciales+'</div>'
-      +'<div><div class="detail-author-name">'+(p.autorNombre||'')+'</div>'
-      +'<div class="detail-author-date">'+fecha+'</div></div>'
-      +'</div></div>'
-      +'<div class="detail-body">'+p.contenido+'</div>'
-      +'<div class="detail-footer">'
-      +'<div class="leido-status'+(leido?' done':'')+'">'
-      +'<div class="leido-check'+(leido?' done':'')+'">'+
-        (leido?'<svg width="10" height="10" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>':'')
-      +'</div>'
-      +(leido ? 'Leído' : 'Pendiente de lectura')
-      +'</div>'
-      +'<button class="btn-marcar'+(leido?' done':'')+'" id="btnMarcar" '+(leido?'disabled':'')+' onclick="marcarLeido(\''+id+'\')">'
-      +(leido
-        ? '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Ya leído'
-        : 'Marcar como leído')
-      +'</button></div>';
   }
 
   function marcarLeido(id) {
     if (!currentUser || misLecturas[id]) return;
     db.collection('flash_lecturas').add({
-      postId:      id,
-      uid:         currentUser.uid,
-      email:       currentUser.email,
-      nombre:      currentUser.email.split('@')[0],
-      timestamp:   firebase.firestore.FieldValue.serverTimestamp()
+      postId:    id,
+      uid:       currentUser.uid,
+      email:     currentUser.email,
+      nombre:    currentUser.email.split('@')[0],
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).then(function() {
       misLecturas[id] = true;
       renderPosts();
-      abrirPost(id);
     }).catch(function(e){ console.error('Error guardando lectura:', e); });
   }
 </script>
