@@ -97,9 +97,29 @@
         </span>
       </div>
     </div>
-    <div class="forgot"><a href="#">¿Olvidaste tu contraseña?</a></div>
+    <div class="forgot"><a href="#" onclick="abrirRecuperar(); return false;">¿Olvidaste tu contraseña?</a></div>
     <button class="btn-login" id="btnLogin">Iniciar sesión</button>
     <div class="footer-note">¿Problemas para acceder? Contacta a tu administrador</div>
+  </div>
+</div>
+
+<!-- MODAL: Recuperar contraseña -->
+<div class="cp-overlay" id="rpOverlay">
+  <div class="cp-card">
+    <div class="cp-icon">
+      <svg width="22" height="22" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path d="M2 7l10 7 10-7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+    </div>
+    <div class="cp-title" id="rpTitle">Recuperar contraseña</div>
+    <div class="cp-sub" id="rpSub">Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.</div>
+    <div class="cp-field" id="rpFieldWrap">
+      <label>Correo electrónico</label>
+      <input type="email" id="rpEmail" class="cp-input" placeholder="correo@ejemplo.com" />
+    </div>
+    <div class="cp-err" id="rpErr"></div>
+    <button class="btn-cp" id="btnRp" onclick="enviarRecuperar()">Enviar enlace</button>
+    <div style="text-align:center;margin-top:14px">
+      <a href="#" onclick="cerrarRecuperar(); return false;" style="font-size:0.75rem;color:#64748B;text-decoration:none;">Cancelar</a>
+    </div>
   </div>
 </div>
 
@@ -264,6 +284,55 @@
         err.classList.add('show');
         btn.disabled = false;
         btn.innerHTML = 'Iniciar sesión';
+      });
+  }
+
+  function abrirRecuperar() {
+    document.getElementById('rpEmail').value = document.getElementById('email').value.trim();
+    document.getElementById('rpErr').classList.remove('show');
+    document.getElementById('rpTitle').textContent = 'Recuperar contraseña';
+    document.getElementById('rpSub').textContent = 'Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.';
+    document.getElementById('rpFieldWrap').style.display = 'block';
+    document.getElementById('btnRp').style.display = 'block';
+    document.getElementById('btnRp').disabled = false;
+    document.getElementById('btnRp').textContent = 'Enviar enlace';
+    document.getElementById('rpOverlay').classList.add('show');
+    document.getElementById('rpEmail').focus();
+  }
+
+  function cerrarRecuperar() {
+    document.getElementById('rpOverlay').classList.remove('show');
+  }
+
+  function enviarRecuperar() {
+    var email = document.getElementById('rpEmail').value.trim();
+    var errEl = document.getElementById('rpErr');
+    var btn   = document.getElementById('btnRp');
+    errEl.classList.remove('show');
+
+    if (!email) {
+      errEl.textContent = 'Por favor ingresa tu correo.';
+      errEl.classList.add('show'); return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Enviando...';
+
+    auth.sendPasswordResetEmail(email)
+      .then(function() {
+        document.getElementById('rpTitle').textContent = 'Correo enviado';
+        document.getElementById('rpSub').textContent = 'Si existe una cuenta con ese correo, recibirás un enlace para restablecer tu contraseña. Revisa también tu carpeta de spam.';
+        document.getElementById('rpFieldWrap').style.display = 'none';
+        btn.style.display = 'none';
+      })
+      .catch(function(e) {
+        var msg = 'Ocurrió un error. Intenta de nuevo.';
+        if (e.code === 'auth/invalid-email') msg = 'El correo no tiene un formato válido.';
+        if (e.code === 'auth/network-request-failed') msg = 'Sin conexión. Verifica tu red.';
+        errEl.textContent = msg;
+        errEl.classList.add('show');
+        btn.disabled = false;
+        btn.textContent = 'Enviar enlace';
       });
   }
 
