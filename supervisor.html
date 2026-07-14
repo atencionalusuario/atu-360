@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="sidebar.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ATU 360 — Supervisión</title>
 <style>
@@ -9,24 +10,8 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Inter', sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
 
-  /* SIDEBAR */
-  .sidebar { width: 220px; flex-shrink: 0; background: #0F2070; display: flex; flex-direction: column; min-height: 100vh; position: sticky; top: 0; height: 100vh; }
-  .sb-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-  .sb-name { font-size: 1.25rem; font-weight: 800; color: white; }
-  .sb-name span { color: #29ABE2; }
-  .sb-tagline { font-size: 0.62rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 2px; margin-top: 3px; }
-  .sb-nav { padding: 20px 12px; flex: 1; }
-  .nav-section-label { font-size: 0.58rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; padding: 0 10px; margin: 16px 0 6px; }
-  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 6px; font-size: 0.8rem; color: rgba(255,255,255,0.55); cursor: pointer; transition: all 0.15s; margin-bottom: 1px; text-decoration: none; }
-  .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
-  .nav-item.active { background: rgba(41,171,226,0.15); color: white; font-weight: 600; border-left: 2px solid #29ABE2; }
-  .sb-bottom { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
-  .sb-user-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .sb-avatar { width: 32px; height: 32px; border-radius: 50%; background: #29ABE2; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: white; font-weight: 700; flex-shrink: 0; }
-  .sb-user-name { font-size: 0.76rem; font-weight: 600; color: white; }
-  .sb-user-role { font-size: 0.62rem; color: #29ABE2; font-weight: 600; margin-top: 1px; }
-  .btn-logout { width: 100%; padding: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: rgba(255,255,255,0.5); font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: inherit; }
-  .btn-logout:hover { background: rgba(255,255,255,0.1); color: white; }
+  /* Sidebar sticky override for supervisor layout */
+  .sidebar { position: sticky; top: 0; height: 100vh; overflow-y: auto; }
 
   /* MAIN */
   .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
@@ -484,58 +469,7 @@
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="sb-brand">
-    <div class="sb-name">ATU <span>360</span></div>
-    <div class="sb-tagline">Supervisión</div>
-  </div>
-  <div class="sb-nav">
-    <div class="nav-item" id="navJornada" onclick="switchVista('jornada')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Mi jornada
-    </div>
-    <div class="nav-item" id="navTurno" onclick="switchVista('turno')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      Mi turno
-    </div>
-    <div class="nav-item active" id="navMonitoreo" onclick="switchVista('monitoreo')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Tiempo real
-    </div>
-    <div class="nav-item" id="navMetricas" onclick="switchVista('metricas')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      Métricas del equipo
-    </div>
-    <div class="nav-item" id="navFlash" onclick="switchVista('flash')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 000-4H4v4z"/><path d="M18 18V2H6a2 2 0 00-2 2v14"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="13" y2="11"/></svg>
-      Flash informativos
-      <span class="flash-badge" id="flashBadge"></span>
-    </div>
-    <div class="nav-item" id="navSolicitudes" onclick="switchVista('solicitudes')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/></svg>
-      Solicitudes
-      <span class="sv-pending-badge" id="svNavBadge"></span>
-    </div>
-    <div class="nav-item" id="navBiblioteca" onclick="switchVista('biblioteca')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-      Biblioteca
-    </div>
-    <div class="nav-item" id="navTransporte" onclick="window.location.href='https://atencionalusuario.github.io/atu-360/transporte.html'">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-      Transporte
-    </div>
-  </div>
-  <div class="sb-bottom">
-    <div class="sb-user-wrap">
-      <div class="sb-avatar" id="sbAvatar">--</div>
-      <div>
-        <div class="sb-user-name" id="sbName">Cargando...</div>
-        <div class="sb-user-role" id="sbRole">Supervisor</div>
-      </div>
-    </div>
-    <button class="btn-logout" id="btnLogout">Cerrar sesión</button>
-  </div>
-</div>
+<div class="sidebar"></div>
 
 <div class="main">
   <div class="topbar">
@@ -958,22 +892,8 @@
         auth.signOut(); window.location.href = 'login.html'; return;
       }
       var d = doc.data();
-      document.getElementById('sbName').textContent   = d.nombre || user.email.split('@')[0];
-      document.getElementById('sbAvatar').textContent = iniciales(d.nombre || user.email);
-      if (d.rol === 'superadmin') {
-        var navJefe = document.createElement('div');
-        navJefe.className = 'nav-item';
-        navJefe.style.marginTop = '8px';
-        navJefe.onclick = function() { window.location.href = 'https://atencionalusuario.github.io/atu-360/jefe.html'; };
-        navJefe.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Panel Jefe';
-        document.getElementById('navTransporte').insertAdjacentElement('beforebegin', navJefe);
-      }
       iniciarEscucha();
     });
-  });
-
-  document.getElementById('btnLogout').addEventListener('click', function() {
-    auth.signOut().then(function() { window.location.href = 'login.html'; });
   });
 
   // ===== DATOS =====
@@ -2370,5 +2290,7 @@
 <script>
   initNotif(db, auth);
 </script>
+<script src="sidebar.js"></script>
+<script>initSidebar();</script>
 </body>
 </html>
