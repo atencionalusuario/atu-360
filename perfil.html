@@ -122,29 +122,39 @@
     <div class="card">
       <div class="card-title">Mi vehículo</div>
       <div class="card-sub">Esta información se usa para la coordinación de transporte.</div>
-      <div class="field-row">
-        <div class="field">
-          <label>Tipo de vehículo</label>
-          <select id="vTipo">
-            <option value="">— Selecciona —</option>
-            <option value="Automóvil">Automóvil</option>
-            <option value="Motocicleta">Motocicleta</option>
-            <option value="Camioneta">Camioneta</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Placa</label>
-          <input type="text" id="vPlaca" placeholder="Ej. P123456">
-        </div>
+      <div class="field" style="margin-bottom:18px">
+        <label>¿Tienes vehículo?</label>
+        <select id="vTiene" onchange="toggleCamposVeh()">
+          <option value="">— Selecciona —</option>
+          <option value="si">Sí</option>
+          <option value="no">No</option>
+        </select>
       </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Marca</label>
-          <input type="text" id="vMarca" placeholder="Ej. Toyota">
+      <div id="camposVehiculo" style="display:none">
+        <div class="field-row">
+          <div class="field">
+            <label>Tipo de vehículo</label>
+            <select id="vTipo">
+              <option value="">— Selecciona —</option>
+              <option value="Automóvil">Automóvil</option>
+              <option value="Motocicleta">Motocicleta</option>
+              <option value="Camioneta">Camioneta</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Placa</label>
+            <input type="text" id="vPlaca" placeholder="Ej. P123456">
+          </div>
         </div>
-        <div class="field">
-          <label>Modelo</label>
-          <input type="text" id="vModelo" placeholder="Ej. Corolla">
+        <div class="field-row">
+          <div class="field">
+            <label>Marca</label>
+            <input type="text" id="vMarca" placeholder="Ej. Toyota">
+          </div>
+          <div class="field">
+            <label>Modelo</label>
+            <input type="text" id="vModelo" placeholder="Ej. Corolla">
+          </div>
         </div>
       </div>
       <button class="btn-save" id="btnVehiculo" onclick="guardarVehiculo()">Guardar vehículo</button>
@@ -248,6 +258,8 @@
         document.getElementById('photoPreview').innerHTML = '<img src="'+d.fotoPerfil+'" alt="foto">';
       }
 
+      document.getElementById('vTiene').value = d.vehiculo ? 'si' : (d.vehiculo === false ? 'no' : '');
+      toggleCamposVeh();
       if (d.tipoVehiculo) document.getElementById('vTipo').value  = d.tipoVehiculo;
       if (d.placa)        document.getElementById('vPlaca').value = d.placa;
       if (d.marca)        document.getElementById('vMarca').value = d.marca;
@@ -350,12 +362,17 @@
   }
 
   // ===== VEHÍCULO =====
+  function toggleCamposVeh() {
+    var tiene = document.getElementById('vTiene').value === 'si';
+    document.getElementById('camposVehiculo').style.display = tiene ? 'block' : 'none';
+  }
+
   function guardarVehiculo() {
     ocultarMsgs('veh');
     var btn = document.getElementById('btnVehiculo');
     btn.disabled = true; btn.textContent = 'Guardando...';
     db.collection('usuarios').doc(currentUser.uid).update({
-      vehiculo:     !!document.getElementById('vTipo').value,
+      vehiculo:     document.getElementById('vTiene').value === 'si',
       tipoVehiculo: document.getElementById('vTipo').value,
       placa:        document.getElementById('vPlaca').value.trim(),
       marca:        document.getElementById('vMarca').value.trim(),
