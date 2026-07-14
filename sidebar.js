@@ -32,25 +32,25 @@ var ITEMS_NAV = {
   formacion:   { id: 'formacion',   label: 'Formación',  url: BASE+'formacion.html',      icon: '<path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>' },
   perfil:      { id: 'perfil',      label: 'Mi Perfil',  url: BASE+'perfil.html',          icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
   // Jefe items (wfmSwitch-based internal panels + navigation)
-  'jefe-usuarios':    { id: 'jefe-usuarios',    elemId: 'navUsuarios',    label: 'Usuarios',           onclick: "wfmSwitch('usuarios')",    icon: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>' },
-  'jefe-notif':       { id: 'jefe-notif',       elemId: 'navNotif',       label: 'Notificaciones',     onclick: "wfmSwitch('notif')",       icon: '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>' },
+  'jefe-usuarios':    { id: 'jefe-usuarios',    elemId: 'navUsuarios',    label: 'Usuarios',           onclick: "jefeNav('usuarios')",    icon: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>' },
+  'jefe-notif':       { id: 'jefe-notif',       elemId: 'navNotif',       label: 'Notificaciones',     onclick: "jefeNav('notif')",       icon: '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>' },
   'jefe-flash':       { id: 'jefe-flash',       elemId: 'navFlash',       label: 'Flash Informativos', url: BASE+'flash.html',              icon: '<path d="M4 22h16a2 2 0 000-4H4v4z"/><path d="M18 18V2H6a2 2 0 00-2 2v14"/>' },
   'jefe-solicitudes': { id: 'jefe-solicitudes', elemId: 'navSolicitudes', label: 'Solicitudes',        url: BASE+'solicitudes.html',        icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>' },
   'jefe-biblioteca':  { id: 'jefe-biblioteca',  elemId: 'navBiblioteca',  label: 'Biblioteca',         url: BASE+'biblioteca.html',         icon: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' },
-  'jefe-tiemporeal':  { id: 'jefe-tiemporeal',  elemId: 'navTiempoReal',  label: 'Tiempo Real',        onclick: "wfmSwitch('tiemporeal')",  icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>' },
-  'jefe-metricas':    { id: 'jefe-metricas',    elemId: 'navMetricas',    label: 'Métricas',           onclick: "wfmSwitch('metricas')",    icon: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' },
-  'jefe-turno':       { id: 'jefe-turno',       elemId: 'navTurno',       label: 'Turno',              onclick: "wfmSwitch('turno')",       icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>' },
-  'jefe-reportes':    { id: 'jefe-reportes',    elemId: 'navReportes',    label: 'Reportes',           onclick: "wfmSwitch('reportes')",    icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>' },
+  'jefe-tiemporeal':  { id: 'jefe-tiemporeal',  elemId: 'navTiempoReal',  label: 'Tiempo Real',        onclick: "jefeNav('tiemporeal')",  icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>' },
+  'jefe-metricas':    { id: 'jefe-metricas',    elemId: 'navMetricas',    label: 'Métricas',           onclick: "jefeNav('metricas')",    icon: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' },
+  'jefe-turno':       { id: 'jefe-turno',       elemId: 'navTurno',       label: 'Turno',              onclick: "jefeNav('turno')",       icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>' },
+  'jefe-reportes':    { id: 'jefe-reportes',    elemId: 'navReportes',    label: 'Reportes',           onclick: "jefeNav('reportes')",    icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>' },
   'jefe-transporte':  { id: 'jefe-transporte',  elemId: 'navTransporte',  label: 'Transporte',         url: BASE+'transporte.html',         icon: '<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>' },
   'jefe-perfil':      { id: 'jefe-perfil',      elemId: 'navPerfil',      label: 'Mi Perfil',          url: BASE+'perfil.html',             icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
   // Supervisor items (switchVista-based internal panels + navigation)
-  'sup-jornada':      { id: 'sup-jornada',      elemId: 'navJornada',     label: 'Jornada',            onclick: "switchVista('jornada')",   icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>' },
-  'sup-turno':        { id: 'sup-turno',        elemId: 'navTurno',       label: 'Turno',              onclick: "switchVista('turno')",     icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>' },
-  'sup-monitoreo':    { id: 'sup-monitoreo',    elemId: 'navMonitoreo',   label: 'Monitoreo',          onclick: "switchVista('monitoreo')", icon: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>' },
-  'sup-metricas':     { id: 'sup-metricas',     elemId: 'navMetricas',    label: 'Métricas',           onclick: "switchVista('metricas')",  icon: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' },
-  'sup-flash':        { id: 'sup-flash',        elemId: 'navFlash',       label: 'Flash Informativos', onclick: "switchVista('flash')",     icon: '<path d="M4 22h16a2 2 0 000-4H4v4z"/><path d="M18 18V2H6a2 2 0 00-2 2v14"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="13" y2="11"/>' },
-  'sup-solicitudes':  { id: 'sup-solicitudes',  elemId: 'navSolicitudes', label: 'Solicitudes',        onclick: "switchVista('solicitudes')", icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/>' },
-  'sup-biblioteca':   { id: 'sup-biblioteca',   elemId: 'navBiblioteca',  label: 'Biblioteca',         onclick: "switchVista('biblioteca')", icon: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' },
+  'sup-jornada':      { id: 'sup-jornada',      elemId: 'navJornada',     label: 'Jornada',            onclick: "supNav('jornada')",   icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>' },
+  'sup-turno':        { id: 'sup-turno',        elemId: 'navTurno',       label: 'Turno',              onclick: "supNav('turno')",     icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>' },
+  'sup-monitoreo':    { id: 'sup-monitoreo',    elemId: 'navMonitoreo',   label: 'Monitoreo',          onclick: "supNav('monitoreo')", icon: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>' },
+  'sup-metricas':     { id: 'sup-metricas',     elemId: 'navMetricas',    label: 'Métricas',           onclick: "supNav('metricas')",  icon: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' },
+  'sup-flash':        { id: 'sup-flash',        elemId: 'navFlash',       label: 'Flash Informativos', onclick: "supNav('flash')",     icon: '<path d="M4 22h16a2 2 0 000-4H4v4z"/><path d="M18 18V2H6a2 2 0 00-2 2v14"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="13" y2="11"/>' },
+  'sup-solicitudes':  { id: 'sup-solicitudes',  elemId: 'navSolicitudes', label: 'Solicitudes',        onclick: "supNav('solicitudes')", icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/>' },
+  'sup-biblioteca':   { id: 'sup-biblioteca',   elemId: 'navBiblioteca',  label: 'Biblioteca',         onclick: "supNav('biblioteca')", icon: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' },
   'sup-transporte':   { id: 'sup-transporte',   elemId: 'navTransporte',  label: 'Transporte',         url: BASE+'transporte.html',         icon: '<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>' },
   'sup-perfil':       { id: 'sup-perfil',       elemId: 'navPerfil',      label: 'Mi Perfil',          url: BASE+'perfil.html',             icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
 };
@@ -211,6 +211,16 @@ function cargarFlashBadge(uid, db) {
           if (badge && sinLeer > 0) { badge.textContent = sinLeer; badge.style.display = 'inline'; }
         });
     });
+}
+
+function jefeNav(panel) {
+  if (typeof wfmSwitch === 'function') { wfmSwitch(panel); }
+  else { window.location.href = BASE + 'jefe.html'; }
+}
+
+function supNav(panel) {
+  if (typeof switchVista === 'function') { switchVista(panel); }
+  else { window.location.href = BASE + 'supervisor.html'; }
 }
 
 function detectarPagina() {
