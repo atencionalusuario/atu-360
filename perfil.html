@@ -31,6 +31,12 @@
   }
   .field input:focus, .field select:focus { border-color: #1A3DAA; background: white; }
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .toggle-wrap { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px; background: #F8FAFC; cursor: pointer; }
+  .toggle { width: 36px; height: 20px; border-radius: 10px; background: #E2E8F0; position: relative; transition: background 0.2s; flex-shrink: 0; }
+  .toggle.on { background: #1A3DAA; }
+  .toggle-thumb { width: 14px; height: 14px; border-radius: 50%; background: white; position: absolute; top: 3px; left: 3px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .toggle.on .toggle-thumb { left: 19px; }
+  .toggle-label { font-size: 0.78rem; font-weight: 600; color: #374151; }
   .btn-save { padding: 10px 22px; background: #1A3DAA; color: white; border: none; border-radius: 8px; font-size: 0.83rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
   .btn-save:hover { opacity: 0.88; }
   .btn-save:disabled { opacity: 0.5; cursor: default; }
@@ -122,13 +128,11 @@
     <div class="card">
       <div class="card-title">Mi vehículo</div>
       <div class="card-sub">Esta información se usa para la coordinación de transporte.</div>
-      <div class="field" style="margin-bottom:18px">
-        <label>¿Tienes vehículo?</label>
-        <select id="vTiene" onchange="toggleCamposVeh()">
-          <option value="">— Selecciona —</option>
-          <option value="si">Sí</option>
-          <option value="no">No</option>
-        </select>
+      <div class="field field-full" style="margin-bottom:18px">
+        <div class="toggle-wrap" onclick="toggleCamposVeh()">
+          <div class="toggle" id="vTiene"><div class="toggle-thumb"></div></div>
+          <span class="toggle-label" id="vTieneLabel">Sin vehículo</span>
+        </div>
       </div>
       <div id="camposVehiculo" style="display:none">
         <div class="field-row">
@@ -258,8 +262,12 @@
         document.getElementById('photoPreview').innerHTML = '<img src="'+d.fotoPerfil+'" alt="foto">';
       }
 
-      document.getElementById('vTiene').value = d.vehiculo ? 'si' : (d.vehiculo === false ? 'no' : '');
-      toggleCamposVeh();
+      if (d.vehiculo) {
+        var tog = document.getElementById('vTiene');
+        tog._on = true; tog.className = 'toggle on';
+        document.getElementById('vTieneLabel').textContent = 'Tiene vehículo';
+        document.getElementById('camposVehiculo').style.display = 'block';
+      }
       if (d.tipoVehiculo) document.getElementById('vTipo').value  = d.tipoVehiculo;
       if (d.placa)        document.getElementById('vPlaca').value = d.placa;
       if (d.marca)        document.getElementById('vMarca').value = d.marca;
@@ -363,8 +371,11 @@
 
   // ===== VEHÍCULO =====
   function toggleCamposVeh() {
-    var tiene = document.getElementById('vTiene').value === 'si';
-    document.getElementById('camposVehiculo').style.display = tiene ? 'block' : 'none';
+    var tog = document.getElementById('vTiene');
+    tog._on = !tog._on;
+    tog.className = 'toggle' + (tog._on ? ' on' : '');
+    document.getElementById('vTieneLabel').textContent = tog._on ? 'Tiene vehículo' : 'Sin vehículo';
+    document.getElementById('camposVehiculo').style.display = tog._on ? 'block' : 'none';
   }
 
   function guardarVehiculo() {
@@ -372,7 +383,7 @@
     var btn = document.getElementById('btnVehiculo');
     btn.disabled = true; btn.textContent = 'Guardando...';
     db.collection('usuarios').doc(currentUser.uid).update({
-      vehiculo:     document.getElementById('vTiene').value === 'si',
+      vehiculo:     !!(document.getElementById('vTiene')._on),
       tipoVehiculo: document.getElementById('vTipo').value,
       placa:        document.getElementById('vPlaca').value.trim(),
       marca:        document.getElementById('vMarca').value.trim(),
