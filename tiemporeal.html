@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATU 360 — Tiempo Real</title>
+<base href="/atu-360/">
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="base.css">
+<style>
+  .body-wrap  { flex: 1; overflow: hidden; display: flex; flex-direction: column; padding: 20px 24px; gap: 14px; }
+
+  /* STATS */
+  .stats-row     { display: flex; gap: 10px; flex-shrink: 0; }
+  .stat-chip     { background: white; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
+  .stat-chip-val { font-size: 1.3rem; font-weight: 800; color: #1A3DAA; line-height: 1; }
+  .stat-chip-label { font-size: 0.68rem; color: #94A3B8; font-weight: 500; }
+  .stat-chip.activos   .stat-chip-val { color: #16A34A; }
+  .stat-chip.inactivos .stat-chip-val { color: #DC2626; }
+
+  /* CONTROLES */
+  .controles  { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; flex-shrink: 0; }
+  .ctrl-input { padding: 8px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.78rem; font-family: inherit; color: #1E293B; background: white; outline: none; width: 200px; }
+  .ctrl-input:focus  { border-color: #1A3DAA; }
+  .ctrl-select { padding: 8px 10px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.78rem; font-family: inherit; color: #1E293B; background: white; outline: none; cursor: pointer; }
+  .ctrl-select:focus { border-color: #1A3DAA; }
+  .count-label { font-size: 0.75rem; color: #94A3B8; font-weight: 500; margin-left: 4px; }
+
+  /* GRILLA */
+  .scroll-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+
+  .rt-group     { background: white; border: 1px solid #E2E8F0; border-radius: 10px; overflow: hidden; }
+  .rt-group-hdr { padding: 12px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #F1F5F9; }
+  .rt-grid      { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; padding: 14px 16px; }
+
+  .ac-card      { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.15s; }
+  .ac-card:hover { border-color: #CBD5E1; }
+  .ac-card.offline { opacity: 0.55; }
+  .ac-card-top  { display: flex; align-items: center; gap: 8px; }
+  .ac-indicator { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .ac-indicator.on  { background: #16A34A; box-shadow: 0 0 0 3px rgba(22,163,74,0.2); }
+  .ac-indicator.off { background: #CBD5E1; }
+  .ac-av        { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: white; flex-shrink: 0; }
+  .ac-av.online  { background: #1A3DAA; }
+  .ac-av.offline { background: #94A3B8; }
+  .ac-nombre    { font-size: 0.78rem; font-weight: 700; color: #1E293B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ac-proyecto  { font-size: 0.65rem; color: #94A3B8; }
+  .ac-estado-badge { font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; text-align: center; }
+  .ac-rt-timer  { font-size: 0.72rem; font-variant-numeric: tabular-nums; text-align: center; font-weight: 600; }
+  .ac-sin-marcaje { font-size: 0.7rem; color: #94A3B8; text-align: center; }
+
+  .empty-state { text-align: center; padding: 60px 24px; color: #94A3B8; font-size: 0.82rem; }
+
+  /* Auto-refresh indicator */
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #16A34A; display: inline-block; margin-right: 5px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+</style>
+</head>
+<body>
+
+<div class="sidebar"></div>
+
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2 style="font-size:0.9rem;font-weight:600">Tiempo Real</h2>
+      <span class="topbar-sep">/</span>
+      <p class="tb-page-sub" id="totalLabel">—</p>
+    </div>
+    <div class="topbar-right">
+      <span style="font-size:0.72rem;color:#64748B;display:flex;align-items:center">
+        <span class="live-dot"></span>En vivo
+      </span>
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <!-- CUERPO -->
+  <div class="body-wrap">
+
+    <!-- STATS -->
+    <div class="stats-row" id="rtStats">
+      <div class="stat-chip activos"><div class="stat-chip-val">—</div><div class="stat-chip-label">En línea</div></div>
+      <div class="stat-chip inactivos"><div class="stat-chip-val">—</div><div class="stat-chip-label">Fuera</div></div>
+      <div class="stat-chip"><div class="stat-chip-val">—</div><div class="stat-chip-label">Total agentes</div></div>
+    </div>
+
+    <!-- CONTROLES -->
+    <div class="controles">
+      <input class="ctrl-input" id="rtBusq" placeholder="Buscar agente..." oninput="renderRT()">
+      <select class="ctrl-select" id="rtFiltProy" onchange="renderRT()">
+        <option value="">Todos los proyectos</option>
+        <option value="doctorsv">DoctorSV</option>
+        <option value="educacion">Educación</option>
+        <option value="marn">MARN</option>
+        <option value="global">Global</option>
+      </select>
+      <select class="ctrl-select" id="rtFiltEst" onchange="renderRT()">
+        <option value="">Todos los estados</option>
+      </select>
+      <span class="count-label" id="rtCount"></span>
+    </div>
+
+    <!-- GRUPOS -->
+    <div class="scroll-area" id="rtGrid">
+      <div class="empty-state">Cargando…</div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var db   = firebase.firestore();
+  var auth = firebase.auth();
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  var ROLES_PERMITIDOS = ['jefe','wfm','admin','superadmin'];
+  var LABELS_PROY = { doctorsv:'DoctorSV', educacion:'Educación', marn:'MARN', global:'Global' };
+
+  var RT_ESTADOS = {
+    'Inbound':              { bg:'#EEF2FF', text:'#1A3DAA' },
+    'Outbound':             { bg:'#F0F9FF', text:'#0284C7' },
+    'Pausa administrativa': { bg:'#F5F3FF', text:'#7C3AED' },
+    'Break':                { bg:'#FFF7ED', text:'#C2410C' },
+    'Baño':                 { bg:'#F0FDF4', text:'#15803D' },
+    'Comida':               { bg:'#FEF9C3', text:'#92400E' },
+    'Capacitación':         { bg:'#F0FDF4', text:'#065F46' },
+    'Feedback':             { bg:'#FDF4FF', text:'#86198F' },
+    'Jornada finalizada':   { bg:'#F1F5F9', text:'#64748B' },
+    'Fuera':                { bg:'#F1F5F9', text:'#94A3B8' }
+  };
+
+  var agentes  = [];
+  var timers   = {};
+
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = BASE + 'login.html'; return; }
+    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
+        auth.signOut(); window.location.href = BASE + 'login.html'; return;
+      }
+      iniciarTiempoReal();
+    });
+  });
+
+  function iniciarTiempoReal() {
+    db.collection('usuarios')
+      .where('rol', 'in', ['agente', 'agente-inmersion', 'supervisor'])
+      .onSnapshot(function(snap) {
+        agentes = [];
+        snap.forEach(function(d) { agentes.push(Object.assign({ id: d.id }, d.data())); });
+        renderRT();
+      }, function(e) { console.error('rt', e); showToast('Error al cargar datos.'); });
+  }
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function iniciales(n) { return (n||'?').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase(); }
+  function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  function renderRT() {
+    var busq   = document.getElementById('rtBusq').value;
+    var fProy  = document.getElementById('rtFiltProy').value;
+    var fEst   = document.getElementById('rtFiltEst').value;
+    var hayFiltro = !!(busq || fProy || fEst);
+
+    var lista = agentes.filter(function(a) {
+      if (busq && !(a.nombre||'').toLowerCase().includes(busq.toLowerCase()) && !(a.email||'').toLowerCase().includes(busq.toLowerCase())) return false;
+      if (fProy && a.proyecto !== fProy) return false;
+      if (fEst  && (a.estadoActual||'Fuera') !== fEst) return false;
+      return true;
+    });
+
+    var supervisores = agentes.filter(function(a) { return a.rol === 'supervisor'; });
+    supervisores.sort(function(a,b) { return (a.nombre||'').localeCompare(b.nombre||'','es'); });
+    var soloAgentes = lista.filter(function(a) { return a.rol !== 'supervisor'; });
+    soloAgentes.sort(function(a,b) {
+      if (a.enLinea && !b.enLinea) return -1;
+      if (!a.enLinea && b.enLinea) return 1;
+      return (a.nombre||'').localeCompare(b.nombre||'','es');
+    });
+
+    // Stats
+    var enLineaTotal = agentes.filter(function(a){ return !!a.enLinea && a.rol !== 'supervisor'; }).length;
+    var totalAgentes = agentes.filter(function(a){ return a.rol !== 'supervisor'; }).length;
+    document.getElementById('rtStats').innerHTML =
+      '<div class="stat-chip activos"><div class="stat-chip-val">'+enLineaTotal+'</div><div class="stat-chip-label">En línea</div></div>'
+      +'<div class="stat-chip inactivos"><div class="stat-chip-val">'+(totalAgentes-enLineaTotal)+'</div><div class="stat-chip-label">Fuera</div></div>'
+      +'<div class="stat-chip"><div class="stat-chip-val">'+totalAgentes+'</div><div class="stat-chip-label">Total agentes</div></div>';
+
+    document.getElementById('totalLabel').textContent = soloAgentes.length + ' de ' + totalAgentes + ' agentes';
+    document.getElementById('rtCount').textContent    = soloAgentes.length + ' de ' + totalAgentes + ' agentes';
+
+    // Actualizar filtro de estados
+    var filtEl  = document.getElementById('rtFiltEst');
+    var prevVal = filtEl.value;
+    var estados = {};
+    agentes.forEach(function(a) { var e = a.estadoActual||'Fuera'; estados[e] = (estados[e]||0)+1; });
+    filtEl.innerHTML = '<option value="">Todos los estados</option>';
+    Object.keys(estados).sort().forEach(function(e) {
+      filtEl.innerHTML += '<option value="'+e+'">'+e+' ('+estados[e]+')</option>';
+    });
+    filtEl.value = prevVal;
+
+    // Limpiar timers anteriores
+    Object.keys(timers).forEach(function(k) { clearInterval(timers[k]); });
+    timers = {};
+
+    // Agrupar por supervisor
+    var grupos = {};
+    soloAgentes.forEach(function(a) {
+      var key = a.emailSupervisor || '__sin__';
+      if (!grupos[key]) grupos[key] = [];
+      grupos[key].push(a);
+    });
+
+    function cardHtml(a) {
+      var online  = !!a.enLinea;
+      var estado  = a.estadoActual || 'Fuera';
+      var cfg     = RT_ESTADOS[estado] || RT_ESTADOS['Fuera'];
+      var pLabel  = LABELS_PROY[a.proyecto] || '';
+      return '<div class="ac-card'+(online?'':' offline')+'">'
+        +'<div class="ac-card-top">'
+        +'<div class="ac-indicator '+(online?'on':'off')+'"></div>'
+        +'<div class="ac-av '+(online?'online':'offline')+'">'+iniciales(a.nombre||a.email)+'</div>'
+        +'<div style="min-width:0">'
+        +'<div class="ac-nombre">'+escHtml(a.nombre||a.email||'?')+'</div>'
+        +(pLabel?'<div class="ac-proyecto">'+pLabel+'</div>':'')
+        +'</div></div>'
+        +(online
+          ?'<div class="ac-estado-badge" style="background:'+cfg.bg+';color:'+cfg.text+'">'+escHtml(estado)+'</div>'
+           +'<div class="ac-rt-timer" style="color:'+cfg.text+'" id="jrt-'+a.id+'">00:00:00</div>'
+          :'<div class="ac-sin-marcaje">Sin entrada hoy</div>')
+        +'</div>';
+    }
+
+    var html = '';
+
+    supervisores.forEach(function(sup) {
+      var grp = grupos[sup.email] || [];
+      if (hayFiltro && grp.length === 0) return;
+      var supOnline = !!sup.enLinea;
+      var enLinGrp  = grp.filter(function(a){ return !!a.enLinea; }).length;
+      html += '<div class="rt-group">'
+        +'<div class="rt-group-hdr">'
+        +'<div class="ac-indicator '+(supOnline?'on':'off')+'" style="width:10px;height:10px"></div>'
+        +'<div class="ac-av '+(supOnline?'online':'offline')+'" style="width:28px;height:28px;font-size:0.62rem">'+iniciales(sup.nombre||sup.email)+'</div>'
+        +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:0.82rem;font-weight:700;color:#1E293B">'+escHtml(sup.nombre||sup.email||'?')+'</div>'
+        +'<div style="font-size:0.68rem;color:#94A3B8">Supervisor · '+(supOnline?'<span style="color:#16A34A;font-weight:700">En línea</span>':'Fuera')+'</div>'
+        +'</div>'
+        +'<div style="font-size:0.72rem;font-weight:700;color:#1A3DAA;background:#EEF2FF;padding:3px 10px;border-radius:20px">'+enLinGrp+' / '+grp.length+'</div>'
+        +'</div>';
+
+      if (grp.length > 0) {
+        html += '<div class="rt-grid" style="padding-left:12px">';
+        grp.forEach(function(a) { html += cardHtml(a); });
+        html += '</div>';
+      } else {
+        html += '<div style="font-size:0.78rem;color:#94A3B8;padding:8px 16px">Sin agentes asignados.</div>';
+      }
+      html += '</div>';
+    });
+
+    var sinSup = grupos['__sin__'] || [];
+    if (sinSup.length > 0) {
+      var enLinSin = sinSup.filter(function(a){ return !!a.enLinea; }).length;
+      html += '<div class="rt-group">'
+        +'<div class="rt-group-hdr">'
+        +'<div style="flex:1;font-size:0.82rem;font-weight:700;color:#94A3B8">Sin supervisor asignado</div>'
+        +'<div style="font-size:0.72rem;font-weight:700;color:#94A3B8;background:#F1F5F9;padding:3px 10px;border-radius:20px">'+enLinSin+' / '+sinSup.length+'</div>'
+        +'</div>'
+        +'<div class="rt-grid" style="padding-left:12px">';
+      sinSup.forEach(function(a) { html += cardHtml(a); });
+      html += '</div></div>';
+    }
+
+    document.getElementById('rtGrid').innerHTML = html ||
+      '<div class="empty-state">Sin agentes para los filtros seleccionados.</div>';
+
+    // Timers en vivo
+    soloAgentes.filter(function(a){ return !!a.enLinea && !!a.estadoDesde; }).forEach(function(a) {
+      timers[a.id] = setInterval(function() {
+        var el = document.getElementById('jrt-'+a.id);
+        if (!el) { clearInterval(timers[a.id]); return; }
+        var desde = a.estadoDesde.toDate ? a.estadoDesde.toDate() : new Date(a.estadoDesde);
+        var seg   = Math.floor((new Date() - desde) / 1000);
+        el.textContent = pad(Math.floor(seg/3600)) + ':' + pad(Math.floor((seg%3600)/60)) + ':' + pad(seg%60);
+      }, 1000);
+    });
+  }
+
+  // ── Toast ─────────────────────────────────────────────────────────────────────
+  var _toastTimer = null;
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
+</script>
+<script src="notif.js"></script>
+<script src="sidebar.js"></script>
+<script>
+  initSidebar();
+  initNotif(db, auth);
+</script>
+</body>
+</html>
