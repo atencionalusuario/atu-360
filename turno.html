@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATU 360 — Turnos</title>
+<base href="/atu-360/">
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="base.css">
+<style>
+  .body-wrap { flex: 1; overflow: hidden; display: flex; flex-direction: column; padding: 20px 24px; gap: 14px; min-height: 0; }
+
+  /* SUB-TABS */
+  .stab-wrap { display: flex; gap: 4px; flex-shrink: 0; border-bottom: 1px solid #E2E8F0; padding-bottom: 0; }
+  .stab { padding: 8px 16px; border-radius: 7px 7px 0 0; font-size: 0.78rem; font-weight: 600; cursor: pointer; border: 1.5px solid transparent; background: transparent; color: #64748B; font-family: inherit; margin-bottom: -1px; border-bottom-color: transparent; transition: all 0.15s; }
+  .stab:hover { color: #1A3DAA; background: #F8FAFC; }
+  .stab.active { background: white; color: #1A3DAA; border-color: #E2E8F0; border-bottom-color: white; }
+
+  /* SCROLL AREA */
+  .scroll-area { flex: 1; overflow-y: auto; min-height: 0; display: flex; flex-direction: column; gap: 16px; }
+
+  /* SECCIÓN */
+  .as-section { background: white; border: 1px solid #E2E8F0; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+  .as-title { font-size: 0.72rem; font-weight: 700; color: #1A3DAA; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* INPUTS */
+  .pt-input { padding: 8px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.82rem; font-family: inherit; color: #1E293B; background: #F8FAFC; outline: none; transition: border 0.2s; width: 100%; }
+  .pt-input:focus { border-color: #1A3DAA; background: white; }
+
+  /* PLANTILLAS */
+  .pt-form { background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+  .pt-form-row { display: flex; gap: 10px; }
+  .pt-list { display: flex; flex-direction: column; gap: 8px; }
+  .pt-card { background: white; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; }
+  .pt-card:hover { border-color: #CBD5E1; }
+  .pt-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .pt-nombre { font-size: 0.82rem; font-weight: 700; color: #1E293B; }
+  .pt-horario { font-size: 0.72rem; color: #94A3B8; margin-top: 2px; }
+  .btn-icon-sm { width: 28px; height: 28px; border: 1px solid #E2E8F0; border-radius: 6px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0; }
+  .btn-icon-sm:hover { background: #F1F5F9; }
+  .btn-icon-sm.danger:hover { background: #FEF2F2; border-color: #FECACA; }
+
+  /* GRID DÍAS */
+  .dias-grid { border: 1px solid #E2E8F0; border-radius: 8px; overflow: hidden; font-size: 0.78rem; }
+  .dias-grid-hdr { display: grid; grid-template-columns: 110px 52px 1fr 1fr; background: #F8FAFC; padding: 7px 12px; font-size: 0.68rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: .4px; border-bottom: 1px solid #E2E8F0; }
+  .dias-grid-hdr div { text-align: center; }
+  .dias-grid-hdr div:first-child { text-align: left; }
+  .dia-row { display: grid; grid-template-columns: 110px 52px 1fr 1fr; align-items: center; padding: 5px 12px; border-bottom: 1px solid #F8FAFC; }
+  .dia-row:last-child { border-bottom: none; }
+  .dia-row span { font-weight: 600; color: #374151; font-size: 0.82rem; }
+  .dia-row input[type="checkbox"] { width: 15px; height: 15px; accent-color: #1A3DAA; display: block; margin: 0 auto; }
+  .dia-row .pt-input { padding: 5px 7px; font-size: 0.78rem; }
+
+  /* ASIGNAR */
+  .turno-check-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px; cursor: pointer; font-size: 0.8rem; font-family: inherit; background: white; color: #374151; }
+  .turno-check-item:hover { border-color: #CBD5E1; }
+  .turno-check-item.sel { border-color: #1A3DAA; background: #EEF2FF; color: #1A3DAA; font-weight: 700; }
+  .check-lista { display: flex; flex-direction: column; gap: 5px; max-height: 220px; overflow-y: auto; }
+  .ac-av { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: white; flex-shrink: 0; }
+  .ac-av.online  { background: #1A3DAA; }
+  .ac-av.offline { background: #94A3B8; }
+
+  /* VER AGENTES */
+  .agentes-panel { flex: 1; min-height: 0; background: white; border: 1px solid #E2E8F0; border-radius: 10px; overflow: hidden; display: flex; }
+  .agentes-lista-wrap { width: 260px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; padding: 12px; border-right: 1px solid #F1F5F9; gap: 8px; }
+  .agentes-detalle-wrap { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .turno-agent-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 7px; cursor: pointer; border: 1px solid transparent; }
+  .turno-agent-item:hover { background: #F8FAFC; }
+  .turno-agent-item.active { background: #EEF2FF; border-color: #C7D2FE; }
+
+  /* CALENDARIO */
+  .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+  .cal-dia { border-radius: 5px; padding: 4px 2px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .cal-dia.laboral { background: #EEF2FF; border: 1px solid #C7D2FE; }
+  .cal-dia.descanso { background: #F1F5F9; border: 1px solid #E2E8F0; }
+  .cal-dia.vacio { background: transparent; border: none; }
+  .cal-dia.hoy .dia-num { font-weight: 800; color: #1A3DAA; }
+  .dia-num { font-size: 0.72rem; font-weight: 600; color: #374151; }
+  .dia-tag { font-size: 0.55rem; font-weight: 700; color: #94A3B8; }
+  .cal-dia.laboral .dia-tag { color: #1A3DAA; }
+
+  .dp-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+  .dp-field { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
+  .dp-label { font-size: 0.65rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: .5px; }
+  .dp-val   { font-size: 0.8rem; color: #1E293B; font-weight: 500; }
+
+  .btn-pri { padding: 10px 24px; background: #1A3DAA; color: white; border: none; border-radius: 8px; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-pri:hover { opacity: 0.88; }
+  .btn-cancel { padding: 8px 16px; background: white; color: #64748B; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.78rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-cancel:hover { border-color: #CBD5E1; }
+  .nav-btn { width: 26px; height: 26px; border: 1.5px solid #E2E8F0; border-radius: 6px; background: white; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; color: #64748B; }
+  .nav-btn:hover { background: #F1F5F9; }
+  .empty-hint { display: flex; align-items: center; justify-content: center; height: 100%; color: #94A3B8; font-size: 0.82rem; }
+</style>
+</head>
+<body>
+
+<div class="sidebar"></div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2 style="font-size:0.9rem;font-weight:600">Turnos</h2>
+      <span class="topbar-sep">/</span>
+      <p class="tb-page-sub" id="totalLabel">—</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="body-wrap">
+
+    <!-- SUB-TABS -->
+    <div class="stab-wrap">
+      <button class="stab active" id="stabPlantillas" onclick="mostrarStab('plantillas',this)">Plantillas de turno</button>
+      <button class="stab"        id="stabAsignar"    onclick="mostrarStab('asignar',this)">Asignar turno</button>
+      <button class="stab"        id="stabAgentes"    onclick="mostrarStab('agentes',this)">Ver agentes</button>
+    </div>
+
+    <!-- ═══ PLANTILLAS ═══ -->
+    <div class="scroll-area" id="panelPlantillas">
+
+      <div class="as-section" style="flex-direction:row;align-items:center;justify-content:space-between;gap:8px">
+        <div style="font-size:0.85rem;font-weight:700;color:#1E293B">Plantillas de turno</div>
+        <button class="btn-pri" style="padding:8px 16px;font-size:0.78rem" onclick="mostrarFormPt()">+ Nueva plantilla</button>
+      </div>
+
+      <!-- Formulario inline -->
+      <div class="pt-form" id="ptForm" style="display:none">
+        <input type="hidden" id="ptFormId">
+        <div class="pt-form-row">
+          <input class="pt-input" id="ptNombre" placeholder="Nombre del turno (ej: Turno Mañana)" style="flex:1">
+          <input type="color" id="ptColor" value="#1A3DAA" style="width:48px;height:38px;border:1.5px solid #E2E8F0;border-radius:7px;cursor:pointer;padding:2px;flex-shrink:0">
+        </div>
+        <input class="pt-input" id="ptDesc" placeholder="Descripción (opcional)">
+        <div class="dias-grid">
+          <div class="dias-grid-hdr">
+            <div style="text-align:left">Día</div><div>Activo</div><div>Entrada</div><div>Salida</div>
+          </div>
+          <div class="dia-row"><span>Lunes</span>    <div><input type="checkbox" id="ptAct_lunes"     checked></div><input class="pt-input" type="time" id="ptIni_lunes"><input class="pt-input" type="time" id="ptFin_lunes"></div>
+          <div class="dia-row"><span>Martes</span>   <div><input type="checkbox" id="ptAct_martes"    checked></div><input class="pt-input" type="time" id="ptIni_martes"><input class="pt-input" type="time" id="ptFin_martes"></div>
+          <div class="dia-row"><span>Miércoles</span><div><input type="checkbox" id="ptAct_miercoles" checked></div><input class="pt-input" type="time" id="ptIni_miercoles"><input class="pt-input" type="time" id="ptFin_miercoles"></div>
+          <div class="dia-row"><span>Jueves</span>   <div><input type="checkbox" id="ptAct_jueves"    checked></div><input class="pt-input" type="time" id="ptIni_jueves"><input class="pt-input" type="time" id="ptFin_jueves"></div>
+          <div class="dia-row"><span>Viernes</span>  <div><input type="checkbox" id="ptAct_viernes"   checked></div><input class="pt-input" type="time" id="ptIni_viernes"><input class="pt-input" type="time" id="ptFin_viernes"></div>
+          <div class="dia-row"><span>Sábado</span>   <div><input type="checkbox" id="ptAct_sabado"></div><input class="pt-input" type="time" id="ptIni_sabado"><input class="pt-input" type="time" id="ptFin_sabado"></div>
+          <div class="dia-row"><span>Domingo</span>  <div><input type="checkbox" id="ptAct_domingo"></div><input class="pt-input" type="time" id="ptIni_domingo"><input class="pt-input" type="time" id="ptFin_domingo"></div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn-cancel" onclick="ocultarFormPt()">Cancelar</button>
+          <button class="btn-pri" style="padding:8px 16px;font-size:0.78rem" onclick="guardarPt()">Guardar plantilla</button>
+        </div>
+      </div>
+
+      <div class="pt-list" id="ptLista">
+        <div style="font-size:0.8rem;color:#94A3B8">Cargando...</div>
+      </div>
+
+    </div>
+
+    <!-- ═══ ASIGNAR ═══ -->
+    <div class="scroll-area" id="panelAsignar" style="display:none">
+
+      <div class="as-section">
+        <div class="as-title">Paso 1 — Plantilla</div>
+        <select class="pt-input" id="asPlantilla" style="max-width:360px">
+          <option value="">Selecciona una plantilla...</option>
+        </select>
+      </div>
+
+      <div class="as-section">
+        <div class="as-title">Paso 2 — Rango de fechas</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+          <div><label style="font-size:0.72rem;color:#64748B;display:block;margin-bottom:4px">Desde</label><input class="pt-input" type="date" id="asDesde" style="width:160px"></div>
+          <div><label style="font-size:0.72rem;color:#64748B;display:block;margin-bottom:4px">Hasta</label><input class="pt-input" type="date" id="asHasta" style="width:160px"></div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;color:#374151;cursor:pointer">
+          <input type="checkbox" id="asFdS" checked style="width:16px;height:16px;accent-color:#1A3DAA">
+          Marcar fines de semana como descanso
+        </label>
+      </div>
+
+      <div class="as-section">
+        <div class="as-title">Paso 3 — Personas</div>
+        <div style="display:flex;gap:8px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;color:#374151;cursor:pointer"><input type="radio" name="asModo" value="individual" onclick="asModo('individual')" style="accent-color:#1A3DAA"> Individual</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.82rem;color:#374151;cursor:pointer"><input type="radio" name="asModo" value="grupal" onclick="asModo('grupal')" style="accent-color:#1A3DAA" checked> Grupal</label>
+        </div>
+
+        <div id="panelIndividual" style="display:none;flex-direction:column;gap:8px">
+          <input class="pt-input" id="asIndBusq" placeholder="Buscar agente..." oninput="renderIndividual()">
+          <div class="check-lista" id="asIndLista"></div>
+        </div>
+
+        <div id="panelGrupal" style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="turno-check-item sel" id="asGrpPresetTodos"        onclick="asPreset('todos')">Todos</button>
+            <button class="turno-check-item"     id="asGrpPresetAgentes"      onclick="asPreset('agentes')">Solo agentes</button>
+            <button class="turno-check-item"     id="asGrpPresetSupervisores" onclick="asPreset('supervisores')">Solo supervisores</button>
+          </div>
+          <input class="pt-input" id="asGrpBusq" placeholder="Buscar para selección manual..." oninput="renderGrupal()">
+          <div class="check-lista" id="asGrpLista"></div>
+        </div>
+      </div>
+
+      <div>
+        <button class="btn-pri" onclick="asignarTurno()">Asignar turno</button>
+      </div>
+
+    </div>
+
+    <!-- ═══ VER AGENTES ═══ -->
+    <div id="panelAgentes" style="display:none;flex:1;min-height:0">
+      <div class="agentes-panel">
+        <div class="agentes-lista-wrap">
+          <input class="pt-input" id="agBusq" placeholder="Buscar agente..." oninput="renderListaAgentes()">
+          <div id="agLista" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:5px">
+            <div style="font-size:0.8rem;color:#94A3B8">Cargando...</div>
+          </div>
+        </div>
+        <div id="agDetalle" class="agentes-detalle-wrap">
+          <div class="empty-hint">Selecciona un agente para ver su turno.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var db   = firebase.firestore();
+  var auth = firebase.auth();
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  var ROLES_PERMITIDOS = ['jefe','wfm','admin','superadmin'];
+  var LABELS_PROY = { doctorsv:'DoctorSV', educacion:'Educación', marn:'MARN', global:'Global' };
+  var MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var DAYS  = ['lunes','martes','miercoles','jueves','viernes','sabado','domingo'];
+  var DOW   = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
+
+  var ptList      = [];
+  var agentes     = [];
+  var agSelInd    = null;
+  var agSelGrp    = [];
+  var grpPreset   = 'todos';
+  var agTurnoSel  = null;
+  var agTurnoDias = {};
+  var mesVista    = (function(){ var h = new Date(); return new Date(h.getFullYear(), h.getMonth(), 1); })();
+
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = BASE + 'login.html'; return; }
+    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
+        auth.signOut(); window.location.href = BASE + 'login.html'; return;
+      }
+      cargarPlantillas();
+      cargarAgentes();
+    });
+  });
+
+  // ── Helpers ───────────────────────────────────────────────────────────────────
+  function pad(n) { return String(n).padStart(2,'0'); }
+  function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function iniciales(n) { return (n||'?').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase(); }
+
+  function resumenHorario(pt) {
+    if (!pt.diasSemana) return (pt.horaInicio && pt.horaFin) ? pt.horaInicio + ' – ' + pt.horaFin : 'Sin horario';
+    var activos = DAYS.filter(function(d){ return pt.diasSemana[d] && pt.diasSemana[d].activo; });
+    if (!activos.length) return 'Sin días activos';
+    var labels = { lunes:'L', martes:'M', miercoles:'X', jueves:'J', viernes:'V', sabado:'S', domingo:'D' };
+    var d0 = pt.diasSemana[activos[0]];
+    var horas = (d0 && d0.horaInicio) ? d0.horaInicio + ' – ' + d0.horaFin : '';
+    return activos.map(function(d){ return labels[d]; }).join(' ') + (horas ? ' · ' + horas : '');
+  }
+
+  // ── Sub-tabs ──────────────────────────────────────────────────────────────────
+  function mostrarStab(tab, btn) {
+    ['plantillas','asignar','agentes'].forEach(function(t) {
+      var panel = document.getElementById('panel' + t.charAt(0).toUpperCase() + t.slice(1));
+      if (panel) panel.style.display = 'none';
+    });
+    document.querySelectorAll('.stab').forEach(function(b){ b.classList.remove('active'); });
+    var panel = document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1));
+    if (panel) {
+      panel.style.display = tab === 'agentes' ? 'flex' : 'flex';
+      panel.style.flexDirection = 'column';
+    }
+    btn.classList.add('active');
+    document.getElementById('totalLabel').textContent = { plantillas:'Plantillas', asignar:'Asignar turno', agentes:'Ver agentes' }[tab];
+  }
+
+  // ── PLANTILLAS ────────────────────────────────────────────────────────────────
+  function cargarPlantillas() {
+    db.collection('turnos_plantillas').get().then(function(snap) {
+      ptList = [];
+      snap.forEach(function(doc){ ptList.push(Object.assign({ id: doc.id }, doc.data())); });
+      ptList.sort(function(a,b){ return (a.nombre||'').localeCompare(b.nombre||'','es'); });
+      renderPtLista();
+      renderPtSelect();
+      document.getElementById('totalLabel').textContent = 'Plantillas';
+    });
+  }
+
+  function renderPtLista() {
+    var html = '';
+    ptList.forEach(function(p) {
+      html += '<div class="pt-card">'
+        +'<div class="pt-dot" style="background:'+escHtml(p.color||'#1A3DAA')+'"></div>'
+        +'<div style="flex:1;min-width:0">'
+        +'<div class="pt-nombre">'+escHtml(p.nombre||'Sin nombre')+'</div>'
+        +'<div class="pt-horario">'+escHtml(resumenHorario(p))+(p.descripcion?' · '+escHtml(p.descripcion):'')+'</div>'
+        +'</div>'
+        +'<button class="btn-icon-sm" onclick="editarPt(\''+escHtml(p.id)+'\')" title="Editar">✏️</button>'
+        +'<button class="btn-icon-sm danger" onclick="eliminarPt(\''+escHtml(p.id)+'\')" title="Eliminar">🗑</button>'
+        +'</div>';
+    });
+    document.getElementById('ptLista').innerHTML = html ||
+      '<div style="font-size:0.8rem;color:#94A3B8">No hay plantillas. Crea una nueva.</div>';
+  }
+
+  function renderPtSelect() {
+    var sel = document.getElementById('asPlantilla'); if (!sel) return;
+    var val = sel.value;
+    sel.innerHTML = '<option value="">Selecciona una plantilla...</option>';
+    ptList.forEach(function(p){
+      var o = document.createElement('option'); o.value = p.id; o.textContent = p.nombre || 'Sin nombre';
+      sel.appendChild(o);
+    });
+    sel.value = val;
+  }
+
+  function mostrarFormPt(pt) {
+    document.getElementById('ptFormId').value  = pt ? pt.id : '';
+    document.getElementById('ptNombre').value  = pt ? pt.nombre||'' : '';
+    document.getElementById('ptColor').value   = pt ? pt.color||'#1A3DAA' : '#1A3DAA';
+    document.getElementById('ptDesc').value    = pt ? pt.descripcion||'' : '';
+    var ds = pt && pt.diasSemana ? pt.diasSemana : {};
+    var def = { lunes:true, martes:true, miercoles:true, jueves:true, viernes:true, sabado:false, domingo:false };
+    DAYS.forEach(function(d) {
+      var info = ds[d] || {};
+      document.getElementById('ptAct_'+d).checked  = d in ds ? !!info.activo : def[d];
+      document.getElementById('ptIni_'+d).value    = info.horaInicio || '';
+      document.getElementById('ptFin_'+d).value    = info.horaFin || '';
+    });
+    document.getElementById('ptForm').style.display = 'flex';
+    document.getElementById('ptForm').scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
+  function ocultarFormPt() { document.getElementById('ptForm').style.display = 'none'; }
+
+  function editarPt(id) {
+    var pt = ptList.find(function(p){ return p.id === id; }); if (!pt) return;
+    mostrarFormPt(pt);
+  }
+
+  function eliminarPt(id) {
+    var pt = ptList.find(function(p){ return p.id === id; }); if (!pt) return;
+    if (!confirm('¿Eliminar plantilla "'+pt.nombre+'"?')) return;
+    db.collection('turnos_plantillas').doc(id).delete().then(function(){ cargarPlantillas(); showToast('Plantilla eliminada.'); });
+  }
+
+  function guardarPt() {
+    var id     = document.getElementById('ptFormId').value;
+    var nombre = document.getElementById('ptNombre').value.trim();
+    if (!nombre) { showToast('El nombre es obligatorio.'); return; }
+    var diasSemana = {};
+    DAYS.forEach(function(d) {
+      diasSemana[d] = {
+        activo:     document.getElementById('ptAct_'+d).checked,
+        horaInicio: document.getElementById('ptIni_'+d).value,
+        horaFin:    document.getElementById('ptFin_'+d).value
+      };
+    });
+    var data = { nombre: nombre, color: document.getElementById('ptColor').value, diasSemana: diasSemana, descripcion: document.getElementById('ptDesc').value.trim() };
+    var prom = id ? db.collection('turnos_plantillas').doc(id).update(data) : db.collection('turnos_plantillas').add(data);
+    prom.then(function(){ ocultarFormPt(); cargarPlantillas(); showToast('Plantilla guardada.'); })
+        .catch(function(e){ showToast('Error: '+e.message); });
+  }
+
+  // ── AGENTES (carga para Asignar y Ver agentes) ────────────────────────────────
+  function cargarAgentes() {
+    db.collection('usuarios').where('rol','in',['agente','agente-inmersion','supervisor']).get()
+      .then(function(snap) {
+        agentes = [];
+        snap.forEach(function(doc){ agentes.push(Object.assign({ id: doc.id }, doc.data())); });
+        agentes.sort(function(a,b){ return (a.nombre||'').localeCompare(b.nombre||'','es'); });
+        renderIndividual();
+        renderGrupal();
+        renderListaAgentes();
+      });
+  }
+
+  // ── ASIGNAR ───────────────────────────────────────────────────────────────────
+  function asModo(modo) {
+    document.getElementById('panelIndividual').style.display = modo === 'individual' ? 'flex' : 'none';
+    document.getElementById('panelGrupal').style.display     = modo === 'grupal'     ? 'flex' : 'none';
+  }
+
+  function asPreset(preset) {
+    grpPreset   = preset;
+    agSelGrp    = [];
+    ['Todos','Agentes','Supervisores'].forEach(function(s) {
+      var el = document.getElementById('asGrpPreset'+s);
+      if (el) el.classList.toggle('sel', s.toLowerCase() === preset);
+    });
+    renderGrupal();
+  }
+
+  function renderIndividual() {
+    var busq = (document.getElementById('asIndBusq').value||'').toLowerCase();
+    var lista = agentes.filter(function(a){ return !busq || (a.nombre||'').toLowerCase().includes(busq) || (a.email||'').toLowerCase().includes(busq); });
+    var html = '';
+    lista.forEach(function(a) {
+      var sel = agSelInd === a.id;
+      html += '<div class="turno-check-item'+(sel?' sel':'')+'" onclick="toggleInd(\''+a.id+'\')">'
+        +'<div class="ac-av online" style="width:24px;height:24px;font-size:0.58rem">'+iniciales(a.nombre||a.email)+'</div>'
+        +'<div style="font-size:0.8rem;font-weight:600;color:#1E293B;flex:1">'+escHtml(a.nombre||a.email||'?')+'</div>'
+        +'<div style="font-size:0.68rem;color:#94A3B8">'+escHtml(a.rol||'')+'</div>'
+        +'</div>';
+    });
+    document.getElementById('asIndLista').innerHTML = html || '<div style="font-size:0.8rem;color:#94A3B8">Sin resultados.</div>';
+  }
+
+  function toggleInd(id) { agSelInd = (agSelInd === id ? null : id); renderIndividual(); }
+
+  function renderGrupal() {
+    var busq = (document.getElementById('asGrpBusq').value||'').toLowerCase();
+    var lista = agentes.filter(function(a){ return !busq || (a.nombre||'').toLowerCase().includes(busq) || (a.email||'').toLowerCase().includes(busq); });
+    var html = '';
+    lista.forEach(function(a) {
+      var sel = agSelGrp.indexOf(a.id) >= 0;
+      html += '<div class="turno-check-item'+(sel?' sel':'')+'" onclick="toggleGrp(\''+a.id+'\')">'
+        +'<input type="checkbox" '+(sel?'checked':'')+' style="accent-color:#1A3DAA;width:15px;height:15px" onclick="event.stopPropagation();toggleGrp(\''+a.id+'\')">'
+        +'<div class="ac-av online" style="width:24px;height:24px;font-size:0.58rem">'+iniciales(a.nombre||a.email)+'</div>'
+        +'<div style="font-size:0.8rem;font-weight:600;color:#1E293B;flex:1">'+escHtml(a.nombre||a.email||'?')+'</div>'
+        +'<div style="font-size:0.68rem;color:#94A3B8">'+escHtml(a.rol||'')+'</div>'
+        +'</div>';
+    });
+    document.getElementById('asGrpLista').innerHTML = html || '<div style="font-size:0.8rem;color:#94A3B8">Sin resultados.</div>';
+  }
+
+  function toggleGrp(id) {
+    var idx = agSelGrp.indexOf(id);
+    if (idx >= 0) agSelGrp.splice(idx, 1); else agSelGrp.push(id);
+    if (agSelGrp.length > 0) {
+      grpPreset = null;
+      ['Todos','Agentes','Supervisores'].forEach(function(s){ document.getElementById('asGrpPreset'+s).classList.remove('sel'); });
+    }
+    renderGrupal();
+  }
+
+  function asignarTurno() {
+    var ptId  = document.getElementById('asPlantilla').value;
+    var desde = document.getElementById('asDesde').value;
+    var hasta = document.getElementById('asHasta').value;
+    var fds   = document.getElementById('asFdS').checked;
+    var modo  = document.querySelector('input[name="asModo"]:checked');
+    if (!modo)          { showToast('Selecciona un modo.'); return; }
+    if (!ptId)          { showToast('Selecciona una plantilla.'); return; }
+    if (!desde || !hasta) { showToast('Selecciona el rango de fechas.'); return; }
+    if (desde > hasta)  { showToast('"Desde" debe ser anterior a "hasta".'); return; }
+    var pt = ptList.find(function(p){ return p.id === ptId; });
+    if (!pt) { showToast('Plantilla no encontrada.'); return; }
+
+    var uids = [];
+    if (modo.value === 'individual') {
+      if (!agSelInd) { showToast('Selecciona un agente.'); return; }
+      uids = [agSelInd];
+    } else {
+      if (agSelGrp.length > 0) {
+        uids = agSelGrp.slice();
+      } else {
+        var preset = grpPreset || 'todos';
+        agentes.forEach(function(a) {
+          var rol = a.rol || '';
+          if (preset === 'todos') uids.push(a.id);
+          else if (preset === 'agentes' && (rol === 'agente' || rol === 'agente-inmersion')) uids.push(a.id);
+          else if (preset === 'supervisores' && rol === 'supervisor') uids.push(a.id);
+        });
+      }
+    }
+    if (!uids.length) { showToast('No hay personas seleccionadas.'); return; }
+
+    var dias = {};
+    var cur = new Date(desde + 'T00:00:00');
+    var end = new Date(hasta + 'T00:00:00');
+    while (cur <= end) {
+      var dow    = cur.getDay();
+      var dowKey = DOW[dow];
+      var key    = cur.getFullYear() + '-' + pad(cur.getMonth()+1) + '-' + pad(cur.getDate());
+      var diaInfo = pt.diasSemana ? pt.diasSemana[dowKey] : null;
+      if (diaInfo != null) {
+        dias[key] = diaInfo.activo ? 'laboral' : 'descanso';
+      } else {
+        dias[key] = (fds && (dow === 0 || dow === 6)) ? 'descanso' : 'laboral';
+      }
+      cur.setDate(cur.getDate() + 1);
+    }
+
+    var data = { plantillaId: ptId, nombre: pt.nombre, horario: resumenHorario(pt), dias: dias };
+    var chunks = [], size = 500;
+    for (var i = 0; i < uids.length; i += size) chunks.push(uids.slice(i, i + size));
+    var promise = Promise.resolve();
+    chunks.forEach(function(ch) {
+      promise = promise.then(function() {
+        var batch = db.batch();
+        ch.forEach(function(uid){ batch.set(db.collection('turnos').doc(uid), data, { merge: true }); });
+        return batch.commit();
+      });
+    });
+    promise.then(function(){
+      showToast('Turno asignado a ' + uids.length + ' persona' + (uids.length !== 1 ? 's' : '') + '.');
+    }).catch(function(e){ showToast('Error al asignar: ' + e.message); });
+  }
+
+  // ── VER AGENTES ───────────────────────────────────────────────────────────────
+  function renderListaAgentes() {
+    var busq  = (document.getElementById('agBusq').value||'').toLowerCase();
+    var lista = agentes.filter(function(a){ return !busq || (a.nombre||'').toLowerCase().includes(busq) || (a.email||'').toLowerCase().includes(busq); });
+    var html  = '';
+    lista.forEach(function(a) {
+      html += '<div class="turno-agent-item'+(agTurnoSel===a.id?' active':'')+'" onclick="verTurno(\''+a.id+'\')">'
+        +'<div class="ac-av online" style="width:28px;height:28px;font-size:0.62rem">'+iniciales(a.nombre||a.email)+'</div>'
+        +'<div style="min-width:0">'
+        +'<div style="font-size:0.78rem;font-weight:600;color:#1E293B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(a.nombre||a.email||'?')+'</div>'
+        +'<div style="font-size:0.65rem;color:#94A3B8">'+(LABELS_PROY[a.proyecto]||a.proyecto||'—')+'</div>'
+        +'</div></div>';
+    });
+    document.getElementById('agLista').innerHTML = html || '<div style="font-size:0.8rem;color:#94A3B8">Sin resultados.</div>';
+  }
+
+  function dpField(label, val) {
+    return '<div class="dp-field"><div class="dp-label">'+label+'</div><div class="dp-val">'+val+'</div></div>';
+  }
+
+  function verTurno(uid) {
+    agTurnoSel = uid; renderListaAgentes();
+    var a = agentes.find(function(x){ return x.id === uid; }); if (!a) return;
+    var det = document.getElementById('agDetalle');
+    det.innerHTML = '<div style="font-size:0.8rem;color:#94A3B8">Cargando turno...</div>';
+    db.collection('turnos').doc(uid).get().then(function(doc) {
+      var d = doc.exists ? doc.data() : null;
+      agTurnoDias = d ? (d.dias || {}) : generarEjemplo();
+      var nombre  = d ? (d.nombre  || 'Turno asignado') : 'Sin turno asignado';
+      var horario = d ? (d.horario || '—') : '—';
+      det.innerHTML =
+        '<div style="font-size:0.78rem;font-weight:700;color:#0F2070;text-transform:uppercase;letter-spacing:.5px;padding-bottom:10px;border-bottom:2px solid #F1F5F9">'+escHtml(a.nombre||'Agente')+'</div>'
+        +'<div class="dp-grid">'+dpField('Turno', escHtml(nombre))+dpField('Horario', escHtml(horario))+'</div>'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+        +'<div id="calMesLabel" style="font-size:0.82rem;font-weight:700;color:#1E293B"></div>'
+        +'<div style="display:flex;gap:4px">'
+        +'<button class="nav-btn" onclick="cambiarMes(-1)">&#8249;</button>'
+        +'<button class="nav-btn" style="width:auto;padding:0 8px;font-size:0.68rem" onclick="irHoy()">Hoy</button>'
+        +'<button class="nav-btn" onclick="cambiarMes(1)">&#8250;</button>'
+        +'</div></div>'
+        +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;font-size:0.62rem;color:#94A3B8;text-align:center;margin-bottom:3px">'
+        +['D','L','M','X','J','V','S'].map(function(d){ return '<div>'+d+'</div>'; }).join('')
+        +'</div>'
+        +'<div class="cal-grid" id="calGrid"></div>'
+        +'<div style="display:flex;gap:12px;margin-top:10px;font-size:0.72rem;color:#64748B">'
+        +'<div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:#EEF2FF;border:1px solid #C7D2FE"></div>Laboral</div>'
+        +'<div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:2px;background:#F1F5F9;border:1px solid #E2E8F0"></div>Descanso</div>'
+        +'</div>';
+      renderCal();
+    });
+  }
+
+  function generarEjemplo() {
+    var dias = {}, hoy = new Date();
+    var d = new Date(hoy.getFullYear(), 0, 1), fin = new Date(hoy.getFullYear(), 11, 31);
+    while (d <= fin) {
+      var dow = d.getDay();
+      var key = d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+      dias[key] = (dow >= 1 && dow <= 5) ? 'laboral' : 'descanso';
+      d.setDate(d.getDate() + 1);
+    }
+    return dias;
+  }
+
+  function renderCal() {
+    var hoy = new Date(), año = mesVista.getFullYear(), mes = mesVista.getMonth();
+    var primerDia = new Date(año, mes, 1).getDay();
+    var totalDias = new Date(año, mes+1, 0).getDate();
+    var calMesEl  = document.getElementById('calMesLabel');
+    if (calMesEl) calMesEl.textContent = MESES[mes] + ' ' + año;
+    var html = '';
+    for (var i = 0; i < primerDia; i++) html += '<div class="cal-dia vacio"></div>';
+    for (var d = 1; d <= totalDias; d++) {
+      var fecha = año + '-' + pad(mes+1) + '-' + pad(d);
+      var tipo  = agTurnoDias[fecha] || 'descanso';
+      var esHoy = año === hoy.getFullYear() && mes === hoy.getMonth() && d === hoy.getDate();
+      html += '<div class="cal-dia '+tipo+(esHoy?' hoy':'')+'"><span class="dia-num">'+d+'</span><span class="dia-tag">'+(tipo==='laboral'?'L':'D')+'</span></div>';
+    }
+    var calEl = document.getElementById('calGrid'); if (calEl) calEl.innerHTML = html;
+  }
+
+  function cambiarMes(dir) { mesVista.setMonth(mesVista.getMonth() + dir); renderCal(); }
+  function irHoy() { var h = new Date(); mesVista = new Date(h.getFullYear(), h.getMonth(), 1); renderCal(); }
+
+  // ── Toast ─────────────────────────────────────────────────────────────────────
+  var _toastTimer = null;
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
+</script>
+<script src="notif.js"></script>
+<script src="sidebar.js"></script>
+<script>
+  initSidebar();
+  initNotif(db, auth);
+</script>
+</body>
+</html>
