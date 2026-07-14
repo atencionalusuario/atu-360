@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATU 360 — Reportes</title>
+<base href="/atu-360/">
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="base.css">
+<style>
+  .content-wrap { flex: 1; overflow-y: auto; padding: 24px 28px 40px; display: flex; flex-direction: column; gap: 16px; }
+
+  .rpt-card { background: white; border-radius: 12px; border: 1.5px solid #E2E8F0; overflow: hidden; }
+  .rpt-header { padding: 16px 20px; border-bottom: 1.5px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .rpt-title { font-size: 0.88rem; font-weight: 700; color: #0F2070; }
+  .rpt-sub   { font-size: 0.75rem; color: #64748B; margin-top: 2px; }
+  .rpt-body  { padding: 14px 20px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; border-bottom: 1px solid #F1F5F9; }
+  .rpt-info  { padding: 12px 20px; font-size: 0.78rem; color: #64748B; min-height: 40px; display: flex; align-items: center; }
+
+  .rpt-input  { padding: 6px 10px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.78rem; font-family: inherit; color: #1E293B; background: white; outline: none; }
+  .rpt-input:focus { border-color: #1A3DAA; }
+  .rpt-select { padding: 6px 10px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.78rem; font-family: inherit; color: #1E293B; background: white; outline: none; cursor: pointer; }
+  .rpt-select:focus { border-color: #1A3DAA; }
+
+  .preset-group { display: flex; gap: 5px; }
+  .preset-btn {
+    padding: 5px 10px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; cursor: pointer;
+    font-family: inherit; border: 1.5px solid #E2E8F0; background: white; color: #374151;
+    transition: all 0.12s;
+  }
+  .preset-btn.active { border-color: #1A3DAA; background: #EEF2FF; color: #1A3DAA; }
+
+  .btn-download {
+    padding: 8px 16px; background: #1A3DAA; color: white; border: none; border-radius: 8px;
+    font-size: 0.78rem; font-weight: 700; cursor: pointer; font-family: inherit;
+    display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+    transition: opacity 0.15s;
+  }
+  .btn-download:hover { opacity: 0.88; }
+  .btn-download:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .info-ok   { color: #16A34A; }
+  .info-warn { color: #B45309; }
+  .info-err  { color: #DC2626; }
+</style>
+</head>
+<body>
+
+<div class="sidebar"></div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2 style="font-size:0.9rem;font-weight:600">Reportes</h2>
+      <span class="topbar-sep">/</span>
+      <p class="tb-page-sub">Descarga datos en CSV</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="content-wrap">
+
+    <!-- ── MARCAJES ─────────────────────────────────────── -->
+    <div class="rpt-card">
+      <div class="rpt-header">
+        <div>
+          <div class="rpt-title">Marcajes</div>
+          <div class="rpt-sub">Registros de entrada y salida</div>
+        </div>
+        <button class="btn-download" onclick="descargar('marcajes')">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar CSV
+        </button>
+      </div>
+      <div class="rpt-body">
+        <div class="preset-group">
+          <button class="preset-btn" id="rpHoyM"  onclick="preset('m','hoy',this)">Hoy</button>
+          <button class="preset-btn active" id="rpSemM" onclick="preset('m','semana',this)">Esta semana</button>
+          <button class="preset-btn" id="rpMesM"  onclick="preset('m','mes',this)">Este mes</button>
+        </div>
+        <input type="date" class="rpt-input" id="rptMDesde">
+        <input type="date" class="rpt-input" id="rptMHasta">
+        <select class="rpt-select" id="rptMAgente" style="flex:1;min-width:160px"><option value="">Todos los agentes</option></select>
+      </div>
+      <div class="rpt-info" id="rptMInfo">Selecciona un rango de fechas y descarga.</div>
+    </div>
+
+    <!-- ── AUXILIARES ────────────────────────────────────── -->
+    <div class="rpt-card">
+      <div class="rpt-header">
+        <div>
+          <div class="rpt-title">Auxiliares</div>
+          <div class="rpt-sub">Tiempos de auxiliar por agente</div>
+        </div>
+        <button class="btn-download" onclick="descargar('auxiliares')">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar CSV
+        </button>
+      </div>
+      <div class="rpt-body">
+        <div class="preset-group">
+          <button class="preset-btn" id="rpHoyA"  onclick="preset('a','hoy',this)">Hoy</button>
+          <button class="preset-btn active" id="rpSemA" onclick="preset('a','semana',this)">Esta semana</button>
+          <button class="preset-btn" id="rpMesA"  onclick="preset('a','mes',this)">Este mes</button>
+        </div>
+        <input type="date" class="rpt-input" id="rptADesde">
+        <input type="date" class="rpt-input" id="rptAHasta">
+        <select class="rpt-select" id="rptAAgente" style="flex:1;min-width:160px"><option value="">Todos los agentes</option></select>
+      </div>
+      <div class="rpt-info" id="rptAInfo">Selecciona un rango de fechas y descarga.</div>
+    </div>
+
+    <!-- ── SOLICITUDES ───────────────────────────────────── -->
+    <div class="rpt-card">
+      <div class="rpt-header">
+        <div>
+          <div class="rpt-title">Solicitudes</div>
+          <div class="rpt-sub">Permisos y solicitudes de los agentes</div>
+        </div>
+        <button class="btn-download" onclick="descargarSolicitudes()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar CSV
+        </button>
+      </div>
+      <div class="rpt-body">
+        <div class="preset-group">
+          <button class="preset-btn" id="rpHoyS"  onclick="preset('s','hoy',this)">Hoy</button>
+          <button class="preset-btn" id="rpSemS"  onclick="preset('s','semana',this)">Esta semana</button>
+          <button class="preset-btn" id="rpMesS"  onclick="preset('s','mes',this)">Este mes</button>
+        </div>
+        <input type="date" class="rpt-input" id="rptSDesde">
+        <input type="date" class="rpt-input" id="rptSHasta">
+        <select class="rpt-select" id="rptSEstado" style="min-width:140px">
+          <option value="">Todos los estados</option>
+          <option value="aprobada">Aprobadas</option>
+          <option value="rechazada">Rechazadas</option>
+          <option value="pendiente-admin">Pendientes</option>
+        </select>
+        <select class="rpt-select" id="rptSAgente" style="flex:1;min-width:160px"><option value="">Todos los agentes</option></select>
+      </div>
+      <div class="rpt-info" id="rptSInfo">Selecciona un rango de fechas y descarga.</div>
+    </div>
+
+    <!-- ── NÓMINA ─────────────────────────────────────────── -->
+    <div class="rpt-card">
+      <div class="rpt-header">
+        <div>
+          <div class="rpt-title">Nómina de usuarios</div>
+          <div class="rpt-sub">Snapshot del estado actual del equipo</div>
+        </div>
+        <button class="btn-download" onclick="descargarNomina()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar CSV
+        </button>
+      </div>
+      <div class="rpt-body">
+        <select class="rpt-select" id="rptNProy" style="min-width:160px">
+          <option value="">Todos los proyectos</option>
+          <option value="doctorsv">DoctorSV</option>
+          <option value="educacion">Educación</option>
+          <option value="marn">MARN</option>
+          <option value="global">Global</option>
+        </select>
+        <select class="rpt-select" id="rptNRol" style="min-width:140px">
+          <option value="">Todos los roles</option>
+          <option value="agente">Agente</option>
+          <option value="agente-inmersion">Agente Inmersión</option>
+          <option value="supervisor">Supervisor</option>
+          <option value="wfm">WFM</option>
+          <option value="jefe">Jefe</option>
+          <option value="formacion">Formación</option>
+          <option value="admin">Admin</option>
+        </select>
+        <select class="rpt-select" id="rptNEstado" style="min-width:150px">
+          <option value="">Activos e inactivos</option>
+          <option value="activo">Solo activos</option>
+          <option value="inactivo">Solo inactivos</option>
+        </select>
+      </div>
+      <div class="rpt-info" id="rptNInfo">Sin filtros descarga todos los usuarios.</div>
+    </div>
+
+    <!-- ── TURNOS ─────────────────────────────────────────── -->
+    <div class="rpt-card">
+      <div class="rpt-header">
+        <div>
+          <div class="rpt-title">Turnos asignados</div>
+          <div class="rpt-sub">Días laborales y de descanso por agente</div>
+        </div>
+        <button class="btn-download" onclick="descargarTurnos()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Descargar CSV
+        </button>
+      </div>
+      <div class="rpt-body">
+        <div class="preset-group">
+          <button class="preset-btn" id="rpHoyT"  onclick="preset('t','hoy',this)">Hoy</button>
+          <button class="preset-btn" id="rpSemT"  onclick="preset('t','semana',this)">Esta semana</button>
+          <button class="preset-btn" id="rpMesT"  onclick="preset('t','mes',this)">Este mes</button>
+        </div>
+        <input type="date" class="rpt-input" id="rptTDesde">
+        <input type="date" class="rpt-input" id="rptTHasta">
+        <select class="rpt-select" id="rptTAgente" style="flex:1;min-width:160px"><option value="">Todos los agentes</option></select>
+      </div>
+      <div class="rpt-info" id="rptTInfo">Selecciona un rango de fechas y descarga.</div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var db   = firebase.firestore();
+  var auth = firebase.auth();
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  var ROLES_PERMITIDOS = ['jefe','wfm','admin','superadmin'];
+  var usuarios = [];
+
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = BASE + 'login.html'; return; }
+    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
+        auth.signOut(); window.location.href = BASE + 'login.html'; return;
+      }
+      iniciar();
+    });
+  });
+
+  // ── Helpers ───────────────────────────────────────────────────────────────────
+  function pad(n) { return String(n).padStart(2,'0'); }
+  function fmtISO(d) { return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+  function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function diasDesde(f) {
+    if (!f) return 0;
+    var hoy = new Date(); hoy.setHours(0,0,0,0);
+    return Math.floor((hoy - new Date(f+'T00:00:00')) / 86400000);
+  }
+  function nombreDeEmail(email) {
+    var u = usuarios.find(function(x){ return x.email === email; });
+    return u ? u.nombre : '';
+  }
+
+  // ── Iniciar ───────────────────────────────────────────────────────────────────
+  function iniciar() {
+    db.collection('usuarios').orderBy('nombre','asc').get().then(function(snap) {
+      usuarios = [];
+      snap.forEach(function(doc) {
+        var d = doc.data();
+        if (d.rol !== 'superadmin') usuarios.push(Object.assign({ id: doc.id }, d));
+      });
+      // Poblar selectores de agente
+      var opts = usuarios.map(function(u){
+        return '<option value="'+escHtml(u.email)+'">'+escHtml(u.nombre)+'</option>';
+      }).join('');
+      ['rptMAgente','rptAAgente','rptSAgente','rptTAgente'].forEach(function(id) {
+        var el = document.getElementById(id); if (!el) return;
+        el.innerHTML = '<option value="">Todos los agentes</option>' + opts;
+      });
+      // Fechas por defecto: semana actual
+      var hoy  = new Date(), dow = hoy.getDay();
+      var diff = dow === 0 ? -6 : 1 - dow;
+      var lunes   = new Date(hoy); lunes.setDate(hoy.getDate() + diff);
+      var domingo = new Date(lunes); domingo.setDate(lunes.getDate() + 6);
+      ['rptMDesde','rptADesde'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=fmtISO(lunes); });
+      ['rptMHasta','rptAHasta'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=fmtISO(domingo); });
+    });
+  }
+
+  // ── Presets de fecha ──────────────────────────────────────────────────────────
+  var presetIds = {
+    m: ['rpHoyM','rpSemM','rpMesM'],
+    a: ['rpHoyA','rpSemA','rpMesA'],
+    s: ['rpHoyS','rpSemS','rpMesS'],
+    t: ['rpHoyT','rpSemT','rpMesT']
+  };
+
+  function preset(tipo, p, btn) {
+    var hoy   = new Date(), dow = hoy.getDay();
+    var desde = new Date(hoy), hasta = new Date(hoy);
+    if (p === 'semana') {
+      var diff = dow === 0 ? -6 : 1 - dow;
+      desde.setDate(hoy.getDate() + diff);
+      hasta = new Date(desde); hasta.setDate(desde.getDate() + 6);
+    } else if (p === 'mes') {
+      desde = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+      hasta = new Date(hoy.getFullYear(), hoy.getMonth()+1, 0);
+    }
+    var pfx = tipo.toUpperCase();
+    var el1 = document.getElementById('rpt'+pfx+'Desde'); if (el1) el1.value = fmtISO(desde);
+    var el2 = document.getElementById('rpt'+pfx+'Hasta'); if (el2) el2.value = fmtISO(hasta);
+    (presetIds[tipo]||[]).forEach(function(id) {
+      var el = document.getElementById(id); if (!el) return;
+      el.classList.toggle('active', el === btn);
+    });
+  }
+
+  // ── CSV builder ───────────────────────────────────────────────────────────────
+  function exportCSV(rows, filename) {
+    var csv = rows.map(function(r) {
+      return r.map(function(v) {
+        var s = String(v == null ? '' : v);
+        if (s.indexOf(',') > -1 || s.indexOf('"') > -1 || s.indexOf('\n') > -1)
+          s = '"' + s.replace(/"/g,'""') + '"';
+        return s;
+      }).join(',');
+    }).join('\r\n');
+    var blob = new Blob(['﻿'+csv], { type:'text/csv;charset=utf-8;' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a'); a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function setInfo(id, msg, cls) {
+    var el = document.getElementById(id); if (!el) return;
+    el.textContent = msg;
+    el.className = 'rpt-info' + (cls ? ' ' + cls : '');
+  }
+
+  // ── Descarga marcajes / auxiliares ────────────────────────────────────────────
+  function descargar(tipo) {
+    var pfx    = tipo === 'marcajes' ? 'M' : 'A';
+    var desde  = document.getElementById('rpt'+pfx+'Desde').value;
+    var hasta  = document.getElementById('rpt'+pfx+'Hasta').value;
+    var agente = document.getElementById('rpt'+pfx+'Agente').value;
+    var infoId = 'rpt'+pfx+'Info';
+    if (!desde || !hasta) { showToast('Selecciona el rango de fechas.'); return; }
+    if (desde > hasta)    { showToast('"Desde" debe ser anterior a "hasta".'); return; }
+    setInfo(infoId, 'Cargando…');
+    var desdeTs = firebase.firestore.Timestamp.fromDate(new Date(desde+'T00:00:00'));
+    var hastaTs = firebase.firestore.Timestamp.fromDate(new Date(hasta+'T23:59:59'));
+    db.collection(tipo)
+      .where('timestamp','>=',desdeTs)
+      .where('timestamp','<=',hastaTs)
+      .orderBy('timestamp')
+      .get()
+      .then(function(snap) {
+        var rows = [];
+        snap.forEach(function(doc) {
+          var d = doc.data();
+          if (agente && d.email !== agente) return;
+          if (tipo === 'marcajes') {
+            rows.push([d.fecha||'', nombreDeEmail(d.email)||d.email||'', d.email||'', d.tipo||'', d.hora||'']);
+          } else {
+            rows.push([d.fecha||'', nombreDeEmail(d.email)||d.email||'', d.email||'', d.auxiliar||'', d.inicio||'', d.fin||'', d.duracion_seg ? Math.round(d.duracion_seg/60) : '']);
+          }
+        });
+        var n = rows.length;
+        setInfo(infoId, n + ' registro' + (n===1?'':'s') + ' encontrado' + (n===1?'':'s'), n ? 'info-ok' : 'info-warn');
+        if (!n) { showToast('No hay registros en ese rango.'); return; }
+        var headers = tipo === 'marcajes'
+          ? ['Fecha','Agente','Email','Tipo','Hora']
+          : ['Fecha','Agente','Email','Auxiliar','Inicio','Fin','Duración (min)'];
+        exportCSV([headers].concat(rows), tipo+'_'+desde+'_'+hasta+'.csv');
+      })
+      .catch(function(e) { setInfo(infoId, 'Error al cargar datos.', 'info-err'); showToast('Error: '+e.message); });
+  }
+
+  // ── Descarga solicitudes ──────────────────────────────────────────────────────
+  function descargarSolicitudes() {
+    var desde  = document.getElementById('rptSDesde').value;
+    var hasta  = document.getElementById('rptSHasta').value;
+    var agente = document.getElementById('rptSAgente').value;
+    var estado = document.getElementById('rptSEstado').value;
+    if (!desde || !hasta) { showToast('Selecciona el rango de fechas.'); return; }
+    if (desde > hasta)    { showToast('"Desde" debe ser anterior a "hasta".'); return; }
+    setInfo('rptSInfo', 'Cargando…');
+    var desdeTs = firebase.firestore.Timestamp.fromDate(new Date(desde+'T00:00:00'));
+    var hastaTs = firebase.firestore.Timestamp.fromDate(new Date(hasta+'T23:59:59'));
+    db.collection('solicitudes')
+      .where('fechaCreacion','>=',desdeTs)
+      .where('fechaCreacion','<=',hastaTs)
+      .orderBy('fechaCreacion')
+      .get()
+      .then(function(snap) {
+        var rows = [];
+        snap.forEach(function(doc) {
+          var d = doc.data();
+          if (agente && d.agenteEmail !== agente) return;
+          if (estado && d.estado !== estado) return;
+          var fCreacion = d.fechaCreacion ? new Date(d.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
+          var fResol    = d.fechaActualizacion ? new Date(d.fechaActualizacion.seconds*1000).toLocaleDateString('es-SV') : '';
+          rows.push([fCreacion, d.agenteNombre||'', d.agenteEmail||'', d.tipo||'', d.fechaInicio||'', d.fechaFin||'', d.horaInicio||'', d.horaFin||'', d.comentarios||'', d.estado||'', d.notaRechazo||'', fResol]);
+        });
+        var n = rows.length;
+        setInfo('rptSInfo', n + ' registro' + (n===1?'':'s') + ' encontrado' + (n===1?'':'s'), n ? 'info-ok' : 'info-warn');
+        if (!n) { showToast('No hay registros en ese rango.'); return; }
+        exportCSV([['Fecha solicitud','Agente','Email','Tipo','Fecha inicio','Fecha fin','Hora inicio','Hora fin','Comentarios','Estado','Nota rechazo','Fecha resolución']].concat(rows), 'solicitudes_'+desde+'_'+hasta+'.csv');
+      })
+      .catch(function(e) { setInfo('rptSInfo','Error al cargar datos.','info-err'); showToast('Error: '+e.message); });
+  }
+
+  // ── Descarga nómina ───────────────────────────────────────────────────────────
+  function descargarNomina() {
+    var proy   = document.getElementById('rptNProy').value;
+    var rol    = document.getElementById('rptNRol').value;
+    var estado = document.getElementById('rptNEstado').value;
+    var lista  = usuarios.filter(function(u) {
+      if (proy   && u.proyecto !== proy)              return false;
+      if (rol    && u.rol !== rol)                    return false;
+      if (estado === 'activo'   && !u.activo)         return false;
+      if (estado === 'inactivo' &&  u.activo)         return false;
+      return true;
+    });
+    var n = lista.length;
+    setInfo('rptNInfo', n + ' usuario' + (n===1?'':'s'), n ? 'info-ok' : 'info-warn');
+    if (!n) { showToast('No hay usuarios con esos filtros.'); return; }
+    var rows = lista.map(function(u) {
+      return [u.nombre||'', u.email||'', u.documento||'', u.cargo||'', u.proyecto||'', u.rol||'', u.canal||'', u.supervisor||'', u.fechaIngreso||'', diasDesde(u.fechaIngreso), u.vehiculo?'Sí':'No', u.activo?'Activo':'Inactivo'];
+    });
+    exportCSV([['Nombre','Email','Documento','Cargo','Proyecto','Rol','Canal','Supervisor','Fecha ingreso','Antigüedad (días)','Vehículo','Estado']].concat(rows), 'nomina.csv');
+  }
+
+  // ── Descarga turnos ───────────────────────────────────────────────────────────
+  function descargarTurnos() {
+    var desde  = document.getElementById('rptTDesde').value;
+    var hasta  = document.getElementById('rptTHasta').value;
+    var agente = document.getElementById('rptTAgente').value;
+    if (!desde || !hasta) { showToast('Selecciona el rango de fechas.'); return; }
+    if (desde > hasta)    { showToast('"Desde" debe ser anterior a "hasta".'); return; }
+    setInfo('rptTInfo', 'Cargando…');
+    var p;
+    if (agente) {
+      var uFilt = usuarios.find(function(x){ return x.email === agente; });
+      if (!uFilt) { showToast('Agente no encontrado.'); return; }
+      p = db.collection('turnos').doc(uFilt.id).get().then(function(doc){ return doc.exists ? [doc] : []; });
+    } else {
+      p = db.collection('turnos').get().then(function(snap){ var arr=[]; snap.forEach(function(d){arr.push(d);}); return arr; });
+    }
+    p.then(function(docs) {
+      var rows = [];
+      docs.forEach(function(doc) {
+        var d = doc.data(); if (!d.dias) return;
+        var u = usuarios.find(function(x){ return x.id === doc.id; }) || {};
+        Object.keys(d.dias).sort().forEach(function(fecha) {
+          if (fecha < desde || fecha > hasta) return;
+          rows.push([fecha, u.nombre||doc.id, u.email||'', d.nombre||'', d.horario||'', d.dias[fecha]||'']);
+        });
+      });
+      rows.sort(function(a,b){ return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0; });
+      var n = rows.length;
+      setInfo('rptTInfo', n + ' registro' + (n===1?'':'s') + ' encontrado' + (n===1?'':'s'), n ? 'info-ok' : 'info-warn');
+      if (!n) { showToast('No hay registros en ese rango.'); return; }
+      exportCSV([['Fecha','Agente','Email','Plantilla','Horario','Estado']].concat(rows), 'turnos_'+desde+'_'+hasta+'.csv');
+    }).catch(function(e) { setInfo('rptTInfo','Error al cargar datos.','info-err'); showToast('Error: '+e.message); });
+  }
+
+  // ── Toast ─────────────────────────────────────────────────────────────────────
+  var _toastTimer = null;
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
+</script>
+<script src="notif.js"></script>
+<script src="sidebar.js"></script>
+<script>
+  initSidebar();
+  initNotif(db, auth);
+</script>
+</body>
+</html>
