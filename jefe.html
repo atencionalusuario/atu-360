@@ -1419,10 +1419,10 @@
       return;
     }
     // --- edición ---
-    var uid = editUid;
-    db.collection('usuarios').doc(uid).update(datos)
-      .then(function(){ cerrarForm(); cargarUsuarios(); showToast('Usuario actualizado.'); })
-      .catch(function(e){ btnG.disabled=false; btnG.textContent='Guardar cambios'; showToast('Error: '+e.message); });
+    datos.fechaActualizacion = firebase.firestore.FieldValue.serverTimestamp();
+    db.collection('usuarios').doc(usuarioSeleccionado).update(datos)
+      .then(function(){ cerrarModalForm(); showToast('Cambios guardados.'); })
+      .catch(function(e){ btnG.disabled=false; btnG.textContent='Guardar cambios'; showToast('Error al guardar: '+e.message); console.error(e); });
   }
 
   function crearUsuarioAuth(email, datos, btnG) {
