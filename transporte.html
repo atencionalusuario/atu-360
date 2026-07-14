@@ -448,6 +448,11 @@
 
   function renderLista(items) {
     var el = document.getElementById('tpLista');
+    var hoyStr = new Date().toISOString().slice(0, 10);
+    items = items.filter(function(r) {
+      if (!r.fechas || r.fechas.length === 0) return true;
+      return r.fechas.some(function(f) { return f >= hoyStr; });
+    });
     if (items.length === 0) { el.innerHTML = '<div class="tp-empty">Sin reservas aún</div>'; return; }
     var html = '';
     items.forEach(function(r) {
