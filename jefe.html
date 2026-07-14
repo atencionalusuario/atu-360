@@ -1257,7 +1257,7 @@
     var el=document.getElementById('dpAsignaciones'); if(!el) return;
     var uid=escHtml(u.id);
     var supOpts='<option value="">— Sin supervisor —</option>'
-      +usuarios.filter(function(x){return x.rol==='supervisor';})
+      +usuarios.filter(function(x){return x.rol==='supervisor'||x.rol==='jefe';})
         .map(function(s){return '<option value="'+escHtml(s.id)+'"'+(u.emailSupervisor===s.email?' selected':'')+'>'+escHtml(s.nombre)+'</option>';}).join('');
     var ptOpts='<option value="">— Selecciona plantilla —</option>'
       +turnoPtList.map(function(p){return '<option value="'+escHtml(p.id)+'">'+escHtml(p.nombre)+'</option>';}).join('');
@@ -1535,7 +1535,7 @@
   }
 
   function g(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
-  function supervisores(){ return usuarios.filter(function(u){ return u.rol==='supervisor'; }); }
+  function supervisores(){ return usuarios.filter(function(u){ return u.rol==='supervisor' || u.rol==='jefe'; }); }
   function supNombre(){ var id=g('fSupervisor'); var s=usuarios.find(function(u){return u.id===id;}); return s?s.nombre||'':''; }
   function supEmail() { var id=g('fSupervisor'); var s=usuarios.find(function(u){return u.id===id;}); return s?s.email||'':''; }
 
