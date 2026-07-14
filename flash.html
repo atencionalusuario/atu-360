@@ -64,6 +64,28 @@
   .loading { text-align: center; padding: 32px; font-size: 0.8rem; color: #94A3B8; }
   .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #E2E8F0; border-top-color: #1A3DAA; border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 8px; }
   @keyframes spin { to { transform: rotate(360deg); } }
+  .btn-nuevo { display: none; align-items: center; gap: 6px; padding: 8px 16px; background: #1A3DAA; color: white; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+  .btn-nuevo:hover { opacity: 0.88; }
+  .btn-nuevo.visible { display: flex; }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: white; border-radius: 14px; width: 100%; max-width: 560px; box-shadow: 0 24px 60px rgba(0,0,0,0.18); overflow: hidden; }
+  .modal-head { padding: 22px 28px 18px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; }
+  .modal-head h3 { font-size: 1rem; font-weight: 700; color: #1E293B; }
+  .modal-close { background: none; border: none; cursor: pointer; color: #94A3B8; padding: 4px; display: flex; align-items: center; }
+  .modal-close:hover { color: #1E293B; }
+  .modal-body { padding: 24px 28px; display: flex; flex-direction: column; gap: 16px; }
+  .modal-body label { font-size: 0.75rem; font-weight: 600; color: #64748B; display: block; margin-bottom: 5px; }
+  .modal-body input[type="text"], .modal-body select, .modal-body textarea { width: 100%; padding: 10px 13px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.85rem; font-family: inherit; color: #1E293B; background: #F8FAFC; outline: none; transition: border 0.2s; }
+  .modal-body input[type="text"]:focus, .modal-body select:focus, .modal-body textarea:focus { border-color: #1A3DAA; background: white; }
+  .modal-body textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+  .modal-foot { padding: 16px 28px; border-top: 1px solid #F1F5F9; display: flex; justify-content: flex-end; gap: 10px; }
+  .btn-cancel { padding: 9px 18px; background: #F1F5F9; color: #64748B; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-cancel:hover { background: #E2E8F0; }
+  .btn-pub { padding: 9px 18px; background: #1A3DAA; color: white; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+  .btn-pub:hover { opacity: 0.88; }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
 </style>
 </head>
 <body>
@@ -79,6 +101,10 @@
     </div>
     <div class="topbar-right">
       <div class="tb-clock" id="clock">--:--:--</div>
+      <button class="btn-nuevo" id="btnNuevo" onclick="abrirModal()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nueva publicación
+      </button>
     </div>
   </div>
 
@@ -86,6 +112,40 @@
     <div id="postsList"><div class="loading"><div class="spinner"></div><br>Cargando publicaciones...</div></div>
   </div>
 </div>
+
+<!-- Modal nueva publicación -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Nueva publicación</h3>
+      <button class="modal-close" onclick="cerrarModal()"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <label>Título *</label>
+        <input type="text" id="mTitulo" placeholder="Escribe el título...">
+      </div>
+      <div>
+        <label>Categoría *</label>
+        <select id="mCat">
+          <option value="actualizacion">Actualización</option>
+          <option value="noticia">Noticia</option>
+          <option value="cambio">Cambio</option>
+          <option value="urgente">Urgente</option>
+        </select>
+      </div>
+      <div>
+        <label>Contenido *</label>
+        <textarea id="mContenido" placeholder="Escribe el contenido..."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-pub" id="btnPublicar" onclick="publicar()">Publicar ahora</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -111,13 +171,65 @@
   setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
 
+  var rolUsuario = null;
+
   // Auth
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = 'login.html'; return; }
     currentUser = user;
+    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      rolUsuario = doc.exists ? doc.data().rol : null;
+      if (rolUsuario === 'jefe' || rolUsuario === 'superadmin') {
+        document.getElementById('btnNuevo').classList.add('visible');
+      }
+    });
     cargarPosts();
     cargarMisLecturas();
   });
+
+  function abrirModal() {
+    document.getElementById('mTitulo').value = '';
+    document.getElementById('mCat').value = 'actualizacion';
+    document.getElementById('mContenido').value = '';
+    document.getElementById('modalOverlay').classList.add('show');
+    document.getElementById('mTitulo').focus();
+  }
+
+  function cerrarModal() {
+    document.getElementById('modalOverlay').classList.remove('show');
+  }
+
+  function publicar() {
+    var titulo    = document.getElementById('mTitulo').value.trim();
+    var cat       = document.getElementById('mCat').value;
+    var contenido = document.getElementById('mContenido').value.trim();
+    if (!titulo || !contenido) { showToast('Completa el título y el contenido.'); return; }
+    var btn = document.getElementById('btnPublicar');
+    btn.disabled = true; btn.textContent = 'Publicando...';
+    db.collection('flash_posts').add({
+      titulo:             titulo,
+      categoria:          cat,
+      contenido:          contenido,
+      estado:             'publicado',
+      autorUid:           currentUser.uid,
+      autorNombre:        currentUser.email.split('@')[0],
+      fechaCreacion:      firebase.firestore.FieldValue.serverTimestamp(),
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function() {
+      cerrarModal();
+      showToast('Publicado correctamente.');
+    }).catch(function(e) {
+      showToast('Error al publicar.');
+      console.error(e);
+    }).finally(function() {
+      btn.disabled = false; btn.textContent = 'Publicar ahora';
+    });
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
 
   // Cargar lecturas previas (no bloquea los posts)
   function cargarMisLecturas() {
