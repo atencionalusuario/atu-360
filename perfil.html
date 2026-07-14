@@ -39,11 +39,15 @@
   .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
   .photo-info { font-size: 0.78rem; color: #64748B; line-height: 1.6; }
   .photo-info strong { display: block; font-size: 0.83rem; color: #1E293B; margin-bottom: 2px; }
-  .file-input-wrap { position: relative; }
-  .file-input-wrap input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-  .btn-file { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; background: #F1F5F9; color: #374151; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
-  .btn-file:hover { background: #E2E8F0; }
-  .file-name { font-size: 0.75rem; color: #64748B; margin-top: 6px; }
+  .btn-camara { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; background: #F1F5F9; color: #374151; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+  .btn-camara:hover { background: #E2E8F0; }
+  .cam-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; align-items: center; justify-content: center; flex-direction: column; gap: 20px; }
+  .cam-overlay.show { display: flex; }
+  .cam-video { width: 320px; height: 320px; object-fit: cover; border-radius: 50%; border: 4px solid white; background: #000; }
+  .cam-canvas { display: none; }
+  .cam-actions { display: flex; gap: 12px; }
+  .btn-capturar { padding: 12px 28px; background: white; color: #1A3DAA; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-cam-cancel { padding: 12px 20px; background: rgba(255,255,255,0.15); color: white; border: 1.5px solid rgba(255,255,255,0.3); border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: inherit; }
   .msg-ok  { font-size: 0.78rem; color: #16A34A; font-weight: 600; margin-top: 10px; display: none; }
   .msg-err { font-size: 0.78rem; color: #DC2626; font-weight: 600; margin-top: 10px; display: none; }
   .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
@@ -75,18 +79,14 @@
         <div class="photo-preview" id="photoPreview"><span id="photoInitials">--</span></div>
         <div class="photo-info">
           <strong id="photoName">Cargando...</strong>
-          <span>JPG o PNG · máximo 2 MB</span>
+          <span>La foto se toma con tu cámara</span>
         </div>
       </div>
-      <div class="file-input-wrap">
-        <div class="btn-file">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          Seleccionar foto
-        </div>
-        <input type="file" id="fotoInput" accept="image/jpeg,image/png" onchange="previsualizarFoto(this)">
-      </div>
-      <div class="file-name" id="fotoNombre"></div>
-      <div style="margin-top:16px">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button class="btn-camara" onclick="abrirCamara()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Tomar foto
+        </button>
         <button class="btn-save" id="btnFoto" onclick="subirFoto()" disabled>Guardar foto</button>
       </div>
       <div class="msg-ok"  id="fotoOk">Foto actualizada correctamente.</div>
@@ -155,6 +155,19 @@
   </div>
 </div>
 
+<!-- Overlay cámara -->
+<div class="cam-overlay" id="camOverlay">
+  <video class="cam-video" id="camVideo" autoplay playsinline muted></video>
+  <canvas class="cam-canvas" id="camCanvas"></canvas>
+  <div class="cam-actions">
+    <button class="btn-capturar" onclick="capturarFoto()">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="display:inline;vertical-align:middle;margin-right:6px"><circle cx="12" cy="12" r="10"/></svg>
+      Capturar
+    </button>
+    <button class="btn-cam-cancel" onclick="cerrarCamara()">Cancelar</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -175,7 +188,8 @@
   var storage = firebase.storage();
 
   var currentUser = null;
-  var fotoArchivo = null;
+  var fotoBlob = null;
+  var streamActivo = null;
 
   setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
@@ -203,34 +217,52 @@
     });
   });
 
-  // ===== FOTO =====
-  function previsualizarFoto(input) {
-    if (!input.files || !input.files[0]) return;
-    var f = input.files[0];
-    if (f.size > 2 * 1024 * 1024) {
-      mostrarMsg('fotoErr', 'La imagen supera los 2 MB.');
-      input.value = ''; fotoArchivo = null;
-      document.getElementById('btnFoto').disabled = true;
-      return;
-    }
-    fotoArchivo = f;
-    document.getElementById('fotoNombre').textContent = f.name;
-    document.getElementById('btnFoto').disabled = false;
+  // ===== CÁMARA =====
+  function abrirCamara() {
     ocultarMsgs('foto');
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      document.getElementById('photoPreview').innerHTML = '<img src="'+e.target.result+'" alt="foto">';
-    };
-    reader.readAsDataURL(f);
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+      .then(function(stream) {
+        streamActivo = stream;
+        var video = document.getElementById('camVideo');
+        video.srcObject = stream;
+        document.getElementById('camOverlay').classList.add('show');
+      })
+      .catch(function(e) {
+        mostrarMsg('fotoErr', 'No se pudo acceder a la cámara: ' + e.message);
+      });
+  }
+
+  function cerrarCamara() {
+    if (streamActivo) { streamActivo.getTracks().forEach(function(t){ t.stop(); }); streamActivo = null; }
+    document.getElementById('camOverlay').classList.remove('show');
+  }
+
+  function capturarFoto() {
+    var video  = document.getElementById('camVideo');
+    var canvas = document.getElementById('camCanvas');
+    var size = 400;
+    canvas.width = size; canvas.height = size;
+    var ctx = canvas.getContext('2d');
+    var vw = video.videoWidth, vh = video.videoHeight;
+    var side = Math.min(vw, vh);
+    var sx = (vw - side) / 2, sy = (vh - side) / 2;
+    ctx.drawImage(video, sx, sy, side, side, 0, 0, size, size);
+    canvas.toBlob(function(blob) {
+      fotoBlob = blob;
+      var url = URL.createObjectURL(blob);
+      document.getElementById('photoPreview').innerHTML = '<img src="'+url+'" alt="foto">';
+      document.getElementById('btnFoto').disabled = false;
+      cerrarCamara();
+    }, 'image/jpeg', 0.9);
   }
 
   function subirFoto() {
-    if (!fotoArchivo || !currentUser) return;
+    if (!fotoBlob || !currentUser) return;
     var btn = document.getElementById('btnFoto');
     btn.disabled = true; btn.textContent = 'Subiendo...';
     ocultarMsgs('foto');
     var ref = storage.ref('profile-photos/' + currentUser.uid);
-    ref.put(fotoArchivo).then(function() {
+    ref.put(fotoBlob).then(function() {
       return ref.getDownloadURL();
     }).then(function(url) {
       return db.collection('usuarios').doc(currentUser.uid).update({ fotoPerfil: url });
