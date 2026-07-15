@@ -195,60 +195,15 @@
         </div>
       </div>
 
-      <!-- CONTROLES -->
-      <div class="controles">
-        <input class="ctrl-input" id="busqueda" placeholder="Buscar nombre, email, cargo..." oninput="aplicarFiltros()">
-        <select class="ctrl-select" id="filtroProyecto" onchange="aplicarFiltros()">
-          <option value="">Todos los proyectos</option>
-          <option value="doctorsv">DoctorSV</option>
-          <option value="educacion">Educación</option>
-          <option value="marn">MARN</option>
-          <option value="global">Global</option>
-        </select>
-        <select class="ctrl-select" id="filtroRol" onchange="aplicarFiltros()">
-          <option value="">Todos los roles</option>
-          <option value="agente">Agente</option>
-          <option value="agente-inmersion">Agente Inmersión</option>
-          <option value="supervisor">Supervisor</option>
-          <option value="formacion">Formación</option>
-          <option value="admin">Admin</option>
-          <option value="jefe">Jefe</option>
-          <option value="wfm">WFM</option>
-        </select>
-        <select class="ctrl-select" id="filtroEstado" onchange="aplicarFiltros()">
-          <option value="">Todos</option>
-          <option value="activo">Activos</option>
-          <option value="inactivo">Inactivos</option>
-        </select>
-        <div class="ctrl-sep"></div>
-        <div class="sort-group">
-          <span class="sort-label">Ordenar por</span>
-          <select class="ctrl-select" id="sort1" onchange="aplicarFiltros()">
-            <option value="nombre">Nombre</option>
-            <option value="proyecto">Proyecto</option>
-            <option value="rol">Rol</option>
-            <option value="cargo">Cargo</option>
-            <option value="fechaIngreso">Fecha ingreso</option>
-            <option value="antiguedad">Antigüedad</option>
-            <option value="estado">Estado</option>
-          </select>
-          <button class="btn-dir asc" id="btnDir1" onclick="toggleDir(1)"></button>
-        </div>
-        <div class="sort-group">
-          <span class="sort-label">Luego por</span>
-          <select class="ctrl-select" id="sort2" onchange="aplicarFiltros()">
-            <option value="">— ninguno —</option>
-            <option value="nombre">Nombre</option>
-            <option value="proyecto">Proyecto</option>
-            <option value="rol">Rol</option>
-            <option value="cargo">Cargo</option>
-            <option value="fechaIngreso">Fecha ingreso</option>
-            <option value="antiguedad">Antigüedad</option>
-            <option value="estado">Estado</option>
-          </select>
-          <button class="btn-dir asc" id="btnDir2" onclick="toggleDir(2)"></button>
-        </div>
-      </div>
+      <!-- inputs ocultos para mantener compatibilidad con aplicarFiltros() -->
+      <input type="hidden" id="busqueda" value="">
+      <select id="filtroProyecto" style="display:none"><option value=""></option></select>
+      <select id="filtroRol" style="display:none"><option value=""></option></select>
+      <select id="filtroEstado" style="display:none"><option value=""></option></select>
+      <select id="sort1" style="display:none"><option value="nombre">Nombre</option></select>
+      <select id="sort2" style="display:none"><option value=""></option></select>
+      <button id="btnDir1" class="btn-dir asc" style="display:none"></button>
+      <button id="btnDir2" class="btn-dir asc" style="display:none"></button>
 
       <!-- TABLA -->
       <div class="tabla-wrap">
