@@ -65,7 +65,7 @@
   tbody tr:last-child  { border-bottom: none; }
   tbody tr:hover       { background: #F8FAFC; }
   tbody tr.selected    { background: #EEF2FF; }
-  tbody tr.inactivo td { opacity: 0.5; }
+  tbody tr.inactivo td { opacity: 1; }
   td              { padding: 10px 14px; color: #374151; vertical-align: middle; }
   .td-user        { display: flex; align-items: center; gap: 9px; }
   .td-avatar      { width: 28px; height: 28px; border-radius: 50%; background: #1A3DAA; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; color: white; font-weight: 700; flex-shrink: 0; }
@@ -222,7 +222,7 @@
       <input type="hidden" id="busqueda" value="">
       <select id="filtroProyecto" style="display:none"><option value=""></option></select>
       <select id="filtroRol" style="display:none"><option value=""></option></select>
-      <select id="filtroEstado" style="display:none"><option value="activo">Activos</option></select>
+      <select id="filtroEstado" style="display:none"><option value="activo">Activos</option><option value="inactivo">Inactivos</option></select>
       <select id="sort1" style="display:none"><option value="nombre">Nombre</option></select>
       <select id="sort2" style="display:none"><option value=""></option></select>
       <button id="btnDir1" class="btn-dir asc" style="display:none"></button>
