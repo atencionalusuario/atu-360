@@ -132,7 +132,7 @@ function renderSidebar(paginaActiva, rol) {
   var html = ''
     + '<div class="sb-brand">'
     + '<div class="sb-name">ATU <span>360</span></div>'
-    + '<div class="sb-tagline">by DoctorSV</div>'
+    + '<div class="sb-tagline">Atención de calidad</div>'
     + '</div>'
     + '<div class="sb-nav">'
     + navHtml
