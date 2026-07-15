@@ -171,7 +171,9 @@
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
-      if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
+      var rol = doc.exists ? doc.data().rol : null;
+      console.log('[metricas] uid:', user.uid, '| doc.exists:', doc.exists, '| rol:', rol);
+      if (!doc.exists || !ROLES_PERMITIDOS.includes(rol)) {
         auth.signOut(); window.location.href = BASE + 'login.html'; return;
       }
       construirTabs();
