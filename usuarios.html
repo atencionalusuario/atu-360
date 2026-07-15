@@ -15,7 +15,7 @@
   .table-area  { flex: 1; display: flex; flex-direction: column; overflow: hidden; padding: 20px 24px; gap: 14px; min-width: 0; }
 
   /* STATS */
-  .stats-row       { display: flex; gap: 10px; flex-shrink: 0; }
+  .stats-row       { display: flex; gap: 10px; flex-shrink: 0; align-items: center; justify-content: space-between; }
   .stat-chip       { background: white; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
   .stat-chip-val   { font-size: 1.3rem; font-weight: 800; color: #1A3DAA; line-height: 1; }
   .stat-chip-label { font-size: 0.68rem; color: #94A3B8; font-weight: 500; }
@@ -163,10 +163,6 @@
       <p class="tb-page-sub" id="totalLabel">—</p>
     </div>
     <div class="topbar-right">
-      <div class="tb-search">
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Buscar usuario..." oninput="document.getElementById('busqueda').value=this.value;aplicarFiltros()">
-      </div>
       <div class="tb-clock" id="clock">--:--:--</div>
       <button class="btn-accion" onclick="descargarPlantilla()">
         <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -190,17 +186,23 @@
 
       <!-- STATS -->
       <div class="stats-row">
-        <div class="stat-chip">
-          <div class="stat-chip-val" id="statTotal">—</div>
-          <div class="stat-chip-label">Total usuarios</div>
+        <div style="display:flex;gap:10px;">
+          <div class="stat-chip">
+            <div class="stat-chip-val" id="statTotal">—</div>
+            <div class="stat-chip-label">Total usuarios</div>
+          </div>
+          <div class="stat-chip activos">
+            <div class="stat-chip-val" id="statActivos">—</div>
+            <div class="stat-chip-label">Activos</div>
+          </div>
+          <div class="stat-chip inactivos">
+            <div class="stat-chip-val" id="statInactivos">—</div>
+            <div class="stat-chip-label">Inactivos</div>
+          </div>
         </div>
-        <div class="stat-chip activos">
-          <div class="stat-chip-val" id="statActivos">—</div>
-          <div class="stat-chip-label">Activos</div>
-        </div>
-        <div class="stat-chip inactivos">
-          <div class="stat-chip-val" id="statInactivos">—</div>
-          <div class="stat-chip-label">Inactivos</div>
+        <div class="tb-search">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Buscar usuario..." oninput="document.getElementById('busqueda').value=this.value;aplicarFiltros()">
         </div>
       </div>
 
