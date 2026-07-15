@@ -93,7 +93,8 @@
   .detail-panel.open { width: 380px; }
   .dp-header         { padding: 18px 20px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; flex-shrink: 0; }
   .dp-header-info    { display: flex; align-items: center; gap: 10px; }
-  .dp-avatar         { width: 40px; height: 40px; border-radius: 50%; background: #1A3DAA; display: flex; align-items: center; justify-content: center; font-size: 0.82rem; color: white; font-weight: 700; flex-shrink: 0; }
+  .dp-avatar         { width: 40px; height: 40px; border-radius: 50%; background: #1A3DAA; display: flex; align-items: center; justify-content: center; font-size: 0.82rem; color: white; font-weight: 700; flex-shrink: 0; overflow: hidden; }
+  .dp-avatar img     { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
   .dp-nombre         { font-size: 0.88rem; font-weight: 700; color: #1E293B; }
   .dp-sub            { font-size: 0.68rem; color: #94A3B8; margin-top: 3px; display: flex; gap: 4px; flex-wrap: wrap; }
   .btn-close         { width: 28px; height: 28px; border: none; background: #F1F5F9; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #64748B; flex-shrink: 0; }
@@ -587,7 +588,9 @@
 
   function abrirPanel(u){
     var dias=diasDesde(u.fechaIngreso);
-    document.getElementById('dpAvatar').textContent=iniciales(u.nombre);
+    var avEl = document.getElementById('dpAvatar');
+    if (u.fotoPerfil) { avEl.innerHTML = '<img src="'+u.fotoPerfil+'" alt="foto">'; }
+    else { avEl.textContent = iniciales(u.nombre); }
     document.getElementById('dpNombre').textContent=u.nombre;
     document.getElementById('dpSub').innerHTML=
       '<span class="tag '+u.rol+'">'+(LABELS_ROL[u.rol]||u.rol)+'</span>'

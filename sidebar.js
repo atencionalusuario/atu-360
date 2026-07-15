@@ -252,7 +252,12 @@ function initSidebar() {
       var nombre = (doc.exists && doc.data().nombre) ? doc.data().nombre : user.email.split('@')[0];
       renderSidebar(paginaActiva, rol);
       document.getElementById('sbName').textContent   = nombre;
-      document.getElementById('sbAvatar').textContent = nombre.substring(0, 2).toUpperCase();
+      var sbAv = document.getElementById('sbAvatar');
+      if (doc.exists && doc.data().fotoPerfil) {
+        sbAv.innerHTML = '<img src="'+doc.data().fotoPerfil+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="foto">';
+      } else {
+        sbAv.textContent = nombre.substring(0, 2).toUpperCase();
+      }
       var rolEl = document.querySelector('.sb-user-role');
       if (rolEl) rolEl.textContent = LABELS_ROL[rol] || 'Agente';
       var conBadges = ['agente', 'supervisor', 'formacion'].indexOf(rol) > -1;
