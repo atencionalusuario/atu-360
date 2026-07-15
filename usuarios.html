@@ -140,6 +140,15 @@
   /* MODAL CONFIRMACIÓN */
   .confirm-modal  { background: white; border-radius: 12px; padding: 28px; width: 360px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
   .confirm-title  { font-size: 0.92rem; font-weight: 700; color: #1E293B; margin-bottom: 8px; }
+  .desact-modal   { background: white; border-radius: 14px; width: 100%; max-width: 460px; box-shadow: 0 24px 60px rgba(0,0,0,0.18); overflow: hidden; }
+  .desact-head    { padding: 20px 24px 16px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; }
+  .desact-head h3 { font-size: 0.95rem; font-weight: 700; color: #1E293B; }
+  .desact-body    { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .desact-body label { font-size: 0.72rem; font-weight: 600; color: #64748B; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .desact-body select, .desact-body textarea { width: 100%; padding: 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.83rem; font-family: inherit; color: #1E293B; background: #F8FAFC; outline: none; transition: border-color 0.2s; }
+  .desact-body select:focus, .desact-body textarea:focus { border-color: #1A3DAA; background: white; }
+  .desact-body textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+  .desact-foot    { padding: 14px 24px; border-top: 1px solid #F1F5F9; display: flex; justify-content: flex-end; gap: 10px; }
   .confirm-sub    { font-size: 0.8rem; color: #64748B; line-height: 1.6; margin-bottom: 20px; }
   .confirm-btns   { display: flex; gap: 8px; justify-content: flex-end; }
 
@@ -303,6 +312,35 @@
     <div class="confirm-btns">
       <button class="btn-sec"    style="flex:unset;padding:9px 18px" onclick="cerrarConfirm()">Cancelar</button>
       <button class="btn-danger" style="flex:unset;padding:9px 18px" id="confirmBtn">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal desactivación -->
+<div class="modal-overlay" id="modalDesact">
+  <div class="desact-modal">
+    <div class="desact-head">
+      <h3>Desactivar usuario</h3>
+      <button class="modal-close" onclick="cerrarDesact()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="desact-body">
+      <div id="desactNombreWrap" style="font-size:0.82rem;color:#475569;padding:8px 12px;background:#F8FAFC;border-radius:8px;border:1px solid #E2E8F0;"></div>
+      <div>
+        <label>Razón de salida</label>
+        <select id="desactRazon">
+          <option value="">— Selecciona —</option>
+          <option value="despido">Despido</option>
+          <option value="renuncia">Renuncia</option>
+        </select>
+      </div>
+      <div>
+        <label>Comentario <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
+        <textarea id="desactComentario" placeholder="Agrega un comentario..."></textarea>
+      </div>
+    </div>
+    <div class="desact-foot">
+      <button class="btn-sec" style="flex:unset;padding:9px 18px" onclick="cerrarDesact()">Cancelar</button>
+      <button class="btn-danger" style="flex:unset;padding:9px 18px" id="btnConfDesact" onclick="confirmarDesact()">Desactivar</button>
     </div>
   </div>
 </div>
@@ -728,18 +766,48 @@
   function cerrarModalForm(){ document.getElementById('modalForm').classList.remove('show'); }
 
   // ── Activar / Desactivar / Eliminar ───────────────────────────────────────────
-  function pedirConfirm(id,activar){
-    var u=usuarios.find(function(x){return x.id===id;});
-    document.getElementById('confirmTitle').textContent=activar?'Activar usuario':'Desactivar usuario';
-    document.getElementById('confirmSub').textContent=activar
-      ?'¿Reactivar a '+u.nombre+'?'
-      :'¿Desactivar a '+u.nombre+'? No podrá iniciar sesión hasta ser reactivado.';
-    document.getElementById('confirmBtn').onclick=function(){ cambiarEstado(id,activar); cerrarConfirm(); };
+  var _desactId = null;
+  function pedirConfirm(id, activar) {
+    if (!activar) { abrirDesact(id); return; }
+    var u = usuarios.find(function(x){ return x.id === id; });
+    document.getElementById('confirmTitle').textContent = 'Activar usuario';
+    document.getElementById('confirmSub').textContent   = '¿Reactivar a ' + u.nombre + '?';
+    document.getElementById('confirmBtn').onclick = function(){ cambiarEstado(id, true); cerrarConfirm(); };
     document.getElementById('modalConfirm').classList.add('show');
   }
-  function cambiarEstado(id,activo){
-    db.collection('usuarios').doc(id).update({activo:activo})
-      .then(function(){ showToast(activo?'Usuario activado.':'Usuario desactivado.'); })
+  function abrirDesact(id) {
+    var u = usuarios.find(function(x){ return x.id === id; });
+    _desactId = id;
+    document.getElementById('desactNombreWrap').textContent = u.nombre + ' — ' + (u.email || '');
+    document.getElementById('desactRazon').value = '';
+    document.getElementById('desactComentario').value = '';
+    document.getElementById('modalDesact').classList.add('show');
+  }
+  function cerrarDesact() { document.getElementById('modalDesact').classList.remove('show'); _desactId = null; }
+  function confirmarDesact() {
+    var razon = document.getElementById('desactRazon').value;
+    if (!razon) { showToast('Selecciona una razón de salida.'); return; }
+    var comentario = document.getElementById('desactComentario').value.trim();
+    var btn = document.getElementById('btnConfDesact');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    db.collection('usuarios').doc(_desactId).update({
+      activo: false,
+      bajaRazon: razon,
+      bajaComentario: comentario,
+      bajaFecha: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){
+      cerrarDesact();
+      showToast('Usuario desactivado.');
+    }).catch(function(err){
+      showToast('Error al desactivar.');
+      console.error(err);
+    }).finally(function(){
+      btn.disabled = false; btn.textContent = 'Desactivar';
+    });
+  }
+  function cambiarEstado(id, activo) {
+    db.collection('usuarios').doc(id).update({ activo: activo })
+      .then(function(){ showToast(activo ? 'Usuario activado.' : 'Usuario desactivado.'); })
       .catch(function(err){ showToast('Error al actualizar.'); console.error(err); });
   }
   function cerrarConfirm(){ document.getElementById('modalConfirm').classList.remove('show'); }
