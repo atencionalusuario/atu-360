@@ -132,7 +132,7 @@
   setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
 
-  var ROLES_PERMITIDOS = ['jefe','wfm','admin','superadmin'];
+  var ROLES_PERMITIDOS = ['jefe','wfm','admin','superadmin','supervisor'];
   var LABELS_PROY = { doctorsv:'DoctorSV', educacion:'Educación', marn:'MARN', global:'Global' };
 
   var RT_ESTADOS = {
@@ -157,18 +157,24 @@
       if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
         auth.signOut(); window.location.href = BASE + 'login.html'; return;
       }
-      iniciarTiempoReal();
+      var rol   = doc.data().rol;
+      var email = user.email;
+      iniciarTiempoReal(rol, email);
     });
   });
 
-  function iniciarTiempoReal() {
-    db.collection('usuarios')
-      .where('rol', 'in', ['agente', 'agente-inmersion', 'supervisor'])
-      .onSnapshot(function(snap) {
-        agentes = [];
-        snap.forEach(function(d) { agentes.push(Object.assign({ id: d.id }, d.data())); });
-        renderRT();
-      }, function(e) { console.error('rt', e); showToast('Error al cargar datos.'); });
+  function iniciarTiempoReal(rol, email) {
+    var query = db.collection('usuarios')
+      .where('rol', 'in', ['agente', 'agente-inmersion', 'supervisor']);
+    if (rol === 'supervisor') {
+      query = db.collection('usuarios')
+        .where('emailSupervisor', '==', email);
+    }
+    query.onSnapshot(function(snap) {
+      agentes = [];
+      snap.forEach(function(d) { agentes.push(Object.assign({ id: d.id }, d.data())); });
+      renderRT();
+    }, function(e) { console.error('rt', e); showToast('Error al cargar datos.'); });
   }
 
   function pad(n) { return String(n).padStart(2, '0'); }
