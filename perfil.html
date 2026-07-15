@@ -309,33 +309,27 @@
     var side = Math.min(vw, vh);
     var sx = (vw - side) / 2, sy = (vh - side) / 2;
     ctx.drawImage(video, sx, sy, side, side, 0, 0, size, size);
-    canvas.toBlob(function(blob) {
-      fotoBlob = blob;
-      var url = URL.createObjectURL(blob);
-      document.getElementById('photoPreview').innerHTML = '<img src="'+url+'" alt="foto">';
-      document.getElementById('btnFoto').disabled = false;
-      cerrarCamara();
-    }, 'image/jpeg', 0.9);
+    var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+    fotoBlob = dataUrl;
+    document.getElementById('photoPreview').innerHTML = '<img src="'+dataUrl+'" alt="foto">';
+    document.getElementById('btnFoto').disabled = false;
+    cerrarCamara();
   }
 
   function subirFoto() {
     if (!fotoBlob || !currentUser) return;
     var btn = document.getElementById('btnFoto');
-    btn.disabled = true; btn.textContent = 'Subiendo...';
+    btn.disabled = true; btn.textContent = 'Guardando...';
     ocultarMsgs('foto');
-    var ref = storage.ref('profile-photos/' + currentUser.uid);
-    ref.put(fotoBlob).then(function() {
-      return ref.getDownloadURL();
-    }).then(function(url) {
-      return db.collection('usuarios').doc(currentUser.uid).update({ fotoPerfil: url });
-    }).then(function() {
-      btn.textContent = 'Guardar foto';
-      mostrarMsg('fotoOk', null);
-      showToast('Foto actualizada.');
-    }).catch(function(e) {
-      btn.disabled = false; btn.textContent = 'Guardar foto';
-      mostrarMsg('fotoErr', 'Error al subir la foto: ' + e.message);
-    });
+    db.collection('usuarios').doc(currentUser.uid).update({ fotoPerfil: fotoBlob })
+      .then(function() {
+        btn.textContent = 'Guardar foto';
+        mostrarMsg('fotoOk', null);
+        showToast('Foto actualizada.');
+      }).catch(function(e) {
+        btn.disabled = false; btn.textContent = 'Guardar foto';
+        mostrarMsg('fotoErr', 'Error al guardar la foto: ' + e.message);
+      });
   }
 
   // ===== CONTRASEÑA =====
