@@ -220,7 +220,7 @@ function jefeNav(panel) {
 
 function supNav(panel) {
   if (typeof switchVista === 'function') { switchVista(panel); }
-  else { window.location.href = BASE + 'supervisor.html'; }
+  else { window.location.href = BASE + 'tiemporeal.html'; }
 }
 
 function detectarPagina() {
