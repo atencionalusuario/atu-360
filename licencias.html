@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATU 360 — Licencias</title>
+<base href="/atu-360/">
+<link rel="stylesheet" href="sidebar.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+  .sidebar { width: 220px; flex-shrink: 0; background: #0F2070; display: flex; flex-direction: column; min-height: 100vh; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+
+  /* TOPBAR */
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+  .btn-new { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: #1A3DAA; color: white; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+  .btn-new:hover { opacity: 0.88; }
+
+  /* CONTENT */
+  .content { padding: 24px 32px; flex: 1; }
+
+  /* FILTROS */
+  .filtros { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filtros select, .filtros input { padding: 8px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.78rem; font-family: inherit; color: #1E293B; background: white; outline: none; }
+  .filtros select:focus, .filtros input:focus { border-color: #1A3DAA; }
+
+  /* TABLA */
+  .table-wrap { background: white; border-radius: 12px; border: 1px solid #E2E8F0; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  thead th { padding: 11px 14px; text-align: left; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #64748B; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid #F1F5F9; cursor: pointer; transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #F8FAFC; }
+  tbody td { padding: 12px 14px; color: #374151; vertical-align: middle; }
+  .td-agente { font-weight: 600; color: #1E293B; }
+  .tag { display: inline-block; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+  .tag-tipo { background: #EEF2FF; color: #1A3DAA; font-size: 0.65rem; font-weight: 600; text-transform: none; letter-spacing: 0; padding: 3px 9px; border-radius: 5px; }
+  .empty { padding: 48px; text-align: center; color: #94A3B8; font-size: 0.82rem; }
+
+  /* PANEL DETALLE */
+  .panel-overlay { position: fixed; inset: 0; background: rgba(15,32,112,0.3); z-index: 50; display: none; }
+  .panel-overlay.show { display: block; }
+  .panel { position: fixed; top: 0; right: 0; width: 420px; height: 100vh; background: white; border-left: 1px solid #E2E8F0; box-shadow: -8px 0 32px rgba(0,0,0,0.1); z-index: 51; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.25s ease; }
+  .panel.show { transform: translateX(0); }
+  .panel-head { padding: 20px 24px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .panel-head h3 { font-size: 0.92rem; font-weight: 700; }
+  .panel-close { background: none; border: none; cursor: pointer; color: #94A3B8; padding: 4px; display: flex; }
+  .panel-close:hover { color: #1E293B; }
+  .panel-body { padding: 24px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 20px; }
+  .dp-section { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #94A3B8; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #F1F5F9; }
+  .dp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .dp-field { display: flex; flex-direction: column; gap: 3px; }
+  .dp-label { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; }
+  .dp-val { font-size: 0.83rem; color: #1E293B; font-weight: 500; }
+  .dp-val.full { grid-column: 1/-1; }
+  .dp-duration { background: #EEF2FF; border-radius: 8px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; }
+  .dp-duration-val { font-size: 1.4rem; font-weight: 800; color: #1A3DAA; }
+  .dp-duration-label { font-size: 0.72rem; color: #64748B; }
+  .dp-doc-link { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; color: #1A3DAA; font-weight: 600; cursor: pointer; text-decoration: underline; }
+  .panel-foot { padding: 16px 24px; border-top: 1px solid #F1F5F9; display: flex; gap: 10px; flex-shrink: 0; }
+  .btn-del { padding: 9px 18px; background: white; color: #DC2626; border: 1.5px solid #FCA5A5; border-radius: 7px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; margin-left: auto; }
+  .btn-del:hover { background: #FEF2F2; }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15,32,112,0.35); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; backdrop-filter: blur(3px); }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+  .modal { background: white; border-radius: 14px; width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(0,0,0,0.18); }
+  .modal-head { padding: 20px 24px 16px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: white; z-index: 1; }
+  .modal-head h3 { font-size: 0.95rem; font-weight: 700; }
+  .modal-close { background: none; border: none; cursor: pointer; color: #94A3B8; padding: 4px; display: flex; }
+  .modal-close:hover { color: #1E293B; }
+  .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1/-1; }
+  .form-group label { font-size: 0.72rem; font-weight: 600; color: #64748B; text-transform: uppercase; letter-spacing: 0.4px; }
+  .form-group select, .form-group input, .form-group textarea { padding: 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.83rem; font-family: inherit; color: #1E293B; background: #F8FAFC; outline: none; transition: border-color 0.2s; }
+  .form-group select:focus, .form-group input:focus, .form-group textarea:focus { border-color: #1A3DAA; background: white; }
+  .form-group textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+  .duracion-preview { background: #EEF2FF; border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; color: #1A3DAA; font-weight: 600; min-height: 36px; display: flex; align-items: center; }
+  .file-area { border: 1.5px dashed #CBD5E1; border-radius: 8px; padding: 16px; text-align: center; cursor: pointer; transition: border-color 0.2s; background: #F8FAFC; }
+  .file-area:hover { border-color: #1A3DAA; background: white; }
+  .file-area input { display: none; }
+  .file-area-label { font-size: 0.78rem; color: #64748B; }
+  .file-area-label span { color: #1A3DAA; font-weight: 600; }
+  .file-selected { font-size: 0.75rem; color: #1A3DAA; margin-top: 6px; font-weight: 600; }
+  .modal-foot { padding: 14px 24px; border-top: 1px solid #F1F5F9; display: flex; justify-content: flex-end; gap: 10px; position: sticky; bottom: 0; background: white; }
+  .btn-cancel { padding: 9px 18px; background: #F1F5F9; color: #64748B; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-cancel:hover { background: #E2E8F0; }
+  .btn-save { padding: 9px 18px; background: #1A3DAA; color: white; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.15s; }
+  .btn-save:hover { opacity: 0.88; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="sidebar"></div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Licencias</h2>
+      <span class="topbar-sep">/</span>
+      <p id="totalLabel">—</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+      <button class="btn-new" onclick="abrirModal()">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nueva licencia
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="filtros">
+      <select id="filtroAgente" onchange="renderTabla()"><option value="">Todos los agentes</option></select>
+      <select id="filtroTipo" onchange="renderTabla()">
+        <option value="">Todos los tipos</option>
+        <option value="enfermedad">Licencia por enfermedad</option>
+        <option value="enfermedad-grave">Licencia por enfermedad gravísima de pariente</option>
+        <option value="duelo">Licencia por duelo</option>
+        <option value="maternidad">Licencia por maternidad</option>
+        <option value="lactancia">Licencia por lactancia materna</option>
+        <option value="paternidad">Licencia por paternidad</option>
+        <option value="vacaciones">Licencia por vacaciones</option>
+        <option value="estudio">Licencia por estudio</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Agente</th>
+            <th>Tipo de licencia</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Duración</th>
+            <th>Doc.</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"><tr><td colspan="6" class="empty">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Panel detalle -->
+<div class="panel-overlay" id="panelOverlay" onclick="cerrarPanel()"></div>
+<div class="panel" id="panel">
+  <div class="panel-head">
+    <h3>Detalle de licencia</h3>
+    <button class="panel-close" onclick="cerrarPanel()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+  <div class="panel-foot">
+    <button class="btn-del" id="btnEliminar" onclick="eliminarLicencia()">Eliminar</button>
+  </div>
+</div>
+
+<!-- Modal nueva licencia -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Nueva licencia</h3>
+      <button class="modal-close" onclick="cerrarModal()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group full">
+        <label>Agente *</label>
+        <select id="mAgente"><option value="">— Selecciona un agente —</option></select>
+      </div>
+      <div class="form-group full">
+        <label>Tipo de licencia *</label>
+        <select id="mTipo">
+          <option value="">— Selecciona el tipo —</option>
+          <option value="enfermedad">Licencia por enfermedad</option>
+          <option value="enfermedad-grave">Licencia por enfermedad gravísima de pariente</option>
+          <option value="duelo">Licencia por duelo</option>
+          <option value="maternidad">Licencia por maternidad</option>
+          <option value="lactancia">Licencia por lactancia materna</option>
+          <option value="paternidad">Licencia por paternidad</option>
+          <option value="vacaciones">Licencia por vacaciones</option>
+          <option value="estudio">Licencia por estudio</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Fecha y hora de inicio *</label>
+          <input type="datetime-local" id="mInicio" oninput="calcularDuracion()">
+        </div>
+        <div class="form-group">
+          <label>Fecha y hora de fin *</label>
+          <input type="datetime-local" id="mFin" oninput="calcularDuracion()">
+        </div>
+      </div>
+      <div class="form-group full">
+        <label>Duración calculada</label>
+        <div class="duracion-preview" id="duracionPreview">Selecciona inicio y fin</div>
+      </div>
+      <div class="form-group full">
+        <label>Documentación adjunta</label>
+        <div class="file-area" onclick="document.getElementById('mArchivo').click()">
+          <input type="file" id="mArchivo" accept="image/*,.pdf" onchange="seleccionarArchivo(this)">
+          <div class="file-area-label"><span>Haz clic para adjuntar</span> un archivo (imagen o PDF, máx. 1 MB)</div>
+          <div class="file-selected" id="fileSelected"></div>
+        </div>
+      </div>
+      <div class="form-group full">
+        <label>Comentarios</label>
+        <textarea id="mComentarios" placeholder="Observaciones adicionales..."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-save" id="btnGuardar" onclick="guardarLicencia()">Guardar licencia</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var auth = firebase.auth();
+  var db   = firebase.firestore();
+
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+  var ROLES_PERMITIDOS = ['supervisor'];
+
+  var currentUser  = null;
+  var agentes      = [];
+  var licencias    = [];
+  var licenciaSelId = null;
+  var archivoBase64 = null;
+  var archivoNombre = null;
+
+  var TIPOS = {
+    'enfermedad':       'Licencia por enfermedad',
+    'enfermedad-grave': 'Licencia por enfermedad gravísima de pariente',
+    'duelo':            'Licencia por duelo',
+    'maternidad':       'Licencia por maternidad',
+    'lactancia':        'Licencia por lactancia materna',
+    'paternidad':       'Licencia por paternidad',
+    'vacaciones':       'Licencia por vacaciones',
+    'estudio':          'Licencia por estudio'
+  };
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = BASE + 'login.html'; return; }
+    currentUser = user;
+    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
+        auth.signOut(); window.location.href = BASE + 'login.html'; return;
+      }
+      cargarAgentes();
+      cargarLicencias();
+    });
+  });
+
+  function cargarAgentes() {
+    db.collection('usuarios')
+      .where('emailSupervisor', '==', currentUser.email)
+      .where('activo', '==', true)
+      .get().then(function(snap) {
+        agentes = [];
+        snap.forEach(function(d) { agentes.push({ id: d.id, nombre: d.data().nombre, email: d.data().email }); });
+        agentes.sort(function(a,b){ return a.nombre.localeCompare(b.nombre); });
+        var sel = document.getElementById('mAgente');
+        var fil = document.getElementById('filtroAgente');
+        agentes.forEach(function(a) {
+          sel.innerHTML += '<option value="'+a.id+'">'+a.nombre+'</option>';
+          fil.innerHTML += '<option value="'+a.id+'">'+a.nombre+'</option>';
+        });
+      });
+  }
+
+  function cargarLicencias() {
+    db.collection('licencias')
+      .where('supervisorUid', '==', currentUser.uid)
+      .orderBy('inicio', 'desc')
+      .onSnapshot(function(snap) {
+        licencias = [];
+        snap.forEach(function(d) { licencias.push(Object.assign({ id: d.id }, d.data())); });
+        renderTabla();
+      }, function(e) { console.error(e); showToast('Error al cargar licencias.'); });
+  }
+
+  function renderTabla() {
+    var filtAgente = document.getElementById('filtroAgente').value;
+    var filtTipo   = document.getElementById('filtroTipo').value;
+    var lista = licencias.filter(function(l) {
+      if (filtAgente && l.agenteUid !== filtAgente) return false;
+      if (filtTipo   && l.tipo     !== filtTipo)   return false;
+      return true;
+    });
+    document.getElementById('totalLabel').textContent = lista.length + ' licencia' + (lista.length !== 1 ? 's' : '');
+    if (lista.length === 0) {
+      document.getElementById('tbody').innerHTML = '<tr><td colspan="6" class="empty">No hay licencias registradas.</td></tr>';
+      return;
+    }
+    var html = '';
+    lista.forEach(function(l) {
+      html += '<tr onclick="abrirPanel(\''+l.id+'\')">'
+        +'<td class="td-agente">'+( l.agenteNombre || '—')+'</td>'
+        +'<td><span class="tag-tipo">'+(TIPOS[l.tipo]||l.tipo)+'</span></td>'
+        +'<td>'+fmtDT(l.inicio)+'</td>'
+        +'<td>'+fmtDT(l.fin)+'</td>'
+        +'<td>'+duracionTexto(l.inicio, l.fin)+'</td>'
+        +'<td>'+(l.archivoNombre ? '<svg width="14" height="14" fill="none" stroke="#1A3DAA" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' : '—')+'</td>'
+        +'</tr>';
+    });
+    document.getElementById('tbody').innerHTML = html;
+  }
+
+  function abrirPanel(id) {
+    var l = licencias.find(function(x){ return x.id === id; });
+    if (!l) return;
+    licenciaSelId = id;
+    var html = '<div>'
+      +'<div class="dp-section">Información general</div>'
+      +'<div class="dp-grid">'
+      +'<div class="dp-field"><div class="dp-label">Agente</div><div class="dp-val">'+(l.agenteNombre||'—')+'</div></div>'
+      +'<div class="dp-field"><div class="dp-label">Tipo</div><div class="dp-val">'+(TIPOS[l.tipo]||l.tipo)+'</div></div>'
+      +'<div class="dp-field"><div class="dp-label">Inicio</div><div class="dp-val">'+fmtDT(l.inicio)+'</div></div>'
+      +'<div class="dp-field"><div class="dp-label">Fin</div><div class="dp-val">'+fmtDT(l.fin)+'</div></div>'
+      +'</div></div>'
+      +'<div class="dp-duration">'
+      +'<div><div class="dp-duration-val">'+duracionTexto(l.inicio, l.fin)+'</div><div class="dp-duration-label">Duración total</div></div>'
+      +'</div>';
+    if (l.archivoNombre) {
+      html += '<div><div class="dp-section">Documentación</div>'
+        +'<span class="dp-doc-link" onclick="verArchivo(\''+id+'\')">'
+        +'<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
+        +(l.archivoNombre)+'</span></div>';
+    }
+    if (l.comentarios) {
+      html += '<div><div class="dp-section">Comentarios</div>'
+        +'<div style="font-size:0.83rem;color:#374151;line-height:1.7;white-space:pre-wrap;">'+l.comentarios+'</div></div>';
+    }
+    document.getElementById('panelBody').innerHTML = html;
+    document.getElementById('panelOverlay').classList.add('show');
+    document.getElementById('panel').classList.add('show');
+  }
+
+  function cerrarPanel() {
+    document.getElementById('panelOverlay').classList.remove('show');
+    document.getElementById('panel').classList.remove('show');
+    licenciaSelId = null;
+  }
+
+  function verArchivo(id) {
+    var l = licencias.find(function(x){ return x.id === id; });
+    if (!l || !l.archivoBase64) return;
+    var w = window.open();
+    w.document.write('<img src="'+l.archivoBase64+'" style="max-width:100%">');
+  }
+
+  function eliminarLicencia() {
+    if (!licenciaSelId) return;
+    if (!confirm('¿Eliminar esta licencia? La acción no se puede deshacer.')) return;
+    db.collection('licencias').doc(licenciaSelId).delete()
+      .then(function(){ cerrarPanel(); showToast('Licencia eliminada.'); })
+      .catch(function(e){ showToast('Error al eliminar.'); console.error(e); });
+  }
+
+  // ── Modal ────────────────────────────────────────────────────────────────────
+  function abrirModal() {
+    document.getElementById('mAgente').value = '';
+    document.getElementById('mTipo').value   = '';
+    document.getElementById('mInicio').value = '';
+    document.getElementById('mFin').value    = '';
+    document.getElementById('mComentarios').value = '';
+    document.getElementById('duracionPreview').textContent = 'Selecciona inicio y fin';
+    document.getElementById('fileSelected').textContent = '';
+    document.getElementById('mArchivo').value = '';
+    archivoBase64 = null; archivoNombre = null;
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+
+  function cerrarModal() {
+    document.getElementById('modalOverlay').classList.remove('show');
+  }
+
+  function seleccionarArchivo(input) {
+    var file = input.files[0];
+    if (!file) return;
+    if (file.size > 1024 * 1024) { showToast('El archivo supera 1 MB. Elige uno más pequeño.'); input.value = ''; return; }
+    archivoNombre = file.name;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      archivoBase64 = e.target.result;
+      document.getElementById('fileSelected').textContent = '📎 ' + file.name;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function calcularDuracion() {
+    var ini = document.getElementById('mInicio').value;
+    var fin = document.getElementById('mFin').value;
+    document.getElementById('duracionPreview').textContent = ini && fin ? duracionTexto(ini, fin) : 'Selecciona inicio y fin';
+  }
+
+  function guardarLicencia() {
+    var agenteId  = document.getElementById('mAgente').value;
+    var tipo      = document.getElementById('mTipo').value;
+    var inicio    = document.getElementById('mInicio').value;
+    var fin       = document.getElementById('mFin').value;
+    var comentarios = document.getElementById('mComentarios').value.trim();
+    if (!agenteId || !tipo || !inicio || !fin) { showToast('Completa los campos obligatorios.'); return; }
+    if (fin <= inicio) { showToast('La fecha de fin debe ser posterior al inicio.'); return; }
+    var agente = agentes.find(function(a){ return a.id === agenteId; });
+    var btn = document.getElementById('btnGuardar');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    var data = {
+      supervisorUid:  currentUser.uid,
+      supervisorEmail: currentUser.email,
+      agenteUid:      agenteId,
+      agenteNombre:   agente ? agente.nombre : '',
+      agenteEmail:    agente ? agente.email  : '',
+      tipo:           tipo,
+      inicio:         inicio,
+      fin:            fin,
+      comentarios:    comentarios,
+      archivoNombre:  archivoNombre || null,
+      archivoBase64:  archivoBase64 || null,
+      creadoEn:       firebase.firestore.FieldValue.serverTimestamp()
+    };
+    db.collection('licencias').add(data)
+      .then(function(){ cerrarModal(); showToast('Licencia registrada correctamente.'); })
+      .catch(function(e){ showToast('Error al guardar.'); console.error(e); })
+      .finally(function(){ btn.disabled = false; btn.textContent = 'Guardar licencia'; });
+  }
+
+  // ── Utilidades ───────────────────────────────────────────────────────────────
+  function fmtDT(val) {
+    if (!val) return '—';
+    var d = new Date(val);
+    if (isNaN(d)) return val;
+    return d.toLocaleDateString('es-SV', { day:'2-digit', month:'2-digit', year:'2-digit' })
+      + ' ' + d.toLocaleTimeString('es-SV', { hour:'2-digit', minute:'2-digit' });
+  }
+
+  function duracionTexto(ini, fin) {
+    if (!ini || !fin) return '—';
+    var ms = new Date(fin) - new Date(ini);
+    if (ms <= 0) return 'Rango inválido';
+    var totalMin = Math.floor(ms / 60000);
+    var dias  = Math.floor(totalMin / 1440);
+    var horas = Math.floor((totalMin % 1440) / 60);
+    var mins  = totalMin % 60;
+    var parts = [];
+    if (dias)  parts.push(dias  + (dias  === 1 ? ' día'  : ' días'));
+    if (horas) parts.push(horas + (horas === 1 ? ' hora' : ' horas'));
+    if (mins && !dias) parts.push(mins + ' min');
+    return parts.join(' ') || '< 1 min';
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
+</script>
+<script src="notif.js"></script>
+<script src="sidebar.js"></script>
+<script>
+  initSidebar();
+  initNotif(db, auth);
+</script>
+</body>
+</html>
