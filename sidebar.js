@@ -84,7 +84,7 @@ var NAV_POR_ROL = {
     reportes:  []
   },
   wfm: {
-    principal: ['jefe-usuarios','jefe-notif','jefe-flash','jefe-solicitudes','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
+    principal: ['jefe-usuarios','jefe-solicitudes','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
     reportes:  []
   },
   superadmin: {
