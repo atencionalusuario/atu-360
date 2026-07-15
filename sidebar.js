@@ -81,7 +81,7 @@ var NAV_POR_ROL = {
     reportes:  []
   },
   supervisor: {
-    principal: ['sup-licencias','sup-jornada','sup-turno','sup-monitoreo','sup-metricas','sup-flash','sup-solicitudes','sup-biblioteca','sup-transporte','sup-perfil'],
+    principal: ['sup-jornada','sup-turno','sup-monitoreo','sup-metricas','sup-flash','sup-solicitudes','sup-licencias','sup-biblioteca','sup-transporte','sup-perfil'],
     reportes:  []
   },
   wfm: {
