@@ -16,7 +16,10 @@
 
   /* STATS */
   .stats-row       { display: flex; gap: 10px; flex-shrink: 0; align-items: center; justify-content: space-between; }
-  .stat-chip       { background: white; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
+  .stat-chip       { background: white; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 10px; cursor: default; }
+  .stat-chip.clickable { cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+  .stat-chip.clickable:hover { border-color: #CBD5E1; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+  .stat-chip.selected { border-color: #1A3DAA; box-shadow: 0 0 0 2px rgba(26,61,170,0.12); }
   .stat-chip-val   { font-size: 1.3rem; font-weight: 800; color: #1A3DAA; line-height: 1; }
   .stat-chip-label { font-size: 0.68rem; color: #94A3B8; font-weight: 500; }
   .stat-chip.activos   .stat-chip-val { color: #16A34A; }
@@ -191,11 +194,11 @@
             <div class="stat-chip-val" id="statTotal">—</div>
             <div class="stat-chip-label">Total usuarios</div>
           </div>
-          <div class="stat-chip activos">
+          <div class="stat-chip activos clickable selected" id="chipActivos" onclick="filtrarEstado('activo')">
             <div class="stat-chip-val" id="statActivos">—</div>
             <div class="stat-chip-label">Activos</div>
           </div>
-          <div class="stat-chip inactivos">
+          <div class="stat-chip inactivos clickable" id="chipInactivos" onclick="filtrarEstado('inactivo')">
             <div class="stat-chip-val" id="statInactivos">—</div>
             <div class="stat-chip-label">Inactivos</div>
           </div>
@@ -210,7 +213,7 @@
       <input type="hidden" id="busqueda" value="">
       <select id="filtroProyecto" style="display:none"><option value=""></option></select>
       <select id="filtroRol" style="display:none"><option value=""></option></select>
-      <select id="filtroEstado" style="display:none"><option value=""></option></select>
+      <select id="filtroEstado" style="display:none"><option value="activo">Activos</option></select>
       <select id="sort1" style="display:none"><option value="nombre">Nombre</option></select>
       <select id="sort2" style="display:none"><option value=""></option></select>
       <button id="btnDir1" class="btn-dir asc" style="display:none"></button>
@@ -443,6 +446,13 @@
   }
 
   // ── Filtrar / renderizar ──────────────────────────────────────────────────────
+  function filtrarEstado(val) {
+    document.getElementById('filtroEstado').value = val;
+    document.getElementById('chipActivos').classList.toggle('selected', val === 'activo');
+    document.getElementById('chipInactivos').classList.toggle('selected', val === 'inactivo');
+    aplicarFiltros();
+  }
+
   function aplicarFiltros(){
     var busq = document.getElementById('busqueda').value.toLowerCase();
     var proy = document.getElementById('filtroProyecto').value;
