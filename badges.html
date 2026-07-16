@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/atu-360/">
+<title>ATU 360 — Badges</title>
+<link rel="stylesheet" href="sidebar.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+  .content { padding: 24px 32px; flex: 1; }
+
+  /* Buscador */
+  .toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .search-wrap { position: relative; flex: 1; max-width: 320px; }
+  .search-wrap input { width: 100%; padding: 9px 36px 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.82rem; font-family: inherit; background: white; color: #1E293B; outline: none; transition: border 0.2s; }
+  .search-wrap input:focus { border-color: #1A3DAA; }
+  .search-wrap input::placeholder { color: #94A3B8; }
+  .search-wrap svg { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #94A3B8; pointer-events: none; }
+  .filtro-rol { padding: 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.82rem; font-family: inherit; color: #1E293B; background: white; outline: none; }
+  .filtro-rol:focus { border-color: #1A3DAA; }
+
+  /* Tabla */
+  .table-wrap { background: white; border-radius: 12px; border: 1px solid #E2E8F0; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  thead th { padding: 11px 16px; text-align: left; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #64748B; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid #F1F5F9; cursor: pointer; transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #F8FAFC; }
+  tbody td { padding: 13px 16px; color: #374151; vertical-align: middle; }
+  .td-nombre { font-weight: 600; color: #1E293B; }
+  .rol-pill { display: inline-block; font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 8px; border-radius: 4px; }
+  .rol-pill.supervisor { background: #EDE9FE; color: #6D28D9; }
+  .rol-pill.agente { background: #EFF6FF; color: #1A3DAA; }
+  .rol-pill.agente-inmersion { background: #F0FDF4; color: #15803D; }
+  .rol-pill.formacion { background: #FFF7ED; color: #C2410C; }
+  .badges-mini { display: flex; gap: 4px; flex-wrap: wrap; }
+  .badge-mini-icon { font-size: 1.1rem; line-height: 1; }
+  .empty { padding: 48px; text-align: center; color: #94A3B8; font-size: 0.82rem; }
+  .loading { padding: 32px; text-align: center; color: #94A3B8; font-size: 0.82rem; }
+
+  /* Panel lateral */
+  .panel-overlay { position: fixed; inset: 0; background: rgba(15,32,112,0.25); z-index: 50; display: none; }
+  .panel-overlay.show { display: block; }
+  .panel { position: fixed; top: 0; right: 0; width: 460px; max-width: 95vw; height: 100vh; background: white; border-left: 1px solid #E2E8F0; box-shadow: -8px 0 32px rgba(0,0,0,0.1); z-index: 51; display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.25s ease; }
+  .panel.show { transform: translateX(0); }
+  .panel-head { padding: 20px 24px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+  .panel-av { width: 40px; height: 40px; border-radius: 50%; background: #EEF2FF; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; color: #1A3DAA; flex-shrink: 0; overflow: hidden; }
+  .panel-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .panel-head-info { flex: 1; min-width: 0; }
+  .panel-head-name { font-size: 0.9rem; font-weight: 700; color: #1E293B; }
+  .panel-head-sub { font-size: 0.72rem; color: #94A3B8; margin-top: 2px; }
+  .panel-close { background: none; border: none; cursor: pointer; color: #94A3B8; padding: 4px; display: flex; margin-left: auto; flex-shrink: 0; }
+  .panel-close:hover { color: #1E293B; }
+  .panel-body { padding: 24px; overflow-y: auto; flex: 1; }
+  .badges-section-title { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #94A3B8; margin-bottom: 14px; padding-bottom: 6px; border-bottom: 1px solid #F1F5F9; }
+  .badges-group { margin-bottom: 24px; }
+  .badges-grid-assign { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+  .badge-toggle { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 8px; border-radius: 10px; border: 2px solid #E2E8F0; background: white; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+  .badge-toggle:hover { border-color: #CBD5E1; background: #F8FAFC; }
+  .badge-toggle.on { border-color: transparent; }
+  .badge-toggle.on.gold    { background: linear-gradient(135deg,#FEF9C3,#FDE68A); border-color: #F59E0B; }
+  .badge-toggle.on.silver  { background: linear-gradient(135deg,#F1F5F9,#CBD5E1); border-color: #94A3B8; }
+  .badge-toggle.on.bronze  { background: linear-gradient(135deg,#FEF3C7,#FCD34D); border-color: #D97706; }
+  .badge-toggle.on.special { background: linear-gradient(135deg,#EDE9FE,#C4B5FD); border-color: #7C3AED; }
+  .badge-toggle-icon { font-size: 1.6rem; line-height: 1; }
+  .badge-toggle-label { font-size: 0.68rem; font-weight: 600; color: #374151; text-align: center; line-height: 1.3; }
+  .badge-toggle.on .badge-toggle-label { color: #1E293B; }
+  .badge-toggle-check { font-size: 0.6rem; font-weight: 700; color: #16A34A; display: none; }
+  .badge-toggle.on .badge-toggle-check { display: block; }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="sidebar"></div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Badges</h2>
+      <span class="topbar-sep">/</span>
+      <p id="topbarSub">—</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="toolbar">
+      <div class="search-wrap">
+        <input type="text" id="buscar" placeholder="Buscar persona..." oninput="renderTabla()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <select class="filtro-rol" id="filtroRol" onchange="renderTabla()">
+        <option value="">Todos los roles</option>
+        <option value="supervisor">Supervisor</option>
+        <option value="agente">Agente</option>
+        <option value="agente-inmersion">Agente inmersión</option>
+        <option value="formacion">Formación</option>
+      </select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Rol</th>
+            <th>Badges asignados</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"><tr><td colspan="3" class="loading">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Panel asignación -->
+<div class="panel-overlay" id="panelOverlay" onclick="cerrarPanel()"></div>
+<div class="panel" id="panel">
+  <div class="panel-head">
+    <div class="panel-av" id="panelAv">--</div>
+    <div class="panel-head-info">
+      <div class="panel-head-name" id="panelNombre">—</div>
+      <div class="panel-head-sub" id="panelSub">—</div>
+    </div>
+    <button class="panel-close" onclick="cerrarPanel()">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var auth = firebase.auth();
+  var db   = firebase.firestore();
+</script>
+<script src="notif.js"></script>
+<script src="sidebar.js"></script>
+<script>
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+  var ROLES_PERMITIDOS = ['jefe','wfm','admin','superadmin','supervisor'];
+  var LABELS_ROL = { agente:'Agente', 'agente-inmersion':'Agente inmersión', supervisor:'Supervisor', formacion:'Formación' };
+
+  initSidebar();
+  initNotif(db, auth);
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  var currentUser   = null;
+  var perfilUsuario = null;
+  var rolUsuario    = null;
+  var usuarios      = [];          // personas a quienes se puede asignar
+  var badgesMap     = {};          // uid → [{docId, badgeId}]
+  var panelUid      = null;        // usuario con panel abierto
+
+  // Grupos del catálogo para mostrar en el panel
+  var GRUPOS = [
+    { label: 'Desempeño',  ids: ['top-performer','puntualidad-oro','puntualidad-plata','puntualidad-bronce','calidad-oro','calidad-plata','calidad-bronce'] },
+    { label: 'Habilidades', ids: ['top-expresion','top-registro','top-gestion','top-tiempo'] },
+    { label: 'Especiales',  ids: ['mvp-semana','top-innovador','apoyo-invaluable','embajador-atu'] }
+  ];
+
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = BASE + 'login.html'; return; }
+    db.collection('usuarios').where('email','==',user.email).limit(1).get()
+      .then(function(snap) {
+        if (snap.empty) { auth.signOut(); return; }
+        perfilUsuario = snap.docs[0].data();
+        rolUsuario    = perfilUsuario.rol;
+        if (!ROLES_PERMITIDOS.includes(rolUsuario)) { auth.signOut(); window.location.href = BASE + 'login.html'; return; }
+        currentUser = user;
+        // Ocultar filtro supervisor si es supervisor (solo ve agentes)
+        if (rolUsuario === 'supervisor') {
+          var opt = document.querySelector('#filtroRol option[value="supervisor"]');
+          if (opt) opt.remove();
+        }
+        cargarUsuarios();
+      });
+  });
+
+  function cargarUsuarios() {
+    var campo = (rolUsuario === 'supervisor') ? 'emailSupervisor' : 'emailJefe';
+    db.collection('usuarios')
+      .where(campo, '==', currentUser.email)
+      .where('activo', '==', true)
+      .get()
+      .then(function(snap) {
+        usuarios = [];
+        snap.forEach(function(d){ usuarios.push(Object.assign({id: d.id}, d.data())); });
+        usuarios.sort(function(a,b){ return (a.nombre||'').localeCompare(b.nombre||''); });
+        document.getElementById('topbarSub').textContent = usuarios.length + ' persona' + (usuarios.length !== 1 ? 's' : '');
+        cargarTodosLosBadges();
+      })
+      .catch(function(e){ console.error(e); });
+  }
+
+  function cargarTodosLosBadges() {
+    var uids = usuarios.map(function(u){ return u.id; });
+    if (uids.length === 0) { renderTabla(); return; }
+    // Firestore 'in' admite hasta 30 elementos; dividimos si hace falta
+    var chunks = [];
+    for (var i = 0; i < uids.length; i += 30) chunks.push(uids.slice(i, i+30));
+    var promises = chunks.map(function(chunk){
+      return db.collection('badges').where('uid','in',chunk).where('activo','==',true).get();
+    });
+    Promise.all(promises).then(function(results) {
+      badgesMap = {};
+      results.forEach(function(snap){
+        snap.forEach(function(doc){
+          var d = doc.data();
+          if (!badgesMap[d.uid]) badgesMap[d.uid] = [];
+          badgesMap[d.uid].push({ docId: doc.id, badgeId: d.badgeId });
+        });
+      });
+      renderTabla();
+    }).catch(function(e){ console.error(e); renderTabla(); });
+  }
+
+  function renderTabla() {
+    var q    = (document.getElementById('buscar').value||'').toLowerCase().trim();
+    var rol  = document.getElementById('filtroRol').value;
+    var lista = usuarios.filter(function(u){
+      if (rol && u.rol !== rol) return false;
+      if (q && !(u.nombre||'').toLowerCase().includes(q) && !(u.email||'').toLowerCase().includes(q)) return false;
+      return true;
+    });
+    document.getElementById('topbarSub').textContent = lista.length + ' persona' + (lista.length !== 1 ? 's' : '');
+    if (lista.length === 0) {
+      document.getElementById('tbody').innerHTML = '<tr><td colspan="3" class="empty">Sin resultados.</td></tr>';
+      return;
+    }
+    var html = '';
+    lista.forEach(function(u) {
+      var bs = badgesMap[u.id] || [];
+      var iconos = bs.map(function(b){
+        var def = BADGES_DEF.find(function(x){ return x.id === b.badgeId; });
+        return def ? '<span class="badge-mini-icon" title="'+def.label+'">'+def.icon+'</span>' : '';
+      }).join('');
+      var rolLabel = LABELS_ROL[u.rol] || u.rol || '—';
+      var rolCls   = u.rol || 'agente';
+      html += '<tr onclick="abrirPanel(\''+u.id+'\')">'
+        +'<td class="td-nombre">'+escHtml(u.nombre||'—')+'</td>'
+        +'<td><span class="rol-pill '+rolCls+'">'+rolLabel+'</span></td>'
+        +'<td><div class="badges-mini">'+(iconos||'<span style="font-size:0.75rem;color:#94A3B8">Sin badges</span>')+'</div></td>'
+        +'</tr>';
+    });
+    document.getElementById('tbody').innerHTML = html;
+  }
+
+  function abrirPanel(uid) {
+    panelUid = uid;
+    var u = usuarios.find(function(x){ return x.id === uid; });
+    if (!u) return;
+
+    // Cabecera
+    var av = document.getElementById('panelAv');
+    if (u.fotoPerfil) {
+      av.innerHTML = '<img src="'+u.fotoPerfil+'">';
+    } else {
+      av.textContent = (u.nombre||'?').charAt(0).toUpperCase();
+      av.style.background = '#EEF2FF';
+    }
+    document.getElementById('panelNombre').textContent = u.nombre || u.email;
+    document.getElementById('panelSub').textContent = (LABELS_ROL[u.rol] || u.rol || '') + (u.cargo ? ' · ' + u.cargo : '');
+
+    // Cargar badges actuales del usuario
+    db.collection('badges').where('uid','==',uid).where('activo','==',true).get()
+      .then(function(snap) {
+        var asignados = {};
+        snap.forEach(function(doc){ asignados[doc.data().badgeId] = doc.id; });
+        // Actualizar cache local
+        badgesMap[uid] = Object.keys(asignados).map(function(bid){ return { docId: asignados[bid], badgeId: bid }; });
+        renderPanel(uid, asignados);
+      })
+      .catch(function(e){ console.error(e); renderPanel(uid, {}); });
+
+    document.getElementById('panelOverlay').classList.add('show');
+    document.getElementById('panel').classList.add('show');
+  }
+
+  function renderPanel(uid, asignados) {
+    var html = '';
+    GRUPOS.forEach(function(g) {
+      html += '<div class="badges-group"><div class="badges-section-title">'+g.label+'</div><div class="badges-grid-assign">';
+      g.ids.forEach(function(bid) {
+        var def = BADGES_DEF.find(function(x){ return x.id === bid; });
+        if (!def) return;
+        var on = asignados[bid] ? 'on' : '';
+        html += '<button class="badge-toggle '+on+' '+def.nivel+'" id="btog-'+bid+'" onclick="toggleBadge(\''+uid+'\',\''+bid+'\')">'
+          +'<div class="badge-toggle-icon">'+def.icon+'</div>'
+          +'<div class="badge-toggle-label">'+def.label+'</div>'
+          +'<div class="badge-toggle-check">✓ Asignado</div>'
+          +'</button>';
+      });
+      html += '</div></div>';
+    });
+    document.getElementById('panelBody').innerHTML = html;
+  }
+
+  function toggleBadge(uid, badgeId) {
+    var lista = badgesMap[uid] || [];
+    var existing = lista.find(function(x){ return x.badgeId === badgeId; });
+    if (existing) {
+      // Quitar badge
+      db.collection('badges').doc(existing.docId).delete()
+        .then(function(){
+          badgesMap[uid] = lista.filter(function(x){ return x.badgeId !== badgeId; });
+          var btn = document.getElementById('btog-'+badgeId);
+          if (btn) btn.classList.remove('on');
+          renderTabla();
+          showToast('Badge retirado.');
+        })
+        .catch(function(e){ showToast('Error: '+e.message); });
+    } else {
+      // Asignar badge
+      var def = BADGES_DEF.find(function(x){ return x.id === badgeId; });
+      db.collection('badges').add({
+        uid:           uid,
+        badgeId:       badgeId,
+        activo:        true,
+        asignadoPor:   currentUser.email,
+        asignadoNombre: perfilUsuario.nombre || currentUser.email,
+        timestamp:     firebase.firestore.FieldValue.serverTimestamp()
+      }).then(function(ref){
+        if (!badgesMap[uid]) badgesMap[uid] = [];
+        badgesMap[uid].push({ docId: ref.id, badgeId: badgeId });
+        var btn = document.getElementById('btog-'+badgeId);
+        if (btn) { btn.classList.add('on'); }
+        renderTabla();
+        showToast('Badge "'+(def?def.label:badgeId)+'" asignado.');
+      })
+      .catch(function(e){ showToast('Error: '+e.message); });
+    }
+  }
+
+  function cerrarPanel() {
+    panelUid = null;
+    document.getElementById('panelOverlay').classList.remove('show');
+    document.getElementById('panel').classList.remove('show');
+  }
+
+  function escHtml(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
+</script>
+</body>
+</html>
