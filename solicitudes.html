@@ -293,14 +293,14 @@
     if (unsubEquipo) unsubEquipo();
     unsubEquipo = db.collection('solicitudes')
       .where('emailSupervisor', '==', currentUser.email)
-      .where('estado', '==', 'pendiente-sup')
       .onSnapshot(function(snap) {
         var lista = [];
         snap.forEach(function(doc){ lista.push(Object.assign({id:doc.id}, doc.data())); });
-        lista.sort(function(a,b){ return (a.fechaCreacion?a.fechaCreacion.seconds:0) - (b.fechaCreacion?b.fechaCreacion.seconds:0); });
+        lista.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0) - (a.fechaCreacion?a.fechaCreacion.seconds:0); });
         solEquipo = lista;
+        var pendientes = lista.filter(function(s){ return s.estado === 'pendiente-sup'; }).length;
         var badge = document.getElementById('badgeEquipo');
-        if (badge) { badge.textContent = lista.length; badge.style.display = lista.length ? 'inline-flex' : 'none'; }
+        if (badge) { badge.textContent = pendientes; badge.style.display = pendientes ? 'inline-flex' : 'none'; }
         if (tabActual === 'equipo') renderListaEquipo(lista);
       }, console.error);
   }
@@ -371,7 +371,7 @@
     if (!s) return;
 
     var esEditable = (modo === 'mis') && (s.estado==='borrador' || s.estado==='rechazada');
-    var esRevision = (modo === 'revision');
+    var esRevision = (modo === 'revision') && (s.estado==='pendiente-sup' || s.estado==='pendiente-admin');
 
     var pasos = construirPasos(s);
     var tlHtml = renderTimeline(pasos);
@@ -594,6 +594,8 @@
     var btnE = document.getElementById('btnEnviar');
     if (btnE) { btnE.disabled = true; btnE.textContent = 'Guardando...'; }
 
+    var nombre = perfilUsuario.nombre || currentUser.email;
+
     if (!solActual) {
       data.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
       db.collection('solicitudes').add(data)
@@ -602,6 +604,15 @@
           var msg = estado==='borrador'?'Borrador guardado.': (rolUsuario==='supervisor'?'Solicitud enviada al jefe.':'Solicitud enviada al supervisor.');
           showToast(msg);
           if (tabActual === 'mis') cargarMis();
+          if (estado === 'pendiente-sup') {
+            resolverUid(data.emailSupervisor, function(uid){
+              notifEnviarSilencioso(uid, 'Nueva solicitud de permiso', nombre+' ha enviado una solicitud de permiso.', 'solicitud', 'solicitud');
+            });
+          } else if (estado === 'pendiente-admin') {
+            resolverUid(data.emailJefe, function(uid){
+              notifEnviarSilencioso(uid, 'Nueva solicitud de permiso', nombre+' ha enviado una solicitud de permiso.', 'admin', 'solicitud');
+            });
+          }
         })
         .catch(function(e){ showToast('Error: ' + e.message); if (btnE) { btnE.disabled=false; btnE.textContent='Enviar'; } });
     } else {
@@ -610,6 +621,15 @@
           var msg = estado==='borrador'?'Borrador actualizado.':(rolUsuario==='supervisor'?'Solicitud enviada al jefe.':'Solicitud enviada al supervisor.');
           showToast(msg);
           if (tabActual === 'mis') cargarMis();
+          if (estado === 'pendiente-sup') {
+            resolverUid(data.emailSupervisor, function(uid){
+              notifEnviarSilencioso(uid, 'Solicitud de permiso reenviada', nombre+' ha reenviado su solicitud de permiso.', 'solicitud', 'solicitud');
+            });
+          } else if (estado === 'pendiente-admin') {
+            resolverUid(data.emailJefe, function(uid){
+              notifEnviarSilencioso(uid, 'Solicitud de permiso reenviada', nombre+' ha reenviado su solicitud de permiso.', 'admin', 'solicitud');
+            });
+          }
         })
         .catch(function(e){ showToast('Error: ' + e.message); if (btnE) { btnE.disabled=false; btnE.textContent='Enviar'; } });
     }
@@ -618,6 +638,8 @@
   /* ---------- APROBAR / RECHAZAR ---------- */
   function aprobar(id) {
     var nuevoEstado = tabActual === 'cola' ? 'aprobada' : 'pendiente-admin';
+    var lista = tabActual === 'equipo' ? solEquipo : solicitudes;
+    var s = lista.find(function(x){ return x.id===id; });
     db.collection('solicitudes').doc(id).update({
       estado: nuevoEstado,
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
@@ -625,6 +647,14 @@
       showToast(nuevoEstado==='aprobada' ? 'Solicitud aprobada.' : 'Solicitud enviada al jefe para aprobación.');
       ocultarDetalle();
       solActual = null;
+      if (!s) return;
+      if (nuevoEstado === 'pendiente-admin') {
+        resolverUid(s.emailJefe, function(uid){
+          notifEnviarSilencioso(uid, 'Solicitud aprobada por supervisor', (s.agenteNombre||s.agenteEmail)+' tiene una solicitud pendiente de tu aprobación.', 'admin', 'solicitud');
+        });
+      } else if (nuevoEstado === 'aprobada') {
+        notifEnviarSilencioso(s.agenteUid, 'Solicitud aprobada', 'Tu solicitud de permiso ha sido aprobada.', 'solicitud', 'aprobada');
+      }
     }).catch(function(e){ showToast('Error: '+e.message); });
   }
 
@@ -643,6 +673,8 @@
     if (!rechazandoId) return;
     var nota = document.getElementById('notaRechazo').value.trim();
     if (!nota) { showToast('Escribe el motivo del rechazo.'); return; }
+    var lista = tabActual === 'equipo' ? solEquipo : solicitudes;
+    var s = lista.find(function(x){ return x.id===rechazandoId; });
     db.collection('solicitudes').doc(rechazandoId).update({
       estado: 'rechazada',
       notaRechazo: nota,
@@ -652,7 +684,22 @@
       cerrarRechazo();
       ocultarDetalle();
       solActual = null;
+      if (s) notifEnviarSilencioso(s.agenteUid, 'Solicitud rechazada', 'Tu solicitud de permiso ha sido rechazada. Motivo: '+nota, 'solicitud', 'rechazada');
     }).catch(function(e){ showToast('Error: '+e.message); });
+  }
+
+  /* ---------- NOTIFICACIONES ---------- */
+  function resolverUid(email, cb) {
+    if (!email) { cb(null); return; }
+    db.collection('usuarios').where('email','==',email).limit(1).get()
+      .then(function(snap){ cb(snap.empty ? null : snap.docs[0].id); })
+      .catch(function(){ cb(null); });
+  }
+
+  function notifEnviarSilencioso(uid, titulo, mensaje, tipo, subTipo) {
+    if (!uid) return;
+    ntfEnviar(db, { uid: uid, titulo: titulo, mensaje: mensaje, tipo: tipo, subTipo: subTipo,
+      remitenteNombre: perfilUsuario.nombre || currentUser.email });
   }
 
   function showToast(msg) {
