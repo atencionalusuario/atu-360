@@ -303,10 +303,10 @@
   function cargarLicencias() {
     db.collection('licencias')
       .where('supervisorUid', '==', currentUser.uid)
-      .orderBy('inicio', 'desc')
       .onSnapshot(function(snap) {
         licencias = [];
         snap.forEach(function(d) { licencias.push(Object.assign({ id: d.id }, d.data())); });
+        licencias.sort(function(a,b){ return (b.inicio||'').localeCompare(a.inicio||''); });
         renderTabla();
       }, function(e) { console.error(e); showToast('Error al cargar licencias.'); });
   }
