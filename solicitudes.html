@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/atu-360/">
 <title>ATU 360 — Solicitudes</title>
 <link rel="stylesheet" href="sidebar.css">
 <style>
@@ -19,6 +20,13 @@
   .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
   .btn-nueva { padding: 8px 16px; background: #1A3DAA; color: white; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; }
   .btn-nueva:hover { opacity: 0.88; }
+  /* Tabs */
+  .tabs-bar { display: flex; gap: 0; border-bottom: 1px solid #E2E8F0; background: white; padding: 0 28px; }
+  .tab-btn { padding: 12px 18px; font-size: 0.82rem; font-weight: 600; color: #94A3B8; border: none; background: none; cursor: pointer; font-family: inherit; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+  .tab-btn.active { color: #1A3DAA; border-bottom-color: #1A3DAA; }
+  .tab-btn:hover:not(.active) { color: #475569; }
+  .tab-badge { display: inline-flex; align-items: center; justify-content: center; background: #FFF7ED; color: #C2410C; font-size: 0.6rem; font-weight: 700; border-radius: 99px; padding: 1px 6px; margin-left: 6px; }
+  /* Content */
   .content { padding: 24px 28px; display: flex; gap: 24px; align-items: flex-start; }
   .list-col { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
   .section-title { font-size: 0.72rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
@@ -36,6 +44,7 @@
   .estado-pill.borrador        { background: #F1F5F9; color: #64748B; }
   .sol-titulo { font-size: 0.82rem; font-weight: 700; color: #1E293B; line-height: 1.3; }
   .sol-meta   { font-size: 0.68rem; color: #94A3B8; margin-top: 4px; }
+  .sol-agente { font-size: 0.72rem; font-weight: 600; color: #475569; margin-bottom: 4px; }
   .detail-col { flex: 1; }
   .empty-state { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 48px 24px; text-align: center; }
   .empty-state p { font-size: 0.82rem; color: #94A3B8; margin-top: 12px; }
@@ -60,7 +69,7 @@
   #fileInput { display: none; }
   .file-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
   .file-item { display: flex; align-items: center; justify-content: space-between; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 7px; padding: 8px 12px; }
-  .file-item-name { font-size: 0.75rem; font-weight: 600; color: #15803D; display: flex; align-items: center; gap: 6px; }
+  .file-item-name { font-size: 0.75rem; font-weight: 600; color: #15803D; display: flex; align-items: center; gap: 6px; cursor: pointer; }
   .file-item-remove { background: none; border: none; cursor: pointer; color: #94A3B8; font-size: 0.85rem; padding: 0; }
   .file-item-remove:hover { color: #DC2626; }
   .timeline { display: flex; flex-direction: column; }
@@ -81,12 +90,22 @@
   .btn-sec:hover { border-color: #CBD5E1; }
   .btn-pri { padding: 9px 18px; border: none; border-radius: 7px; background: #1A3DAA; color: white; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; }
   .btn-pri:hover { opacity: 0.88; }
+  .btn-danger { padding: 9px 18px; border: none; border-radius: 7px; background: #DC2626; color: white; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-danger:hover { opacity: 0.88; }
+  .btn-success { padding: 9px 18px; border: none; border-radius: 7px; background: #16A34A; color: white; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-success:hover { opacity: 0.88; }
   .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
   .toast.show { opacity: 1; }
   .loading { text-align: center; padding: 24px; font-size: 0.8rem; color: #94A3B8; }
   .info-row { display: flex; flex-direction: column; gap: 2px; }
   .info-label { font-size: 0.68rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; }
   .info-val   { font-size: 0.85rem; font-weight: 600; color: #1E293B; }
+  /* Modal rechazo */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.35); z-index: 200; display: none; align-items: center; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal-box { background: white; border-radius: 12px; padding: 28px; width: 400px; max-width: 90vw; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 24px 48px rgba(0,0,0,0.15); }
+  .modal-title { font-size: 0.95rem; font-weight: 700; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -98,20 +117,20 @@
     <div class="topbar-left">
       <h2>Solicitudes</h2>
       <span class="topbar-sep">/</span>
-      <p>Mis solicitudes</p>
+      <p id="topbarSub">Mis solicitudes</p>
     </div>
     <div class="topbar-right">
       <div class="tb-clock" id="clock">--:--:--</div>
-      <button class="btn-nueva" id="btnNueva">
+      <button class="btn-nueva" id="btnNueva" style="display:none">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Nueva solicitud
       </button>
     </div>
   </div>
-
+  <div class="tabs-bar" id="tabsBar" style="display:none"></div>
   <div class="content">
     <div class="list-col">
-      <div class="section-title">Historial</div>
+      <div class="section-title" id="listTitle">Historial</div>
       <div id="solLista"><div class="loading">Cargando...</div></div>
     </div>
     <div class="detail-col">
@@ -120,6 +139,21 @@
         <p>Selecciona una solicitud<br>o crea una nueva</p>
       </div>
       <div class="detail-card" id="detailCard"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal rechazo -->
+<div class="modal-overlay" id="modalRechazo">
+  <div class="modal-box">
+    <div class="modal-title">Motivo del rechazo</div>
+    <div>
+      <label class="field-label">Nota para el solicitante <span class="field-req">*</span></label>
+      <textarea id="notaRechazo" placeholder="Explica brevemente el motivo del rechazo..." style="min-height:80px"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sec" onclick="cerrarRechazo()">Cancelar</button>
+      <button class="btn-danger" onclick="confirmarRechazo()">Rechazar solicitud</button>
     </div>
   </div>
 </div>
@@ -145,69 +179,154 @@
 <script src="notif.js"></script>
 <script src="sidebar.js"></script>
 <script>
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+  var ROLES_PERMITIDOS = ['agente','agente-inmersion','supervisor','jefe','wfm','admin','superadmin'];
+
   initSidebar();
   initNotif(db, auth);
 
   setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
 
-  var currentUser = null;
-  var solicitudes = [];
-  var solActual   = null;
+  var currentUser    = null;
+  var perfilUsuario  = null;
+  var rolUsuario     = null;
+  var solicitudes    = [];   // lista activa en la tab actual
+  var solEquipo      = [];   // solicitudes del equipo (supervisor)
+  var solActual      = null;
+  var tabActual      = 'mis'; // 'mis' | 'equipo' | 'cola'
   var archivosSeleccionados = [];
+  var rechazandoId   = null;
+  var unsubMis = null, unsubEquipo = null, unsubCola = null;
 
   var ESTADOS = {
     'borrador':'Borrador', 'pendiente-sup':'Pendiente — Supervisor',
     'pendiente-admin':'Pendiente — Admin', 'aprobada':'Aprobada', 'rechazada':'Rechazada'
   };
 
-  // Esperar a que Firebase Auth esté listo
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (!user) return;
-    currentUser = user;
-    cargarSolicitudes();
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = BASE + 'login.html'; return; }
+    db.collection('usuarios').where('email','==',user.email).limit(1).get()
+      .then(function(snap) {
+        if (snap.empty) { auth.signOut(); window.location.href = BASE + 'login.html'; return; }
+        perfilUsuario = snap.docs[0].data();
+        rolUsuario    = perfilUsuario.rol;
+        if (!ROLES_PERMITIDOS.includes(rolUsuario)) { auth.signOut(); window.location.href = BASE + 'login.html'; return; }
+        currentUser = user;
+        init();
+      })
+      .catch(function(e){ console.error(e); });
   });
 
-  document.getElementById('btnNueva').addEventListener('click', function(){ mostrarFormulario(null); });
-
-  document.getElementById('fileInput').addEventListener('change', function(e) {
-    Array.from(e.target.files).forEach(function(f) {
-      if (!archivosSeleccionados.find(function(x){ return x.name===f.name; }))
-        archivosSeleccionados.push(f);
-    });
-    renderFileList();
-    this.value = '';
-  });
-
-  function cargarSolicitudes() {
-    db.collection('solicitudes')
-      .where('agenteUid', '==', currentUser.uid)
-      .onSnapshot(function(snap) {
-        solicitudes = [];
-        snap.forEach(function(doc){ solicitudes.push(Object.assign({ id: doc.id }, doc.data())); });
-        // Ordenar por fecha de creación descendente (cliente)
-        solicitudes.sort(function(a,b){
-          var ta = a.fechaCreacion ? a.fechaCreacion.seconds : 0;
-          var tb = b.fechaCreacion ? b.fechaCreacion.seconds : 0;
-          return tb - ta;
-        });
-        renderLista();
-      }, function(err) {
-        console.error('Error cargando solicitudes:', err);
-        document.getElementById('solLista').innerHTML =
-          '<div class="loading" style="color:#DC2626">Error al cargar solicitudes.<br><small>'+err.message+'</small></div>';
-      });
+  function init() {
+    if (rolUsuario === 'supervisor') {
+      initTabs(['mis','equipo']);
+      document.getElementById('btnNueva').style.display = 'flex';
+      document.getElementById('btnNueva').addEventListener('click', function(){ mostrarFormulario(null); });
+      cambiarTab('mis');
+    } else if (rolUsuario === 'jefe' || rolUsuario === 'wfm' || rolUsuario === 'admin' || rolUsuario === 'superadmin') {
+      document.getElementById('topbarSub').textContent = 'Cola de aprobación';
+      document.getElementById('listTitle').textContent = 'Pendientes';
+      initTabs(['cola']);
+      cambiarTab('cola');
+    } else {
+      // agente / agente-inmersion
+      document.getElementById('btnNueva').style.display = 'flex';
+      document.getElementById('btnNueva').addEventListener('click', function(){ mostrarFormulario(null); });
+      cambiarTab('mis');
+    }
   }
 
-  function renderLista() {
-    if (solicitudes.length === 0) {
-      document.getElementById('solLista').innerHTML = '<div class="loading">Sin solicitudes aún.</div>';
-      return;
+  function initTabs(tabs) {
+    if (tabs.length < 2) return;
+    var bar = document.getElementById('tabsBar');
+    bar.style.display = 'flex';
+    var labels = { mis: 'Mis solicitudes', equipo: 'Equipo', cola: 'Cola de aprobación' };
+    tabs.forEach(function(t) {
+      var btn = document.createElement('button');
+      btn.className = 'tab-btn' + (t===tabActual?' active':'');
+      btn.dataset.tab = t;
+      btn.textContent = labels[t];
+      if (t === 'equipo') btn.innerHTML += '<span class="tab-badge" id="badgeEquipo" style="display:none">0</span>';
+      btn.onclick = function(){ cambiarTab(t); };
+      bar.appendChild(btn);
+    });
+  }
+
+  function cambiarTab(tab) {
+    tabActual = tab;
+    solActual = null;
+    solicitudes = [];
+    document.getElementById('solLista').innerHTML = '<div class="loading">Cargando...</div>';
+    ocultarDetalle();
+
+    document.querySelectorAll('.tab-btn').forEach(function(b){
+      b.classList.toggle('active', b.dataset.tab === tab);
+    });
+
+    if (tab === 'mis') {
+      if (unsubMis) { /* ya activo */ } else cargarMis();
+      renderLista(solicitudes);
+    } else if (tab === 'equipo') {
+      cargarEquipo();
+    } else if (tab === 'cola') {
+      cargarCola();
     }
+  }
+
+  /* ---------- CARGA MIS SOLICITUDES ---------- */
+  function cargarMis() {
+    if (unsubMis) unsubMis();
+    unsubMis = db.collection('solicitudes')
+      .where('agenteUid', '==', currentUser.uid)
+      .onSnapshot(function(snap) {
+        var lista = [];
+        snap.forEach(function(doc){ lista.push(Object.assign({id:doc.id}, doc.data())); });
+        lista.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0) - (a.fechaCreacion?a.fechaCreacion.seconds:0); });
+        if (tabActual === 'mis') { solicitudes = lista; renderLista(solicitudes); }
+        else solicitudes = lista;
+      }, console.error);
+  }
+
+  /* ---------- CARGA EQUIPO (supervisor) ---------- */
+  function cargarEquipo() {
+    if (unsubEquipo) unsubEquipo();
+    unsubEquipo = db.collection('solicitudes')
+      .where('emailSupervisor', '==', currentUser.email)
+      .where('estado', '==', 'pendiente-sup')
+      .onSnapshot(function(snap) {
+        var lista = [];
+        snap.forEach(function(doc){ lista.push(Object.assign({id:doc.id}, doc.data())); });
+        lista.sort(function(a,b){ return (a.fechaCreacion?a.fechaCreacion.seconds:0) - (b.fechaCreacion?b.fechaCreacion.seconds:0); });
+        solEquipo = lista;
+        var badge = document.getElementById('badgeEquipo');
+        if (badge) { badge.textContent = lista.length; badge.style.display = lista.length ? 'inline-flex' : 'none'; }
+        if (tabActual === 'equipo') renderListaEquipo(lista);
+      }, console.error);
+  }
+
+  /* ---------- CARGA COLA JEFE ---------- */
+  function cargarCola() {
+    if (unsubCola) unsubCola();
+    unsubCola = db.collection('solicitudes')
+      .where('emailJefe', '==', currentUser.email)
+      .where('estado', '==', 'pendiente-admin')
+      .onSnapshot(function(snap) {
+        var lista = [];
+        snap.forEach(function(doc){ lista.push(Object.assign({id:doc.id}, doc.data())); });
+        lista.sort(function(a,b){ return (a.fechaCreacion?a.fechaCreacion.seconds:0) - (b.fechaCreacion?b.fechaCreacion.seconds:0); });
+        if (tabActual === 'cola') { solicitudes = lista; renderListaEquipo(lista); }
+        else solicitudes = lista;
+      }, console.error);
+  }
+
+  /* ---------- RENDER LISTAS ---------- */
+  function renderLista(lista) {
+    if (lista.length === 0) { document.getElementById('solLista').innerHTML = '<div class="loading">Sin solicitudes aún.</div>'; return; }
     var html = '';
-    solicitudes.forEach(function(s) {
+    lista.forEach(function(s) {
       var fecha = s.fechaCreacion ? new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
-      html += '<div class="sol-card'+(solActual===s.id?' active':'')+'" onclick="verSolicitud(\''+s.id+'\')">'
+      html += '<div class="sol-card'+(solActual===s.id?' active':'')+'" onclick="verSolicitud(\''+s.id+'\',\'mis\')">'
         +'<div class="sol-card-top">'
         +'<span class="sol-tipo permiso">Permiso</span>'
         +'<span class="estado-pill '+s.estado+'">'+(ESTADOS[s.estado]||s.estado)+'</span>'
@@ -219,38 +338,64 @@
     document.getElementById('solLista').innerHTML = html;
   }
 
-  function verSolicitud(id) {
-    solActual = id;
-    renderLista();
-    var s = solicitudes.find(function(x){ return x.id===id; });
-    if (!s) return;
-    var esEditable = s.estado==='borrador' || s.estado==='rechazada';
-
-    var pasos = [
-      { label:'Solicitud enviada', sub: s.fechaCreacion ? new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '', estado:'done' },
-      { label:'Revision del supervisor', sub: s.estado==='pendiente-sup'?'En espera':(s.estado==='borrador'?'Pendiente de envio':'Revisado'), estado: s.estado==='pendiente-sup'?'active':(s.estado==='borrador'?'pending':'done') },
-      { label:'Revision del administrador', sub: s.estado==='pendiente-admin'?'En espera':(s.estado==='aprobada'||s.estado==='rechazada'?'Revisado':'Pendiente'), estado: s.estado==='pendiente-admin'?'active':(s.estado==='aprobada'||s.estado==='rechazada'?'done':'pending') },
-      { label: s.estado==='aprobada'?'Aprobada':s.estado==='rechazada'?'Rechazada':'Resolucion final', sub: s.estado==='aprobada'?'Solicitud aprobada':s.estado==='rechazada'?'Solicitud rechazada':'Pendiente', estado: s.estado==='aprobada'||s.estado==='rechazada'?'done':'pending', nota: s.notaRechazo||'' }
-    ];
-
-    var tlHtml = '<div class="timeline">';
-    pasos.forEach(function(p,i){
-      tlHtml += '<div class="tl-step"><div class="tl-line-wrap"><div class="tl-dot '+p.estado+'"></div>'
-        +(i<pasos.length-1?'<div class="tl-connector'+(p.estado==='done'?' done':'')+'"></div>':'')+'</div>'
-        +'<div class="tl-text"><div class="tl-label">'+p.label+'</div><div class="tl-sub">'+p.sub+'</div>'
-        +(p.nota?'<div class="tl-nota">'+p.nota+'</div>':'')+'</div></div>';
+  function renderListaEquipo(lista) {
+    if (lista.length === 0) { document.getElementById('solLista').innerHTML = '<div class="loading">No hay solicitudes pendientes.</div>'; return; }
+    var html = '';
+    lista.forEach(function(s) {
+      var fecha = s.fechaCreacion ? new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
+      html += '<div class="sol-card'+(solActual===s.id?' active':'')+'" onclick="verSolicitud(\''+s.id+'\',\'revision\')">'
+        +'<div class="sol-card-top">'
+        +'<span class="sol-tipo permiso">Permiso</span>'
+        +'<span class="estado-pill '+s.estado+'">'+(ESTADOS[s.estado]||s.estado)+'</span>'
+        +'</div>'
+        +'<div class="sol-agente">'+(s.agenteNombre||s.agenteEmail||'—')+'</div>'
+        +'<div class="sol-titulo">'+(s.comentarios?s.comentarios.substring(0,50)+'...':'Sin comentarios')+'</div>'
+        +'<div class="sol-meta">'+fecha+(s.fechaInicio?' · '+s.fechaInicio:'')+'</div>'
+        +'</div>';
     });
-    tlHtml += '</div>';
+    document.getElementById('solLista').innerHTML = html;
+  }
+
+  /* ---------- VER SOLICITUD ---------- */
+  function verSolicitud(id, modo) {
+    solActual = id;
+    var lista = (tabActual === 'equipo' || tabActual === 'cola') ? (tabActual==='equipo'?solEquipo:solicitudes) : solicitudes;
+    if (tabActual === 'mis') renderLista(solicitudes);
+    else renderListaEquipo(tabActual==='equipo'?solEquipo:solicitudes);
+
+    var s = lista.find(function(x){ return x.id===id; });
+    if (!s) {
+      // Si viene de mis solicitudes pero la lista actual es equipo, buscamos en ambas
+      s = solicitudes.find(function(x){ return x.id===id; }) || solEquipo.find(function(x){ return x.id===id; });
+    }
+    if (!s) return;
+
+    var esEditable = (modo === 'mis') && (s.estado==='borrador' || s.estado==='rechazada');
+    var esRevision = (modo === 'revision');
+
+    var pasos = construirPasos(s);
+    var tlHtml = renderTimeline(pasos);
 
     var archHtml = '';
     if (s.archivos && s.archivos.length > 0) {
-      archHtml = '<div><span class="info-label">Documentacion adjunta</span>'
+      archHtml = '<div><span class="info-label">Documentación adjunta</span>'
         +'<div class="file-list">'
-        +s.archivos.map(function(a){
-          return '<div class="file-item"><span class="file-item-name">'
+        +s.archivos.map(function(a, i){
+          var clickable = a.base64 ? 'onclick="verArchivo(\''+id+'\','+i+')" style="cursor:pointer;text-decoration:underline"' : '';
+          return '<div class="file-item"><span class="file-item-name" '+clickable+'>'
             +'<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
-            +a.nombre+'</span></div>';
+            +(a.nombre||'Archivo')+'</span></div>';
         }).join('')+'</div></div>';
+    }
+
+    var footerHtml = '';
+    if (esEditable) {
+      footerHtml = '<div class="detail-footer"><button class="btn-sec" onclick="editarSolicitud(\''+id+'\')">Editar</button></div>';
+    } else if (esRevision) {
+      footerHtml = '<div class="detail-footer">'
+        +'<button class="btn-danger" onclick="abrirRechazo(\''+id+'\')">Rechazar</button>'
+        +'<button class="btn-success" onclick="aprobar(\''+id+'\')">Aprobar</button>'
+        +'</div>';
     }
 
     document.getElementById('emptyState').style.display = 'none';
@@ -258,9 +403,9 @@
     dc.className = 'detail-card show';
     dc.innerHTML =
       '<div class="detail-header"><div>'
-      +'<div class="detail-header-title">Permiso</div>'
+      +'<div class="detail-header-title">Permiso — '+(s.agenteNombre||s.agenteEmail||'')+'</div>'
       +'<div class="detail-header-sub"><span class="estado-pill '+s.estado+'" style="font-size:0.65rem">'+(ESTADOS[s.estado]||s.estado)+'</span></div>'
-      +'</div>'+(esEditable?'<button class="btn-sec" onclick="editarSolicitud(\''+s.id+'\')">Editar</button>':'')+'</div>'
+      +'</div></div>'
       +'<div class="detail-body">'
       +'<div class="field-row">'
       +'<div class="info-row"><span class="info-label">Fecha inicio</span><span class="info-val">'+(s.fechaInicio||'—')+'</span></div>'
@@ -274,20 +419,63 @@
       +'<div style="font-size:0.84rem;color:#374151;line-height:1.6;background:#F8FAFC;padding:10px 14px;border-radius:8px;border:1px solid #F1F5F9;margin-top:4px">'+(s.comentarios||'—')+'</div></div>'
       + archHtml
       +'<div><span class="info-label" style="display:block;margin-bottom:10px">Estado de la solicitud</span>'+tlHtml+'</div>'
-      +'</div>';
+      +'</div>'
+      + footerHtml;
   }
 
+  function construirPasos(s) {
+    var esSup = (s.agenteUid === currentUser.uid && (perfilUsuario.rol==='supervisor'));
+    if (esSup) {
+      return [
+        { label:'Solicitud enviada', sub: fechaStr(s.fechaCreacion), estado:'done' },
+        { label:'Revisión del jefe', sub: s.estado==='pendiente-admin'?'En espera':(s.estado==='aprobada'||s.estado==='rechazada'?'Revisado':'Pendiente de envío'), estado: s.estado==='pendiente-admin'?'active':(s.estado==='aprobada'||s.estado==='rechazada'?'done':'pending') },
+        { label: s.estado==='aprobada'?'Aprobada':s.estado==='rechazada'?'Rechazada':'Resolución final', sub: s.estado==='aprobada'?'Solicitud aprobada':s.estado==='rechazada'?'Solicitud rechazada':'Pendiente', estado: s.estado==='aprobada'||s.estado==='rechazada'?'done':'pending', nota: s.notaRechazo||'' }
+      ];
+    }
+    return [
+      { label:'Solicitud enviada', sub: fechaStr(s.fechaCreacion), estado:'done' },
+      { label:'Revisión del supervisor', sub: s.estado==='pendiente-sup'?'En espera':(s.estado==='borrador'?'Pendiente de envío':'Revisado'), estado: s.estado==='pendiente-sup'?'active':(s.estado==='borrador'?'pending':'done') },
+      { label:'Revisión del jefe', sub: s.estado==='pendiente-admin'?'En espera':(s.estado==='aprobada'||s.estado==='rechazada'?'Revisado':'Pendiente'), estado: s.estado==='pendiente-admin'?'active':(s.estado==='aprobada'||s.estado==='rechazada'?'done':'pending') },
+      { label: s.estado==='aprobada'?'Aprobada':s.estado==='rechazada'?'Rechazada':'Resolución final', sub: s.estado==='aprobada'?'Solicitud aprobada':s.estado==='rechazada'?'Solicitud rechazada':'Pendiente', estado: s.estado==='aprobada'||s.estado==='rechazada'?'done':'pending', nota: s.notaRechazo||'' }
+    ];
+  }
+
+  function renderTimeline(pasos) {
+    var html = '<div class="timeline">';
+    pasos.forEach(function(p,i){
+      html += '<div class="tl-step"><div class="tl-line-wrap"><div class="tl-dot '+p.estado+'"></div>'
+        +(i<pasos.length-1?'<div class="tl-connector'+(p.estado==='done'?' done':'')+'"></div>':'')+'</div>'
+        +'<div class="tl-text"><div class="tl-label">'+p.label+'</div><div class="tl-sub">'+p.sub+'</div>'
+        +(p.nota?'<div class="tl-nota">'+p.nota+'</div>':'')+'</div></div>';
+    });
+    return html + '</div>';
+  }
+
+  function fechaStr(ts) { return ts ? new Date(ts.seconds*1000).toLocaleDateString('es-SV') : ''; }
+
+  function ocultarDetalle() {
+    document.getElementById('emptyState').style.display = '';
+    var dc = document.getElementById('detailCard');
+    dc.className = 'detail-card';
+    dc.innerHTML = '';
+  }
+
+  /* ---------- NUEVO / EDITAR FORMULARIO ---------- */
   function mostrarFormulario(s) {
     archivosSeleccionados = [];
     solActual = s ? s.id : null;
     document.querySelectorAll('.sol-card').forEach(function(c){ c.classList.remove('active'); });
     document.getElementById('emptyState').style.display = 'none';
+
+    var esSup = rolUsuario === 'supervisor';
+    var destino = esSup ? 'al jefe' : 'al supervisor';
+
     var dc = document.getElementById('detailCard');
     dc.className = 'detail-card show';
     dc.innerHTML =
       '<div class="detail-header"><div>'
       +'<div class="detail-header-title">'+(s?'Editar solicitud':'Nueva solicitud')+'</div>'
-      +'<div class="detail-header-sub">Se enviara al supervisor para revision</div>'
+      +'<div class="detail-header-sub">Se enviará '+destino+' para revisión</div>'
       +'</div></div>'
       +'<div class="detail-body">'
       +'<div><label class="field-label">Tipo de solicitud <span class="field-req">*</span></label>'
@@ -302,28 +490,47 @@
       +'</div>'
       +'<div><label class="field-label">Comentarios <span class="field-req">*</span></label>'
       +'<textarea id="fComentarios" placeholder="Describe el motivo o contexto de tu solicitud...">'+(s&&s.comentarios?s.comentarios:'')+'</textarea></div>'
-      +'<div><label class="field-label">Documentacion adjunta <span style="color:#94A3B8;font-weight:400">(opcional)</span></label>'
+      +'<div><label class="field-label">Documentación adjunta <span style="color:#94A3B8;font-weight:400">(opcional — max. 1MB por archivo)</span></label>'
       +'<div class="upload-area" id="uploadArea" onclick="document.getElementById(\'fileInput\').click()">'
       +'<div style="color:#94A3B8;margin-bottom:8px"><svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>'
       +'<div class="upload-label">Haz clic para subir archivos</div>'
-      +'<div class="upload-hint">PDF, JPG, PNG, DOC — Max. 10MB por archivo</div>'
+      +'<div class="upload-hint">PDF, JPG, PNG, DOC — Max. 1MB por archivo</div>'
       +'</div>'
       +'<div class="file-list" id="fileList"></div>'
       +'</div>'
       +'</div>'
       +'<div class="detail-footer">'
-      +'<button class="btn-sec" id="btnBorrador">Guardar borrador</button>'
-      +'<button class="btn-pri" id="btnEnviar">Enviar al supervisor</button>'
+      +(esSup?'':'<button class="btn-sec" id="btnBorrador">Guardar borrador</button>')
+      +'<button class="btn-pri" id="btnEnviar">Enviar '+destino+'</button>'
       +'</div>';
 
-    document.getElementById('btnBorrador').addEventListener('click', function(){ guardar('borrador'); });
-    document.getElementById('btnEnviar').addEventListener('click',   function(){ guardar('pendiente-sup'); });
+    var btnB = document.getElementById('btnBorrador');
+    if (btnB) btnB.addEventListener('click', function(){ guardar('borrador'); });
+    document.getElementById('btnEnviar').addEventListener('click', function(){
+      guardar(esSup ? 'pendiente-admin' : 'pendiente-sup');
+    });
   }
 
   function editarSolicitud(id) {
     var s = solicitudes.find(function(x){ return x.id===id; });
-    mostrarFormulario(s);
+    if (s) mostrarFormulario(s);
   }
+
+  /* ---------- ARCHIVOS ---------- */
+  document.getElementById('fileInput').addEventListener('change', function(e) {
+    var MAX = 1 * 1024 * 1024;
+    Array.from(e.target.files).forEach(function(f) {
+      if (f.size > MAX) { showToast('Archivo demasiado grande: ' + f.name + ' (máx. 1MB)'); return; }
+      if (archivosSeleccionados.find(function(x){ return x.name===f.name; })) return;
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        archivosSeleccionados.push({ name: f.name, type: f.type, base64: ev.target.result });
+        renderFileList();
+      };
+      reader.readAsDataURL(f);
+    });
+    this.value = '';
+  });
 
   function renderFileList() {
     var el = document.getElementById('fileList'); if (!el) return;
@@ -340,6 +547,22 @@
 
   function removeFile(i) { archivosSeleccionados.splice(i,1); renderFileList(); }
 
+  function verArchivo(solId, idx) {
+    var lista = solicitudes.concat(solEquipo);
+    var s = lista.find(function(x){ return x.id===solId; });
+    if (!s || !s.archivos || !s.archivos[idx] || !s.archivos[idx].base64) return;
+    var a = s.archivos[idx];
+    var w = window.open();
+    if (a.tipo && a.tipo.startsWith('image/')) {
+      w.document.write('<img src="'+a.base64+'" style="max-width:100%">');
+    } else {
+      var link = w.document.createElement('a');
+      link.href = a.base64; link.download = a.nombre || 'archivo';
+      w.document.body.appendChild(link); link.click();
+    }
+  }
+
+  /* ---------- GUARDAR ---------- */
   function guardar(estado) {
     var fi  = (document.getElementById('fFechaInicio')||{}).value||'';
     var ff  = (document.getElementById('fFechaFin')||{}).value||'';
@@ -347,40 +570,89 @@
     var hf  = (document.getElementById('fHoraFin')||{}).value||'';
     var com = ((document.getElementById('fComentarios')||{}).value||'').trim();
 
-    if (!fi || !ff)  { showToast('Selecciona las fechas de la solicitud.'); return; }
-    if (!hi || !hf)  { showToast('Selecciona la hora de inicio y hora de fin.'); return; }
-    if (!com)        { showToast('Agrega un comentario.'); return; }
+    if (estado !== 'borrador') {
+      if (!fi || !ff)  { showToast('Selecciona las fechas de la solicitud.'); return; }
+      if (!hi || !hf)  { showToast('Selecciona la hora de inicio y hora de fin.'); return; }
+      if (!com)        { showToast('Agrega un comentario.'); return; }
+    }
 
     var data = {
-      agenteUid:    currentUser.uid,
-      agenteEmail:  currentUser.email,
-      agenteNombre: currentUser.email.split('@')[0],
-      tipo:         'permiso',
-      fechaInicio:  fi, fechaFin: ff,
-      horaInicio:   hi, horaFin:  hf,
-      comentarios:  com,
-      estado:       estado,
-      archivos:     archivosSeleccionados.map(function(f){ return { nombre: f.name, url: '' }; }),
+      agenteUid:      currentUser.uid,
+      agenteEmail:    currentUser.email,
+      agenteNombre:   perfilUsuario.nombre || currentUser.email,
+      emailSupervisor: perfilUsuario.emailSupervisor || '',
+      emailJefe:      perfilUsuario.emailJefe || '',
+      tipo:           'permiso',
+      fechaInicio:    fi, fechaFin: ff,
+      horaInicio:     hi, horaFin:  hf,
+      comentarios:    com,
+      estado:         estado,
+      archivos:       archivosSeleccionados.map(function(f){ return { nombre: f.name, tipo: f.type, base64: f.base64 || '' }; }),
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
     };
+
+    var btnE = document.getElementById('btnEnviar');
+    if (btnE) { btnE.disabled = true; btnE.textContent = 'Guardando...'; }
 
     if (!solActual) {
       data.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
       db.collection('solicitudes').add(data)
         .then(function(ref){
           solActual = ref.id;
-          showToast(estado==='borrador' ? 'Borrador guardado.' : 'Solicitud enviada al supervisor.');
-          if (estado !== 'borrador') verSolicitud(ref.id);
+          var msg = estado==='borrador'?'Borrador guardado.': (rolUsuario==='supervisor'?'Solicitud enviada al jefe.':'Solicitud enviada al supervisor.');
+          showToast(msg);
+          if (tabActual === 'mis') cargarMis();
         })
-        .catch(function(e){ showToast('Error: ' + e.message); console.error(e); });
+        .catch(function(e){ showToast('Error: ' + e.message); if (btnE) { btnE.disabled=false; btnE.textContent='Enviar'; } });
     } else {
       db.collection('solicitudes').doc(solActual).update(data)
         .then(function(){
-          showToast(estado==='borrador' ? 'Borrador actualizado.' : 'Solicitud enviada al supervisor.');
-          if (estado !== 'borrador') verSolicitud(solActual);
+          var msg = estado==='borrador'?'Borrador actualizado.':(rolUsuario==='supervisor'?'Solicitud enviada al jefe.':'Solicitud enviada al supervisor.');
+          showToast(msg);
+          if (tabActual === 'mis') cargarMis();
         })
-        .catch(function(e){ showToast('Error: ' + e.message); console.error(e); });
+        .catch(function(e){ showToast('Error: ' + e.message); if (btnE) { btnE.disabled=false; btnE.textContent='Enviar'; } });
     }
+  }
+
+  /* ---------- APROBAR / RECHAZAR ---------- */
+  function aprobar(id) {
+    var nuevoEstado = tabActual === 'cola' ? 'aprobada' : 'pendiente-admin';
+    db.collection('solicitudes').doc(id).update({
+      estado: nuevoEstado,
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){
+      showToast(nuevoEstado==='aprobada' ? 'Solicitud aprobada.' : 'Solicitud enviada al jefe para aprobación.');
+      ocultarDetalle();
+      solActual = null;
+    }).catch(function(e){ showToast('Error: '+e.message); });
+  }
+
+  function abrirRechazo(id) {
+    rechazandoId = id;
+    document.getElementById('notaRechazo').value = '';
+    document.getElementById('modalRechazo').classList.add('show');
+  }
+
+  function cerrarRechazo() {
+    rechazandoId = null;
+    document.getElementById('modalRechazo').classList.remove('show');
+  }
+
+  function confirmarRechazo() {
+    if (!rechazandoId) return;
+    var nota = document.getElementById('notaRechazo').value.trim();
+    if (!nota) { showToast('Escribe el motivo del rechazo.'); return; }
+    db.collection('solicitudes').doc(rechazandoId).update({
+      estado: 'rechazada',
+      notaRechazo: nota,
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){
+      showToast('Solicitud rechazada.');
+      cerrarRechazo();
+      ocultarDetalle();
+      solActual = null;
+    }).catch(function(e){ showToast('Error: '+e.message); });
   }
 
   function showToast(msg) {
