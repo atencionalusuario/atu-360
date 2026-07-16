@@ -634,6 +634,8 @@
   function supervisores(){ return usuarios.filter(function(u){ return u.rol==='supervisor'||u.rol==='jefe'; }); }
   function supNombre(){ var id=g('fSupervisor'); var s=usuarios.find(function(u){return u.id===id;}); return s?s.nombre||'':''; }
   function supEmail() { var id=g('fSupervisor'); var s=usuarios.find(function(u){return u.id===id;}); return s?s.email||'':''; }
+  function jefes()    { return usuarios.filter(function(u){ return u.rol==='jefe'||u.rol==='superadmin'; }); }
+  function jefeEmail(){ var id=g('fJefe'); var j=usuarios.find(function(u){return u.id===id;}); return j?j.email||'':''; }
   function g(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
 
   function abrirModalForm(id){
@@ -673,6 +675,9 @@
       +'</select></div>'
       +'<div class="field"><label>Supervisor</label><select id="fSupervisor"><option value="">— Sin supervisor —</option>'
       +supervisores().map(function(s){ return '<option value="'+s.id+'"'+(u&&u.emailSupervisor===s.email?' selected':'')+'>'+s.nombre+' ('+s.email+')</option>'; }).join('')
+      +'</select></div>'
+      +'<div class="field"><label>Jefe</label><select id="fJefe"><option value="">— Sin jefe —</option>'
+      +jefes().map(function(j){ return '<option value="'+j.id+'"'+(u&&u.emailJefe===j.email?' selected':'')+'>'+j.nombre+' ('+j.email+')</option>'; }).join('')
       +'</select></div>'
       +'<div class="field"><label>Fecha de ingreso <span class="field-req">*</span></label><input type="date" id="fFecha" value="'+(u?u.fechaIngreso||'':'')+'"></div>'
       +'<div class="field"><label>Horas con goce</label><input type="number" id="fHCG" value="'+(u?u.horasConGoce:40)+'" min="0"></div>'
@@ -719,7 +724,7 @@
     var datos={
       nombre:nombre, email:email, documento:docNum, telefono:g('fTelefono'),
       cargo:cargo, canal:g('fCanal'), proyecto:proyecto, rol:rol,
-      supervisor:supNombre(), emailSupervisor:supEmail(), fechaIngreso:fecha,
+      supervisor:supNombre(), emailSupervisor:supEmail(), emailJefe:jefeEmail(), fechaIngreso:fecha,
       horasConGoce:parseInt(g('fHCG'))||40, horasSinGoce:parseInt(g('fHSG'))||480,
       vehiculo:veh, tipoVehiculo:veh?g('fTipoVeh'):'', marca:veh?g('fMarca'):'',
       modelo:veh?g('fModelo'):'', placa:veh?g('fPlaca'):''
