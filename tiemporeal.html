@@ -252,7 +252,17 @@
         +'</div></div>'
         +(online
           ?'<div class="ac-estado-badge" style="background:'+cfg.bg+';color:'+cfg.text+'">'+escHtml(estado)+'</div>'
-           +'<div class="ac-rt-timer" style="color:'+cfg.text+'" id="jrt-'+a.id+'">00:00:00</div>'
+           +'<div style="display:flex;gap:6px;align-items:center;margin-top:2px">'
+           +'<div style="flex:1;text-align:center">'
+           +'<div style="font-size:0.6rem;color:#94A3B8;text-transform:uppercase;letter-spacing:0.5px">Jornada</div>'
+           +'<div class="ac-rt-timer" style="color:#1E293B;font-size:0.78rem" id="jrt-'+a.id+'">--:--:--</div>'
+           +'</div>'
+           +'<div style="width:1px;background:#E2E8F0;height:28px"></div>'
+           +'<div style="flex:1;text-align:center">'
+           +'<div style="font-size:0.6rem;color:#94A3B8;text-transform:uppercase;letter-spacing:0.5px">Estado</div>'
+           +'<div class="ac-rt-timer" style="color:'+cfg.text+';font-size:0.78rem" id="ert-'+a.id+'">00:00:00</div>'
+           +'</div>'
+           +'</div>'
           :'<div class="ac-sin-marcaje">Sin entrada hoy</div>')
         +'</div>';
     }
@@ -301,14 +311,25 @@
     document.getElementById('rtGrid').innerHTML = html ||
       '<div class="empty-state">Sin agentes para los filtros seleccionados.</div>';
 
-    // Timers en vivo
-    soloAgentes.filter(function(a){ return !!a.enLinea && !!a.estadoDesde; }).forEach(function(a) {
+    // Timers en vivo — jornada + estado
+    soloAgentes.filter(function(a){ return !!a.enLinea; }).forEach(function(a) {
+      var jEl = document.getElementById('jrt-'+a.id);
+      var eEl = document.getElementById('ert-'+a.id);
+      if (!jEl && !eEl) return;
+
+      var jDesde = a.entradaDesde ? (a.entradaDesde.toDate ? a.entradaDesde.toDate() : new Date(a.entradaDesde)) : null;
+      var eDesde = a.estadoDesde  ? (a.estadoDesde.toDate  ? a.estadoDesde.toDate()  : new Date(a.estadoDesde))  : null;
+
       timers[a.id] = setInterval(function() {
-        var el = document.getElementById('jrt-'+a.id);
-        if (!el) { clearInterval(timers[a.id]); return; }
-        var desde = a.estadoDesde.toDate ? a.estadoDesde.toDate() : new Date(a.estadoDesde);
-        var seg   = Math.floor((new Date() - desde) / 1000);
-        el.textContent = pad(Math.floor(seg/3600)) + ':' + pad(Math.floor((seg%3600)/60)) + ':' + pad(seg%60);
+        var now = new Date();
+        if (jEl && jDesde) {
+          var seg = Math.floor((now - jDesde) / 1000);
+          jEl.textContent = pad(Math.floor(seg/3600))+':'+pad(Math.floor((seg%3600)/60))+':'+pad(seg%60);
+        }
+        if (eEl && eDesde) {
+          var seg2 = Math.floor((now - eDesde) / 1000);
+          eEl.textContent = pad(Math.floor(seg2/3600))+':'+pad(Math.floor((seg2%3600)/60))+':'+pad(seg2%60);
+        }
       }, 1000);
     });
   }

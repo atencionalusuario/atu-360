@@ -379,14 +379,16 @@
     }).catch(function(e){ console.error('Error auxiliar:', e); });
   }
 
-  function actualizarEstadoActual(estadoNombre) {
+  function actualizarEstadoActual(estadoNombre, extra) {
     var uid = firebase.auth().currentUser ? firebase.auth().currentUser.uid : null;
     if (!uid) return;
-    db.collection('usuarios').doc(uid).update({
+    var data = {
       estadoActual:  estadoNombre,
       estadoDesde:   firebase.firestore.FieldValue.serverTimestamp(),
       enLinea:       estadoNombre !== 'Fuera' && estadoNombre !== 'Jornada finalizada'
-    }).catch(function(e){ console.error('Error estado:', e); });
+    };
+    if (extra) Object.keys(extra).forEach(function(k){ data[k] = extra[k]; });
+    db.collection('usuarios').doc(uid).update(data).catch(function(e){ console.error('Error estado:', e); });
   }
 
   // MARCAJE
@@ -459,7 +461,7 @@
         },1000);
         document.getElementById('auxCard').style.display='block';
         activarBtn(document.querySelector('[data-nombre="Pausa administrativa"]'));
-        actualizarEstadoActual('Pausa administrativa');
+        actualizarEstadoActual('Pausa administrativa', { entradaDesde: firebase.firestore.FieldValue.serverTimestamp() });
         guardarMarcaje('entrada',now,foto);
       } else {
         estado='terminado'; clearInterval(jornIv);
@@ -472,7 +474,7 @@
         document.getElementById('btnLabel').textContent='Jornada completa';
         document.querySelectorAll('.aux-btn').forEach(function(b){b.disabled=true;b.classList.remove('aux-active');});
         document.getElementById('auxSub').textContent='La jornada ha finalizado.';
-        actualizarEstadoActual('Jornada finalizada');
+        actualizarEstadoActual('Jornada finalizada', { entradaDesde: null });
         guardarMarcaje('salida',now,foto);
       }
     },700);
