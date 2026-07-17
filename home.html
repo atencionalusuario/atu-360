@@ -248,13 +248,88 @@
   initSidebar();
   initNotif(db, auth);
 
-  // Cargar nombre del agente
+  // Cargar nombre del agente y restaurar estado del día
   firebase.auth().onAuthStateChanged(function(user) {
     if (!user) return;
+
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
       var nombre = doc.exists ? doc.data().nombre : user.email.split('@')[0];
       document.getElementById('greetName').textContent = nombre;
     });
+
+    var hoyFecha = new Date().toLocaleDateString('es-SV');
+    db.collection('marcajes')
+      .where('uid', '==', user.uid)
+      .where('fecha', '==', hoyFecha)
+      .get()
+      .then(function(snap) {
+        var entradaDoc = null, salidaDoc = null;
+        snap.forEach(function(d) {
+          var data = d.data();
+          if (data.tipo === 'entrada' && !entradaDoc) entradaDoc = data;
+          if (data.tipo === 'salida') salidaDoc = data;
+        });
+
+        if (!entradaDoc) return;
+
+        entradaTime = entradaDoc.timestamp ? entradaDoc.timestamp.toDate() : new Date();
+
+        if (salidaDoc) {
+          estado = 'terminado';
+          clearInterval(jornIv);
+          setBadgeStatus('done', 'Jornada finalizada');
+          document.getElementById('entradaInfo').textContent = 'Salida registrada a las ' + salidaDoc.hora;
+          document.getElementById('btnMarcaje').className = 'btn-marcaje done';
+          document.getElementById('btnIcon').innerHTML = '<svg width="22" height="22" fill="none" stroke="#94A3B8" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+          document.getElementById('btnLabel').textContent = 'Jornada completa';
+          document.getElementById('timerWrap').style.display = 'block';
+          var salidaTs = salidaDoc.timestamp ? salidaDoc.timestamp.toDate() : new Date();
+          var totalSeg = Math.floor((salidaTs - entradaTime) / 1000);
+          document.getElementById('timerVal').textContent = pad(Math.floor(totalSeg/3600))+':'+pad(Math.floor((totalSeg%3600)/60))+':'+pad(totalSeg%60);
+          document.getElementById('auxCard').style.display = 'block';
+          document.querySelectorAll('.aux-btn').forEach(function(b){b.disabled=true;b.classList.remove('aux-active');});
+          document.getElementById('auxSub').textContent = 'La jornada ha finalizado.';
+        } else {
+          estado = 'dentro';
+          setBadgeStatus('in', 'En turno activo');
+          document.getElementById('entradaInfo').textContent = 'Entrada registrada a las ' + entradaDoc.hora;
+          document.getElementById('btnMarcaje').className = 'btn-marcaje salida';
+          document.getElementById('btnIcon').innerHTML = '<svg width="22" height="22" fill="white" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>';
+          document.getElementById('btnLabel').textContent = 'Marcar salida';
+          document.getElementById('timerWrap').style.display = 'block';
+          document.getElementById('auxCard').style.display = 'block';
+          iniciarResumenJornada();
+          jornIv = setInterval(function(){
+            var d = Math.floor((new Date() - entradaTime) / 1000);
+            document.getElementById('timerVal').textContent = pad(Math.floor(d/3600))+':'+pad(Math.floor((d%3600)/60))+':'+pad(d%60);
+          }, 1000);
+        }
+
+        // Restaurar log de auxiliares del día
+        db.collection('auxiliares')
+          .where('uid', '==', user.uid)
+          .where('fecha', '==', hoyFecha)
+          .get()
+          .then(function(auxSnap) {
+            var rows = [];
+            auxSnap.forEach(function(d) { rows.push(d.data()); });
+            if (rows.length === 0) return;
+            rows.sort(function(a,b){ return (a.inicio||'').localeCompare(b.inicio||''); });
+            var empty = document.getElementById('auxLogEmpty');
+            if (empty) empty.remove();
+            rows.forEach(function(data) {
+              var dur = data.duracion_seg || 0;
+              var durStr = pad(Math.floor(dur/60))+':'+pad(dur%60);
+              var row = document.createElement('div');
+              row.className = 'aux-log-row';
+              row.innerHTML = '<span class="aux-log-nombre">'+data.auxiliar+'</span>'
+                +'<span class="aux-log-dur">'+data.inicio+' – '+data.fin+'</span>'
+                +'<span class="aux-log-dur right">'+durStr+'</span>';
+              document.getElementById('auxLog').appendChild(row);
+              actualizarResumen(data.auxiliar, dur);
+            });
+          });
+      });
   });
 
   // Fecha y reloj
