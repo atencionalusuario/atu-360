@@ -152,6 +152,57 @@
   window.ntfClick = function(id) {
     marcarLeida(id);
     ntfCerrar();
+    var n = _notifs.find(function(x){ return x.id === id; });
+    if (!n) return;
+    // Crear modal si no existe
+    var modal = document.getElementById('ntfModal');
+    if (!modal) {
+      var s = document.createElement('style');
+      s.textContent = [
+        '.ntf-modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.4);z-index:10000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px);}',
+        '.ntf-modal{background:white;border-radius:14px;width:440px;max-width:92vw;box-shadow:0 24px 60px rgba(0,0,0,0.18);overflow:hidden;}',
+        '.ntf-modal-head{padding:20px 24px 14px;border-bottom:1px solid #F1F5F9;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}',
+        '.ntf-modal-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}',
+        '.ntf-modal-icon.solicitud{background:#EFF6FF;color:#1A3DAA;}',
+        '.ntf-modal-icon.admin{background:#FEF3C7;color:#D97706;}',
+        '.ntf-modal-icon.aprobada{background:#F0FDF4;color:#16A34A;}',
+        '.ntf-modal-icon.rechazada{background:#FEF2F2;color:#DC2626;}',
+        '.ntf-modal-titulo{font-size:0.92rem;font-weight:700;color:#1E293B;line-height:1.3;flex:1;}',
+        '.ntf-modal-close{background:none;border:none;cursor:pointer;color:#94A3B8;padding:2px;display:flex;flex-shrink:0;}',
+        '.ntf-modal-close:hover{color:#1E293B;}',
+        '.ntf-modal-body{padding:20px 24px;}',
+        '.ntf-modal-msg{font-size:0.88rem;color:#374151;line-height:1.7;white-space:pre-wrap;}',
+        '.ntf-modal-meta{margin-top:16px;padding-top:14px;border-top:1px solid #F1F5F9;font-size:0.72rem;color:#94A3B8;display:flex;gap:16px;}'
+      ].join('');
+      document.head.appendChild(s);
+      modal = document.createElement('div');
+      modal.id = 'ntfModal';
+      modal.className = 'ntf-modal-overlay';
+      modal.innerHTML = '<div class="ntf-modal">'
+        +'<div class="ntf-modal-head">'
+        +'<div class="ntf-modal-icon" id="ntfMIcon"></div>'
+        +'<div class="ntf-modal-titulo" id="ntfMTitulo"></div>'
+        +'<button class="ntf-modal-close" onclick="document.getElementById(\'ntfModal\').remove()">'
+        +'<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+        +'</button>'
+        +'</div>'
+        +'<div class="ntf-modal-body">'
+        +'<div class="ntf-modal-msg" id="ntfMMsg"></div>'
+        +'<div class="ntf-modal-meta"><span id="ntfMRemitente"></span><span id="ntfMFecha"></span></div>'
+        +'</div>'
+        +'</div>';
+      modal.addEventListener('click', function(e){ if (e.target === modal) modal.remove(); });
+      document.body.appendChild(modal);
+    }
+    var iconCls = n.tipo === 'admin' ? 'admin' : (n.subTipo || 'solicitud');
+    var iconSvg = n.tipo === 'admin' ? SVG_ADMIN : SVG_SOL;
+    document.getElementById('ntfMIcon').className = 'ntf-modal-icon ' + iconCls;
+    document.getElementById('ntfMIcon').innerHTML = iconSvg;
+    document.getElementById('ntfMTitulo').textContent = n.titulo || '';
+    document.getElementById('ntfMMsg').textContent = n.mensaje || '';
+    var ts = n.timestamp ? n.timestamp.toDate() : new Date();
+    document.getElementById('ntfMFecha').textContent = ts.toLocaleString('es-SV', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    document.getElementById('ntfMRemitente').textContent = n.remitenteNombre ? '✉ ' + n.remitenteNombre : '';
   };
 
   function escHtml(s) {
