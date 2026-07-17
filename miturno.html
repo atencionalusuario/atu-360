@@ -64,7 +64,9 @@
   .cal-dias-semana { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 6px; }
   .cal-dia-semana { text-align: center; font-size: 0.68rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; padding: 4px 0; letter-spacing: 0.5px; }
   .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 6px; }
-  .cal-dia { border-radius: 8px; padding: 10px 6px; text-align: center; min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: all 0.15s; }
+  .cal-dia { border-radius: 8px; padding: 10px 6px; text-align: center; min-height: 68px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; transition: all 0.15s; }
+  .dia-horas { font-size: 0.62rem; font-weight: 600; color: #4F6EF7; letter-spacing: 0.2px; line-height: 1; }
+  .cal-dia.hoy .dia-horas { color: rgba(255,255,255,0.75); }
   .cal-dia.vacio    { background: transparent; }
   .cal-dia.descanso { background: #F8FAFC; border: 1px solid #F1F5F9; }
   .cal-dia.laboral  { background: #EEF2FF; border: 1px solid #C7D2FE; }
@@ -267,7 +269,17 @@
 
     for (var d = 1; d <= totalDias; d++) {
       var fecha  = año + '-' + pad2(mes+1) + '-' + pad2(d);
-      var tipo   = diasLaborales[fecha] || 'descanso';
+      var raw    = diasLaborales[fecha];
+      var tipo, entrada, salida;
+      if (!raw) {
+        tipo = 'descanso'; entrada = ''; salida = '';
+      } else if (typeof raw === 'string') {
+        tipo = raw; entrada = ''; salida = '';
+      } else {
+        tipo = raw.tipo || 'descanso';
+        entrada = raw.entrada || '';
+        salida  = raw.salida  || '';
+      }
       var esHoy  = (año === hoy.getFullYear() && mes === hoy.getMonth() && d === hoy.getDate());
       var fechaD = new Date(año, mes, d);
       var hoyD   = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
@@ -279,9 +291,13 @@
 
       var clases = 'cal-dia ' + tipo + (esHoy ? ' hoy' : '') + (esPasado && !esHoy ? ' pasado' : '');
       var tag = tipo === 'laboral' ? 'Laboral' : 'Descanso';
+      var horasHtml = (tipo === 'laboral' && entrada && salida)
+        ? '<span class="dia-horas">' + entrada + ' – ' + salida + '</span>'
+        : '';
       html += '<div class="' + clases + '">'
         + '<span class="dia-num">' + d + '</span>'
         + '<span class="dia-tag">' + tag + '</span>'
+        + horasHtml
         + '</div>';
     }
 

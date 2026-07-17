@@ -507,9 +507,13 @@
       var key    = cur.getFullYear() + '-' + pad(cur.getMonth()+1) + '-' + pad(cur.getDate());
       var diaInfo = pt.diasSemana ? pt.diasSemana[dowKey] : null;
       if (diaInfo != null) {
-        dias[key] = diaInfo.activo ? 'laboral' : 'descanso';
+        dias[key] = diaInfo.activo
+          ? { tipo: 'laboral', entrada: diaInfo.horaInicio || '', salida: diaInfo.horaFin || '' }
+          : { tipo: 'descanso' };
       } else {
-        dias[key] = (fds && (dow === 0 || dow === 6)) ? 'descanso' : 'laboral';
+        dias[key] = (fds && (dow === 0 || dow === 6))
+          ? { tipo: 'descanso' }
+          : { tipo: 'laboral', entrada: '', salida: '' };
       }
       cur.setDate(cur.getDate() + 1);
     }
