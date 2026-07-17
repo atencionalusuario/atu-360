@@ -158,6 +158,7 @@ function renderSidebar(paginaActiva, rol) {
   document.querySelector('.sidebar').innerHTML = html;
 
   document.getElementById('btnLogout').addEventListener('click', function() {
+    localStorage.removeItem('atu360_session_start');
     firebase.auth().signOut().then(function() {
       window.location.href = BASE + 'login.html';
     });
@@ -248,10 +249,37 @@ function detectarPagina() {
   return 'home';
 }
 
+var MAX_SESSION_MS = 12 * 60 * 60 * 1000; // 12 horas
+
+function cerrarSesionExpirada() {
+  localStorage.removeItem('atu360_session_start');
+  firebase.auth().signOut().then(function() {
+    window.location.href = BASE + 'login.html?exp=1';
+  });
+}
+
+function verificarSesion() {
+  var raw = localStorage.getItem('atu360_session_start');
+  if (!raw) {
+    // Sesión anterior al deploy de esta feature — asignamos inicio desde ahora
+    localStorage.setItem('atu360_session_start', Date.now().toString());
+    return;
+  }
+  var inicio  = parseInt(raw, 10);
+  var elapsed = Date.now() - inicio;
+  if (elapsed >= MAX_SESSION_MS) {
+    cerrarSesionExpirada();
+    return;
+  }
+  // Programar cierre automático al cumplir las 12 h
+  setTimeout(cerrarSesionExpirada, MAX_SESSION_MS - elapsed);
+}
+
 function initSidebar() {
   var paginaActiva = detectarPagina();
   firebase.auth().onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
+    verificarSesion();
     var db = firebase.firestore();
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
       var rol    = doc.exists ? (doc.data().rol || 'agente') : 'agente';
