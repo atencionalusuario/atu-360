@@ -875,14 +875,14 @@
   }
 
   // ── CSV ───────────────────────────────────────────────────────────────────────
-  var COLS_CSV     = ['nombre','documento','email','telefono','cargo','canal','proyecto','rol','supervisor','emailSupervisor','fechaIngreso','vehiculo','tipoVehiculo','marca','modelo','placa'];
+  var COLS_CSV     = ['nombre','documento','email','cargo','proyecto','rol','fechaIngreso','emailSupervisor','emailJefe','telefono','canal','vehiculo','tipoVehiculo','marca','modelo','placa'];
   var PROYECTOS_OK = ['doctorsv','educacion','marn','global'];
   var ROLES_OK     = ['agente','agente-inmersion','supervisor','formacion','admin','wfm','jefe','superadmin'];
   var pendientesCSV = [];
 
   function descargarPlantilla(){
     var csv=COLS_CSV.join(',')+'\n'
-      +['María Alvarado','04567890-1','maria@doctorsv.com','7890-1234','Agente de atención','Telefónico','doctorsv','agente','Juan Pérez','juan@doctorsv.com','2025-01-15','false','','','',''].join(',');
+      +['María Alvarado','04567890-1','maria@doctorsv.gob.sv','Agente de atención','doctorsv','agente','2025-01-15','juan.perez@doctorsv.gob.sv','ana.garcia@doctorsv.gob.sv','7890-1234','Telefónico','false','','','',''].join(',');
     var a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
     a.download='plantilla_usuarios_ATU360.csv'; a.click();
