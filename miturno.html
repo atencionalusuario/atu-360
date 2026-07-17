@@ -191,7 +191,8 @@
   var hoy = new Date();
   var mesVista = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
   var diasLaborales = {};
-  var turnoInfo = { nombre: 'Sin turno asignado', horario: '—' };
+  var turnoInfo = { nombre: 'Sin turno asignado', horario: '—', diasSemana: null };
+  var DOW_KEYS = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
 
   var MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
@@ -206,11 +207,12 @@
     cargarTurno(user.uid);
   });
 
-  // Cargar turno desde Firestore
-  // Colección: turnos — documento por agente con campos:
-  //   nombre: string (ej: "Turno A — Mañana")
-  //   horario: string (ej: "07:00 AM — 03:00 PM · 8h")
-  //   dias: objeto { "2026-06-01": "laboral", "2026-06-02": "descanso", ... }
+  function mostrarTurno() {
+    document.getElementById('turnoNombre').textContent  = turnoInfo.nombre;
+    document.getElementById('turnoHorario').textContent = turnoInfo.horario;
+    renderCalendario();
+  }
+
   function cargarTurno(uid) {
     db.collection('turnos').doc(uid).get()
       .then(function(doc) {
@@ -219,22 +221,25 @@
           turnoInfo.nombre  = data.nombre  || 'Turno asignado';
           turnoInfo.horario = data.horario || '—';
           diasLaborales = data.dias || {};
+          // Cargar plantilla para obtener horarios por día de semana
+          if (data.plantillaId) {
+            db.collection('turnos_plantillas').doc(data.plantillaId).get()
+              .then(function(ptDoc) {
+                if (ptDoc.exists) turnoInfo.diasSemana = ptDoc.data().diasSemana || null;
+                mostrarTurno();
+              }).catch(function(){ mostrarTurno(); });
+            return;
+          }
         } else {
-          // Si no hay turno en Firestore usamos ejemplo lun-vie
           diasLaborales = generarEjemplo();
-          turnoInfo.nombre  = 'Turno A — Mañana';
-          turnoInfo.horario = '07:00 AM — 03:00 PM · 8h por jornada';
+          turnoInfo.nombre  = 'Sin turno asignado';
+          turnoInfo.horario = '—';
         }
-        document.getElementById('turnoNombre').textContent  = turnoInfo.nombre;
-        document.getElementById('turnoHorario').textContent = turnoInfo.horario;
-        renderCalendario();
+        mostrarTurno();
       })
       .catch(function(e){
         console.error('Error cargando turno:', e);
-        diasLaborales = generarEjemplo();
-        document.getElementById('turnoNombre').textContent  = 'Turno A — Mañana';
-        document.getElementById('turnoHorario').textContent = '07:00 AM — 03:00 PM · 8h por jornada';
-        renderCalendario();
+        mostrarTurno();
       });
   }
 
@@ -274,7 +279,11 @@
       if (!raw) {
         tipo = 'descanso'; entrada = ''; salida = '';
       } else if (typeof raw === 'string') {
-        tipo = raw; entrada = ''; salida = '';
+        tipo = raw;
+        var dowKey = DOW_KEYS[new Date(año, mes, d).getDay()];
+        var ds = turnoInfo.diasSemana && turnoInfo.diasSemana[dowKey];
+        entrada = ds ? (ds.horaInicio || '') : '';
+        salida  = ds ? (ds.horaFin    || '') : '';
       } else {
         tipo = raw.tipo || 'descanso';
         entrada = raw.entrada || '';
