@@ -165,7 +165,7 @@
   // Mostrar aviso si la sesión expiró
   if (new URLSearchParams(window.location.search).get('exp') === '1') {
     var errEl = document.getElementById('errMsg');
-    if (errEl) { errEl.textContent = 'Tu sesión expiró después de 12 horas. Vuelve a iniciar sesión.'; errEl.classList.add('show'); }
+    if (errEl) { errEl.textContent = 'Tu sesión expiró. Inicia sesión nuevamente.'; errEl.classList.add('show'); }
   }
 
   var RUTAS = { agente: BASE+'home.html', 'agente-inmersion': BASE+'home.html', formacion: BASE+'home.html', admin: BASE+'usuarios.html', wfm: BASE+'usuarios.html', jefe: BASE+'usuarios.html', superadmin: BASE+'usuarios.html', supervisor: BASE+'tiemporeal.html' }; // v2
