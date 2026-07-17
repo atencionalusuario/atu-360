@@ -35,7 +35,8 @@
   .sol-card.active { border-color: #1A3DAA; }
   .sol-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
   .sol-tipo { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 2px 8px; border-radius: 3px; }
-  .sol-tipo.permiso { background: #EEF2FF; color: #1A3DAA; }
+  .sol-tipo.permiso       { background: #EEF2FF; color: #1A3DAA; }
+  .sol-tipo.horas-extras  { background: #FFF7ED; color: #C2410C; }
   .estado-pill { font-size: 0.62rem; font-weight: 700; padding: 2px 8px; border-radius: 3px; }
   .estado-pill.pendiente-sup   { background: #FFFBEB; color: #B45309; }
   .estado-pill.pendiente-admin { background: #FFF7ED; color: #C2410C; }
@@ -335,9 +336,11 @@
     var html = '';
     lista.forEach(function(s) {
       var fecha = s.fechaCreacion ? new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
+      var tipoLabel = s.tipo==='horas-extras'?'Horas extras':'Permiso';
+      var tipoCls   = s.tipo==='horas-extras'?'horas-extras':'permiso';
       html += '<div class="sol-card'+(solActual===s.id?' active':'')+'" onclick="verSolicitud(\''+s.id+'\',\'mis\')">'
         +'<div class="sol-card-top">'
-        +'<span class="sol-tipo permiso">Permiso</span>'
+        +'<span class="sol-tipo '+tipoCls+'">'+tipoLabel+'</span>'
         +'<span class="estado-pill '+s.estado+'">'+(ESTADOS[s.estado]||s.estado)+'</span>'
         +'</div>'
         +'<div class="sol-titulo">'+(s.comentarios?s.comentarios.substring(0,55)+'...':'Sin comentarios')+'</div>'
@@ -352,9 +355,11 @@
     var html = '';
     lista.forEach(function(s) {
       var fecha = s.fechaCreacion ? new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
+      var tipoLabel2 = s.tipo==='horas-extras'?'Horas extras':'Permiso';
+      var tipoCls2   = s.tipo==='horas-extras'?'horas-extras':'permiso';
       html += '<div class="sol-card'+(solActual===s.id?' active':'')+'" onclick="verSolicitud(\''+s.id+'\',\'revision\')">'
         +'<div class="sol-card-top">'
-        +'<span class="sol-tipo permiso">Permiso</span>'
+        +'<span class="sol-tipo '+tipoCls2+'">'+tipoLabel2+'</span>'
         +'<span class="estado-pill '+s.estado+'">'+(ESTADOS[s.estado]||s.estado)+'</span>'
         +'</div>'
         +'<div class="sol-agente">'+(s.agenteNombre||s.agenteEmail||'—')+'</div>'
@@ -412,7 +417,7 @@
     dc.className = 'detail-card show';
     dc.innerHTML =
       '<div class="detail-header"><div>'
-      +'<div class="detail-header-title">Permiso — '+(s.agenteNombre||s.agenteEmail||'')+'</div>'
+      +'<div class="detail-header-title">'+(s.tipo==='horas-extras'?'Horas extras':'Permiso')+' — '+(s.agenteNombre||s.agenteEmail||'')+'</div>'
       +'<div class="detail-header-sub"><span class="estado-pill '+s.estado+'" style="font-size:0.65rem">'+(ESTADOS[s.estado]||s.estado)+'</span></div>'
       +'</div></div>'
       +'<div class="detail-body">'
@@ -488,7 +493,10 @@
       +'</div></div>'
       +'<div class="detail-body">'
       +'<div><label class="field-label">Tipo de solicitud <span class="field-req">*</span></label>'
-      +'<select id="fTipo"><option value="permiso">Permiso</option></select></div>'
+      +'<select id="fTipo">'
++'<option value="permiso"'+(s&&s.tipo==='permiso'?' selected':'')+'>Permiso</option>'
++'<option value="horas-extras"'+(s&&s.tipo==='horas-extras'?' selected':'')+'>Horas extras</option>'
++'</select></div>'
       +'<div class="field-row">'
       +'<div><label class="field-label">Fecha inicio <span class="field-req">*</span></label><input type="date" id="fFechaInicio" value="'+(s&&s.fechaInicio?s.fechaInicio:'')+'"></div>'
       +'<div><label class="field-label">Fecha fin <span class="field-req">*</span></label><input type="date" id="fFechaFin" value="'+(s&&s.fechaFin?s.fechaFin:'')+'"></div>'
@@ -591,7 +599,7 @@
       agenteNombre:   perfilUsuario.nombre || currentUser.email,
       emailSupervisor: perfilUsuario.emailSupervisor || '',
       emailJefe:      perfilUsuario.emailJefe || '',
-      tipo:           'permiso',
+      tipo:           (document.getElementById('fTipo') ? document.getElementById('fTipo').value : 'permiso'),
       fechaInicio:    fi, fechaFin: ff,
       horaInicio:     hi, horaFin:  hf,
       comentarios:    com,
