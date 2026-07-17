@@ -50,15 +50,14 @@
   .timer-wrap { text-align: center; }
   .timer-label { font-size: 0.62rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; }
   .timer-val { font-size: 0.95rem; font-weight: 700; color: #1A3DAA; margin-top: 2px; font-variant-numeric: tabular-nums; }
-  .turno-card { background: #0F2070; border-radius: 10px; padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; }
-  .t-label { font-size: 0.62rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 2px; }
-  .t-name  { font-size: 1rem; font-weight: 700; color: white; margin-top: 4px; }
-  .t-hora  { font-size: 0.78rem; color: rgba(255,255,255,0.6); margin-top: 3px; }
-  .turno-items { display: flex; gap: 32px; }
-  .turno-item { text-align: center; }
-  .ti-val { font-size: 1rem; font-weight: 700; color: white; }
-  .ti-key { font-size: 0.62rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
-  .turno-divider { width: 1px; background: rgba(255,255,255,0.1); align-self: stretch; }
+  .resumen-card { background: #0F2070; border-radius: 10px; padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .resumen-label { font-size: 0.62rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+  .resumen-items { display: flex; gap: 0; flex: 1; justify-content: flex-end; }
+  .resumen-item { text-align: center; padding: 0 24px; border-right: 1px solid rgba(255,255,255,0.1); }
+  .resumen-item:last-child { border-right: none; padding-right: 0; }
+  .resumen-item:first-child { padding-left: 0; }
+  .ri-val { font-size: 1rem; font-weight: 700; color: white; font-variant-numeric: tabular-nums; }
+  .ri-key { font-size: 0.62rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
   .aux-title { font-size: 1rem; font-weight: 700; color: #1E293B; }
   .aux-sub { font-size: 0.78rem; color: #64748B; margin-top: 3px; margin-bottom: 16px; }
   .aux-btns { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -171,16 +170,27 @@
       <div class="aux-log" id="auxLog"><div class="aux-log-empty" id="auxLogEmpty">Sin registros aún</div></div>
     </div>
 
-    <div class="turno-card">
+    <div class="resumen-card">
       <div>
-        <div class="t-label">Turno asignado hoy</div>
-        <div class="t-name">Turno A — Mañana</div>
-        <div class="t-hora">07:00 AM — 03:00 PM</div>
+        <div class="resumen-label">Resumen del día</div>
       </div>
-      <div class="turno-items">
-        <div class="turno-item"><div class="ti-val">8h</div><div class="ti-key">Duración</div></div>
-        <div class="turno-divider"></div>
-        <div class="turno-item"><div class="ti-val">30 min</div><div class="ti-key">Break</div></div>
+      <div class="resumen-items">
+        <div class="resumen-item">
+          <div class="ri-val" id="riJornada">00:00</div>
+          <div class="ri-key">Tiempo activo</div>
+        </div>
+        <div class="resumen-item">
+          <div class="ri-val" id="riGestion">00:00</div>
+          <div class="ri-key">Gestión</div>
+        </div>
+        <div class="resumen-item">
+          <div class="ri-val" id="riBreak">00:00</div>
+          <div class="ri-key">Break</div>
+        </div>
+        <div class="resumen-item">
+          <div class="ri-val" id="riPausa">00:00</div>
+          <div class="ri-key">Pausas</div>
+        </div>
       </div>
     </div>
   </div>
@@ -367,6 +377,7 @@
         document.getElementById('btnIcon').innerHTML='<svg width="22" height="22" fill="white" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>';
         document.getElementById('btnLabel').textContent='Marcar salida';
         document.getElementById('timerWrap').style.display='block';
+        iniciarResumenJornada();
         jornIv=setInterval(function(){
           var d=Math.floor((new Date()-entradaTime)/1000);
           document.getElementById('timerVal').textContent=pad(Math.floor(d/3600))+':'+pad(Math.floor((d%3600)/60))+':'+pad(d%60);
@@ -395,6 +406,35 @@
   function setBadgeStatus(cls,txt){
     document.getElementById('statusBadge').className='status-badge '+cls;
     document.getElementById('statusText').textContent=txt;
+  }
+
+  // RESUMEN DEL DÍA
+  var resumenSeg = { gestion: 0, brk: 0, pausa: 0 };
+  var GRUPOS_AUX = {
+    gestion: ['Inbound','Outbound'],
+    brk:     ['Break','Baño','Comida'],
+    pausa:   ['Pausa administrativa','Feedback','Capacitación']
+  };
+  var resumenJornadaIv = null;
+
+  function segsAHM(s){ return pad(Math.floor(s/3600))+':'+pad(Math.floor((s%3600)/60)); }
+
+  function actualizarResumen(nombre, dur){
+    if (GRUPOS_AUX.gestion.indexOf(nombre) > -1) resumenSeg.gestion += dur;
+    else if (GRUPOS_AUX.brk.indexOf(nombre) > -1) resumenSeg.brk += dur;
+    else if (GRUPOS_AUX.pausa.indexOf(nombre) > -1) resumenSeg.pausa += dur;
+    document.getElementById('riGestion').textContent = segsAHM(resumenSeg.gestion);
+    document.getElementById('riBreak').textContent   = segsAHM(resumenSeg.brk);
+    document.getElementById('riPausa').textContent   = segsAHM(resumenSeg.pausa);
+  }
+
+  function iniciarResumenJornada(){
+    if (resumenJornadaIv) return;
+    resumenJornadaIv = setInterval(function(){
+      if (!entradaTime) return;
+      var seg = Math.floor((new Date() - entradaTime) / 1000);
+      document.getElementById('riJornada').textContent = segsAHM(seg);
+    }, 1000);
   }
 
   // AUXILIARES
@@ -438,6 +478,7 @@
     document.getElementById('auxLog').prepend(row);
     var tidEl=auxBtnActivo?auxBtnActivo.querySelector('.aux-btn-timer'):null;
     if(tidEl) tidEl.textContent='00:00';
+    actualizarResumen(auxActivo, dur);
     guardarAuxiliar(auxActivo,auxInicio,fin);
   }
 </script>
