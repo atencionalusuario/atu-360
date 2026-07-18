@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/atu-360/">
+<title>ATU 360 — Acciones de Personal</title>
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="base.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter','Segoe UI',sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+  .btn-nueva { padding: 8px 16px; background: #1A3DAA; color: white; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; }
+  .btn-nueva:hover { opacity: 0.88; }
+
+  /* Filtros */
+  .filtros-bar { display: flex; gap: 8px; align-items: center; padding: 12px 28px; background: white; border-bottom: 1px solid #F1F5F9; flex-wrap: wrap; }
+  .ctrl-input  { padding: 7px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.78rem; font-family: inherit; color: #1E293B; background: white; outline: none; width: 200px; }
+  .ctrl-input:focus { border-color: #1A3DAA; }
+  .ctrl-select { padding: 7px 10px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.78rem; font-family: inherit; color: #1E293B; background: white; outline: none; cursor: pointer; }
+  .ctrl-select:focus { border-color: #1A3DAA; }
+  .count-label { font-size: 0.75rem; color: #94A3B8; margin-left: 4px; }
+
+  /* Layout */
+  .content { padding: 24px 28px; display: flex; gap: 20px; align-items: flex-start; flex: 1; }
+  .list-col { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+  .detail-col { flex: 1; min-width: 0; }
+
+  /* Tarjetas lista */
+  .ac-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 14px 16px; cursor: pointer; transition: all 0.15s; }
+  .ac-card:hover { border-color: #CBD5E1; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .ac-card.active { border-color: #1A3DAA; }
+  .ac-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .tipo-pill { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 2px 8px; border-radius: 3px; }
+  .tipo-pill.ap-oral    { background: #FEF3C7; color: #B45309; }
+  .tipo-pill.ap-escrita { background: #FEE2E2; color: #B91C1C; }
+  .tipo-pill.ausencia   { background: #F3F4F6; color: #4B5563; }
+  .ac-nombre { font-size: 0.82rem; font-weight: 700; color: #1E293B; }
+  .ac-meta   { font-size: 0.68rem; color: #94A3B8; margin-top: 3px; }
+  .ac-comentario { font-size: 0.72rem; color: #64748B; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Estado vacío */
+  .empty-state { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 48px 24px; text-align: center; }
+  .empty-state p { font-size: 0.82rem; color: #94A3B8; margin-top: 12px; }
+
+  /* Panel detalle */
+  .detail-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; display: none; }
+  .detail-card.show { display: block; }
+  .detail-header { padding: 20px 24px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: flex-start; justify-content: space-between; }
+  .detail-header-title { font-size: 0.92rem; font-weight: 700; color: #1E293B; }
+  .detail-header-sub   { font-size: 0.72rem; color: #94A3B8; margin-top: 3px; }
+  .detail-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+  .info-row   { display: flex; flex-direction: column; gap: 4px; }
+  .info-label { font-size: 0.72rem; font-weight: 600; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; }
+  .info-val   { font-size: 0.88rem; color: #1E293B; }
+  .info-box   { background: #F8FAFC; border: 1px solid #F1F5F9; border-radius: 8px; padding: 12px 14px; font-size: 0.84rem; color: #374151; line-height: 1.6; }
+  .field-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .btn-del    { padding: 8px 16px; border: 1.5px solid #FCA5A5; border-radius: 7px; background: white; color: #DC2626; font-size: 0.78rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-del:hover { background: #FEF2F2; }
+
+  /* Formulario */
+  .form-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; }
+  .form-header { padding: 20px 24px; border-bottom: 1px solid #F1F5F9; }
+  .form-title  { font-size: 0.92rem; font-weight: 700; color: #1E293B; }
+  .form-sub    { font-size: 0.72rem; color: #94A3B8; margin-top: 2px; }
+  .form-body   { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+  .field-label { font-size: 0.75rem; font-weight: 600; color: #374151; margin-bottom: 6px; display: block; }
+  .field-req   { color: #DC2626; }
+  select, input[type="date"], textarea {
+    width: 100%; padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 8px;
+    font-size: 0.85rem; color: #1E293B; background: #F8FAFC; outline: none;
+    transition: border 0.2s; font-family: inherit;
+  }
+  select:focus, input:focus, textarea:focus { border-color: #1A3DAA; box-shadow: 0 0 0 3px rgba(26,61,170,0.07); background: white; }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+  .form-footer { display: flex; gap: 8px; justify-content: flex-end; padding: 0 24px 24px; }
+  .btn-cancel2 { padding: 10px 18px; border: 1px solid #E2E8F0; border-radius: 7px; background: white; font-size: 0.82rem; font-weight: 600; color: #64748B; cursor: pointer; font-family: inherit; }
+  .btn-cancel2:hover { border-color: #CBD5E1; }
+  .btn-guardar { padding: 10px 20px; border: none; border-radius: 7px; background: #1A3DAA; color: white; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-guardar:hover { opacity: 0.88; }
+
+  .loading { font-size: 0.82rem; color: #94A3B8; text-align: center; padding: 24px; }
+</style>
+</head>
+<body>
+
+<div class="sidebar"></div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Acciones de Personal</h2>
+      <span class="topbar-sep">/</span>
+      <p id="topbarSub">Cargando...</p>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-nueva" onclick="mostrarFormulario(null)">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nueva acción
+      </button>
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="filtros-bar">
+    <input class="ctrl-input" id="busqInput" placeholder="Buscar por nombre o correo..." oninput="renderLista()">
+    <select class="ctrl-select" id="filtroTipo" onchange="renderLista()">
+      <option value="">Todos los tipos</option>
+      <option value="ap-oral">AP Oral</option>
+      <option value="ap-escrita">AP Escrita</option>
+      <option value="ausencia">Ausencia injustificada</option>
+    </select>
+    <span class="count-label" id="countLabel"></span>
+  </div>
+
+  <div class="content">
+    <div class="list-col" id="listCol">
+      <div class="loading">Cargando...</div>
+    </div>
+    <div class="detail-col">
+      <div class="empty-state" id="emptyState">
+        <svg width="32" height="32" fill="none" stroke="#CBD5E1" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <p>Selecciona un registro o crea uno nuevo.</p>
+      </div>
+      <div class="detail-card" id="detailCard"></div>
+      <div class="form-card" id="formCard" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+  var ROLES_PERMITIDOS = ['supervisor','jefe','wfm','admin','superadmin'];
+
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var db   = firebase.firestore();
+  var auth = firebase.auth();
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  var currentUser   = null;
+  var perfilUsuario = null;
+  var rolUsuario    = null;
+  var equipoUsuarios = [];  // agentes/supervisores del equipo
+  var acciones      = [];
+  var accionActual  = null;
+  var _unsub        = null;
+
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = BASE + 'login.html'; return; }
+    db.collection('usuarios').where('email','==',user.email).limit(1).get()
+      .then(function(snap) {
+        if (snap.empty || !ROLES_PERMITIDOS.includes(snap.docs[0].data().rol)) {
+          auth.signOut(); window.location.href = BASE + 'login.html'; return;
+        }
+        currentUser   = user;
+        perfilUsuario = snap.docs[0].data();
+        rolUsuario    = perfilUsuario.rol;
+        document.getElementById('topbarSub').textContent =
+          rolUsuario === 'supervisor' ? 'Mi equipo' : 'Equipo completo';
+        cargarEquipo();
+        suscribirAcciones();
+      });
+  });
+
+  /* ── CARGA EQUIPO ─────────────────────────────────────────────────── */
+  function cargarEquipo() {
+    var q = rolUsuario === 'supervisor'
+      ? db.collection('usuarios').where('emailSupervisor','==',currentUser.email).where('activo','==',true)
+      : db.collection('usuarios').where('emailJefe','==',currentUser.email).where('activo','==',true);
+    q.get().then(function(snap) {
+      equipoUsuarios = [];
+      snap.forEach(function(d){ equipoUsuarios.push(Object.assign({ id: d.id }, d.data())); });
+      equipoUsuarios.sort(function(a,b){ return (a.nombre||'').localeCompare(b.nombre||'','es'); });
+    });
+  }
+
+  /* ── SUSCRIPCIÓN ACCIONES ─────────────────────────────────────────── */
+  function suscribirAcciones() {
+    if (_unsub) _unsub();
+    var campo = rolUsuario === 'supervisor' ? 'emailSupervisor' : 'emailJefe';
+    _unsub = db.collection('acciones_personal')
+      .where(campo, '==', currentUser.email)
+      .onSnapshot(function(snap) {
+        acciones = [];
+        snap.forEach(function(d){ acciones.push(Object.assign({ id: d.id }, d.data())); });
+        acciones.sort(function(a,b){ return (b.fecha||'').localeCompare(a.fecha||''); });
+        renderLista();
+      }, function(e){ console.error('acciones', e); });
+  }
+
+  /* ── LISTA ────────────────────────────────────────────────────────── */
+  function renderLista() {
+    var busq = (document.getElementById('busqInput').value||'').toLowerCase();
+    var filtTipo = document.getElementById('filtroTipo').value;
+
+    var lista = acciones.filter(function(a) {
+      if (busq && !(a.subjectNombre||'').toLowerCase().includes(busq) && !(a.subjectEmail||'').toLowerCase().includes(busq)) return false;
+      if (filtTipo) {
+        var key = tipoClave(a);
+        if (key !== filtTipo) return false;
+      }
+      return true;
+    });
+
+    document.getElementById('countLabel').textContent = lista.length + ' registros';
+
+    if (lista.length === 0) {
+      document.getElementById('listCol').innerHTML = '<div class="loading">Sin registros.</div>';
+      return;
+    }
+    var html = '';
+    lista.forEach(function(a) {
+      var clave = tipoClave(a);
+      var label = tipoLabel(a);
+      html += '<div class="ac-card'+(accionActual===a.id?' active':'')+'" onclick="verAccion(\''+a.id+'\')">'
+        +'<div class="ac-card-top">'
+        +'<span class="tipo-pill '+clave+'">'+label+'</span>'
+        +'<span style="font-size:0.68rem;color:#94A3B8">'+(a.fecha||'')+'</span>'
+        +'</div>'
+        +'<div class="ac-nombre">'+(a.subjectNombre||a.subjectEmail||'—')+'</div>'
+        +(a.comentarios?'<div class="ac-comentario">'+escHtml(a.comentarios)+'</div>':'')
+        +'</div>';
+    });
+    document.getElementById('listCol').innerHTML = html;
+  }
+
+  function tipoClave(a) {
+    if (a.tipoRegistro === 'ausencia') return 'ausencia';
+    return a.tipoRegistro === 'ap' && a.tipoAP === 'escrita' ? 'ap-escrita' : 'ap-oral';
+  }
+
+  function tipoLabel(a) {
+    if (a.tipoRegistro === 'ausencia') return 'Ausencia';
+    return 'AP ' + (a.tipoAP === 'escrita' ? 'Escrita' : 'Oral');
+  }
+
+  /* ── DETALLE ──────────────────────────────────────────────────────── */
+  function verAccion(id) {
+    accionActual = id;
+    renderLista();
+    ocultarFormulario();
+    var a = acciones.find(function(x){ return x.id===id; });
+    if (!a) return;
+    document.getElementById('emptyState').style.display = 'none';
+    var clave = tipoClave(a);
+    var label = tipoLabel(a);
+    document.getElementById('detailCard').className = 'detail-card show';
+    document.getElementById('detailCard').innerHTML =
+      '<div class="detail-header"><div>'
+      +'<div class="detail-header-title">'+label+' — '+escHtml(a.subjectNombre||a.subjectEmail||'')+'</div>'
+      +'<div class="detail-header-sub">Registrado por '+escHtml(a.creadorNombre||'')+'</div>'
+      +'</div>'
+      +'<span class="tipo-pill '+clave+'" style="flex-shrink:0;align-self:flex-start">'+label+'</span>'
+      +'</div>'
+      +'<div class="detail-body">'
+      +'<div class="field-row">'
+      +'<div class="info-row"><span class="info-label">Persona</span><span class="info-val">'+escHtml(a.subjectNombre||'—')+'</span></div>'
+      +'<div class="info-row"><span class="info-label">Correo</span><span class="info-val">'+escHtml(a.subjectEmail||'—')+'</span></div>'
+      +'</div>'
+      +'<div class="field-row">'
+      +'<div class="info-row"><span class="info-label">Fecha</span><span class="info-val">'+(a.fecha||'—')+'</span></div>'
+      +(a.tipoRegistro==='ap'?'<div class="info-row"><span class="info-label">Tipo de AP</span><span class="info-val">'+(a.tipoAP==='escrita'?'Escrita':'Oral')+'</span></div>':'<div></div>')
+      +'</div>'
+      +'<div class="info-row"><span class="info-label">Comentarios</span><div class="info-box">'+escHtml(a.comentarios||'—')+'</div></div>'
+      +'</div>'
+      +'<div style="padding:0 24px 20px;display:flex;justify-content:flex-end">'
+      +'<button class="btn-del" onclick="eliminarAccion(\''+id+'\')">Eliminar registro</button>'
+      +'</div>';
+  }
+
+  function eliminarAccion(id) {
+    if (!confirm('¿Eliminar este registro? Esta acción no se puede deshacer.')) return;
+    db.collection('acciones_personal').doc(id).delete().then(function() {
+      accionActual = null;
+      document.getElementById('detailCard').className = 'detail-card';
+      document.getElementById('emptyState').style.display = '';
+    });
+  }
+
+  /* ── FORMULARIO ───────────────────────────────────────────────────── */
+  function mostrarFormulario(a) {
+    accionActual = null;
+    document.getElementById('detailCard').className = 'detail-card';
+    document.getElementById('emptyState').style.display = 'none';
+    var fc = document.getElementById('formCard');
+    fc.style.display = 'block';
+    fc.innerHTML =
+      '<div class="form-header">'
+      +'<div class="form-title">Nueva acción de personal</div>'
+      +'<div class="form-sub">Se notificará a la persona al guardar.</div>'
+      +'</div>'
+      +'<div class="form-body">'
+      +'<div><label class="field-label">Tipo de registro <span class="field-req">*</span></label>'
+      +'<select id="fTipoReg" onchange="toggleTipoAP()">'
+      +'<option value="ap">Acción de Personal (AP)</option>'
+      +'<option value="ausencia">Ausencia injustificada</option>'
+      +'</select></div>'
+      +'<div id="wrapTipoAP"><label class="field-label">Tipo de AP <span class="field-req">*</span></label>'
+      +'<select id="fTipoAP"><option value="oral">Oral</option><option value="escrita">Escrita</option></select></div>'
+      +'<div><label class="field-label">Persona <span class="field-req">*</span></label>'
+      +'<select id="fPersona" onchange="autoEmail()">'
+      +'<option value="">— Selecciona —</option>'
+      +equipoUsuarios.map(function(u){ return '<option value="'+u.id+'" data-email="'+escHtml(u.email||'')+'" data-nombre="'+escHtml(u.nombre||u.email||'')+'" data-rol="'+escHtml(u.rol||'')+'" data-sup="'+escHtml(u.emailSupervisor||'')+'" data-jefe="'+escHtml(u.emailJefe||'')+'">'+escHtml(u.nombre||u.email||'?')+'</option>'; }).join('')
+      +'</select></div>'
+      +'<div><label class="field-label">Correo</label>'
+      +'<input type="text" id="fCorreo" readonly style="background:#F1F5F9;color:#64748B" placeholder="Se completa al seleccionar persona"></div>'
+      +'<div><label class="field-label">Fecha <span class="field-req">*</span></label>'
+      +'<input type="date" id="fFecha" value="'+hoyISO()+'"></div>'
+      +'<div><label class="field-label">Comentarios <span class="field-req">*</span></label>'
+      +'<textarea id="fComentarios" placeholder="Describe el motivo o contexto..."></textarea></div>'
+      +'</div>'
+      +'<div class="form-footer">'
+      +'<button class="btn-cancel2" onclick="ocultarFormulario()">Cancelar</button>'
+      +'<button class="btn-guardar" onclick="guardar()">Guardar registro</button>'
+      +'</div>';
+  }
+
+  function toggleTipoAP() {
+    var tipo = document.getElementById('fTipoReg').value;
+    document.getElementById('wrapTipoAP').style.display = tipo === 'ap' ? 'block' : 'none';
+  }
+
+  function autoEmail() {
+    var sel = document.getElementById('fPersona');
+    var opt = sel.options[sel.selectedIndex];
+    document.getElementById('fCorreo').value = opt ? (opt.getAttribute('data-email')||'') : '';
+  }
+
+  function ocultarFormulario() {
+    document.getElementById('formCard').style.display = 'none';
+  }
+
+  function hoyISO() {
+    var d = new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  }
+
+  function guardar() {
+    var tipoReg = document.getElementById('fTipoReg').value;
+    var tipoAP  = tipoReg === 'ap' ? document.getElementById('fTipoAP').value : '';
+    var fecha   = document.getElementById('fFecha').value;
+    var com     = document.getElementById('fComentarios').value.trim();
+    var sel     = document.getElementById('fPersona');
+    var opt     = sel ? sel.options[sel.selectedIndex] : null;
+    var uid     = sel ? sel.value : '';
+    var email   = opt ? (opt.getAttribute('data-email')||'') : '';
+    var nombre  = opt ? (opt.getAttribute('data-nombre')||'') : '';
+    var supEmail  = opt ? (opt.getAttribute('data-sup')||'')  : '';
+    var jefeEmail = opt ? (opt.getAttribute('data-jefe')||'') : '';
+
+    if (!uid)   { alert('Selecciona una persona.'); return; }
+    if (!fecha) { alert('Indica la fecha.'); return; }
+    if (!com)   { alert('Los comentarios son obligatorios.'); return; }
+
+    var data = {
+      tipoRegistro:  tipoReg,
+      tipoAP:        tipoAP,
+      subjectUid:    uid,
+      subjectEmail:  email,
+      subjectNombre: nombre,
+      emailSupervisor: supEmail,
+      emailJefe:       jefeEmail,
+      fecha:           fecha,
+      comentarios:     com,
+      creadorUid:      currentUser.uid,
+      creadorNombre:   perfilUsuario.nombre || currentUser.email,
+      timestamp:       firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    db.collection('acciones_personal').add(data).then(function() {
+      ocultarFormulario();
+      document.getElementById('emptyState').style.display = '';
+      // Notificar a la persona
+      var labelTipo = tipoReg === 'ausencia' ? 'Ausencia injustificada' : ('Acción de Personal — ' + (tipoAP === 'escrita' ? 'Escrita' : 'Oral'));
+      var titulo  = labelTipo + ' registrada';
+      var mensaje = 'Se registró una '+labelTipo.toLowerCase()+' a tu nombre el '+fecha+'.\nComentarios: '+com;
+      ntfEnviar(db, {
+        uid:             uid,
+        titulo:          titulo,
+        mensaje:         mensaje,
+        tipo:            'admin',
+        subTipo:         'acciones',
+        remitenteNombre: perfilUsuario.nombre || currentUser.email
+      });
+    }).catch(function(e){ alert('Error al guardar: '+e.message); });
+  }
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
+<script src="notif.js"></script>
+<script src="sidebar.js"></script>
+<script>
+  initSidebar();
+  initNotif(db, auth);
+</script>
+</body>
+</html>

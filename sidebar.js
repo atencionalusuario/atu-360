@@ -36,6 +36,7 @@ var ITEMS_NAV = {
   'jefe-notif':       { id: 'jefe-notif',       label: 'Notificaciones',     url: BASE+'notificaciones.html', icon: '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>' },
   'jefe-flash':       { id: 'jefe-flash',       label: 'Flash Informativos', url: BASE+'flash.html',          icon: '<path d="M4 22h16a2 2 0 000-4H4v4z"/><path d="M18 18V2H6a2 2 0 00-2 2v14"/>' },
   'jefe-solicitudes': { id: 'jefe-solicitudes', label: 'Solicitudes',        url: BASE+'solicitudes.html',    icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>' },
+  'jefe-acciones':    { id: 'jefe-acciones',    label: 'Acciones de Personal', url: BASE+'acciones.html',       icon: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>' },
   'jefe-biblioteca':  { id: 'jefe-biblioteca',  label: 'Biblioteca',         url: BASE+'biblioteca.html',     icon: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' },
   'jefe-tiemporeal':  { id: 'jefe-tiemporeal',  label: 'Tiempo Real',        url: BASE+'tiemporeal.html',     icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>' },
   'jefe-metricas':    { id: 'jefe-metricas',    label: 'Métricas',           url: BASE+'metricas.html',       icon: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' },
@@ -53,6 +54,7 @@ var ITEMS_NAV = {
   'sup-metricas':     { id: 'sup-metricas',     label: 'Métricas',           url: BASE+'metricas.html',       icon: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' },
   'sup-flash':        { id: 'sup-flash',        label: 'Flash Informativos', url: BASE+'flash.html',          icon: '<path d="M4 22h16a2 2 0 000-4H4v4z"/><path d="M18 18V2H6a2 2 0 00-2 2v14"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="13" y2="11"/>' },
   'sup-solicitudes':  { id: 'sup-solicitudes',  label: 'Solicitudes',        url: BASE+'solicitudes.html',    icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/>' },
+  'sup-acciones':     { id: 'sup-acciones',     label: 'Acciones de Personal', url: BASE+'acciones.html',       icon: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>' },
   'sup-biblioteca':   { id: 'sup-biblioteca',   label: 'Biblioteca',         url: BASE+'biblioteca.html',     icon: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' },
   'sup-transporte':   { id: 'sup-transporte',   label: 'Transporte',         url: BASE+'transporte.html',     icon: '<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>' },
   'sup-perfil':       { id: 'sup-perfil',       label: 'Mi Perfil',          url: BASE+'perfil.html',         icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
@@ -79,11 +81,11 @@ var NAV_POR_ROL = {
     reportes:  []
   },
   jefe: {
-    principal: ['jefe-usuarios','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
+    principal: ['jefe-usuarios','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
     reportes:  []
   },
   supervisor: {
-    principal: ['sup-jornada','sup-turno','sup-monitoreo','sup-metricas','sup-flash','sup-solicitudes','sup-licencias','sup-badges','sup-biblioteca','sup-transporte','sup-perfil'],
+    principal: ['sup-jornada','sup-turno','sup-monitoreo','sup-metricas','sup-flash','sup-solicitudes','sup-acciones','sup-licencias','sup-badges','sup-biblioteca','sup-transporte','sup-perfil'],
     reportes:  []
   },
   wfm: {
@@ -239,6 +241,7 @@ function detectarPagina() {
   if (url.indexOf('metricas') > -1)       return 'jefe-metricas';
   if (url.indexOf('formacion') > -1)      return 'formacion';
   if (url.indexOf('flash') > -1)          return 'jefe-flash';
+  if (url.indexOf('acciones') > -1)       return 'jefe-acciones';
   if (url.indexOf('solicitudes') > -1)    return 'jefe-solicitudes';
   if (url.indexOf('biblioteca') > -1)     return 'jefe-biblioteca';
   if (url.indexOf('miturno') > -1)        return 'miturno';
