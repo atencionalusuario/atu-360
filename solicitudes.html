@@ -216,13 +216,14 @@
 
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
-    db.collection('usuarios').where('email','==',user.email).limit(1).get()
-      .then(function(snap) {
-        if (snap.empty) { auth.signOut(); window.location.href = BASE + 'login.html'; return; }
-        perfilUsuario = snap.docs[0].data();
+    db.collection('usuarios').doc(user.uid).get()
+      .then(function(doc) {
+        if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
+          window.location.href = BASE + 'home.html'; return;
+        }
+        perfilUsuario = doc.data();
         rolUsuario    = perfilUsuario.rol;
-        if (!ROLES_PERMITIDOS.includes(rolUsuario)) { auth.signOut(); window.location.href = BASE + 'login.html'; return; }
-        currentUser = user;
+        currentUser   = user;
         init();
       })
       .catch(function(e){ console.error(e); });
