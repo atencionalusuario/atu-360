@@ -207,7 +207,8 @@
   var tabActual      = 'mis'; // 'mis' | 'equipo' | 'cola'
   var archivosSeleccionados = [];
   var rechazandoId   = null;
-  var unsubMis = null, unsubEquipo = null, unsubCola = null;
+  var unsubMis = null, unsubEquipo = null, unsubCola = null, unsubResumen = null;
+  var resumenData = [], periodoActivo = 'semana';
 
   var ESTADOS = {
     'borrador':'Borrador', 'pendiente-sup':'Pendiente — Supervisor',
@@ -236,7 +237,7 @@
       document.getElementById('btnNueva').addEventListener('click', function(){ mostrarFormulario(null); });
       cambiarTab('mis');
     } else if (rolUsuario === 'wfm') {
-      initTabs(['mis','cola']);
+      initTabs(['mis','diario','cola']);
       document.getElementById('btnNueva').style.display = 'flex';
       document.getElementById('btnNueva').addEventListener('click', function(){ mostrarFormulario(null); });
       cambiarTab('mis');
@@ -257,7 +258,7 @@
     if (tabs.length < 2) return;
     var bar = document.getElementById('tabsBar');
     bar.style.display = 'flex';
-    var labels = { mis: 'Mis solicitudes', equipo: 'Equipo', cola: 'Cola de aprobación' };
+    var labels = { mis: 'Mis solicitudes', equipo: 'Equipo', cola: 'Cola de aprobación', diario: 'Diario' };
     tabs.forEach(function(t) {
       var btn = document.createElement('button');
       btn.className = 'tab-btn' + (t===tabActual?' active':'');
@@ -279,6 +280,14 @@
     document.querySelectorAll('.tab-btn').forEach(function(b){
       b.classList.toggle('active', b.dataset.tab === tab);
     });
+
+    var listCol = document.querySelector('.list-col');
+    if (tab === 'diario') {
+      listCol.style.display = 'none';
+      cargarDiario();
+      return;
+    }
+    listCol.style.display = '';
 
     if (tab === 'mis') {
       if (unsubMis) { /* ya activo */ } else cargarMis();
@@ -444,7 +453,7 @@
   }
 
   function construirPasos(s) {
-    var esSup = (s.agenteUid === currentUser.uid && (perfilUsuario.rol==='supervisor'));
+    var esSup = (s.agenteUid === currentUser.uid && (perfilUsuario.rol==='supervisor' || perfilUsuario.rol==='wfm'));
     if (esSup) {
       return [
         { label:'Solicitud enviada', sub: fechaStr(s.fechaCreacion), estado:'done' },
@@ -746,6 +755,135 @@
     }) : lista;
     if (tabActual === 'equipo' || tabActual === 'cola') renderListaEquipo(filtrada);
     else renderLista(filtrada);
+  }
+
+  /* ---------- DIARIO (WFM) ---------- */
+  function cargarDiario() {
+    if (unsubResumen) unsubResumen();
+    var dc = document.getElementById('detailCard');
+    dc.className = 'detail-card show';
+    dc.innerHTML = '<div style="padding:24px"><div class="loading">Cargando...</div></div>';
+    document.getElementById('emptyState').style.display = 'none';
+
+    unsubResumen = db.collection('solicitudes')
+      .where('estado', '==', 'aprobada')
+      .onSnapshot(function(snap) {
+        resumenData = [];
+        snap.forEach(function(d){ resumenData.push(Object.assign({id:d.id}, d.data())); });
+        resumenData.sort(function(a,b){ return (a.fechaInicio||'') > (b.fechaInicio||'') ? -1 : 1; });
+        if (tabActual === 'diario') renderDiario();
+      }, console.error);
+  }
+
+  function renderDiario() {
+    var hoyStr = new Date().toISOString().slice(0,10);
+    var buscar = ((document.getElementById('diarioBuscar')||{value:''}).value||'').toLowerCase().trim();
+
+    // Rango del período
+    var desde = '', hasta = '';
+    if (periodoActivo === 'hoy') {
+      desde = hoyStr; hasta = hoyStr;
+    } else if (periodoActivo === 'semana') {
+      var d0 = new Date(), dy0 = d0.getDay()||7;
+      var lun = new Date(d0); lun.setDate(d0.getDate()-dy0+1);
+      var dom = new Date(lun); dom.setDate(lun.getDate()+6);
+      desde = lun.toISOString().slice(0,10);
+      hasta = dom.toISOString().slice(0,10);
+    } else if (periodoActivo === 'mes') {
+      var n = new Date();
+      desde = n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-01';
+      hasta = n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(new Date(n.getFullYear(),n.getMonth()+1,0).getDate()).padStart(2,'0');
+    }
+
+    var lista = resumenData.filter(function(s) {
+      if (periodoActivo !== 'todo' && s.fechaInicio && (s.fechaInicio < desde || s.fechaInicio > hasta)) return false;
+      if (buscar) return (s.agenteNombre||'').toLowerCase().includes(buscar) || (s.agenteEmail||'').toLowerCase().includes(buscar) || (s.emailSupervisor||'').toLowerCase().includes(buscar);
+      return true;
+    });
+
+    // Stats fijas (sobre toda la data, no el período)
+    var d1 = new Date(), dy1 = d1.getDay()||7;
+    var lunSem = new Date(d1); lunSem.setDate(d1.getDate()-dy1+1);
+    var domSem = new Date(lunSem); domSem.setDate(lunSem.getDate()+6);
+    var sdDesde = lunSem.toISOString().slice(0,10), sdHasta = domSem.toISOString().slice(0,10);
+    var statHoy    = resumenData.filter(function(s){ return s.fechaInicio===hoyStr; }).length;
+    var statSemana = resumenData.filter(function(s){ return s.fechaInicio>=sdDesde && s.fechaInicio<=sdHasta; }).length;
+    var statTotal  = resumenData.length;
+
+    // Agrupar por fechaInicio
+    var grupos = {};
+    lista.forEach(function(s){ var k=s.fechaInicio||'Sin fecha'; if(!grupos[k])grupos[k]=[]; grupos[k].push(s); });
+    var fechas = Object.keys(grupos).sort().reverse();
+
+    var PERIODOS = [{id:'hoy',label:'Hoy'},{id:'semana',label:'Esta semana'},{id:'mes',label:'Este mes'},{id:'todo',label:'Todo'}];
+
+    var html = '<div style="padding:24px;display:flex;flex-direction:column;gap:20px">'
+      // Stats
+      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">'
+      +'<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:16px 20px"><div style="font-size:0.68rem;font-weight:600;color:#16A34A;text-transform:uppercase;letter-spacing:1px">Aprobadas hoy</div><div style="font-size:2rem;font-weight:800;color:#15803D;margin-top:4px">'+statHoy+'</div></div>'
+      +'<div style="background:#EEF2FF;border:1px solid #C7D2FE;border-radius:10px;padding:16px 20px"><div style="font-size:0.68rem;font-weight:600;color:#4338CA;text-transform:uppercase;letter-spacing:1px">Esta semana</div><div style="font-size:2rem;font-weight:800;color:#3730A3;margin-top:4px">'+statSemana+'</div></div>'
+      +'<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;padding:16px 20px"><div style="font-size:0.68rem;font-weight:600;color:#C2410C;text-transform:uppercase;letter-spacing:1px">Total</div><div style="font-size:2rem;font-weight:800;color:#9A3412;margin-top:4px">'+statTotal+'</div></div>'
+      +'</div>'
+      // Filtros
+      +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
+      +'<div style="display:flex;gap:3px;background:#F1F5F9;border-radius:8px;padding:3px">'
+      +PERIODOS.map(function(p){
+        var a=p.id===periodoActivo;
+        return '<button onclick="setPeriodoDiario(\''+p.id+'\')" style="padding:6px 14px;border:none;border-radius:6px;font-size:0.78rem;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.15s;background:'+(a?'white':'transparent')+';color:'+(a?'#1A3DAA':'#64748B')+';box-shadow:'+(a?'0 1px 3px rgba(0,0,0,0.1)':'none')+'">'+p.label+'</button>';
+      }).join('')
+      +'</div>'
+      +'<div style="position:relative;flex:1;min-width:160px;max-width:300px">'
+      +'<input id="diarioBuscar" type="text" placeholder="Buscar agente..." oninput="renderDiario()" value="'+escHtml(buscar||'')+'" style="width:100%;padding:8px 34px 8px 12px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:0.82rem;font-family:inherit;outline:none;background:white">'
+      +'<svg style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#94A3B8;pointer-events:none" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
+      +'</div>'
+      +'</div>'
+      // Lista agrupada
+      +(fechas.length===0
+        ? '<div style="text-align:center;padding:48px 0;color:#94A3B8;font-size:0.85rem">No hay solicitudes aprobadas en este período.</div>'
+        : fechas.map(function(fecha){
+            var items=grupos[fecha], esHoy=fecha===hoyStr;
+            var label=fecha==='Sin fecha'?'Sin fecha':fmtFechaLarga(fecha);
+            if(esHoy) label='Hoy · '+label;
+            return '<div>'
+              +'<div style="font-size:0.7rem;font-weight:700;color:'+(esHoy?'#1A3DAA':'#94A3B8')+';text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #F1F5F9">'+label+' <span style="font-weight:400;opacity:0.7">('+items.length+')</span></div>'
+              +'<div style="display:flex;flex-direction:column;gap:6px">'
+              +items.map(function(s){
+                var tipoCls=s.tipo==='horas-extras'?'horas-extras':'permiso';
+                var tipoLabel=s.tipo==='horas-extras'?'Horas extras':'Permiso';
+                var horario=s.horaInicio&&s.horaFin?s.horaInicio+' – '+s.horaFin:'—';
+                var rango=s.fechaFin&&s.fechaFin!==s.fechaInicio?' · hasta '+s.fechaFin:'';
+                return '<div style="background:white;border:1px solid #E2E8F0;border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px">'
+                  +'<span class="sol-tipo '+tipoCls+'" style="flex-shrink:0">'+tipoLabel+'</span>'
+                  +'<div style="flex:1;min-width:0">'
+                  +'<div style="font-size:0.83rem;font-weight:700;color:#1E293B">'+escHtml(s.agenteNombre||s.agenteEmail||'—')+'</div>'
+                  +'<div style="font-size:0.7rem;color:#94A3B8;margin-top:1px">'+horario+rango+'</div>'
+                  +'</div>'
+                  +'<div style="text-align:right;font-size:0.7rem;color:#64748B;flex-shrink:0;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(s.emailSupervisor||'')+'</div>'
+                  +'</div>';
+              }).join('')
+              +'</div></div>';
+          }).join('')
+      )
+      +'</div>';
+
+    var dc = document.getElementById('detailCard');
+    dc.className = 'detail-card show';
+    dc.innerHTML = html;
+    document.getElementById('emptyState').style.display = 'none';
+  }
+
+  function setPeriodoDiario(p) { periodoActivo = p; renderDiario(); }
+
+  function fmtFechaLarga(dateStr) {
+    if (!dateStr) return '';
+    var parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    return d.toLocaleDateString('es-SV', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
   function showToast(msg) {
