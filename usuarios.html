@@ -716,7 +716,7 @@
       +'<div class="field"><label>Supervisor <span class="field-req">*</span></label><select id="fSupervisor"><option value="">— Sin supervisor —</option>'
       +supervisores().map(function(s){ return '<option value="'+s.id+'"'+(u&&u.emailSupervisor===s.email?' selected':'')+'>'+s.nombre+' ('+s.email+')</option>'; }).join('')
       +'</select></div>'
-      +'<div class="field"><label>Jefe <span class="field-req">*</span></label><select id="fJefe"><option value="">— Sin jefe —</option>'
+      +'<div class="field"><label>Jefe</label><select id="fJefe"><option value="">— Sin jefe —</option>'
       +jefes().map(function(j){ return '<option value="'+j.id+'"'+(u&&u.emailJefe===j.email?' selected':'')+'>'+j.nombre+' ('+j.email+')</option>'; }).join('')
       +'</select></div>'
       +'<div class="field"><label>Fecha de ingreso <span class="field-req">*</span></label><input type="date" id="fFecha" value="'+(u?u.fechaIngreso||'':'')+'"></div>'
@@ -752,7 +752,7 @@
     var proyecto=g('fProyecto'),rol=g('fRol'),fecha=g('fFecha'),cargo=g('fCargo');
     var req=[{id:'fNombre',v:nombre},{id:'fDocumento',v:docNum},{id:'fEmail',v:email},
              {id:'fCargo',v:cargo},{id:'fProyecto',v:proyecto},{id:'fRol',v:rol},{id:'fFecha',v:fecha},
-             {id:'fSupervisor',v:g('fSupervisor')},{id:'fJefe',v:g('fJefe')}];
+             {id:'fSupervisor',v:g('fSupervisor')}];
     var primero=null;
     req.forEach(function(r){
       var el=document.getElementById(r.id); if(!el) return;
