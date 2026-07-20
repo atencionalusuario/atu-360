@@ -93,7 +93,7 @@ var NAV_POR_ROL = {
     reportes:  []
   },
   superadmin: {
-    principal: ['jefe-usuarios','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
+    principal: ['jefe-usuarios','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
     reportes:  []
   },
   // Fallback para cualquier otro rol que use sidebar.js
