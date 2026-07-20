@@ -85,7 +85,7 @@
         <div class="photo-preview" id="photoPreview"><span id="photoInitials">--</span></div>
         <div class="photo-info">
           <strong id="photoName">Cargando...</strong>
-          <span>La foto se toma con tu cámara</span>
+          <span id="photoHint">La foto se toma con tu cámara</span>
         </div>
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -313,6 +313,8 @@
     fotoBlob = dataUrl;
     document.getElementById('photoPreview').innerHTML = '<img src="'+dataUrl+'" alt="foto">';
     document.getElementById('btnFoto').disabled = false;
+    document.getElementById('photoHint').textContent = 'Foto lista — presiona Guardar foto para confirmar';
+    document.getElementById('photoHint').style.color = '#D97706';
     cerrarCamara();
   }
 
@@ -324,6 +326,10 @@
     db.collection('usuarios').doc(currentUser.uid).update({ fotoPerfil: fotoBlob })
       .then(function() {
         btn.textContent = 'Guardar foto';
+        fotoBlob = null;
+        btn.disabled = true;
+        document.getElementById('photoHint').textContent = 'Foto guardada correctamente.';
+        document.getElementById('photoHint').style.color = '#16A34A';
         mostrarMsg('fotoOk', null);
         showToast('Foto actualizada.');
       }).catch(function(e) {
