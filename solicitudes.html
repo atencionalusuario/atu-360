@@ -214,6 +214,12 @@
     'borrador':'Borrador', 'pendiente-sup':'Pendiente — Supervisor',
     'pendiente-admin':'Pendiente — Admin', 'aprobada':'Aprobada', 'rechazada':'Rechazada'
   };
+  var SOL_TIPOS = {
+    'permiso':'Permiso', 'horas-extras':'Horas extras',
+    'vacaciones':'Vacaciones', 'capacitacion':'Capacitación', 'ajuste':'Ajuste de marcaje', 'otro':'Otro'
+  };
+  function solTipoLabel(tipo) { return SOL_TIPOS[tipo] || tipo || 'Solicitud'; }
+  function solTipoCls(tipo)   { return SOL_TIPOS[tipo] ? tipo : 'permiso'; }
 
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
@@ -351,8 +357,8 @@
     var html = '';
     lista.forEach(function(s) {
       var fecha = s.fechaCreacion ? new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
-      var tipoLabel = s.tipo==='horas-extras'?'Horas extras':'Permiso';
-      var tipoCls   = s.tipo==='horas-extras'?'horas-extras':'permiso';
+      var tipoLabel = solTipoLabel(s.tipo);
+      var tipoCls   = solTipoCls(s.tipo);
       html += '<div class="sol-card'+(solActual===s.id?' active':'')+'" onclick="verSolicitud(\''+s.id+'\',\'mis\')">'
         +'<div class="sol-card-top">'
         +'<span class="sol-tipo '+tipoCls+'">'+tipoLabel+'</span>'
@@ -370,8 +376,8 @@
     var html = '';
     lista.forEach(function(s) {
       var fecha = s.fechaCreacion ? new Date(s.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
-      var tipoLabel2 = s.tipo==='horas-extras'?'Horas extras':'Permiso';
-      var tipoCls2   = s.tipo==='horas-extras'?'horas-extras':'permiso';
+      var tipoLabel2 = solTipoLabel(s.tipo);
+      var tipoCls2   = solTipoCls(s.tipo);
       html += '<div class="sol-card'+(solActual===s.id?' active':'')+'" onclick="verSolicitud(\''+s.id+'\',\'revision\')">'
         +'<div class="sol-card-top">'
         +'<span class="sol-tipo '+tipoCls2+'">'+tipoLabel2+'</span>'
@@ -432,7 +438,7 @@
     dc.className = 'detail-card show';
     dc.innerHTML =
       '<div class="detail-header"><div>'
-      +'<div class="detail-header-title">'+(s.tipo==='horas-extras'?'Horas extras':'Permiso')+' — '+(s.agenteNombre||s.agenteEmail||'')+'</div>'
+      +'<div class="detail-header-title">'+solTipoLabel(s.tipo)+' — '+(s.agenteNombre||s.agenteEmail||'')+'</div>'
       +'<div class="detail-header-sub"><span class="estado-pill '+s.estado+'" style="font-size:0.65rem">'+(ESTADOS[s.estado]||s.estado)+'</span></div>'
       +'</div></div>'
       +'<div class="detail-body">'
@@ -627,7 +633,7 @@
     if (btnE) { btnE.disabled = true; btnE.textContent = 'Guardando...'; }
 
     var nombre = perfilUsuario.nombre || currentUser.email;
-    var tipoLabel = data.tipo === 'horas-extras' ? 'horas extras' : 'permiso';
+    var tipoLabel = solTipoLabel(data.tipo).toLowerCase();
 
     if (!solActual) {
       data.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
@@ -686,7 +692,7 @@
           notifEnviarSilencioso(uid, 'Solicitud aprobada por supervisor', (s.agenteNombre||s.agenteEmail)+' tiene una solicitud pendiente de tu aprobación.', 'admin', 'solicitud');
         });
       } else if (nuevoEstado === 'aprobada') {
-        var tlAprobada = s && s.tipo==='horas-extras' ? 'horas extras' : 'permiso';
+        var tlAprobada = solTipoLabel(s.tipo).toLowerCase();
         notifEnviarSilencioso(s.agenteUid, 'Solicitud aprobada', 'Tu solicitud de '+tlAprobada+' ha sido aprobada.', 'solicitud', 'aprobada');
         resolverUid(s.emailSupervisor, function(uid){
           notifEnviarSilencioso(uid, 'Solicitud aprobada por el jefe', 'La solicitud de '+(s.agenteNombre||s.agenteEmail)+' ha sido aprobada.', 'solicitud', 'aprobada');
@@ -722,7 +728,7 @@
       ocultarDetalle();
       solActual = null;
       if (s) {
-        var tlRechazo = s.tipo==='horas-extras' ? 'horas extras' : 'permiso';
+        var tlRechazo = solTipoLabel(s.tipo).toLowerCase();
         notifEnviarSilencioso(s.agenteUid, 'Solicitud rechazada', 'Tu solicitud de '+tlRechazo+' ha sido rechazada. Motivo: '+nota, 'solicitud', 'rechazada');
         if (tabActual === 'cola') {
           resolverUid(s.emailSupervisor, function(uid){
@@ -851,8 +857,8 @@
               +'<div style="font-size:0.7rem;font-weight:700;color:'+(esHoy?'#1A3DAA':'#94A3B8')+';text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #F1F5F9">'+label+' <span style="font-weight:400;opacity:0.7">('+items.length+')</span></div>'
               +'<div style="display:flex;flex-direction:column;gap:6px">'
               +items.map(function(s){
-                var tipoCls=s.tipo==='horas-extras'?'horas-extras':'permiso';
-                var tipoLabel=s.tipo==='horas-extras'?'Horas extras':'Permiso';
+                var tipoCls=solTipoCls(s.tipo);
+                var tipoLabel=solTipoLabel(s.tipo);
                 var horario=s.horaInicio&&s.horaFin?s.horaInicio+' – '+s.horaFin:'—';
                 var rango=s.fechaFin&&s.fechaFin!==s.fechaInicio?' · hasta '+s.fechaFin:'';
                 return '<div style="background:white;border:1px solid #E2E8F0;border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px">'
