@@ -627,6 +627,7 @@
     if (btnE) { btnE.disabled = true; btnE.textContent = 'Guardando...'; }
 
     var nombre = perfilUsuario.nombre || currentUser.email;
+    var tipoLabel = data.tipo === 'horas-extras' ? 'horas extras' : 'permiso';
 
     if (!solActual) {
       data.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
@@ -638,11 +639,11 @@
           if (tabActual === 'mis') cargarMis();
           if (estado === 'pendiente-sup') {
             resolverUid(data.emailSupervisor, function(uid){
-              notifEnviarSilencioso(uid, 'Nueva solicitud de permiso', nombre+' ha enviado una solicitud de permiso.', 'solicitud', 'solicitud');
+              notifEnviarSilencioso(uid, 'Nueva solicitud de '+tipoLabel, nombre+' ha enviado una solicitud de '+tipoLabel+'.', 'solicitud', 'solicitud');
             });
           } else if (estado === 'pendiente-admin') {
             resolverUid(data.emailJefe, function(uid){
-              notifEnviarSilencioso(uid, 'Nueva solicitud de permiso', nombre+' ha enviado una solicitud de permiso.', 'admin', 'solicitud');
+              notifEnviarSilencioso(uid, 'Nueva solicitud de '+tipoLabel, nombre+' ha enviado una solicitud de '+tipoLabel+'.', 'admin', 'solicitud');
             });
           }
         })
@@ -655,11 +656,11 @@
           if (tabActual === 'mis') cargarMis();
           if (estado === 'pendiente-sup') {
             resolverUid(data.emailSupervisor, function(uid){
-              notifEnviarSilencioso(uid, 'Solicitud de permiso reenviada', nombre+' ha reenviado su solicitud de permiso.', 'solicitud', 'solicitud');
+              notifEnviarSilencioso(uid, 'Solicitud de '+tipoLabel+' reenviada', nombre+' ha reenviado su solicitud de '+tipoLabel+'.', 'solicitud', 'solicitud');
             });
           } else if (estado === 'pendiente-admin') {
             resolverUid(data.emailJefe, function(uid){
-              notifEnviarSilencioso(uid, 'Solicitud de permiso reenviada', nombre+' ha reenviado su solicitud de permiso.', 'admin', 'solicitud');
+              notifEnviarSilencioso(uid, 'Solicitud de '+tipoLabel+' reenviada', nombre+' ha reenviado su solicitud de '+tipoLabel+'.', 'admin', 'solicitud');
             });
           }
         })
@@ -685,7 +686,8 @@
           notifEnviarSilencioso(uid, 'Solicitud aprobada por supervisor', (s.agenteNombre||s.agenteEmail)+' tiene una solicitud pendiente de tu aprobación.', 'admin', 'solicitud');
         });
       } else if (nuevoEstado === 'aprobada') {
-        notifEnviarSilencioso(s.agenteUid, 'Solicitud aprobada', 'Tu solicitud de permiso ha sido aprobada.', 'solicitud', 'aprobada');
+        var tlAprobada = s && s.tipo==='horas-extras' ? 'horas extras' : 'permiso';
+        notifEnviarSilencioso(s.agenteUid, 'Solicitud aprobada', 'Tu solicitud de '+tlAprobada+' ha sido aprobada.', 'solicitud', 'aprobada');
         resolverUid(s.emailSupervisor, function(uid){
           notifEnviarSilencioso(uid, 'Solicitud aprobada por el jefe', 'La solicitud de '+(s.agenteNombre||s.agenteEmail)+' ha sido aprobada.', 'solicitud', 'aprobada');
         });
@@ -720,7 +722,8 @@
       ocultarDetalle();
       solActual = null;
       if (s) {
-        notifEnviarSilencioso(s.agenteUid, 'Solicitud rechazada', 'Tu solicitud de permiso ha sido rechazada. Motivo: '+nota, 'solicitud', 'rechazada');
+        var tlRechazo = s.tipo==='horas-extras' ? 'horas extras' : 'permiso';
+        notifEnviarSilencioso(s.agenteUid, 'Solicitud rechazada', 'Tu solicitud de '+tlRechazo+' ha sido rechazada. Motivo: '+nota, 'solicitud', 'rechazada');
         if (tabActual === 'cola') {
           resolverUid(s.emailSupervisor, function(uid){
             notifEnviarSilencioso(uid, 'Solicitud rechazada por el jefe', 'La solicitud de '+(s.agenteNombre||s.agenteEmail)+' ha sido rechazada. Motivo: '+nota, 'solicitud', 'rechazada');
