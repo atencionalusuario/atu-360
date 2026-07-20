@@ -112,10 +112,13 @@ var LABELS_ROL = {
 function renderSidebar(paginaActiva, rol) {
   var config = NAV_POR_ROL[rol] || NAV_POR_ROL['_default'];
 
+  var currentFile = window.location.pathname.split('/').pop() || 'home.html';
+
   function buildItems(ids) {
     return ids.map(function(id) {
       var item = ITEMS_NAV[id]; if (!item) return '';
-      var isActive = item.id === paginaActiva ? ' active' : '';
+      var itemFile = item.url.split('/').pop();
+      var isActive = itemFile === currentFile ? ' active' : '';
       var elemIdAttr = item.elemId ? ' id="' + item.elemId + '"' : '';
       var clickHandler = item.onclick ? item.onclick : 'window.location.href=\'' + item.url + '\'';
       var badgeHtml = item.badge
