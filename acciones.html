@@ -168,13 +168,13 @@
 
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
-    db.collection('usuarios').where('email','==',user.email).limit(1).get()
-      .then(function(snap) {
-        if (snap.empty || !ROLES_PERMITIDOS.includes(snap.docs[0].data().rol)) {
-          auth.signOut(); window.location.href = BASE + 'login.html'; return;
+    db.collection('usuarios').doc(user.uid).get()
+      .then(function(doc) {
+        if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
+          window.location.href = BASE + 'home.html'; return;
         }
         currentUser   = user;
-        perfilUsuario = snap.docs[0].data();
+        perfilUsuario = doc.data();
         rolUsuario    = perfilUsuario.rol;
         document.getElementById('topbarSub').textContent =
           rolUsuario === 'supervisor' ? 'Mi equipo' : 'Equipo completo';

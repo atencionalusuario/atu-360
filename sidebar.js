@@ -264,17 +264,25 @@ function cerrarSesionExpirada() {
 function verificarSesion() {
   var raw = localStorage.getItem('atu360_session_start');
   if (!raw) {
-    // Sesión anterior al deploy de esta feature — asignamos inicio desde ahora
     localStorage.setItem('atu360_session_start', Date.now().toString());
     return;
   }
   var inicio  = parseInt(raw, 10);
+  // Guard against corrupted/invalid timestamps
+  if (isNaN(inicio) || inicio <= 0) {
+    localStorage.setItem('atu360_session_start', Date.now().toString());
+    return;
+  }
   var elapsed = Date.now() - inicio;
+  // Guard against negative elapsed (clock skew)
+  if (elapsed < 0) {
+    localStorage.setItem('atu360_session_start', Date.now().toString());
+    return;
+  }
   if (elapsed >= MAX_SESSION_MS) {
     cerrarSesionExpirada();
     return;
   }
-  // Programar cierre automático al cumplir las 12 h
   setTimeout(cerrarSesionExpirada, MAX_SESSION_MS - elapsed);
 }
 
