@@ -106,7 +106,7 @@ var NAV_POR_ROL = {
 var LABELS_ROL = {
   agente: 'Agente', 'agente-inmersion': 'Agente Inmersión',
   supervisor: 'Supervisor', formacion: 'Formación',
-  admin: 'Jefe', wfm: 'Jefe', jefe: 'Jefe', superadmin: 'Superadmin'
+  admin: 'Admin', wfm: 'WFM', jefe: 'Jefe', superadmin: 'Superadmin'
 };
 
 function renderSidebar(paginaActiva, rol) {
