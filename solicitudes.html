@@ -672,6 +672,9 @@
         });
       } else if (nuevoEstado === 'aprobada') {
         notifEnviarSilencioso(s.agenteUid, 'Solicitud aprobada', 'Tu solicitud de permiso ha sido aprobada.', 'solicitud', 'aprobada');
+        resolverUid(s.emailSupervisor, function(uid){
+          notifEnviarSilencioso(uid, 'Solicitud aprobada por el jefe', 'La solicitud de '+(s.agenteNombre||s.agenteEmail)+' ha sido aprobada.', 'solicitud', 'aprobada');
+        });
       }
     }).catch(function(e){ showToast('Error: '+e.message); });
   }
@@ -702,7 +705,14 @@
       cerrarRechazo();
       ocultarDetalle();
       solActual = null;
-      if (s) notifEnviarSilencioso(s.agenteUid, 'Solicitud rechazada', 'Tu solicitud de permiso ha sido rechazada. Motivo: '+nota, 'solicitud', 'rechazada');
+      if (s) {
+        notifEnviarSilencioso(s.agenteUid, 'Solicitud rechazada', 'Tu solicitud de permiso ha sido rechazada. Motivo: '+nota, 'solicitud', 'rechazada');
+        if (tabActual === 'cola') {
+          resolverUid(s.emailSupervisor, function(uid){
+            notifEnviarSilencioso(uid, 'Solicitud rechazada por el jefe', 'La solicitud de '+(s.agenteNombre||s.agenteEmail)+' ha sido rechazada. Motivo: '+nota, 'solicitud', 'rechazada');
+          });
+        }
+      }
     }).catch(function(e){ showToast('Error: '+e.message); });
   }
 
