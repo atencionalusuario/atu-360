@@ -235,7 +235,12 @@
       document.getElementById('btnNueva').style.display = 'flex';
       document.getElementById('btnNueva').addEventListener('click', function(){ mostrarFormulario(null); });
       cambiarTab('mis');
-    } else if (rolUsuario === 'jefe' || rolUsuario === 'wfm' || rolUsuario === 'admin' || rolUsuario === 'superadmin') {
+    } else if (rolUsuario === 'wfm') {
+      initTabs(['mis','cola']);
+      document.getElementById('btnNueva').style.display = 'flex';
+      document.getElementById('btnNueva').addEventListener('click', function(){ mostrarFormulario(null); });
+      cambiarTab('mis');
+    } else if (rolUsuario === 'jefe' || rolUsuario === 'admin' || rolUsuario === 'superadmin') {
       document.getElementById('topbarSub').textContent = 'Cola de aprobación';
       document.getElementById('listTitle').textContent = 'Pendientes';
       initTabs(['cola']);
@@ -482,7 +487,7 @@
     document.querySelectorAll('.sol-card').forEach(function(c){ c.classList.remove('active'); });
     document.getElementById('emptyState').style.display = 'none';
 
-    var esSup = rolUsuario === 'supervisor';
+    var esSup = rolUsuario === 'supervisor' || rolUsuario === 'wfm';
     var destino = esSup ? 'al jefe' : 'al supervisor';
 
     var dc = document.getElementById('detailCard');
