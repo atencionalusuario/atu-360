@@ -44,6 +44,7 @@
   .rol-pill.agente { background: #EFF6FF; color: #1A3DAA; }
   .rol-pill.agente-inmersion { background: #F0FDF4; color: #15803D; }
   .rol-pill.formacion { background: #FFF7ED; color: #C2410C; }
+  .rol-pill.jefe, .rol-pill.wfm, .rol-pill.admin, .rol-pill.superadmin { background: #F0F9FF; color: #0284C7; }
   .badges-mini { display: flex; gap: 4px; flex-wrap: wrap; }
   .badge-mini-icon { font-size: 1.1rem; line-height: 1; }
   .empty { padding: 48px; text-align: center; color: #94A3B8; font-size: 0.82rem; }
@@ -167,7 +168,7 @@
 <script>
   var BASE = 'https://atencionalusuario.github.io/atu-360/';
   var ROLES_PERMITIDOS = ['jefe','admin','superadmin','supervisor'];
-  var LABELS_ROL = { agente:'Agente', 'agente-inmersion':'Agente inmersión', supervisor:'Supervisor', formacion:'Formación' };
+  var LABELS_ROL = { agente:'Agente', 'agente-inmersion':'Agente inmersión', supervisor:'Supervisor', formacion:'Formación', admin:'Admin', wfm:'WFM', jefe:'Jefe', superadmin:'Superadmin' };
 
   initSidebar();
   initNotif(db, auth);

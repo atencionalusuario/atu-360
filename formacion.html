@@ -242,8 +242,7 @@
         var rows = [];
         snap.forEach(function(doc){ rows.push(doc.data()); });
         var total = rows.length;
-        var pct = total > 0 ? 100 : 0;
-        var html = '<div class="lecturas-bar-wrap"><div class="lecturas-bar"><div class="lecturas-bar-fill" style="width:'+pct+'%"></div></div><span class="lecturas-pct">'+total+' lecturas registradas</span></div>';
+        var html = '<div class="lecturas-bar-wrap"><span class="lecturas-pct">'+total+' lecturas registradas</span></div>';
         if (total === 0) {
           html += '<div class="loading">Ningún agente ha marcado esta publicación como leída aún.</div>';
         } else {

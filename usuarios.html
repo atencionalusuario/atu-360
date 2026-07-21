@@ -34,9 +34,6 @@
   .ctrl-sep    { width: 1px; height: 28px; background: #E2E8F0; margin: 0 4px; }
   .sort-group  { display: flex; align-items: center; gap: 6px; }
   .sort-label  { font-size: 0.72rem; font-weight: 600; color: #64748B; white-space: nowrap; }
-  .btn-dir     { width: 30px; height: 30px; border: 1.5px solid #E2E8F0; border-radius: 6px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #64748B; }
-  .btn-dir.asc::after  { content: '↑'; }
-  .btn-dir.desc::after { content: '↓'; }
   .btn-accion  { padding: 8px 14px; border-radius: 7px; font-size: 0.78rem; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 5px; border: 1.5px solid #E2E8F0; background: white; color: #374151; }
   .btn-accion.primary  { background: #1A3DAA; color: white; border-color: #1A3DAA; }
   .btn-accion.primary:hover { opacity: 0.88; }
@@ -547,7 +544,7 @@
     });
 
     var lista = usuarios.filter(function(u){
-      if(busq && !u.nombre.toLowerCase().includes(busq) && !u.email.toLowerCase().includes(busq) && !(u.cargo||'').toLowerCase().includes(busq)) return false;
+      if(busq && !(u.nombre||'').toLowerCase().includes(busq) && !(u.email||'').toLowerCase().includes(busq) && !(u.cargo||'').toLowerCase().includes(busq)) return false;
       if(proy && u.proyecto!==proy) return false;
       if(rol  && u.rol!==rol)       return false;
       if(est  && (est==='activo'?!u.activo:u.activo)) return false;
@@ -678,7 +675,7 @@
   function supervisores(){ return usuarios.filter(function(u){ return u.rol==='supervisor'||u.rol==='jefe'; }); }
   function supNombre(){ var id=g('fSupervisor'); if(!id||id==='ninguno') return ''; var s=usuarios.find(function(u){return u.id===id;}); return s?s.nombre||'':''; }
   function supEmail() { var id=g('fSupervisor'); if(!id||id==='ninguno') return ''; var s=usuarios.find(function(u){return u.id===id;}); return s?s.email||'':''; }
-  function jefes()    { return usuarios.filter(function(u){ return u.rol==='jefe'||u.rol==='superadmin'; }); }
+  function jefes()    { return usuarios.filter(function(u){ return u.rol==='jefe'; }); }
   function jefeEmail(){ var id=g('fJefe'); if(!id||id==='ninguno') return ''; var j=usuarios.find(function(u){return u.id===id;}); return j?j.email||'':''; }
   function g(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
 
@@ -725,8 +722,8 @@
       +jefes().map(function(j){ return '<option value="'+j.id+'"'+(u&&u.emailJefe===j.email?' selected':'')+'>'+escHtml(j.nombre)+' ('+escHtml(j.email)+')</option>'; }).join('')
       +'</select></div>'
       +'<div class="field"><label>Fecha de ingreso <span class="field-req">*</span></label><input type="date" id="fFecha" value="'+(u?u.fechaIngreso||'':'')+'"></div>'
-      +'<div class="field"><label>Horas con goce</label><input type="number" id="fHCG" value="'+(u?u.horasConGoce:40)+'" min="0"></div>'
-      +'<div class="field"><label>Horas sin goce</label><input type="number" id="fHSG" value="'+(u?u.horasSinGoce:480)+'" min="0"></div>'
+      +'<div class="field"><label>Horas con goce</label><input type="number" id="fHCG" value="'+(u&&u.horasConGoce!=null?u.horasConGoce:40)+'" min="0"></div>'
+      +'<div class="field"><label>Horas sin goce</label><input type="number" id="fHSG" value="'+(u&&u.horasSinGoce!=null?u.horasSinGoce:480)+'" min="0"></div>'
       +'</div></div>'
       +'<div><div class="form-section-title">Vehículo</div><div class="form-grid">'
       +'<div class="field field-full"><div class="toggle-wrap" onclick="toggleVeh()">'
@@ -771,7 +768,7 @@
       nombre:nombre, email:email, documento:docNum, telefono:g('fTelefono'),
       cargo:cargo, canal:g('fCanal'), proyecto:proyecto, rol:rol,
       supervisor:supNombre(), emailSupervisor:supEmail(), emailJefe:jefeEmail(), fechaIngreso:fecha,
-      horasConGoce:parseInt(g('fHCG'))||40, horasSinGoce:parseInt(g('fHSG'))||480,
+      horasConGoce:(function(){var v=parseInt(g('fHCG'));return isNaN(v)?40:v;})(), horasSinGoce:(function(){var v=parseInt(g('fHSG'));return isNaN(v)?480:v;})(),
       vehiculo:veh, tipoVehiculo:veh?g('fTipoVeh'):'', marca:veh?g('fMarca'):'',
       modelo:veh?g('fModelo'):'', placa:veh?g('fPlaca'):''
     };

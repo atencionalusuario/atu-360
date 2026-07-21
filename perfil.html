@@ -225,7 +225,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <script>
   firebase.initializeApp({
     apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
@@ -237,7 +236,6 @@
   });
   var auth    = firebase.auth();
   var db      = firebase.firestore();
-  var storage = firebase.storage();
 
   var currentUser = null;
   var fotoBlob = null;
@@ -258,8 +256,11 @@
       document.getElementById('photoName').textContent = nombre;
       document.getElementById('photoInitials').textContent = iniciales;
 
-      if (d.fotoPerfil) {
-        document.getElementById('photoPreview').innerHTML = '<img src="'+d.fotoPerfil+'" alt="foto">';
+      if (d.fotoPerfil && /^data:image\//.test(d.fotoPerfil)) {
+        var _pp = document.getElementById('photoPreview');
+        _pp.textContent = '';
+        var _im = document.createElement('img'); _im.src = d.fotoPerfil; _im.alt = 'foto';
+        _pp.appendChild(_im);
       }
 
       if (d.vehiculo) {
@@ -276,6 +277,12 @@
       var ce = d.contactosEmergencia || [];
       if (ce[0]) { document.getElementById('ce1Nombre').value = ce[0].nombre || ''; document.getElementById('ce1Tel').value = ce[0].telefono || ''; }
       if (ce[1]) { document.getElementById('ce2Nombre').value = ce[1].nombre || ''; document.getElementById('ce2Tel').value = ce[1].telefono || ''; }
+    }).catch(function(e){
+      console.error(e);
+      var fb = user.email.split('@')[0];
+      document.getElementById('topbarSub').textContent = fb;
+      document.getElementById('photoName').textContent = fb;
+      document.getElementById('photoInitials').textContent = fb.substring(0,2).toUpperCase();
     });
   });
 

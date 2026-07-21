@@ -130,6 +130,7 @@
   .btn-rp-ok { padding: 9px 20px; border: none; border-radius: 8px; background: #0F2070; color: white; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; }
   .btn-rp-ok:hover { background: #1A3DAA; }
   .btn-rp-ok:disabled { opacity: 0.6; cursor: not-allowed; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -448,7 +449,7 @@
 
   function renderLista(items) {
     var el = document.getElementById('tpLista');
-    var hoyStr = new Date().toISOString().slice(0, 10);
+    var hoyStr = toISO(new Date());
     items = items.filter(function(r) {
       if (!r.fechas || r.fechas.length === 0) return true;
       return r.fechas.some(function(f) { return f >= hoyStr; });
@@ -489,8 +490,9 @@
   auth.onAuthStateChanged(function(user) {
     if (!user) return;
     currentUser = user;
+    nombreUsuario = user.email.split('@')[0];   // fallback inmediato hasta que resuelva la lectura
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
-      nombreUsuario = doc.exists ? (doc.data().nombre || user.email.split('@')[0]) : user.email.split('@')[0];
+      if (doc.exists && doc.data().nombre) nombreUsuario = doc.data().nombre;
     });
     cargarReservas(user.uid);
   });

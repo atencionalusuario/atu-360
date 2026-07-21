@@ -279,10 +279,9 @@
       var leido = !!misLecturas[p.id];
       var _d = p.fechaCreacion ? new Date(p.fechaCreacion.seconds*1000) : null;
       var fecha = _d ? _d.toLocaleDateString('es-SV', {day:'2-digit', month:'long', year:'numeric'}) + ' · ' + _d.toLocaleTimeString('es-SV', {hour:'2-digit', minute:'2-digit'}) : '';
-      var iniciales = p.autorNombre ? p.autorNombre.split(' ').map(function(w){return w[0];}).join('').substring(0,2).toUpperCase() : '--';
       html += '<article class="blog-entry'+(leido?'':' unread')+'" id="entry-'+p.id+'">'
         +'<div class="entry-header">'
-        +'<span class="post-cat '+p.categoria+'">'+CATS[p.categoria]+'</span>'
+        +'<span class="post-cat '+(p.categoria||'')+'">'+escHtml(CATS[p.categoria]||p.categoria||'General')+'</span>'
         +(leido?'':'<div class="unread-dot"></div>')
         +'</div>'
         +'<div class="entry-title">'+escHtml(p.titulo)+'</div>'

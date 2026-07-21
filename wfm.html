@@ -770,7 +770,7 @@
   function fmtAntiguedad(dias){ if(dias<30) return dias+'d'; if(dias<365) return Math.floor(dias/30)+'m '+dias%30+'d'; return Math.floor(dias/365)+'a '+Math.floor((dias%365)/30)+'m'; }
 
   function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-  function wfmInic(n){ return (n||'?').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase(); }
+  function wfmInic(n){ return iniciales(n); }
   function wfmPad(n){ return String(n).padStart(2,'0'); }
   function dpField(label,val){ return '<div class="dp-field"><div class="dp-label">'+label+'</div><div class="dp-val">'+escHtml(val)+'</div></div>'; }
   function showToast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},3000); }
@@ -1787,8 +1787,8 @@
       +supervisores().map(function(s){return '<option value="'+escHtml(s.id)+'"'+(u&&u.emailSupervisor===s.email?' selected':'')+'>'+escHtml(s.nombre)+' ('+escHtml(s.email)+')</option>';}).join('')
       +'</select></div>'
       +'<div class="field"><label>Fecha de ingreso <span class="field-req">*</span></label><input type="date" id="fFecha" value="'+escHtml(u?u.fechaIngreso||'':'')+'" ></div>'
-      +'<div class="field"><label>Horas con goce</label><input type="number" id="fHCG" value="'+(u?u.horasConGoce:40)+'" min="0"></div>'
-      +'<div class="field"><label>Horas sin goce</label><input type="number" id="fHSG" value="'+(u?u.horasSinGoce:480)+'" min="0"></div>'
+      +'<div class="field"><label>Horas con goce</label><input type="number" id="fHCG" value="'+(u&&u.horasConGoce!=null?u.horasConGoce:40)+'" min="0"></div>'
+      +'<div class="field"><label>Horas sin goce</label><input type="number" id="fHSG" value="'+(u&&u.horasSinGoce!=null?u.horasSinGoce:480)+'" min="0"></div>'
       +'</div></div>'
       +'<div><div class="form-section-title">Vehículo</div><div class="form-grid">'
       +'<div class="field field-full"><div class="toggle-wrap" onclick="toggleVeh()">'

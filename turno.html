@@ -299,7 +299,7 @@
     document.querySelectorAll('.stab').forEach(function(b){ b.classList.remove('active'); });
     var panel = document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1));
     if (panel) {
-      panel.style.display = tab === 'agentes' ? 'flex' : 'flex';
+      panel.style.display = 'flex';
       panel.style.flexDirection = 'column';
     }
     btn.classList.add('active');

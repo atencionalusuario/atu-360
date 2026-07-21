@@ -290,7 +290,7 @@
       .get().then(function(snap) {
         agentes = [];
         snap.forEach(function(d) { agentes.push({ id: d.id, nombre: d.data().nombre, email: d.data().email }); });
-        agentes.sort(function(a,b){ return a.nombre.localeCompare(b.nombre); });
+        agentes.sort(function(a,b){ return (a.nombre||'').localeCompare(b.nombre||''); });
         var sel = document.getElementById('mAgente');
         var fil = document.getElementById('filtroAgente');
         agentes.forEach(function(a) {
