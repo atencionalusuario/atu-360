@@ -3,7 +3,7 @@
 
 (function() {
 
-  var _db, _auth, _unsubNotif = null, _notifs = [], _open = false;
+  var _db, _auth, _unsubNotif = null, _notifs = [], _open = false, _notifDesdeMs = 0;
 
   var SVG_BELL = '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>';
   var SVG_SOL  = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
@@ -220,14 +220,33 @@
 
       // Leer rol del usuario
       db.collection('usuarios').doc(user.uid).get().then(function(doc) {
-        var rol = doc.exists ? (doc.data().rol || 'agente') : 'agente';
+        var data = doc.exists ? doc.data() : {};
+        var rol = data.rol || 'agente';
         var targets = [user.uid, 'todos', rol];
+
+        // Agente inmersión: solo ver notificaciones creadas a partir de su primer inicio de sesión.
+        _notifDesdeMs = 0;
+        if (rol === 'agente-inmersion') {
+          if (data.notifDesde && data.notifDesde.seconds) {
+            _notifDesdeMs = data.notifDesde.seconds * 1000;
+          } else {
+            _notifDesdeMs = Date.now();   // umbral de esta sesión; se persiste para las siguientes
+            db.collection('usuarios').doc(user.uid)
+              .update({ notifDesde: firebase.firestore.FieldValue.serverTimestamp() })
+              .catch(function(e){ console.warn('notifDesde:', e.message); });
+          }
+        }
 
         _unsubNotif = db.collection('notificaciones')
           .where('uid', 'in', targets)
           .onSnapshot(function(snap) {
             _notifs = [];
-            snap.forEach(function(d) { _notifs.push(Object.assign({ id: d.id }, d.data())); });
+            snap.forEach(function(d) {
+              var n = Object.assign({ id: d.id }, d.data());
+              // Ocultar notificaciones anteriores al umbral (agente-inmersión)
+              if (_notifDesdeMs && n.timestamp && n.timestamp.seconds * 1000 < _notifDesdeMs) return;
+              _notifs.push(n);
+            });
             _notifs.sort(function(a,b) {
               var ta = a.timestamp ? a.timestamp.seconds : 0;
               var tb = b.timestamp ? b.timestamp.seconds : 0;
