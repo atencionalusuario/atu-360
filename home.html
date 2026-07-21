@@ -305,7 +305,7 @@
             var rows = [];
             auxSnap.forEach(function(d) { rows.push(d.data()); });
             if (rows.length === 0) return;
-            rows.sort(function(a,b){ return (a.inicio||'').localeCompare(b.inicio||''); });
+            rows.sort(function(a,b){ return (b.timestamp?b.timestamp.seconds:0) - (a.timestamp?a.timestamp.seconds:0); });
             var empty = document.getElementById('auxLogEmpty');
             if (empty) empty.remove();
             rows.forEach(function(data) {
