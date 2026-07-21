@@ -12,7 +12,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
 
-  /* SIDEBAR */
+  /* SIDEBAR (sin tocar) */
   .sidebar { width: 220px; flex-shrink: 0; background: #0F2070; display: flex; flex-direction: column; min-height: 100vh; }
   .sb-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
   .sb-name { font-size: 1.25rem; font-weight: 800; color: white; }
@@ -42,45 +42,44 @@
 
   /* BIBLIOTECA CONTENT */
   .bib-wrap { padding: 24px 28px; display: flex; flex-direction: column; gap: 16px; }
-
-  /* Buscador */
   .bib-search { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 24px; }
   .bib-search input { width: 100%; padding: 10px 16px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.88rem; font-family: 'Inter', sans-serif; outline: none; color: #1E293B; background: #F8FAFC; transition: border 0.2s; }
   .bib-search input:focus { border-color: #1A3DAA; box-shadow: 0 0 0 3px rgba(26,61,170,0.07); background: white; }
-
-  /* Saludo */
   .bib-saludo { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 24px; font-family: 'Montserrat', sans-serif; }
-  .bib-saludo p { font-size: 0.9rem; line-height: 1.7; color: #374151; margin-bottom: 8px; }
+  .bib-saludo p { font-size: 0.9rem; line-height: 1.7; color: #374151; margin-bottom: 8px; text-align: justify; }
   .bib-saludo p:last-child { margin-bottom: 0; }
   .bib-saludo strong { color: #0F2070; }
-
-  /* Mensaje vacío */
   .bib-vacio { display: none; text-align: center; font-size: 0.88rem; color: #94A3B8; padding: 28px; background: white; border-radius: 10px; border: 1px solid #E2E8F0; }
-
-  /* Tarjetas filtrables */
   .bib-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .bib-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 24px; font-family: 'Montserrat', sans-serif; }
   .bib-card h2 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: #0F2070; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid #F1F5F9; letter-spacing: 0.5px; }
   .bib-card p { font-size: 0.85rem; line-height: 1.65; color: #555; margin-bottom: 10px; }
   .bib-card p:last-child { margin-bottom: 0; }
   .bib-card strong { color: #0F2070; }
-
-  /* Tarjeta menú usuario */
   .bib-menu { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 24px; }
   .bib-menu h2 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: #0F2070; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid #F1F5F9; letter-spacing: 0.5px; font-family: 'Montserrat', sans-serif; }
   .bib-botones { display: flex; flex-wrap: wrap; gap: 8px; }
   .bib-btn { background: #0F2070; color: white; padding: 10px 16px; border-radius: 7px; border: none; cursor: pointer; font-weight: 600; font-size: 0.78rem; font-family: 'Inter', sans-serif; transition: all 0.15s; }
   .bib-btn:hover { background: #1A3DAA; transform: translateY(-1px); }
-
-  /* Footer biblioteca */
   .bib-footer { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .bib-footer-logo { font-size: 1.1rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; }
   .bib-footer-btns { display: flex; gap: 8px; flex-wrap: wrap; }
   .bib-footer-btn { padding: 9px 18px; border: none; border-radius: 7px; font-weight: 700; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
   .bib-footer-btn:hover { opacity: 0.88; transform: translateY(-1px); }
-  .btn-menu-f    { background: #0F2070; color: white; }
-  .btn-objeciones{ background: #F27C34; color: white; }
+  .btn-menu-f { background: #0F2070; color: white; }
+  .btn-objeciones { background: #F27C34; color: white; }
   .btn-despedida { background: #0F2070; color: white; }
+
+  /* --- INICIO NUEVOS ESTILOS --- */
+  .sdp-options { margin-top: 16px; display: flex; gap: 10px; }
+  .sdp-btn { padding: 8px 16px; border-radius: 7px; border: 1.5px solid; cursor: pointer; font-weight: 600; font-size: 0.78rem; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+  .sdp-btn:hover { transform: translateY(-1px); }
+  .sdp-btn.si { border-color: #16A34A; background: #F0FDF4; color: #15803D; }
+  .sdp-btn.si:hover { background: #DCFCE7; }
+  .sdp-btn.no { border-color: #DC2626; background: #FEF2F2; color: #B91C1C; }
+  .sdp-btn.no:hover { background: #FEE2E2; }
+  .sdp-response { display: none; margin-top: 16px; padding-top: 14px; border-top: 1px solid #F1F5F9; }
+  /* --- FIN NUEVOS ESTILOS --- */
 
   @media (max-width: 700px) {
     .bib-grid { grid-template-columns: 1fr; }
@@ -106,25 +105,19 @@
 
   <div class="bib-wrap">
 
-    <!-- BUSCADOR -->
-    <div class="bib-search">
-      <input type="text" id="buscador" placeholder="Buscar en tarjetas o menús..." oninput="filtrar()">
-    </div>
-
-    <!-- SALUDO -->
     <div class="bib-saludo">
       <p>Gracias por contactar a <strong>DoctorSV</strong>, le saluda el/la agente <strong>XXXX XXXX</strong>, <strong>¿con quién tengo el gusto?</strong></p>
       <p>Un placer SR / SRA <strong>XXXXXXX</strong>, antes de continuar, ¿me podría indicar su <strong>número de documento?</strong></p>
       <p>Le confirmo, su número de documento es <strong>XXXXXXX-X</strong>.</p>
     </div>
 
-    <!-- MENSAJE VACÍO -->
+    <div class="bib-search">
+      <input type="text" id="buscador" placeholder="Buscar en tarjetas o menús..." oninput="filtrar()">
+    </div>
+
     <div class="bib-vacio" id="bibVacio">No se encontraron opciones que coincidan con tu búsqueda.</div>
 
-    <!-- CONTENEDOR FILTRABLE -->
     <div id="contenedorFiltrable">
-
-      <!-- GRID DE TARJETAS -->
       <div class="bib-grid" id="bibGrid">
         <div class="elemento-filtrable bib-card">
           <h2>No está registrado en el SDP:</h2>
@@ -133,14 +126,34 @@
           <p>De acuerdo, por favor, <strong>permítame un momento en línea para verificar en nuestro sistema.</strong></p>
           <p><strong>Muchas gracias por su espera en línea, SR / SRA XXXXXXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
         </div>
+
+        <!-- --- INICIO TARJETA MODIFICADA --- -->
         <div class="elemento-filtrable bib-card">
           <h2>Ya está registrado en el SDP:</h2>
           <p>Muchas gracias, ¿me podría confirmar si los últimos 4 dígitos de su teléfono siguen siendo <strong>XXXX?</strong></p>
-          <p><strong>Muchas gracias SR / SRA XXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
+          
+          <!-- Contenedor para los botones Sí/No -->
+          <div class="sdp-options" id="sdpOptions">
+            <button class="sdp-btn si" onclick="mostrarRespuesta('si')">Sí, confirmo</button>
+            <button class="sdp-btn no" onclick="mostrarRespuesta('no')">No, es otro</button>
+          </div>
+
+          <!-- Contenedor para la respuesta del SÍ -->
+          <div class="sdp-response" id="sdpSi">
+            <p><strong>Muchas gracias SR / SRA XXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
+          </div>
+          
+          <!-- Contenedor para la respuesta del NO -->
+          <div class="sdp-response" id="sdpNo">
+            <p>De acuerdo, procedo a actualizar su número de teléfono, <strong>¿me lo podría volver a indicar, por favor?</strong></p>
+            <p>Le confirmo, su nuevo número es <strong>XXXX-XXXX</strong>.</p>
+            <p><strong>Muchas gracias SR / SRA XXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
+          </div>
         </div>
+        <!-- --- FIN TARJETA MODIFICADA --- -->
+
       </div>
 
-      <!-- MENÚ USUARIO -->
       <div class="elemento-filtrable bib-menu" style="margin-top:16px">
         <h2>Menú Usuario</h2>
         <div class="bib-botones">
@@ -162,7 +175,6 @@
 
     </div>
 
-    <!-- FOOTER -->
     <div class="bib-footer">
       <div class="bib-footer-logo">DoctorSV</div>
       <div class="bib-footer-btns">
@@ -204,11 +216,25 @@
       }
     });
     document.getElementById('bibVacio').style.display = encontrados === 0 ? 'block' : 'none';
-    // Ocultar/mostrar el grid si ambas tarjetas están ocultas
     var grid = document.getElementById('bibGrid');
     var visibles = grid.querySelectorAll('.elemento-filtrable[style*="block"]');
     grid.style.display = visibles.length === 0 ? 'none' : 'grid';
   }
+
+  // --- INICIO NUEVA FUNCIÓN ---
+  function mostrarRespuesta(opcion) {
+    // Ocultar los botones Sí/No
+    document.getElementById('sdpOptions').style.display = 'none';
+
+    // Mostrar el script correspondiente
+    if (opcion === 'si') {
+      document.getElementById('sdpSi').style.display = 'block';
+    } else {
+      document.getElementById('sdpNo').style.display = 'block';
+    }
+  }
+  // --- FIN NUEVA FUNCIÓN ---
+
 </script>
 <script src="notif.js"></script>
 <script src="sidebar.js"></script>
