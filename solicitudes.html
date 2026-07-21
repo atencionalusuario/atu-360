@@ -364,7 +364,7 @@
         +'<span class="sol-tipo '+tipoCls+'">'+tipoLabel+'</span>'
         +'<span class="estado-pill '+s.estado+'">'+(ESTADOS[s.estado]||s.estado)+'</span>'
         +'</div>'
-        +'<div class="sol-titulo">'+(s.comentarios?s.comentarios.substring(0,55)+'...':'Sin comentarios')+'</div>'
+        +'<div class="sol-titulo">'+(s.comentarios?escHtml(s.comentarios.substring(0,55))+'...':'Sin comentarios')+'</div>'
         +'<div class="sol-meta">'+fecha+(s.fechaInicio?' · '+s.fechaInicio:'')+'</div>'
         +'</div>';
     });
@@ -383,8 +383,8 @@
         +'<span class="sol-tipo '+tipoCls2+'">'+tipoLabel2+'</span>'
         +'<span class="estado-pill '+s.estado+'">'+(ESTADOS[s.estado]||s.estado)+'</span>'
         +'</div>'
-        +'<div class="sol-agente">'+(s.agenteNombre||s.agenteEmail||'—')+'</div>'
-        +'<div class="sol-titulo">'+(s.comentarios?s.comentarios.substring(0,50)+'...':'Sin comentarios')+'</div>'
+        +'<div class="sol-agente">'+escHtml(s.agenteNombre||s.agenteEmail||'—')+'</div>'
+        +'<div class="sol-titulo">'+(s.comentarios?escHtml(s.comentarios.substring(0,50))+'...':'Sin comentarios')+'</div>'
         +'<div class="sol-meta">'+fecha+(s.fechaInicio?' · '+s.fechaInicio:'')+'</div>'
         +'</div>';
     });
@@ -419,7 +419,7 @@
           var clickable = a.base64 ? 'onclick="verArchivo(\''+id+'\','+i+')" style="cursor:pointer;text-decoration:underline"' : '';
           return '<div class="file-item"><span class="file-item-name" '+clickable+'>'
             +'<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
-            +(a.nombre||'Archivo')+'</span></div>';
+            +escHtml(a.nombre||'Archivo')+'</span></div>';
         }).join('')+'</div></div>';
     }
 
@@ -438,7 +438,7 @@
     dc.className = 'detail-card show';
     dc.innerHTML =
       '<div class="detail-header"><div>'
-      +'<div class="detail-header-title">'+solTipoLabel(s.tipo)+' — '+(s.agenteNombre||s.agenteEmail||'')+'</div>'
+      +'<div class="detail-header-title">'+solTipoLabel(s.tipo)+' — '+escHtml(s.agenteNombre||s.agenteEmail||'')+'</div>'
       +'<div class="detail-header-sub"><span class="estado-pill '+s.estado+'" style="font-size:0.65rem">'+(ESTADOS[s.estado]||s.estado)+'</span></div>'
       +'</div></div>'
       +'<div class="detail-body">'
@@ -451,7 +451,7 @@
       +'<div class="info-row"><span class="info-label">Hora fin</span><span class="info-val">'+(s.horaFin||'—')+'</span></div>'
       +'</div>'
       +'<div class="info-row"><span class="info-label">Comentarios</span>'
-      +'<div style="font-size:0.84rem;color:#374151;line-height:1.6;background:#F8FAFC;padding:10px 14px;border-radius:8px;border:1px solid #F1F5F9;margin-top:4px">'+(s.comentarios||'—')+'</div></div>'
+      +'<div style="font-size:0.84rem;color:#374151;line-height:1.6;background:#F8FAFC;padding:10px 14px;border-radius:8px;border:1px solid #F1F5F9;margin-top:4px">'+escHtml(s.comentarios||'—')+'</div></div>'
       + archHtml
       +'<div><span class="info-label" style="display:block;margin-bottom:10px">Estado de la solicitud</span>'+tlHtml+'</div>'
       +'</div>'
@@ -481,7 +481,7 @@
       html += '<div class="tl-step"><div class="tl-line-wrap"><div class="tl-dot '+p.estado+'"></div>'
         +(i<pasos.length-1?'<div class="tl-connector'+(p.estado==='done'?' done':'')+'"></div>':'')+'</div>'
         +'<div class="tl-text"><div class="tl-label">'+p.label+'</div><div class="tl-sub">'+p.sub+'</div>'
-        +(p.nota?'<div class="tl-nota">'+p.nota+'</div>':'')+'</div></div>';
+        +(p.nota?'<div class="tl-nota">'+escHtml(p.nota)+'</div>':'')+'</div></div>';
     });
     return html + '</div>';
   }
@@ -527,7 +527,7 @@
       +'<div><label class="field-label">Hora fin <span class="field-req">*</span></label><input type="time" id="fHoraFin" value="'+(s&&s.horaFin?s.horaFin:'')+'"></div>'
       +'</div>'
       +'<div><label class="field-label">Comentarios <span class="field-req">*</span></label>'
-      +'<textarea id="fComentarios" placeholder="Describe el motivo o contexto de tu solicitud...">'+(s&&s.comentarios?s.comentarios:'')+'</textarea></div>'
+      +'<textarea id="fComentarios" placeholder="Describe el motivo o contexto de tu solicitud...">'+(s&&s.comentarios?escHtml(s.comentarios):'')+'</textarea></div>'
       +'<div><label class="field-label">Documentación adjunta <span style="color:#94A3B8;font-weight:400">(opcional — max. 1MB por archivo)</span></label>'
       +'<div class="upload-area" id="uploadArea" onclick="document.getElementById(\'fileInput\').click()">'
       +'<div style="color:#94A3B8;margin-bottom:8px"><svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>'
@@ -892,7 +892,7 @@
   }
 
   function escHtml(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
 
   function showToast(msg) {

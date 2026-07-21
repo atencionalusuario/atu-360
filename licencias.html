@@ -327,7 +327,7 @@
     var html = '';
     lista.forEach(function(l) {
       html += '<tr onclick="abrirPanel(\''+l.id+'\')">'
-        +'<td class="td-agente">'+( l.agenteNombre || '—')+'</td>'
+        +'<td class="td-agente">'+escHtml(l.agenteNombre || '—')+'</td>'
         +'<td><span class="tag-tipo">'+(TIPOS[l.tipo]||l.tipo)+'</span></td>'
         +'<td>'+fmtDT(l.inicio)+'</td>'
         +'<td>'+fmtDT(l.fin)+'</td>'
@@ -338,6 +338,8 @@
     document.getElementById('tbody').innerHTML = html;
   }
 
+  function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
   function abrirPanel(id) {
     var l = licencias.find(function(x){ return x.id === id; });
     if (!l) return;
@@ -345,7 +347,7 @@
     var html = '<div>'
       +'<div class="dp-section">Información general</div>'
       +'<div class="dp-grid">'
-      +'<div class="dp-field"><div class="dp-label">Agente</div><div class="dp-val">'+(l.agenteNombre||'—')+'</div></div>'
+      +'<div class="dp-field"><div class="dp-label">Agente</div><div class="dp-val">'+escHtml(l.agenteNombre||'—')+'</div></div>'
       +'<div class="dp-field"><div class="dp-label">Tipo</div><div class="dp-val">'+(TIPOS[l.tipo]||l.tipo)+'</div></div>'
       +'<div class="dp-field"><div class="dp-label">Inicio</div><div class="dp-val">'+fmtDT(l.inicio)+'</div></div>'
       +'<div class="dp-field"><div class="dp-label">Fin</div><div class="dp-val">'+fmtDT(l.fin)+'</div></div>'
@@ -357,11 +359,11 @@
       html += '<div><div class="dp-section">Documentación</div>'
         +'<span class="dp-doc-link" onclick="verArchivo(\''+id+'\')">'
         +'<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
-        +(l.archivoNombre)+'</span></div>';
+        +escHtml(l.archivoNombre)+'</span></div>';
     }
     if (l.comentarios) {
       html += '<div><div class="dp-section">Comentarios</div>'
-        +'<div style="font-size:0.83rem;color:#374151;line-height:1.7;white-space:pre-wrap;">'+l.comentarios+'</div></div>';
+        +'<div style="font-size:0.83rem;color:#374151;line-height:1.7;white-space:pre-wrap;">'+escHtml(l.comentarios)+'</div></div>';
     }
     document.getElementById('panelBody').innerHTML = html;
     document.getElementById('panelOverlay').classList.add('show');

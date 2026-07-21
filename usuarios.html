@@ -599,13 +599,13 @@
     lista.forEach(function(u){
       var dias=diasDesde(u.fechaIngreso);
       html+='<tr class="'+(u.activo?'':'inactivo')+(usuarioSeleccionado===u.id?' selected':'')+'" onclick="seleccionarUsuario(\''+u.id+'\')">'
-        +'<td><div class="td-user"><div class="td-avatar">'+iniciales(u.nombre)+'</div>'
-        +'<div><div class="td-nombre">'+u.nombre+'</div><div class="td-email">'+u.email+'</div></div></div></td>'
-        +'<td>'+(u.cargo||'—')+'</td>'
+        +'<td><div class="td-user"><div class="td-avatar">'+escHtml(iniciales(u.nombre))+'</div>'
+        +'<div><div class="td-nombre">'+escHtml(u.nombre)+'</div><div class="td-email">'+escHtml(u.email)+'</div></div></div></td>'
+        +'<td>'+escHtml(u.cargo||'—')+'</td>'
         +'<td><span class="tag '+u.proyecto+'">'+( LABELS_PROY[u.proyecto]||u.proyecto)+'</span></td>'
         +'<td><span class="tag '+u.rol+'">'+( LABELS_ROL[u.rol]||u.rol)+'</span></td>'
-        +'<td>'+(u.canal||'—')+'</td>'
-        +'<td>'+(u.supervisor||'—')+'</td>'
+        +'<td>'+escHtml(u.canal||'—')+'</td>'
+        +'<td>'+escHtml(u.supervisor||'—')+'</td>'
         +'<td class="td-mono">'+fmtFecha(u.fechaIngreso)+'</td>'
         +'<td class="td-mono">'+fmtAntiguedad(dias)+'</td>'
         +'<td><span class="tag '+(u.vehiculo?'si':'no')+'">'+(u.vehiculo?'Sí':'No')+'</span></td>'
@@ -622,14 +622,16 @@
     aplicarFiltros(); abrirPanel(u);
   }
 
+  function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
   function dpField(label,val){
-    return '<div class="dp-field"><div class="dp-label">'+label+'</div><div class="dp-val">'+val+'</div></div>';
+    return '<div class="dp-field"><div class="dp-label">'+label+'</div><div class="dp-val">'+escHtml(val)+'</div></div>';
   }
 
   function abrirPanel(u){
     var dias=diasDesde(u.fechaIngreso);
     var avEl = document.getElementById('dpAvatar');
-    if (u.fotoPerfil) { avEl.innerHTML = '<img src="'+u.fotoPerfil+'" alt="foto">'; }
+    if (u.fotoPerfil && /^data:image\//.test(u.fotoPerfil)) { avEl.textContent=''; var _im=document.createElement('img'); _im.src=u.fotoPerfil; _im.alt='foto'; avEl.appendChild(_im); }
     else { avEl.textContent = iniciales(u.nombre); }
     document.getElementById('dpNombre').textContent=u.nombre;
     document.getElementById('dpSub').innerHTML=
@@ -688,13 +690,13 @@
     var veh=u&&u.vehiculo;
     document.getElementById('formBody').innerHTML=
       '<div><div class="form-section-title">Información personal</div><div class="form-grid">'
-      +'<div class="field"><label>Nombre completo <span class="field-req">*</span></label><input type="text" id="fNombre" value="'+(u?u.nombre:'')+'" placeholder="Nombre completo"></div>'
-      +'<div class="field"><label>Documento <span class="field-req">*</span></label><input type="text" id="fDocumento" value="'+(u?u.documento||'':'')+'" placeholder="00000000-0"></div>'
-      +'<div class="field"><label>Correo <span class="field-req">*</span></label><input type="email" id="fEmail" value="'+(u?u.email:'')+'" placeholder="usuario@proyecto.com"'+(u?' readonly':'')+' ></div>'
-      +'<div class="field"><label>Teléfono</label><input type="text" id="fTelefono" value="'+(u?u.telefono||'':'')+'" placeholder="0000-0000"></div>'
+      +'<div class="field"><label>Nombre completo <span class="field-req">*</span></label><input type="text" id="fNombre" value="'+escHtml(u?u.nombre:'')+'" placeholder="Nombre completo"></div>'
+      +'<div class="field"><label>Documento <span class="field-req">*</span></label><input type="text" id="fDocumento" value="'+escHtml(u?u.documento||'':'')+'" placeholder="00000000-0"></div>'
+      +'<div class="field"><label>Correo <span class="field-req">*</span></label><input type="email" id="fEmail" value="'+escHtml(u?u.email:'')+'" placeholder="usuario@proyecto.com"'+(u?' readonly':'')+' ></div>'
+      +'<div class="field"><label>Teléfono</label><input type="text" id="fTelefono" value="'+escHtml(u?u.telefono||'':'')+'" placeholder="0000-0000"></div>'
       +'</div></div>'
       +'<div><div class="form-section-title">Información operativa</div><div class="form-grid">'
-      +'<div class="field"><label>Cargo <span class="field-req">*</span></label><input type="text" id="fCargo" value="'+(u?u.cargo||'':'')+'" placeholder="Agente de atención"></div>'
+      +'<div class="field"><label>Cargo <span class="field-req">*</span></label><input type="text" id="fCargo" value="'+escHtml(u?u.cargo||'':'')+'" placeholder="Agente de atención"></div>'
       +'<div class="field"><label>Canal</label><select id="fCanal"><option value="">— Selecciona —</option>'
       +opt('Telefónico',u&&u.canal)+opt('Chat',u&&u.canal)+opt('Email',u&&u.canal)+opt('Presencial',u&&u.canal)+opt('Otro',u&&u.canal)
       +'</select></div>'
@@ -714,10 +716,10 @@
       +'<option value="wfm"'+(u&&u.rol==='wfm'?' selected':'')+'>WFM</option>'
       +'</select></div>'
       +'<div class="field"><label>Supervisor <span class="field-req">*</span></label><select id="fSupervisor"><option value="">— Sin supervisor —</option>'
-      +supervisores().map(function(s){ return '<option value="'+s.id+'"'+(u&&u.emailSupervisor===s.email?' selected':'')+'>'+s.nombre+' ('+s.email+')</option>'; }).join('')
+      +supervisores().map(function(s){ return '<option value="'+s.id+'"'+(u&&u.emailSupervisor===s.email?' selected':'')+'>'+escHtml(s.nombre)+' ('+escHtml(s.email)+')</option>'; }).join('')
       +'</select></div>'
       +'<div class="field"><label>Jefe <span class="field-req">*</span></label><select id="fJefe"><option value="">— Selecciona —</option><option value="ninguno"'+(u&&!u.emailJefe?' selected':'')+'>Sin jefe</option>'
-      +jefes().map(function(j){ return '<option value="'+j.id+'"'+(u&&u.emailJefe===j.email?' selected':'')+'>'+j.nombre+' ('+j.email+')</option>'; }).join('')
+      +jefes().map(function(j){ return '<option value="'+j.id+'"'+(u&&u.emailJefe===j.email?' selected':'')+'>'+escHtml(j.nombre)+' ('+escHtml(j.email)+')</option>'; }).join('')
       +'</select></div>'
       +'<div class="field"><label>Fecha de ingreso <span class="field-req">*</span></label><input type="date" id="fFecha" value="'+(u?u.fechaIngreso||'':'')+'"></div>'
       +'<div class="field"><label>Horas con goce</label><input type="number" id="fHCG" value="'+(u?u.horasConGoce:40)+'" min="0"></div>'

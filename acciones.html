@@ -238,7 +238,7 @@
         +'<span class="tipo-pill '+clave+'">'+label+'</span>'
         +'<span style="font-size:0.68rem;color:#94A3B8">'+(a.fecha||'')+'</span>'
         +'</div>'
-        +'<div class="ac-nombre">'+(a.subjectNombre||a.subjectEmail||'—')+'</div>'
+        +'<div class="ac-nombre">'+escHtml(a.subjectNombre||a.subjectEmail||'—')+'</div>'
         +(a.comentarios?'<div class="ac-comentario">'+escHtml(a.comentarios)+'</div>':'')
         +'</div>';
     });

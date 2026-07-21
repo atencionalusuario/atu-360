@@ -277,7 +277,7 @@
 
   // ── Helpers ───────────────────────────────────────────────────────────────────
   function pad(n) { return String(n).padStart(2,'0'); }
-  function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escHtml(s) { return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
   function iniciales(n) { return (n||'?').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase(); }
 
   function resumenHorario(pt) {
@@ -541,9 +541,9 @@
     var html  = '';
     lista.forEach(function(a) {
       html += '<div class="turno-agent-item'+(agTurnoSel===a.id?' active':'')+'" onclick="verTurno(\''+a.id+'\')">'
-        +'<div class="ac-av online" style="width:28px;height:28px;font-size:0.62rem">'+iniciales(a.nombre||a.email)+'</div>'
+        +'<div class="ac-av online" style="width:28px;height:28px;font-size:0.62rem">'+escHtml(iniciales(a.nombre||a.email))+'</div>'
         +'<div style="min-width:0">'
-        +'<div style="font-size:0.78rem;font-weight:600;color:#1E293B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(a.nombre||a.email||'?')+'</div>'
+        +'<div style="font-size:0.78rem;font-weight:600;color:#1E293B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml(a.nombre||a.email||'?')+'</div>'
         +'<div style="font-size:0.65rem;color:#94A3B8">'+(LABELS_PROY[a.proyecto]||a.proyecto||'—')+'</div>'
         +'</div></div>';
     });
@@ -551,7 +551,7 @@
   }
 
   function dpField(label, val) {
-    return '<div class="dp-field"><div class="dp-label">'+label+'</div><div class="dp-val">'+val+'</div></div>';
+    return '<div class="dp-field"><div class="dp-label">'+label+'</div><div class="dp-val">'+escHtml(val)+'</div></div>';
   }
 
   function verTurno(uid) {

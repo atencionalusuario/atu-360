@@ -245,7 +245,7 @@
       return '<div class="ac-card'+(online?'':' offline')+'">'
         +'<div class="ac-card-top">'
         +'<div class="ac-indicator '+(online?'on':'off')+'"></div>'
-        +'<div class="ac-av '+(online?'online':'offline')+'">'+iniciales(a.nombre||a.email)+'</div>'
+        +'<div class="ac-av '+(online?'online':'offline')+'">'+escHtml(iniciales(a.nombre||a.email))+'</div>'
         +'<div style="min-width:0">'
         +'<div class="ac-nombre">'+escHtml(a.nombre||a.email||'?')+'</div>'
         +(pLabel?'<div class="ac-proyecto">'+pLabel+'</div>':'')
