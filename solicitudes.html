@@ -202,6 +202,7 @@
   var perfilUsuario  = null;
   var rolUsuario     = null;
   var solicitudes    = [];   // lista activa en la tab actual
+  var solMis         = [];   // cache viva de "mis solicitudes" (sobrevive al cambio de tab)
   var solEquipo      = [];   // solicitudes del equipo (supervisor)
   var solActual      = null;
   var tabActual      = 'mis'; // 'mis' | 'equipo' | 'cola'
@@ -296,7 +297,8 @@
     listCol.style.display = '';
 
     if (tab === 'mis') {
-      if (unsubMis) { /* ya activo */ } else cargarMis();
+      solicitudes = solMis;
+      if (!unsubMis) cargarMis();
       renderLista(solicitudes);
     } else if (tab === 'equipo') {
       cargarEquipo();
@@ -314,8 +316,8 @@
         var lista = [];
         snap.forEach(function(doc){ lista.push(Object.assign({id:doc.id}, doc.data())); });
         lista.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0) - (a.fechaCreacion?a.fechaCreacion.seconds:0); });
+        solMis = lista;
         if (tabActual === 'mis') { solicitudes = lista; renderLista(solicitudes); }
-        else solicitudes = lista;
       }, console.error);
   }
 
@@ -406,7 +408,10 @@
     if (!s) return;
 
     var esEditable = (modo === 'mis') && (s.estado==='borrador' || s.estado==='rechazada');
-    var esRevision = (modo === 'revision') && (s.estado==='pendiente-sup' || s.estado==='pendiente-admin');
+    var esRevision = (modo === 'revision') && (
+      (tabActual === 'equipo' && s.estado === 'pendiente-sup') ||
+      (tabActual === 'cola'   && s.estado === 'pendiente-admin')
+    );
 
     var pasos = construirPasos(s);
     var tlHtml = renderTimeline(pasos);
@@ -655,6 +660,7 @@
         })
         .catch(function(e){ showToast('Error: ' + e.message); if (btnE) { btnE.disabled=false; btnE.textContent='Enviar'; } });
     } else {
+      if (estado !== 'rechazada' && estado !== 'borrador') data.notaRechazo = firebase.firestore.FieldValue.delete();
       db.collection('solicitudes').doc(solActual).update(data)
         .then(function(){
           var msg = estado==='borrador'?'Borrador actualizado.':(rolUsuario==='supervisor'?'Solicitud enviada al jefe.':'Solicitud enviada al supervisor.');
@@ -784,9 +790,14 @@
       }, console.error);
   }
 
+  function ymdLocal(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+
   function renderDiario() {
-    var hoyStr = new Date().toISOString().slice(0,10);
-    var buscar = ((document.getElementById('diarioBuscar')||{value:''}).value||'').toLowerCase().trim();
+    var hoyStr = ymdLocal(new Date());
+    var rawBuscar = (document.getElementById('diarioBuscar')||{value:''}).value || '';
+    var buscar = rawBuscar.toLowerCase().trim();
+    var _focoBusq = document.activeElement && document.activeElement.id === 'diarioBuscar';
+    var _caret = _focoBusq ? document.activeElement.selectionStart : null;
 
     // Rango del período
     var desde = '', hasta = '';
@@ -796,8 +807,8 @@
       var d0 = new Date(), dy0 = d0.getDay()||7;
       var lun = new Date(d0); lun.setDate(d0.getDate()-dy0+1);
       var dom = new Date(lun); dom.setDate(lun.getDate()+6);
-      desde = lun.toISOString().slice(0,10);
-      hasta = dom.toISOString().slice(0,10);
+      desde = ymdLocal(lun);
+      hasta = ymdLocal(dom);
     } else if (periodoActivo === 'mes') {
       var n = new Date();
       desde = n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-01';
@@ -814,7 +825,7 @@
     var d1 = new Date(), dy1 = d1.getDay()||7;
     var lunSem = new Date(d1); lunSem.setDate(d1.getDate()-dy1+1);
     var domSem = new Date(lunSem); domSem.setDate(lunSem.getDate()+6);
-    var sdDesde = lunSem.toISOString().slice(0,10), sdHasta = domSem.toISOString().slice(0,10);
+    var sdDesde = ymdLocal(lunSem), sdHasta = ymdLocal(domSem);
     var statHoy    = resumenData.filter(function(s){ return s.fechaInicio===hoyStr; }).length;
     var statSemana = resumenData.filter(function(s){ return s.fechaInicio>=sdDesde && s.fechaInicio<=sdHasta; }).length;
     var statTotal  = resumenData.length;
@@ -842,7 +853,7 @@
       }).join('')
       +'</div>'
       +'<div style="position:relative;flex:1;min-width:160px;max-width:300px">'
-      +'<input id="diarioBuscar" type="text" placeholder="Buscar agente..." oninput="renderDiario()" value="'+escHtml(buscar||'')+'" style="width:100%;padding:8px 34px 8px 12px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:0.82rem;font-family:inherit;outline:none;background:white">'
+      +'<input id="diarioBuscar" type="text" placeholder="Buscar agente..." oninput="renderDiario()" value="'+escHtml(rawBuscar)+'" style="width:100%;padding:8px 34px 8px 12px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:0.82rem;font-family:inherit;outline:none;background:white">'
       +'<svg style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#94A3B8;pointer-events:none" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
       +'</div>'
       +'</div>'
@@ -879,6 +890,10 @@
     dc.className = 'detail-card show';
     dc.innerHTML = html;
     document.getElementById('emptyState').style.display = 'none';
+    if (_focoBusq) {
+      var _ni = document.getElementById('diarioBuscar');
+      if (_ni) { _ni.focus(); try { _ni.setSelectionRange(_caret, _caret); } catch(e){} }
+    }
   }
 
   function setPeriodoDiario(p) { periodoActivo = p; renderDiario(); }

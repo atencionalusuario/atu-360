@@ -248,6 +248,7 @@
             <option value="proyecto">Proyecto</option>
             <option value="rol">Rol</option>
             <option value="supervisor">Supervisor</option>
+            <option value="estado">Estado</option>
             <option value="fechaIngreso">Fecha de ingreso</option>
             <option value="antiguedad">Antigüedad</option>
           </select>
@@ -262,6 +263,7 @@
             <option value="proyecto">Proyecto</option>
             <option value="rol">Rol</option>
             <option value="supervisor">Supervisor</option>
+            <option value="estado">Estado</option>
             <option value="fechaIngreso">Fecha de ingreso</option>
             <option value="antiguedad">Antigüedad</option>
           </select>
@@ -674,8 +676,8 @@
   function opt(val,cur){ return '<option value="'+val+'"'+(cur===val?' selected':'')+'>'+val+'</option>'; }
 
   function supervisores(){ return usuarios.filter(function(u){ return u.rol==='supervisor'||u.rol==='jefe'; }); }
-  function supNombre(){ var id=g('fSupervisor'); var s=usuarios.find(function(u){return u.id===id;}); return s?s.nombre||'':''; }
-  function supEmail() { var id=g('fSupervisor'); var s=usuarios.find(function(u){return u.id===id;}); return s?s.email||'':''; }
+  function supNombre(){ var id=g('fSupervisor'); if(!id||id==='ninguno') return ''; var s=usuarios.find(function(u){return u.id===id;}); return s?s.nombre||'':''; }
+  function supEmail() { var id=g('fSupervisor'); if(!id||id==='ninguno') return ''; var s=usuarios.find(function(u){return u.id===id;}); return s?s.email||'':''; }
   function jefes()    { return usuarios.filter(function(u){ return u.rol==='jefe'||u.rol==='superadmin'; }); }
   function jefeEmail(){ var id=g('fJefe'); if(!id||id==='ninguno') return ''; var j=usuarios.find(function(u){return u.id===id;}); return j?j.email||'':''; }
   function g(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
@@ -716,7 +718,7 @@
       +'<option value="jefe"'+(u&&u.rol==='jefe'?' selected':'')+'>Jefe</option>'
       +'<option value="wfm"'+(u&&u.rol==='wfm'?' selected':'')+'>WFM</option>'
       +'</select></div>'
-      +'<div class="field"><label>Supervisor <span class="field-req">*</span></label><select id="fSupervisor"><option value="">— Sin supervisor —</option>'
+      +'<div class="field"><label>Supervisor <span class="field-req">*</span></label><select id="fSupervisor"><option value="">— Selecciona —</option><option value="ninguno"'+(u&&!u.emailSupervisor?' selected':'')+'>Sin supervisor</option>'
       +supervisores().map(function(s){ return '<option value="'+s.id+'"'+(u&&u.emailSupervisor===s.email?' selected':'')+'>'+escHtml(s.nombre)+' ('+escHtml(s.email)+')</option>'; }).join('')
       +'</select></div>'
       +'<div class="field"><label>Jefe <span class="field-req">*</span></label><select id="fJefe"><option value="">— Selecciona —</option><option value="ninguno"'+(u&&!u.emailJefe?' selected':'')+'>Sin jefe</option>'
@@ -786,7 +788,7 @@
           }
           crearUsuarioAuth(email,datos,btnG);
         })
-        .catch(function(){ crearUsuarioAuth(email,datos,btnG); });
+        .catch(function(e){ console.error(e); btnG.disabled=false; btnG.textContent='Crear usuario'; showToast('No se pudo verificar si el documento ya existe. Reintenta.'); });
       return;
     }
     datos.fechaActualizacion=firebase.firestore.FieldValue.serverTimestamp();
@@ -930,7 +932,7 @@
       if(errs.length){ err++;
         html+='<tr class="error-row"><td>'+(i+1)+'</td><td>'+escHtml(fila.nombre)+'</td><td>'+escHtml(fila.email)+'</td><td>'+escHtml(fila.proyecto)+'</td><td>'+escHtml(fila.rol)+'</td><td><span class="badge-err">'+escHtml(errs.join(', '))+'</span></td></tr>';
       } else { ok++;
-        pendientesCSV.push({nombre:fila.nombre,documento:fila.documento,email:fila.email,telefono:fila.telefono||'',cargo:fila.cargo||'',canal:fila.canal||'',proyecto:fila.proyecto,rol:fila.rol,supervisor:fila.supervisor||'',emailSupervisor:fila.emailsupervisor||'',fechaIngreso:fecha,vehiculo:fila.vehiculo==='true',tipoVehiculo:fila.tipovehiculo||'',marca:fila.marca||'',modelo:fila.modelo||'',placa:fila.placa||'',horasConGoce:40,horasSinGoce:480,activo:true});
+        pendientesCSV.push({nombre:fila.nombre,documento:fila.documento,email:fila.email,telefono:fila.telefono||'',cargo:fila.cargo||'',canal:fila.canal||'',proyecto:fila.proyecto,rol:fila.rol,supervisor:fila.supervisor||'',emailSupervisor:fila.emailsupervisor||'',emailJefe:fila.emailjefe||'',fechaIngreso:fecha,vehiculo:fila.vehiculo==='true',tipoVehiculo:fila.tipovehiculo||'',marca:fila.marca||'',modelo:fila.modelo||'',placa:fila.placa||'',horasConGoce:40,horasSinGoce:480,activo:true});
         html+='<tr><td>'+(i+1)+'</td><td>'+escHtml(fila.nombre)+'</td><td>'+escHtml(fila.email)+'</td><td>'+escHtml(fila.proyecto)+'</td><td>'+escHtml(fila.rol)+'</td><td><span class="badge-ok">Válido</span></td></tr>';
       }
     });
