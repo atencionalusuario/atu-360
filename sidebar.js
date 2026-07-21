@@ -21,7 +21,6 @@ var BADGES_DEF = [
 // Catálogo completo de ítems de navegación
 var ITEMS_NAV = {
   home:        { id: 'home',        label: 'Inicio',             url: BASE+'home.html',        icon: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>' },
-  'wfm-panel': { id: 'wfm-panel',  label: 'Panel WFM',          url: BASE+'wfm.html',         icon: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>' },
   flash:       { id: 'flash',       label: 'Flash Informativos', url: BASE+'flash.html',       icon: '<path d="M4 22h16a2 2 0 000-4H4v4z"/><path d="M18 18V2H6a2 2 0 00-2 2v14"/>', badge: true },
   solicitudes: { id: 'solicitudes', label: 'Solicitudes',        url: BASE+'solicitudes.html', icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>' },
   biblioteca:  { id: 'biblioteca',  label: 'Biblioteca',         url: BASE+'biblioteca.html',  icon: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' },
