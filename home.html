@@ -313,8 +313,10 @@
               var durStr = pad(Math.floor(dur/60))+':'+pad(dur%60);
               var row = document.createElement('div');
               row.className = 'aux-log-row';
+              var _ini = String(data.inicio||'').replace(/(\d{1,2}:\d{2}):\d{2}/, '$1');
+              var _fin = String(data.fin||'').replace(/(\d{1,2}:\d{2}):\d{2}/, '$1');
               row.innerHTML = '<span class="aux-log-nombre">'+data.auxiliar+'</span>'
-                +'<span class="aux-log-dur">'+data.inicio+' – '+data.fin+'</span>'
+                +'<span class="aux-log-dur">'+_ini+' – '+_fin+'</span>'
                 +'<span class="aux-log-dur right">'+durStr+'</span>';
               document.getElementById('auxLog').appendChild(row);
               actualizarResumen(data.auxiliar, dur);
@@ -362,8 +364,8 @@
       uid: firebase.auth().currentUser.uid,
       email: firebase.auth().currentUser.email,
       auxiliar: nombre,
-      inicio: inicio.toLocaleTimeString('es-SV'),
-      fin: fin.toLocaleTimeString('es-SV'),
+      inicio: inicio.toLocaleTimeString('es-SV',{hour:'2-digit',minute:'2-digit'}),
+      fin: fin.toLocaleTimeString('es-SV',{hour:'2-digit',minute:'2-digit'}),
       duracion_seg: Math.floor((fin-inicio)/1000),
       fecha: inicio.toLocaleDateString('es-SV'),
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
