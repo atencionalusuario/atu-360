@@ -290,6 +290,8 @@
       if (hayFiltro && grp.length === 0) return;
       var supOnline = !!sup.enLinea;
       var enLinGrp  = grp.filter(function(a){ return !!a.enLinea; }).length;
+      var sEstado   = sup.estadoActual || 'Fuera';
+      var scfg      = RT_ESTADOS[sEstado] || RT_ESTADOS['Fuera'];
       html += '<div class="rt-group">'
         +'<div class="rt-group-hdr">'
         +'<div class="ac-indicator '+(supOnline?'on':'off')+'" style="width:10px;height:10px"></div>'
@@ -298,7 +300,12 @@
         +'<div style="font-size:0.82rem;font-weight:700;color:#1E293B">'+escHtml(sup.nombre||sup.email||'?')+'</div>'
         +'<div style="font-size:0.68rem;color:#94A3B8">Supervisor · '+(supOnline?'<span style="color:#16A34A;font-weight:700">En línea</span>':'Fuera')+'</div>'
         +'</div>'
-        +'<div style="font-size:0.72rem;font-weight:700;color:#1A3DAA;background:#EEF2FF;padding:3px 10px;border-radius:20px">'+enLinGrp+' / '+grp.length+'</div>'
+        +(supOnline
+          ? '<div class="ac-estado-badge" style="background:'+scfg.bg+';color:'+scfg.text+';margin-right:12px;flex-shrink:0">'+escHtml(sEstado)+'</div>'
+            +'<div style="text-align:center;margin-right:14px;flex-shrink:0"><div style="font-size:0.55rem;color:#94A3B8;text-transform:uppercase;letter-spacing:0.5px">Jornada</div><div class="ac-rt-timer" style="color:#1E293B;font-size:0.74rem" id="jrt-'+sup.id+'">--:--:--</div></div>'
+            +'<div style="text-align:center;margin-right:14px;flex-shrink:0"><div style="font-size:0.55rem;color:#94A3B8;text-transform:uppercase;letter-spacing:0.5px">Estado</div><div class="ac-rt-timer" style="color:'+scfg.text+';font-size:0.74rem" id="ert-'+sup.id+'">00:00:00</div></div>'
+          : '')
+        +'<div style="font-size:0.72rem;font-weight:700;color:#1A3DAA;background:#EEF2FF;padding:3px 10px;border-radius:20px;flex-shrink:0">'+enLinGrp+' / '+grp.length+'</div>'
         +((['supervisor','jefe','superadmin'].indexOf(miRol) >= 0 && supOnline)
           ? '<button onclick="forzarSalida(\''+sup.id+'\')" title="Marcar salida de emergencia" style="margin-left:8px;width:24px;height:24px;border-radius:50%;border:1px solid #FECACA;background:#FEF2F2;color:#DC2626;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0">'
              +'<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 11-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>'
@@ -352,8 +359,8 @@
     document.getElementById('rtGrid').innerHTML = html ||
       '<div class="empty-state">Sin agentes para los filtros seleccionados.</div>';
 
-    // Timers en vivo — jornada + estado
-    soloAgentes.filter(function(a){ return !!a.enLinea; }).forEach(function(a) {
+    // Timers en vivo — jornada + estado (agentes y supervisores en línea)
+    soloAgentes.concat(supervisores).filter(function(a){ return !!a.enLinea; }).forEach(function(a) {
       var jEl = document.getElementById('jrt-'+a.id);
       var eEl = document.getElementById('ert-'+a.id);
       if (!jEl && !eEl) return;
