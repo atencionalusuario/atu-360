@@ -150,6 +150,8 @@
 
   var agentes  = [];
   var timers   = {};
+  var miRol    = '';
+  var miEmail  = '';
 
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
@@ -164,6 +166,7 @@
   });
 
   function iniciarTiempoReal(rol, email) {
+    miRol = rol; miEmail = email;
     var query = db.collection('usuarios')
       .where('rol', 'in', ['agente', 'agente-inmersion', 'supervisor']);
     if (rol === 'supervisor') {
@@ -293,6 +296,26 @@
         html += '<div style="font-size:0.78rem;color:#94A3B8;padding:8px 16px">Sin agentes asignados.</div>';
       }
       html += '</div>';
+    });
+
+    // Grupos cuyo supervisor no está en la lista cargada (p.ej. un supervisor
+    // viendo solo a su equipo: no aparece su propio doc con rol 'supervisor').
+    var supEmails = {};
+    supervisores.forEach(function(s){ supEmails[s.email] = true; });
+    Object.keys(grupos).forEach(function(key) {
+      if (key === '__sin__' || supEmails[key]) return;
+      var grp = grupos[key];
+      if (hayFiltro && grp.length === 0) return;
+      var enLinOrf = grp.filter(function(a){ return !!a.enLinea; }).length;
+      var hdr = (key === miEmail) ? 'Mi equipo' : escHtml(key);
+      html += '<div class="rt-group">'
+        +'<div class="rt-group-hdr">'
+        +'<div style="flex:1;font-size:0.82rem;font-weight:700;color:#1E293B">'+hdr+'</div>'
+        +'<div style="font-size:0.72rem;font-weight:700;color:#1A3DAA;background:#EEF2FF;padding:3px 10px;border-radius:20px">'+enLinOrf+' / '+grp.length+'</div>'
+        +'</div>'
+        +'<div class="rt-grid" style="padding-left:12px">';
+      grp.forEach(function(a) { html += cardHtml(a); });
+      html += '</div></div>';
     });
 
     var sinSup = grupos['__sin__'] || [];

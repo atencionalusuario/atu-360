@@ -608,7 +608,8 @@
     for (var i = 0; i < primerDia; i++) html += '<div class="cal-dia vacio"></div>';
     for (var d = 1; d <= totalDias; d++) {
       var fecha = año + '-' + pad(mes+1) + '-' + pad(d);
-      var tipo  = agTurnoDias[fecha] || 'descanso';
+      var dia   = agTurnoDias[fecha];
+      var tipo  = (dia && typeof dia === 'object') ? (dia.tipo || 'descanso') : (dia || 'descanso');
       var esHoy = año === hoy.getFullYear() && mes === hoy.getMonth() && d === hoy.getDate();
       html += '<div class="cal-dia '+tipo+(esHoy?' hoy':'')+'"><span class="dia-num">'+d+'</span><span class="dia-tag">'+(tipo==='laboral'?'L':'D')+'</span></div>';
     }
