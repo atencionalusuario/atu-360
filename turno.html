@@ -487,7 +487,8 @@
       if (agSelGrp.length > 0) {
         uids = agSelGrp.slice();
       } else {
-        var preset = grpPreset || 'todos';
+        if (!grpPreset) { showToast('Selecciona a quién asignar (Todos, Agentes o Supervisores) o marca personas manualmente.'); return; }
+        var preset = grpPreset;
         agentes.forEach(function(a) {
           var rol = a.rol || '';
           if (preset === 'todos') uids.push(a.id);

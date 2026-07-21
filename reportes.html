@@ -136,7 +136,7 @@
           <option value="">Todos los estados</option>
           <option value="aprobada">Aprobadas</option>
           <option value="rechazada">Rechazadas</option>
-          <option value="pendiente-admin">Pendientes</option>
+          <option value="pendiente">Pendientes</option>
         </select>
         <select class="rpt-select" id="rptSAgente" style="flex:1;min-width:160px"><option value="">Todos los agentes</option></select>
       </div>
@@ -395,7 +395,8 @@
         snap.forEach(function(doc) {
           var d = doc.data();
           if (agente && d.agenteEmail !== agente) return;
-          if (estado && d.estado !== estado) return;
+          if (estado === 'pendiente') { if ((d.estado||'').indexOf('pendiente') !== 0) return; }
+          else if (estado && d.estado !== estado) return;
           var fCreacion = d.fechaCreacion ? new Date(d.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
           var fResol    = d.fechaActualizacion ? new Date(d.fechaActualizacion.seconds*1000).toLocaleDateString('es-SV') : '';
           rows.push([fCreacion, d.agenteNombre||'', d.agenteEmail||'', d.tipo||'', d.fechaInicio||'', d.fechaFin||'', d.horaInicio||'', d.horaFin||'', d.comentarios||'', d.estado||'', d.notaRechazo||'', fResol]);

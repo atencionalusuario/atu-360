@@ -967,7 +967,7 @@
       var cp = SOL_PROY_COLOR[s.proyecto]||'#94A3B8';
       var ini = s.fechaInicio || '—', fin = s.fechaFin || s.fechaInicio || '—';
       html += '<div class="sol-det-entry" style="border-left-color:'+c+'">'
-        + '<div class="sol-det-nombre">'+escHtml(s.agente||s.nombre||'Agente')+'</div>'
+        + '<div class="sol-det-nombre">'+escHtml(s.agenteNombre||s.agenteEmail||'Agente')+'</div>'
         + '<div class="sol-det-meta" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">'
         + '<span style="color:'+c+';font-weight:700">'+(SOL_TIPOS[s.tipo]||s.tipo)+'</span>'
         + (s.proyecto ? '<span style="color:'+cp+';font-weight:600">'+escHtml(LABELS_PROY[s.proyecto]||s.proyecto)+'</span>' : '')
@@ -1494,11 +1494,15 @@
     });
   }
 
+  var wfmUsuariosSub = false;
   function cargarUsuarios() {
+    if (wfmUsuariosSub) return;   // un solo listener, aunque lo invoquen Usuarios y Reportes
+    wfmUsuariosSub = true;
     db.collection('usuarios').orderBy('nombre','asc').onSnapshot(function(snap){
       usuarios=[];
       snap.forEach(function(doc){ var d=doc.data(); if(d.rol==='superadmin') return; usuarios.push(Object.assign({id:doc.id},d)); });
       aplicarFiltros();
+      if (typeof rptPoblarAgentes === 'function') rptPoblarAgentes();
       if(usuarioSeleccionado){
         var u=usuarios.find(function(x){return x.id===usuarioSeleccionado;});
         if(u) abrirPanel(u);
@@ -1834,9 +1838,10 @@
     });
     if(primero){primero.scrollIntoView({behavior:'smooth',block:'center'});showToast('Completa los campos marcados en rojo.');return;}
     var veh=document.getElementById('togVeh')._on;
+    var _hcg=parseInt(g('fHCG')), _hsg=parseInt(g('fHSG'));
     var datos={nombre:nombre,email:email,documento:docNum,telefono:g('fTelefono'),cargo:cargo,canal:g('fCanal'),
       proyecto:proyecto,rol:rol,supervisor:supNombre(),emailSupervisor:supEmail(),fechaIngreso:fecha,
-      horasConGoce:parseInt(g('fHCG'))||40,horasSinGoce:parseInt(g('fHSG'))||480,
+      horasConGoce:isNaN(_hcg)?40:_hcg,horasSinGoce:isNaN(_hsg)?480:_hsg,
       vehiculo:veh,tipoVehiculo:veh?g('fTipoVeh'):'',marca:veh?g('fMarca'):'',
       modelo:veh?g('fModelo'):'',placa:veh?g('fPlaca'):''};
     var btnG=document.getElementById('btnGuardar');
@@ -1985,17 +1990,27 @@
   var rptCargado = false;
 
   function rptIniciar() {
-    var hoy=new Date(), dow=hoy.getDay(), diffL=dow===0?-6:1-dow;
-    var lunes=new Date(hoy); lunes.setDate(hoy.getDate()+diffL);
-    var domingo=new Date(lunes); domingo.setDate(lunes.getDate()+6);
-    function pad(n){return String(n).padStart(2,'0');}
-    function fmtISO(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
-    ['rptMDesde','rptADesde'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=fmtISO(lunes); });
-    ['rptMHasta','rptAHasta'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=fmtISO(domingo); });
+    if (!rptCargado) {
+      rptCargado = true;
+      var hoy=new Date(), dow=hoy.getDay(), diffL=dow===0?-6:1-dow;
+      var lunes=new Date(hoy); lunes.setDate(hoy.getDate()+diffL);
+      var domingo=new Date(lunes); domingo.setDate(lunes.getDate()+6);
+      var pad=function(n){return String(n).padStart(2,'0');};
+      var fmtISO=function(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
+      ['rptMDesde','rptADesde'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=fmtISO(lunes); });
+      ['rptMHasta','rptAHasta'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=fmtISO(domingo); });
+    }
+    cargarUsuarios();      // asegura que el array `usuarios` esté cargado aunque no se haya visitado la pestaña Usuarios
+    rptPoblarAgentes();
+  }
+
+  function rptPoblarAgentes() {
     var opts=usuarios.map(function(u){return '<option value="'+escHtml(u.email)+'">'+escHtml(u.nombre)+'</option>';}).join('');
-    ['rptMAgente','rptAAgente'].forEach(function(id){
+    ['rptMAgente','rptAAgente','rptSAgente','rptTAgente'].forEach(function(id){
       var el=document.getElementById(id); if(!el) return;
+      var prev=el.value;
       el.innerHTML='<option value="">Todos los agentes</option>'+opts;
+      el.value=prev;
     });
   }
 

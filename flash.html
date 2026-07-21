@@ -266,7 +266,7 @@
   function renderPosts() {
     var sinLeer = posts.filter(function(p){ return !misLecturas[p.id]; }).length;
     document.getElementById('sinLeerLabel').textContent = sinLeer > 0 ? sinLeer + ' sin leer' : 'Todo al día';
-    var badge = document.getElementById('navBadge');
+    var badge = document.getElementById('flashBadge');
     if (badge) { badge.textContent = sinLeer; badge.style.display = sinLeer > 0 ? 'inline' : 'none'; }
 
     if (posts.length === 0) {
