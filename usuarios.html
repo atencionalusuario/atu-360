@@ -687,6 +687,7 @@
     document.getElementById('formSub').textContent  =u?u.email:'Completa los campos requeridos';
     document.getElementById('formFooterLeft').innerHTML=(!u)?'Contraseña inicial: <strong>ATU360*</strong>':'';
     document.getElementById('btnGuardar').textContent=u?'Guardar cambios':'Crear usuario';
+    document.getElementById('btnGuardar').disabled=false;
     var veh=u&&u.vehiculo;
     document.getElementById('formBody').innerHTML=
       '<div><div class="form-section-title">Información personal</div><div class="form-grid">'
