@@ -152,6 +152,12 @@
   var timers   = {};
   var miRol    = '';
   var miEmail  = '';
+  var filtroLinea = '';   // '' = todos | 'online' | 'offline'
+
+  window.setFiltroLinea = function(v){
+    filtroLinea = (filtroLinea === v) ? '' : v;   // clic en el activo lo deselecciona
+    renderRT();
+  };
 
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
@@ -188,12 +194,14 @@
     var busq   = document.getElementById('rtBusq').value;
     var fProy  = document.getElementById('rtFiltProy').value;
     var fEst   = document.getElementById('rtFiltEst').value;
-    var hayFiltro = !!(busq || fProy || fEst);
+    var hayFiltro = !!(busq || fProy || fEst || filtroLinea);
 
     var lista = agentes.filter(function(a) {
       if (busq && !(a.nombre||'').toLowerCase().includes(busq.toLowerCase()) && !(a.email||'').toLowerCase().includes(busq.toLowerCase())) return false;
       if (fProy && a.proyecto !== fProy) return false;
       if (fEst  && (a.estadoActual||'Fuera') !== fEst) return false;
+      if (filtroLinea === 'online'  && !a.enLinea) return false;
+      if (filtroLinea === 'offline' &&  a.enLinea) return false;
       return true;
     });
 
@@ -209,10 +217,15 @@
     // Stats
     var enLineaTotal = agentes.filter(function(a){ return !!a.enLinea && a.rol !== 'supervisor'; }).length;
     var totalAgentes = agentes.filter(function(a){ return a.rol !== 'supervisor'; }).length;
+    function statChip(cls, val, label, fv){
+      var sel = filtroLinea === fv;
+      return '<div class="stat-chip '+cls+'" onclick="setFiltroLinea(\''+fv+'\')" style="cursor:pointer;'+(sel?'outline:2px solid #1A3DAA;outline-offset:-2px;':'')+'">'
+        +'<div class="stat-chip-val">'+val+'</div><div class="stat-chip-label">'+label+'</div></div>';
+    }
     document.getElementById('rtStats').innerHTML =
-      '<div class="stat-chip activos"><div class="stat-chip-val">'+enLineaTotal+'</div><div class="stat-chip-label">En línea</div></div>'
-      +'<div class="stat-chip inactivos"><div class="stat-chip-val">'+(totalAgentes-enLineaTotal)+'</div><div class="stat-chip-label">Fuera</div></div>'
-      +'<div class="stat-chip"><div class="stat-chip-val">'+totalAgentes+'</div><div class="stat-chip-label">Total agentes</div></div>';
+      statChip('activos',   enLineaTotal,               'En línea',      'online')
+      + statChip('inactivos', (totalAgentes-enLineaTotal), 'Fuera',         'offline')
+      + statChip('',          totalAgentes,               'Total agentes', '');
 
     document.getElementById('totalLabel').textContent = soloAgentes.length + ' de ' + totalAgentes + ' agentes';
     document.getElementById('rtCount').textContent    = soloAgentes.length + ' de ' + totalAgentes + ' agentes';
