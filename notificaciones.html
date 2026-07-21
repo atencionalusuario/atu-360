@@ -235,7 +235,7 @@
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
-      if (!doc.exists) { auth.signOut(); window.location.href = BASE + 'login.html'; return; }
+      if (!doc.exists) { window.location.href = BASE + 'home.html'; return; }
       currentUser   = user;
       currentPerfil = doc.data();
       if (ROLES_ADMIN.includes(currentPerfil.rol)) {

@@ -781,7 +781,7 @@
     currentUser = user;
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
       if (!doc.exists || !['wfm'].includes(doc.data().rol)) {
-        auth.signOut(); window.location.href = BASE+'login.html'; return;
+        window.location.href = BASE+'home.html'; return;
       }
       var d = doc.data();
       var nombre = d.nombre || user.email.split('@')[0];

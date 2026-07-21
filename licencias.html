@@ -276,7 +276,7 @@
     currentUser = user;
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
       if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
-        auth.signOut(); window.location.href = BASE + 'login.html'; return;
+        window.location.href = BASE + 'home.html'; return;
       }
       cargarAgentes();
       cargarLicencias();
