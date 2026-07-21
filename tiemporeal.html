@@ -245,8 +245,15 @@
       var estado  = a.estadoActual || 'Fuera';
       var cfg     = RT_ESTADOS[estado] || RT_ESTADOS['Fuera'];
       var pLabel  = LABELS_PROY[a.proyecto] || '';
-      var puedeReset = ['supervisor','jefe','superadmin'].indexOf(miRol) >= 0 && a.estadoActual === 'Jornada finalizada';
-      return '<div class="ac-card'+(online?'':' offline')+'">'
+      var esPoder     = ['supervisor','jefe','superadmin'].indexOf(miRol) >= 0;
+      var puedeReset  = esPoder && a.estadoActual === 'Jornada finalizada';
+      var puedeForzar = esPoder && online;
+      return '<div class="ac-card'+(online?'':' offline')+'" style="position:relative">'
+        +(puedeForzar
+          ? '<button onclick="forzarSalida(\''+a.id+'\')" title="Marcar salida de emergencia" style="position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;border:1px solid #FECACA;background:#FEF2F2;color:#DC2626;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0">'
+             +'<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 11-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>'
+             +'</button>'
+          : '')
         +'<div class="ac-card-top">'
         +'<div class="ac-indicator '+(online?'on':'off')+'"></div>'
         +'<div class="ac-av '+(online?'online':'offline')+'">'+escHtml(iniciales(a.nombre||a.email))+'</div>'
@@ -290,6 +297,11 @@
         +'<div style="font-size:0.68rem;color:#94A3B8">Supervisor · '+(supOnline?'<span style="color:#16A34A;font-weight:700">En línea</span>':'Fuera')+'</div>'
         +'</div>'
         +'<div style="font-size:0.72rem;font-weight:700;color:#1A3DAA;background:#EEF2FF;padding:3px 10px;border-radius:20px">'+enLinGrp+' / '+grp.length+'</div>'
+        +((['supervisor','jefe','superadmin'].indexOf(miRol) >= 0 && supOnline)
+          ? '<button onclick="forzarSalida(\''+sup.id+'\')" title="Marcar salida de emergencia" style="margin-left:8px;width:24px;height:24px;border-radius:50%;border:1px solid #FECACA;background:#FEF2F2;color:#DC2626;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0">'
+             +'<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 11-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>'
+             +'</button>'
+          : '')
         +'</div>';
 
       if (grp.length > 0) {
@@ -390,6 +402,72 @@
       })
       .catch(function(e) { console.error(e); showToast('No se pudo reanudar el turno.'); });
   };
+
+  // ── Marcar salida de emergencia (supervisor/jefe) ───────────────────────────────
+  var _fsUid = null;
+
+  function crearModalForzarSalida() {
+    var ov = document.createElement('div');
+    ov.id = 'fsModal';
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.4);z-index:9999;display:none;align-items:center;justify-content:center;';
+    ov.innerHTML =
+      '<div style="background:white;border-radius:12px;width:410px;max-width:92vw;padding:24px;box-shadow:0 24px 48px rgba(0,0,0,0.18)">'
+      +'<div style="font-size:0.98rem;font-weight:700;color:#1E293B;margin-bottom:8px">Marcar salida de emergencia</div>'
+      +'<div style="font-size:0.85rem;color:#475569;line-height:1.6">¿Estás seguro de marcar la salida a <strong id="fsNombre"></strong>? Se finalizará su jornada de hoy y quedará fuera de línea.</div>'
+      +'<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px">'
+      +'<button id="fsCancel" style="padding:9px 16px;border:1.5px solid #E2E8F0;border-radius:7px;background:white;font-size:0.82rem;font-weight:600;color:#374151;cursor:pointer;font-family:inherit">Cancelar</button>'
+      +'<button id="fsOk" style="padding:9px 16px;border:none;border-radius:7px;background:#DC2626;color:white;font-size:0.82rem;font-weight:700;cursor:pointer;font-family:inherit">Marcar salida</button>'
+      +'</div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function(e){ if (e.target === ov) cerrarModalFS(); });
+    document.getElementById('fsCancel').addEventListener('click', cerrarModalFS);
+    document.getElementById('fsOk').addEventListener('click', confirmarForzarSalida);
+    return ov;
+  }
+
+  function cerrarModalFS() {
+    var m = document.getElementById('fsModal');
+    if (m) m.style.display = 'none';
+    _fsUid = null;
+  }
+
+  window.forzarSalida = function(uid) {
+    _fsUid = uid;
+    var a = agentes.find(function(x){ return x.id === uid; });
+    var nombre = a ? (a.nombre || a.email || 'este usuario') : 'este usuario';
+    var m = document.getElementById('fsModal') || crearModalForzarSalida();
+    document.getElementById('fsNombre').textContent = nombre;
+    m.style.display = 'flex';
+  };
+
+  function confirmarForzarSalida() {
+    var uid = _fsUid;
+    cerrarModalFS();
+    if (!uid) return;
+    var a = agentes.find(function(x){ return x.id === uid; });
+    var nombre = a ? (a.nombre || a.email || 'el usuario') : 'el usuario';
+    var now = new Date();
+    var batch = db.batch();
+    batch.set(db.collection('marcajes').doc(), {
+      uid: uid,
+      email: a ? (a.email || '') : '',
+      tipo: 'salida',
+      hora: now.toLocaleTimeString('es-SV'),
+      fecha: now.toLocaleDateString('es-SV'),
+      foto: null,
+      forzadoPor: miEmail || '',
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    batch.update(db.collection('usuarios').doc(uid), {
+      estadoActual: 'Jornada finalizada',
+      estadoDesde:  firebase.firestore.FieldValue.serverTimestamp(),
+      entradaDesde: null,
+      enLinea:      false
+    });
+    batch.commit()
+      .then(function(){ showToast('Salida marcada para ' + nombre + '.'); })
+      .catch(function(e){ console.error(e); showToast('No se pudo marcar la salida.'); });
+  }
 
   // ── Toast ─────────────────────────────────────────────────────────────────────
   var _toastTimer = null;
