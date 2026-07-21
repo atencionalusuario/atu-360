@@ -928,10 +928,10 @@
       if(!ROLES_OK.includes(fila.rol)) errs.push('Rol');
       if(!fecha) errs.push('Fecha');
       if(errs.length){ err++;
-        html+='<tr class="error-row"><td>'+(i+1)+'</td><td>'+fila.nombre+'</td><td>'+fila.email+'</td><td>'+fila.proyecto+'</td><td>'+fila.rol+'</td><td><span class="badge-err">'+errs.join(', ')+'</span></td></tr>';
+        html+='<tr class="error-row"><td>'+(i+1)+'</td><td>'+escHtml(fila.nombre)+'</td><td>'+escHtml(fila.email)+'</td><td>'+escHtml(fila.proyecto)+'</td><td>'+escHtml(fila.rol)+'</td><td><span class="badge-err">'+escHtml(errs.join(', '))+'</span></td></tr>';
       } else { ok++;
         pendientesCSV.push({nombre:fila.nombre,documento:fila.documento,email:fila.email,telefono:fila.telefono||'',cargo:fila.cargo||'',canal:fila.canal||'',proyecto:fila.proyecto,rol:fila.rol,supervisor:fila.supervisor||'',emailSupervisor:fila.emailsupervisor||'',fechaIngreso:fecha,vehiculo:fila.vehiculo==='true',tipoVehiculo:fila.tipovehiculo||'',marca:fila.marca||'',modelo:fila.modelo||'',placa:fila.placa||'',horasConGoce:40,horasSinGoce:480,activo:true});
-        html+='<tr><td>'+(i+1)+'</td><td>'+fila.nombre+'</td><td>'+fila.email+'</td><td>'+fila.proyecto+'</td><td>'+fila.rol+'</td><td><span class="badge-ok">Válido</span></td></tr>';
+        html+='<tr><td>'+(i+1)+'</td><td>'+escHtml(fila.nombre)+'</td><td>'+escHtml(fila.email)+'</td><td>'+escHtml(fila.proyecto)+'</td><td>'+escHtml(fila.rol)+'</td><td><span class="badge-ok">Válido</span></td></tr>';
       }
     });
     html+='</tbody></table>';
