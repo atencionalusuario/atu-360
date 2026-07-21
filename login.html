@@ -26,6 +26,7 @@
   input[type="email"] { width:100%; padding:12px 14px 12px 40px; border:1.5px solid #E2E8F0; border-radius:10px; font-size:0.88rem; color:#1E293B; background:#F8FAFC; outline:none; transition:border 0.2s; font-family:inherit; }
   input[type="password"], #pass { width:100%; padding:12px 42px 12px 40px; border:1.5px solid #E2E8F0; border-radius:10px; font-size:0.88rem; color:#1E293B; background:#F8FAFC; outline:none; transition:border 0.2s; font-family:inherit; }
   input:focus { border-color:#1A3DAA; box-shadow:0 0 0 3px rgba(26,61,170,0.08); background:white; }
+  #pass::placeholder { color:#CBD5E1; letter-spacing:2px; }
   .show-pass { position:absolute; right:14px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:0.85rem; color:#64748B; user-select:none; }
   .forgot { text-align:right; margin-top:-10px; margin-bottom:20px; }
   .forgot a { font-size:0.75rem; color:#1A3DAA; text-decoration:none; font-weight:600; }
@@ -91,7 +92,7 @@
         <span class="input-icon">
           <svg width="16" height="16" fill="none" stroke="#94A3B8" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
         </span>
-        <input type="password" id="pass" />
+        <input type="password" id="pass" placeholder="••••••••" />
         <span class="show-pass" id="togglePass">
           <svg id="iconOjo" width="18" height="18" fill="none" stroke="#64748B" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         </span>
