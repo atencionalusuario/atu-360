@@ -181,7 +181,11 @@
     }
     query.onSnapshot(function(snap) {
       agentes = [];
-      snap.forEach(function(d) { agentes.push(Object.assign({ id: d.id }, d.data())); });
+      snap.forEach(function(d) {
+        var data = d.data();
+        if (data.activo === false) return;   // excluir usuarios desactivados
+        agentes.push(Object.assign({ id: d.id }, data));
+      });
       renderRT();
     }, function(e) { console.error('rt', e); showToast('Error al cargar datos.'); });
   }
