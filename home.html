@@ -284,6 +284,16 @@
             var d = Math.floor((new Date() - entradaTime) / 1000);
             document.getElementById('timerVal').textContent = pad(Math.floor(d/3600))+':'+pad(Math.floor((d%3600)/60))+':'+pad(d%60);
           }, 1000);
+
+          // Restaurar el auxiliar activo del turno (persistido en usuarios/{uid}) sin reiniciar su reloj
+          db.collection('usuarios').doc(user.uid).get().then(function(uDoc){
+            if(!uDoc.exists) return;
+            var ud = uDoc.data();
+            var est = ud.estadoActual;
+            if(!est || est === 'Jornada finalizada' || !ud.estadoDesde) return;
+            var abtn = document.querySelector('.aux-btn[data-nombre="'+est+'"]');
+            if(abtn) activarBtn(abtn, ud.estadoDesde.toDate(), true);
+          });
         }
 
         // Restaurar log de auxiliares del día
@@ -507,11 +517,11 @@
     activarBtn(btn);
   });
 
-  function activarBtn(btn){
+  function activarBtn(btn, inicio, noPersistir){
     if(auxBtnActivo) auxBtnActivo.classList.remove('aux-active');
     btn.classList.add('aux-active');
-    auxBtnActivo=btn; auxActivo=btn.getAttribute('data-nombre'); auxInicio=new Date();
-    actualizarEstadoActual(auxActivo);
+    auxBtnActivo=btn; auxActivo=btn.getAttribute('data-nombre'); auxInicio=inicio||new Date();
+    if(!noPersistir) actualizarEstadoActual(auxActivo);
     clearInterval(auxIv);
     var tidEl=btn.querySelector('.aux-btn-timer');
     auxIv=setInterval(function(){
