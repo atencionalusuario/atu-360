@@ -245,6 +245,7 @@
       var estado  = a.estadoActual || 'Fuera';
       var cfg     = RT_ESTADOS[estado] || RT_ESTADOS['Fuera'];
       var pLabel  = LABELS_PROY[a.proyecto] || '';
+      var puedeReset = ['supervisor','jefe','superadmin'].indexOf(miRol) >= 0 && a.estadoActual === 'Jornada finalizada';
       return '<div class="ac-card'+(online?'':' offline')+'">'
         +'<div class="ac-card-top">'
         +'<div class="ac-indicator '+(online?'on':'off')+'"></div>'
@@ -267,6 +268,9 @@
            +'</div>'
            +'</div>'
           :'<div class="ac-sin-marcaje">Sin entrada hoy</div>')
+        +(puedeReset
+          ? '<button onclick="resetTurno(\''+a.id+'\')" style="margin-top:8px;width:100%;padding:6px 8px;border:1px solid #E2E8F0;border-radius:6px;background:white;color:#1A3DAA;font-size:0.68rem;font-weight:700;cursor:pointer;font-family:inherit">↺ Reanudar turno</button>'
+          : '')
         +'</div>';
     }
 
@@ -356,6 +360,36 @@
       }, 1000);
     });
   }
+
+  // ── Reanudar turno (supervisor/jefe): deshace una salida marcada por error ──────
+  window.resetTurno = function(uid) {
+    var a = agentes.find(function(x){ return x.id === uid; });
+    var nombre = a ? (a.nombre || a.email || 'el agente') : 'el agente';
+    if (!window.confirm('¿Reanudar el turno de ' + nombre + '?\n\nSe eliminará la salida de hoy y su turno volverá a estar activo (conserva la hora de entrada y el registro del día). El agente deberá recargar su página.')) return;
+    var hoyFecha = new Date().toLocaleDateString('es-SV');
+    db.collection('marcajes')
+      .where('uid', '==', uid)
+      .where('fecha', '==', hoyFecha)
+      .get()
+      .then(function(snap) {
+        var salidas = [], entradaTs = null;
+        snap.forEach(function(d) {
+          var data = d.data();
+          if (data.tipo === 'salida') salidas.push(d.ref);
+          if (data.tipo === 'entrada' && !entradaTs) entradaTs = data.timestamp || null;
+        });
+        if (salidas.length === 0) { showToast(nombre + ' no tiene un turno finalizado hoy.'); return; }
+        var batch = db.batch();
+        salidas.forEach(function(ref) { batch.delete(ref); });
+        var upd = { estadoActual: 'Pausa administrativa', estadoDesde: firebase.firestore.FieldValue.serverTimestamp() };
+        if (entradaTs) upd.entradaDesde = entradaTs;
+        batch.update(db.collection('usuarios').doc(uid), upd);
+        return batch.commit().then(function() {
+          showToast('Turno de ' + nombre + ' reanudado. Debe recargar su página.');
+        });
+      })
+      .catch(function(e) { console.error(e); showToast('No se pudo reanudar el turno.'); });
+  };
 
   // ── Toast ─────────────────────────────────────────────────────────────────────
   var _toastTimer = null;
