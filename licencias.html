@@ -412,7 +412,7 @@
   function seleccionarArchivo(input) {
     var file = input.files[0];
     if (!file) return;
-    if (file.size > 1024 * 1024) { showToast('El archivo supera 1 MB. Elige uno más pequeño.'); input.value = ''; return; }
+    if (file.size > 700 * 1024) { showToast('El archivo supera 700 KB. Elige uno más pequeño.'); input.value = ''; return; }
     archivoNombre = file.name;
     var reader = new FileReader();
     reader.onload = function(e) {
@@ -455,7 +455,13 @@
     };
     db.collection('licencias').add(data)
       .then(function(){ cerrarModal(); showToast('Licencia registrada correctamente.'); })
-      .catch(function(e){ showToast('Error al guardar.'); console.error(e); })
+      .catch(function(e){
+        console.error(e);
+        var msg = /maximum|exceeds|longer than|too large|size/i.test(e.message || '')
+          ? 'No se pudo guardar: el archivo adjunto es demasiado grande. Usa uno más liviano (máx. ~700 KB).'
+          : 'Error al guardar la licencia. Intenta de nuevo.';
+        showToast(msg);
+      })
       .finally(function(){ btn.disabled = false; btn.textContent = 'Guardar licencia'; });
   }
 
