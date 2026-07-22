@@ -82,11 +82,26 @@
   .sdp-subcard.si h3 { color: #15803D; }
   .sdp-subcard.no { border-color: #DC2626; background: #FEF2F2; }
   .sdp-subcard.no h3 { color: #B91C1C; }
+
+  .bib-btn-sub { background: #EEF2FF; color: #0F2070; }
+  .bib-btn-sub:hover { background: #DDE5FF; }
+  .consultas-script { margin-top: 16px; padding-top: 14px; border-top: 1px solid #F1F5F9; font-family: 'Montserrat', sans-serif; font-size: 0.85rem; line-height: 1.65; color: #555; }
+  .consultas-script strong { color: #0F2070; }
+  .consultas-script.placeholder { color: #94A3B8; font-style: italic; }
+  .consultas-script h4 { font-size: 0.78rem; font-weight: 700; color: #0F2070; text-transform: uppercase; letter-spacing: 0.4px; margin: 16px 0 8px; }
+  .consultas-script h4:first-child { margin-top: 0; }
+  .rama-grid { margin: 8px 0 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .rama-card { border-radius: 8px; border: 1.5px solid #E2E8F0; background: #F8FAFC; padding: 14px 16px; }
+  .rama-card h4 { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #0F2070; margin-bottom: 8px; letter-spacing: 0.4px; }
+  .rama-card p { font-size: 0.85rem; line-height: 1.6; color: #555; margin-bottom: 8px; }
+  .rama-card p:last-child { margin-bottom: 0; }
+  .rama-card strong { color: #0F2070; }
   /* --- FIN NUEVOS ESTILOS --- */
 
   @media (max-width: 700px) {
     .bib-grid { grid-template-columns: 1fr; }
     .sdp-subgrid { grid-template-columns: 1fr; }
+    .rama-grid { grid-template-columns: 1fr; }
     .bib-footer { flex-direction: column; align-items: flex-start; }
   }
 </style>
@@ -154,7 +169,7 @@
     <div class="elemento-filtrable bib-menu" style="margin-top:16px">
       <h2>Menú Usuario</h2>
       <div class="bib-botones">
-        <button class="bib-btn">Consultas</button>
+        <button class="bib-btn" onclick="toggleSeccion('seccionConsultas')">Consultas</button>
         <button class="bib-btn">Gestión de citas</button>
         <button class="bib-btn">Gestión de perfiles</button>
         <button class="bib-btn">Incidencias técnicas</button>
@@ -168,6 +183,42 @@
         <button class="bib-btn">Denuncias / Incidencias centro de soporte</button>
         <button class="bib-btn">No relacionado al servicio</button>
       </div>
+    </div>
+
+    <div class="elemento-filtrable bib-menu" id="seccionConsultas" style="margin-top:16px; display:none;">
+      <h2>Consultas — Subtemas</h2>
+      <div class="bib-botones">
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('orientacion-servicio', this)">Orientación sobre todo el servicio</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('usuario-sala-espera', this)">Usuario en sala de espera</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('requisitos-registrarse', this)">Requisitos para registrarse</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('descargar-instalar-app', this)">Cómo descargar/instalar la app</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('como-registrarse', this)">Cómo registrarse</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('como-ingresar', this)">Cómo ingresar</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('como-hacer-cita', this)">Cómo hacer una cita</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('cita-referencia', this)">Cómo hacer cita de referencia</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('cita-seguimiento', this)">Cómo hacer cita de seguimiento</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('registrar-familiar', this)">Cómo registrar a un familiar</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('cambiar-contrasena', this)">Cómo cambiar la contraseña</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('constancias-cita', this)">Cómo ver constancias de cita</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('conectarse-videollamada', this)">Cómo conectarse a la videollamada</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('recomendaciones-cita-telefonica', this)">Recomendaciones cita vía telefónica</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('recomendaciones-cita-videollamada', this)">Recomendaciones cita videollamada</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('descargar-constancia-medica', this)">Cómo descargar constancia médica</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('validez-constancia-medica', this)">Validez de constancia médica</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('completar-antecedentes', this)">Completar antecedentes</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('quiero-referencia-medica', this)">Quiero una referencia médica</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('vigencia-referencia-externa', this)">Vigencia de referencia médica externa</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('efectos-secundarios', this)">Efectos secundarios</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('cambio-establecimiento-referencia', this)">Validación de cambio de establecimiento de referencia</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('cita-especialidades-doctorsv', this)">Cita con especialidades médicas DoctorSV</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('prorroga-incapacidad', this)">Prórroga de incapacidad o constancia médica</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('incapacidad-doctorsv', this)">Información de incapacidad en DoctorSV</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('signos-vitales', this)">Cómo me realizo los signos vitales</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('orientacion-salud', this)">Orientación de salud</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('olvide-contrasena', this)">Olvidé mi contraseña</button>
+        <button class="bib-btn bib-btn-sub" onclick="mostrarScriptConsulta('costos-servicio', this)">Costos del servicio</button>
+      </div>
+      <div class="consultas-script placeholder" id="scriptConsultas">Selecciona un subtema para ver el script.</div>
     </div>
 
     <div class="bib-footer">
@@ -214,6 +265,168 @@
     var grid = document.getElementById('bibGrid');
     var visibles = grid.querySelectorAll('.elemento-filtrable[style*="block"]');
     grid.style.display = visibles.length === 0 ? 'none' : 'grid';
+  }
+
+  function toggleSeccion(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = (el.style.display === 'none' || !el.style.display) ? 'block' : 'none';
+  }
+
+  // Scripts de Consultas: se llenan a medida que se define el contenido de cada subtema.
+  var scriptsConsultas = {
+    'orientacion-servicio':
+      '<p>El servicio de DoctorSV ha sido desarrollado como una alternativa a la atención presencial, para recibir atención médica sin necesidad de trasladarse a un centro de salud.</p>' +
+      '<p>A través de la aplicación DoctorSV usted podrá ser atendido de forma remota por un médico general en el momento que usted lo requiera y en el lugar donde se encuentre.</p>' +
+      '<p>Le comento que la aplicación es muy fácil de instalar, primero debe descargarla en las tiendas de aplicaciones, buscándola con el nombre <strong>"Doctorsv"</strong>. Si usted tiene 18 años en adelante, podrá registrarse y hacer una cita. Si gusta, lo puedo ayudar con el paso a paso para descargarla y registrarse.</p>' +
+      '<h4>¿Quiere el paso a paso?</h4>' +
+      '<p>El primer paso para descargar DoctorSV es buscarla en la tienda de aplicaciones de su teléfono. Para ayudarle, puede poner la llamada en altavoz, y así le guío paso a paso.</p>' +
+      '<p>¿Me podría indicar el modelo de su dispositivo?</p>' +
+      '<div class="rama-grid">' +
+        '<div class="rama-card"><h4>Android</h4>' +
+          '<p>Ahora ingrese a <strong>Google Play Store</strong>, la tienda de aplicaciones.</p>' +
+          '<p>En la parte superior de la pantalla podrá ubicar el buscador. Allí escriba <strong>"Doctorsv"</strong>.</p>' +
+          '<p>El siguiente paso es pulsar donde dice <strong>"Instalar"</strong>.</p>' +
+          '<p>Esperemos un instante mientras se descarga e instala.</p>' +
+          '<p>Luego, en esa misma pantalla pulse <strong>"Abrir"</strong>.</p>' +
+        '</div>' +
+        '<div class="rama-card"><h4>iOS</h4>' +
+          '<p>Ahora ingrese a la <strong>App Store</strong>, la tienda de aplicaciones. En la parte inferior de la pantalla podrá ubicar el buscador. Allí escriba <strong>Doctorsv</strong>.</p>' +
+          '<p>El siguiente paso es pulsar el botón que dice <strong>"Obtener"</strong> (o, en su defecto, le aparecerá un ícono que parece una nube con una flecha hacia abajo). Espere un instante mientras se descarga e instala la aplicación.</p>' +
+          '<p>Luego, en esa misma pantalla pulse <strong>"Abrir"</strong>.</p>' +
+        '</div>' +
+      '</div>' +
+      '<h4>Cómo registrarse</h4>' +
+      '<p>Con gusto le ayudo en el proceso para registrarse en la aplicación.</p>' +
+      '<p>Para iniciar, pulse el ícono de la aplicación, que lo llevará a la pantalla principal. Una vez allí, seleccione el botón <strong>"Regístrate"</strong> (en la parte inferior). El primer paso es ingresar el tipo de documento de identidad con el cual se va a registrar (puede ser DUI, pasaporte salvadoreño o carnet de residente). En el campo siguiente, escribirá su número de documento y su fecha de nacimiento.</p>' +
+      '<p>En la siguiente pantalla podrá ver sus nombres y apellidos de forma precargada. Justo debajo puede ingresar su correo electrónico y número de teléfono. Luego, debe pulsar para recibir el código de verificación vía SMS; recibirá en su teléfono un código de 6 dígitos que ingresará posteriormente. Podrá ver un mensaje confirmando el envío del código y debe presionar <strong>"Aceptar"</strong>. En este paso deberá completar sus datos para crear la cuenta, colocando su dirección, ocupación, escolaridad y al finalizar pulsar el botón <strong>"Continuar"</strong>.</p>' +
+      '<p>Debe ingresar el código de verificación que recibió vía SMS y establecer una contraseña para su cuenta, la cual deberá tener números y/o letras y estar conformada por 8 caracteres como mínimo. Por último, debe aceptar los Términos y Condiciones de la aplicación y hacer clic en <strong>"Enviar"</strong>. Cuando ya esté registrado/a, aparecerá el mensaje <strong>"Registro Exitoso"</strong>. Pulse <strong>"Continuar"</strong> para observar el tutorial de pantallas de uso de la aplicación o pulse <strong>"Menú Principal"</strong> para iniciar sesión y hacer uso del servicio.</p>' +
+      '<h4>Cómo ingresar</h4>' +
+      '<p>Para ingresar a la aplicación usted deberá pulsar la opción <strong>"Iniciar Sesión"</strong>, ubicada en la parte inferior de la pantalla inicial de la aplicación.</p>' +
+      '<p>En la siguiente pantalla, ingrese el tipo y el número de documento con el cual se registró y su contraseña.</p>' +
+      '<p>Una vez ingresados esos datos, estará dentro de la aplicación y podrá ver las diferentes secciones como: mi cita médica, recetas, estudios clínicos, antecedentes, entre otras.</p>' +
+      '<h4>Cómo hacer una cita</h4>' +
+      '<p>En la pantalla principal de su aplicación, puede seleccionar el botón <strong>"Hacer cita médica virtual"</strong>. En la siguiente pantalla, seleccione para quién va a ser la cita; si es para usted, seleccione su nombre y pulse el botón <strong>"Siguiente"</strong>. Luego debe descartar que presente una emergencia, pulsando el botón <strong>"No, presento otros síntomas"</strong>.</p>' +
+      '<p>Justo después deberá aceptar los Términos y Condiciones, el Consentimiento Informado y la Política y Aviso de Privacidad, luego pulse el botón <strong>"Hacer cita médica virtual"</strong>. En la siguiente pantalla usted podrá ver la opción más próxima de videollamada disponible.</p>' +
+      '<p>En caso que usted requiera una cita en otro día u horario deberá seleccionar la opción <strong>"Ver más fechas u horarios"</strong>. Elija la cita de su preferencia y pulse el botón <strong>"Hacer cita médica virtual"</strong> y se mostrará la confirmación de su cita médica con el detalle de fecha y hora.</p>' +
+      '<p>El siguiente paso será brindarle más datos al médico mediante un cuestionario acerca de su salud. Este paso es opcional. Puede pulsar en <strong>"Continuar"</strong> o en <strong>"Prefiero no responder"</strong>.</p>' +
+      '<p>Usted podrá ver la cita agendada en la pantalla principal de la aplicación o en la sección <strong>"Mis Citas"</strong> en la parte inferior de la pantalla.</p>' +
+      '<h4>Cómo conectarse a la videollamada</h4>' +
+      '<p>Con gusto le ayudo. Podrá ingresar a su cita médica siguiendo estos pasos:</p>' +
+      '<p>Ingrese a la aplicación buscando el ícono de DoctorSV en su teléfono.</p>' +
+      '<p>Ubique en la pantalla principal la sección <strong>"Mi cita médica"</strong> y seleccione <strong>"Unirse a la videoconsulta"</strong> en la cita médica agendada. La aplicación lo llevará a Google Meet. Deberá seleccionar la cuenta de correo con la que se unirá a la videollamada. Si su teléfono es marca Huawei, no será necesario tener Google Meet, podrá ingresar sin problemas.</p>' +
+      '<p>Habilite micrófono y cámara y seleccione <strong>"Solicitar unirse"</strong>.</p>' +
+      '<p>Espere en línea mientras el médico le permite ingresar a la videollamada.</p>' +
+      '<h4>Recomendaciones previas</h4>' +
+      '<p>Busque un lugar con buena iluminación, buena conexión a internet o señal móvil y que esté apartado del ruido.</p>' +
+      '<p>Procure conectarse puntualmente a la videollamada. Estará en la sala de espera desde la aplicación o en Google Meet hasta que el médico le brinde acceso.</p>' +
+      '<p>Asegúrese que el dispositivo que usará tenga habilitado el micrófono, la cámara y cuente con suficiente carga en la batería.</p>' +
+      '<p>Si tiene algún inconveniente o duda, se puede comunicar con nosotros y con todo gusto le atenderemos.</p>',
+    'usuario-sala-espera': '',
+    'requisitos-registrarse':
+      '<p>Para registrarse como usuario principal, los requisitos son:</p>' +
+      '<p>• Ser mayor de edad.</p>' +
+      '<p>• Tener uno de los siguientes documentos: DUI, pasaporte salvadoreño o carnet de residente.</p>' +
+      '<p>• Tener un número de teléfono celular nacional activo.</p>',
+    'descargar-instalar-app':
+      '<p>El primer paso para descargar la app es buscarla en la tienda de aplicaciones de su teléfono.</p>' +
+      '<p>¿Me podría indicar el modelo de su dispositivo?</p>' +
+      '<div class="rama-grid">' +
+        '<div class="rama-card"><h4>Android</h4>' +
+          '<p>Ahora ingrese a <strong>Google Play Store</strong>, la tienda de aplicaciones.</p>' +
+          '<p>En la parte superior de la pantalla podrá ubicar el buscador. Allí escriba <strong>Doctorsv</strong>.</p>' +
+          '<p>El siguiente paso es pulsar donde dice <strong>"Instalar"</strong>.</p>' +
+          '<p>Esperemos un instante mientras se descarga e instala.</p>' +
+          '<p>Luego, en esa misma pantalla pulse <strong>"Abrir"</strong>.</p>' +
+        '</div>' +
+        '<div class="rama-card"><h4>iOS</h4>' +
+          '<p>Ahora ingrese a la <strong>App Store</strong>, la tienda de aplicaciones. En la parte superior de la pantalla podrá ubicar el buscador. Allí escriba <strong>Doctorsv</strong>.</p>' +
+          '<p>El siguiente paso es pulsar el ícono de descargar, que se muestra con una nube y una flecha hacia abajo. Espere un instante mientras se descarga e instala la aplicación.</p>' +
+          '<p>Luego, en esa misma pantalla pulse <strong>"Abrir"</strong>.</p>' +
+        '</div>' +
+      '</div>',
+    'como-registrarse':
+      '<p>Con gusto le ayudo en el proceso para registrarse en la aplicación. Tenga en cuenta que DoctorSV ha iniciado su sexta fase, que incluye la atención para menores de edad.</p>' +
+      '<p>Para iniciar, pulse el ícono de la aplicación, que lo llevará a la pantalla principal. Una vez allí, seleccione el botón <strong>"Regístrate"</strong> (en la parte inferior). El primer paso es ingresar el tipo de documento de identidad con el cual se va a registrar (puede ser DUI, pasaporte salvadoreño o carnet de residente). En el campo siguiente, escribirá su número de documento y su fecha de nacimiento.</p>' +
+      '<p>En la siguiente pantalla podrá ver sus nombres y apellidos de forma precargada. Justo debajo puede ingresar su correo electrónico y número de teléfono. Luego, debe pulsar para recibir el código de verificación vía SMS; recibirá en su teléfono un código de 6 dígitos que ingresará posteriormente. Podrá ver un mensaje confirmando el envío del código y debe presionar <strong>"Aceptar"</strong>. En este paso deberá completar sus datos para crear la cuenta, colocando su dirección, ocupación, escolaridad y al finalizar pulsar el botón <strong>"Continuar"</strong>.</p>' +
+      '<p>Debe ingresar el código de verificación que recibió vía SMS y establecer una contraseña para su cuenta, la cual deberá tener números y/o letras y estar conformada por 8 caracteres como mínimo. Por último, debe aceptar los Términos y Condiciones de la aplicación y hacer clic en <strong>"Enviar"</strong>. Cuando ya esté registrado/a, aparecerá el mensaje <strong>"Registro Exitoso"</strong>. Pulse <strong>"Continuar"</strong> para observar el tutorial de pantallas de uso de la aplicación o pulse <strong>"Menú Principal"</strong> para iniciar sesión y hacer uso del servicio.</p>',
+    'como-ingresar':
+      '<p>Para ingresar a la aplicación usted deberá pulsar la opción <strong>"Iniciar Sesión"</strong>, ubicada en la parte inferior de la pantalla inicial de la aplicación.</p>' +
+      '<p>En la siguiente pantalla, ingrese el tipo y el número de documento con el cual se registró y su contraseña.</p>' +
+      '<p>Una vez ingresados esos datos, estará dentro de la aplicación y podrá ver las diferentes secciones como: mi cita médica, recetas, estudios clínicos, antecedentes, entre otras.</p>',
+    'como-hacer-cita':
+      '<p>Con gusto le explico cómo hacer una cita. DoctorSV ha iniciado su sexta fase, que incluye la atención para menores de edad.</p>' +
+      '<p>En la pantalla principal de su aplicación, puede seleccionar el botón <strong>"Hacer cita médica virtual"</strong>. En la siguiente pantalla, seleccione para quién va a ser la cita; si es para usted, seleccione su nombre y pulse el botón <strong>"Siguiente"</strong>. Luego, debe descartar que presente una emergencia, pulsando el botón <strong>"No, ninguno"</strong>.</p>' +
+      '<p>Justo después deberá agregar los síntomas que está experimentando actualmente. Luego, debe aceptar los Términos y Condiciones, el Consentimiento Informado y la Política y Aviso de Privacidad, y pulsar el botón <strong>"Hacer cita médica virtual"</strong>. En la siguiente pantalla usted podrá ver las opciones más próximas de videollamada disponibles.</p>' +
+      '<p>En caso que usted requiera una cita en otro día u horario deberá seleccionar la opción <strong>"Siguiente día"</strong>. Elija la cita de su preferencia y pulse el botón <strong>"Hacer cita médica virtual"</strong> y se mostrará la confirmación de su cita médica con el detalle de fecha y hora.</p>' +
+      '<p>Usted podrá ver la cita agendada en la pantalla principal de la aplicación o en la sección <strong>"Mis Citas"</strong> en la parte inferior de la pantalla.</p>' +
+      '<p>Pulse <strong>"Continuar"</strong> para regresar a la pantalla principal.</p>',
+    'cita-referencia': '',
+    'cita-seguimiento': '',
+    'registrar-familiar':
+      '<p>Para poder registrar a su familiar, ingrese en la sección de <strong>Perfil</strong> (ícono de una persona ubicado en la parte inferior derecha). Allí pulse sobre el botón <strong>"Pacientes"</strong>.</p>' +
+      '<p>Seleccione el botón azul <strong>"+ Agregar otro paciente"</strong>, ubicado en la parte inferior de la pantalla.</p>' +
+      '<div class="rama-grid">' +
+        '<div class="rama-card"><h4>Menor de edad</h4>' +
+          '<p>En caso que desee agregar a un menor de edad, marque el recuadro de la pregunta <strong>"¿Es menor de edad?"</strong>. Debe seleccionar si el menor posee algún documento de identidad. Si no es así, seleccione <strong>"No, no posee documento"</strong>. Luego acepte el consentimiento, ingrese la fecha de nacimiento, los nombres y el sexo. Luego podrá agregar más información del menor y su parentesco.</p>' +
+        '</div>' +
+        '<div class="rama-card"><h4>Adulto</h4>' +
+          '<p>Para agregar un adulto, deberá elegir el tipo de documento, ingresar el número de documento, la fecha de nacimiento y aceptar el consentimiento informado.</p>' +
+        '</div>' +
+      '</div>' +
+      '<p>De esta manera el tercero queda agregado y podrá hacer uso del servicio a través de su cuenta.</p>',
+    'cambiar-contrasena':
+      '<p>Para cambiar su contraseña deberá ingresar en <strong>"Perfil"</strong> y seleccionar <strong>"Configuración"</strong>.</p>' +
+      '<p>Seleccione <strong>"Cambiar contraseña"</strong> y pulse la opción <strong>"Continuar"</strong> para recibir el código de verificación vía SMS.</p>' +
+      '<p>Ingrese el código de verificación de 6 dígitos.</p>' +
+      '<p>Luego debe establecer una contraseña para su cuenta, la cual deberá tener números y/o letras y como mínimo estar conformada por 8 caracteres. Por último, debe dar clic en <strong>"Enviar"</strong> y la contraseña habrá cambiado exitosamente.</p>',
+    'constancias-cita': '',
+    'conectarse-videollamada':
+      '<p>Con gusto le ayudo, para ingresar a su cita médica siga los siguientes pasos:</p>' +
+      '<p>Ingrese a la aplicación buscando el ícono de DoctorSV en su teléfono.</p>' +
+      '<p>Seleccione en la pantalla principal la opción <strong>"Mis citas"</strong> y seleccione <strong>"Unirse a la videoconsulta"</strong> en la cita médica agendada.</p>' +
+      '<p>Podrá tener su cita médica desde la aplicación o a través de Google Meet.</p>' +
+      '<p>Habilite micrófono y cámara.</p>' +
+      '<p>Espere en línea mientras el médico le permite ingresar a la videollamada.</p>',
+    'recomendaciones-cita-telefonica':
+      '<p>Busque un lugar con buena señal móvil y que esté apartado del ruido, donde usted se pueda sentir cómodo y en confianza con el médico.</p>' +
+      '<p>El médico le llamará puntualmente al número de teléfono registrado. Si no recibe la llamada, por favor póngase en contacto con nosotros al <strong>136</strong>.</p>' +
+      '<p>Asegúrese que el dispositivo cuente con suficiente carga en la batería.</p>' +
+      '<p>Tenga a la mano papel y lápiz para anotar todas las indicaciones e información que le brinde el médico.</p>' +
+      '<p>Tenga en cuenta que la cita será con un médico general y tendrá una duración estimada de 30 minutos. El médico le podrá brindar un diagnóstico y, de ser necesario, emitirá la receta y los estudios médicos pertinentes.</p>',
+    'recomendaciones-cita-videollamada':
+      '<p>Busque un lugar con buena iluminación, buena conexión a internet o señal móvil y que esté apartado del ruido.</p>' +
+      '<p>Procure conectarse puntualmente a la videollamada. Estará en la sala de espera desde la aplicación o en Google Meet hasta que el médico le brinde acceso.</p>' +
+      '<p>Asegúrese que el dispositivo que usará tenga habilitado el micrófono, la cámara y cuente con suficiente carga en la batería.</p>' +
+      '<p>Si tiene algún inconveniente o duda, se puede comunicar con nosotros y con todo gusto le atenderemos.</p>',
+    'descargar-constancia-medica': '',
+    'validez-constancia-medica': '',
+    'completar-antecedentes': '',
+    'quiero-referencia-medica': '',
+    'vigencia-referencia-externa': '',
+    'efectos-secundarios': '',
+    'cambio-establecimiento-referencia': '',
+    'cita-especialidades-doctorsv': '',
+    'prorroga-incapacidad': '',
+    'incapacidad-doctorsv': '',
+    'signos-vitales': '',
+    'orientacion-salud': '',
+    'olvide-contrasena': '',
+    'costos-servicio':
+      '<p>Es nuestro placer informarle que el servicio DoctorSV no tiene ningún costo. Usted podrá hacer uso del servicio cuando lo requiera.</p>' +
+      '<p>Los medicamentos y estudios médicos asociados también están incluidos dentro del servicio gratuito.</p>'
+  };
+
+  function mostrarScriptConsulta(key, btn) {
+    var display = document.getElementById('scriptConsultas');
+    var texto = scriptsConsultas[key];
+    if (texto) {
+      display.classList.remove('placeholder');
+      display.innerHTML = texto;
+    } else {
+      display.classList.add('placeholder');
+      display.textContent = 'Script pendiente de agregar para: ' + btn.textContent;
+    }
   }
 
 </script>
