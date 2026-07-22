@@ -96,12 +96,35 @@
   .rama-card p { font-size: 0.85rem; line-height: 1.6; color: #555; margin-bottom: 8px; }
   .rama-card p:last-child { margin-bottom: 0; }
   .rama-card strong { color: #0F2070; }
+
+  .cat-pregunta { font-size: 1rem; font-weight: 700; color: #0F2070; font-family: 'Montserrat', sans-serif; text-align: center; }
+  .bib-categorias { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .cat-btn { background: #0F2070; color: white; border: none; border-radius: 10px; padding: 40px 16px; font-size: 1.25rem; font-weight: 700; font-family: 'Montserrat', sans-serif; cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .cat-sub { font-size: 0.75rem; font-weight: 400; color: #9AA8CC; font-family: 'Inter', sans-serif; }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,32,112,0.45); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: white; border-radius: 12px; max-width: 640px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 28px 32px; position: relative; }
+  .modal-box h2 { font-size: 1.1rem; font-weight: 800; color: #0F2070; text-align: center; font-family: 'Montserrat', sans-serif; margin-bottom: 20px; }
+  .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-size: 1.4rem; color: #94A3B8; cursor: pointer; line-height: 1; }
+  .modal-close:hover { color: #1E293B; }
+  .modal-section-label { font-size: 0.8rem; font-style: italic; color: #64748B; margin: 18px 0 8px; font-family: 'Inter', sans-serif; }
+  .modal-section-label:first-of-type { margin-top: 0; }
+  .modal-card { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px 20px; font-family: 'Montserrat', sans-serif; }
+  .modal-card p { font-size: 0.88rem; line-height: 1.7; color: #374151; margin-bottom: 10px; }
+  .modal-card p:last-child { margin-bottom: 0; }
+  .modal-card strong { color: #0F2070; }
+  .modal-footer { display: flex; justify-content: flex-end; margin-top: 20px; }
+  .modal-btn-cerrar { background: #16A34A; color: white; border: none; padding: 14px 32px; border-radius: 7px; font-weight: 700; font-size: 1rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+  .modal-btn-cerrar:hover { background: #15803D; }
+  .cat-btn:hover { background: #1A3DAA; transform: translateY(-1px); }
   /* --- FIN NUEVOS ESTILOS --- */
 
   @media (max-width: 700px) {
     .bib-grid { grid-template-columns: 1fr; }
     .sdp-subgrid { grid-template-columns: 1fr; }
     .rama-grid { grid-template-columns: 1fr; }
+    .bib-categorias { grid-template-columns: 1fr; }
     .bib-footer { flex-direction: column; align-items: flex-start; }
   }
 </style>
@@ -164,24 +187,37 @@
       <input type="text" id="buscador" placeholder="Buscar en tarjetas o menús..." oninput="filtrar()">
     </div>
 
+    <p class="cat-pregunta">¿Qué necesita el usuario?</p>
+
+    <div class="bib-categorias">
+      <button class="cat-btn" onclick="toggleSeccion('seccionConsultas')">Consulta<span class="cat-sub">¿Me pide que le explique algo?</span></button>
+      <button class="cat-btn" onclick="toggleSeccion('seccionGestion')">Gestión<span class="cat-sub">¿Me pide hacer o cambiar algo?</span></button>
+      <button class="cat-btn" onclick="toggleSeccion('seccionIncidencia')">Incidencia<span class="cat-sub">¿Me reporta que algo falla?</span></button>
+    </div>
+
     <div class="bib-vacio" id="bibVacio">No se encontraron opciones que coincidan con tu búsqueda.</div>
 
-    <div class="elemento-filtrable bib-menu" style="margin-top:16px">
-      <h2>Menú Usuario</h2>
+    <div class="elemento-filtrable bib-menu" id="seccionGestion" style="margin-top:16px; display:none;">
+      <h2>Gestión</h2>
       <div class="bib-botones">
-        <button class="bib-btn" onclick="toggleSeccion('seccionConsultas')">Consultas</button>
-        <button class="bib-btn">Gestión de citas</button>
-        <button class="bib-btn">Gestión de perfiles</button>
-        <button class="bib-btn">Incidencias técnicas</button>
-        <button class="bib-btn">Incidencias con los médicos</button>
-        <button class="bib-btn">Incidencias con farmacias</button>
-        <button class="bib-btn">Incidencias con laboratorios</button>
-        <button class="bib-btn">Incidencias con imágenes</button>
-        <button class="bib-btn">Incidencias con proced. presenciales</button>
-        <button class="bib-btn">Gestión de recetas / órdenes de estudios</button>
-        <button class="bib-btn">Incidencias operativas</button>
-        <button class="bib-btn">Denuncias / Incidencias centro de soporte</button>
-        <button class="bib-btn">No relacionado al servicio</button>
+        <button class="bib-btn bib-btn-sub">Gestión de citas</button>
+        <button class="bib-btn bib-btn-sub">Gestión de perfiles</button>
+        <button class="bib-btn bib-btn-sub">Gestión de recetas / órdenes de estudios</button>
+      </div>
+    </div>
+
+    <div class="elemento-filtrable bib-menu" id="seccionIncidencia" style="margin-top:16px; display:none;">
+      <h2>Incidencia</h2>
+      <div class="bib-botones">
+        <button class="bib-btn bib-btn-sub">Incidencias técnicas</button>
+        <button class="bib-btn bib-btn-sub">Incidencias con los médicos</button>
+        <button class="bib-btn bib-btn-sub">Incidencias con farmacias</button>
+        <button class="bib-btn bib-btn-sub">Incidencias con laboratorios</button>
+        <button class="bib-btn bib-btn-sub">Incidencias con imágenes</button>
+        <button class="bib-btn bib-btn-sub">Incidencias con proced. presenciales</button>
+        <button class="bib-btn bib-btn-sub">Incidencias operativas</button>
+        <button class="bib-btn bib-btn-sub">Denuncias / Incidencias centro de soporte</button>
+        <button class="bib-btn bib-btn-sub">No relacionado al servicio</button>
       </div>
     </div>
 
@@ -226,10 +262,35 @@
       <div class="bib-footer-btns">
         <button class="bib-footer-btn btn-menu-f">Menú</button>
         <button class="bib-footer-btn btn-objeciones">Objeciones y casos especiales</button>
-        <button class="bib-footer-btn btn-despedida">Script de despedida</button>
+        <button class="bib-footer-btn btn-despedida" onclick="abrirModal('modalDespedida')">Script de despedida</button>
       </div>
     </div>
 
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalDespedida" onclick="if(event.target===this) cerrarModal('modalDespedida')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="cerrarModal('modalDespedida')">&times;</button>
+    <h2>Script de despedida</h2>
+
+    <p class="modal-section-label">Casos relacionados a DoctorSV</p>
+    <div class="modal-card">
+      <p>¿Le podemos asistir con alguna otra duda relacionada con DoctorSV?</p>
+      <p>De acuerdo Sr./Sra. XXX, <strong>ha sido un gusto atenderle bajo el número de gestión XXXXXXX</strong>.</p>
+      <p>En este momento lo transferiré a un breve sondeo que le permitirá evaluar el servicio recibido en esta llamada. Le agradecemos su tiempo, por favor no cuelgue la llamada.</p>
+    </div>
+
+    <p class="modal-section-label">Casos no relacionados al servicio (sin encuesta)</p>
+    <div class="modal-card">
+      <p>¿Le podemos asistir con alguna otra duda relacionada con DoctorSV?</p>
+      <p>De acuerdo Sr./Sra. XXX, un placer atenderle, estamos a la orden para apoyarle.</p>
+      <p>¡Feliz día! / ¡Feliz tarde! / ¡Feliz noche!</p>
+    </div>
+
+    <div class="modal-footer">
+      <button class="modal-btn-cerrar" onclick="cerrarModal('modalDespedida')">Cerrar</button>
+    </div>
   </div>
 </div>
 
@@ -265,6 +326,14 @@
     var grid = document.getElementById('bibGrid');
     var visibles = grid.querySelectorAll('.elemento-filtrable[style*="block"]');
     grid.style.display = visibles.length === 0 ? 'none' : 'grid';
+  }
+
+  function abrirModal(id) {
+    document.getElementById(id).classList.add('open');
+  }
+
+  function cerrarModal(id) {
+    document.getElementById(id).classList.remove('open');
   }
 
   function toggleSeccion(id) {
