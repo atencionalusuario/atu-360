@@ -42,11 +42,12 @@
 
   /* BIBLIOTECA CONTENT */
   .bib-wrap { padding: 24px 28px; display: flex; flex-direction: column; gap: 16px; }
+  .bib-title { font-size: 1.6rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; }
   .bib-search { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 24px; }
   .bib-search input { width: 100%; padding: 10px 16px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.88rem; font-family: 'Inter', sans-serif; outline: none; color: #1E293B; background: #F8FAFC; transition: border 0.2s; }
   .bib-search input:focus { border-color: #1A3DAA; box-shadow: 0 0 0 3px rgba(26,61,170,0.07); background: white; }
   .bib-saludo { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 24px; font-family: 'Montserrat', sans-serif; }
-  .bib-saludo p { font-size: 0.9rem; line-height: 1.7; color: #374151; margin-bottom: 8px; text-align: justify; }
+  .bib-saludo p { font-size: 0.9rem; line-height: 1.7; color: #374151; margin-bottom: 8px; }
   .bib-saludo p:last-child { margin-bottom: 0; }
   .bib-saludo strong { color: #0F2070; }
   .bib-vacio { display: none; text-align: center; font-size: 0.88rem; color: #94A3B8; padding: 28px; background: white; border-radius: 10px; border: 1px solid #E2E8F0; }
@@ -71,18 +72,21 @@
   .btn-despedida { background: #0F2070; color: white; }
 
   /* --- INICIO NUEVOS ESTILOS --- */
-  .sdp-options { margin-top: 16px; display: flex; gap: 10px; }
-  .sdp-btn { padding: 8px 16px; border-radius: 7px; border: 1.5px solid; cursor: pointer; font-weight: 600; font-size: 0.78rem; font-family: 'Inter', sans-serif; transition: all 0.15s; }
-  .sdp-btn:hover { transform: translateY(-1px); }
-  .sdp-btn.si { border-color: #16A34A; background: #F0FDF4; color: #15803D; }
-  .sdp-btn.si:hover { background: #DCFCE7; }
-  .sdp-btn.no { border-color: #DC2626; background: #FEF2F2; color: #B91C1C; }
-  .sdp-btn.no:hover { background: #FEE2E2; }
-  .sdp-response { display: none; margin-top: 16px; padding-top: 14px; border-top: 1px solid #F1F5F9; }
+  .sdp-subgrid { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .sdp-subcard { border-radius: 8px; border: 1.5px solid; padding: 14px 16px; }
+  .sdp-subcard h3 { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
+  .sdp-subcard p { font-size: 0.85rem; line-height: 1.6; color: #555; margin-bottom: 8px; }
+  .sdp-subcard p:last-child { margin-bottom: 0; }
+  .sdp-subcard strong { color: #0F2070; }
+  .sdp-subcard.si { border-color: #16A34A; background: #F0FDF4; }
+  .sdp-subcard.si h3 { color: #15803D; }
+  .sdp-subcard.no { border-color: #DC2626; background: #FEF2F2; }
+  .sdp-subcard.no h3 { color: #B91C1C; }
   /* --- FIN NUEVOS ESTILOS --- */
 
   @media (max-width: 700px) {
     .bib-grid { grid-template-columns: 1fr; }
+    .sdp-subgrid { grid-template-columns: 1fr; }
     .bib-footer { flex-direction: column; align-items: flex-start; }
   }
 </style>
@@ -105,10 +109,40 @@
 
   <div class="bib-wrap">
 
+    <h1 class="bib-title">Inicio</h1>
+
     <div class="bib-saludo">
       <p>Gracias por contactar a <strong>DoctorSV</strong>, le saluda el/la agente <strong>XXXX XXXX</strong>, <strong>¿con quién tengo el gusto?</strong></p>
       <p>Un placer SR / SRA <strong>XXXXXXX</strong>, antes de continuar, ¿me podría indicar su <strong>número de documento?</strong></p>
       <p>Le confirmo, su número de documento es <strong>XXXXXXX-X</strong>.</p>
+    </div>
+
+    <div class="bib-grid" id="bibGrid">
+      <div class="elemento-filtrable bib-card">
+        <h2>No está registrado en el SDP:</h2>
+        <p>Muchas gracias, ¿me podría indicar su <strong>fecha de nacimiento</strong> y su <strong>número de teléfono?</strong></p>
+        <p>Le confirmo: su teléfono es <strong>XXXX-XXXX</strong> y su fecha de nacimiento es <strong>XX/XX/XXXX</strong></p>
+        <p>De acuerdo, por favor, <strong>permítame un momento en línea para verificar en nuestro sistema.</strong></p>
+        <p><strong>Muchas gracias por su espera en línea, SR / SRA XXXXXXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
+      </div>
+
+      <div class="elemento-filtrable bib-card">
+        <h2>Ya está registrado en el SDP:</h2>
+        <p>Muchas gracias, ¿me podría confirmar si los últimos 4 dígitos de su teléfono siguen siendo <strong>XXXX?</strong></p>
+
+        <div class="sdp-subgrid">
+          <div class="sdp-subcard si">
+            <h3>Sí, confirmo</h3>
+            <p><strong>Muchas gracias SR / SRA XXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
+          </div>
+          <div class="sdp-subcard no">
+            <h3>No, es otro</h3>
+            <p>De acuerdo, procedo a actualizar su número de teléfono, <strong>¿me lo podría volver a indicar, por favor?</strong></p>
+            <p>Le confirmo, su nuevo número es <strong>XXXX-XXXX</strong>.</p>
+            <p><strong>Muchas gracias SR / SRA XXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="bib-search">
@@ -117,62 +151,23 @@
 
     <div class="bib-vacio" id="bibVacio">No se encontraron opciones que coincidan con tu búsqueda.</div>
 
-    <div id="contenedorFiltrable">
-      <div class="bib-grid" id="bibGrid">
-        <div class="elemento-filtrable bib-card">
-          <h2>No está registrado en el SDP:</h2>
-          <p>Muchas gracias, ¿me podría indicar su <strong>fecha de nacimiento</strong> y su <strong>número de teléfono?</strong></p>
-          <p>Le confirmo: su teléfono es <strong>XXXX-XXXX</strong> y su fecha de nacimiento es <strong>XX/XX/XXXX</strong></p>
-          <p>De acuerdo, por favor, <strong>permítame un momento en línea para verificar en nuestro sistema.</strong></p>
-          <p><strong>Muchas gracias por su espera en línea, SR / SRA XXXXXXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
-        </div>
-
-        <!-- --- INICIO TARJETA MODIFICADA --- -->
-        <div class="elemento-filtrable bib-card">
-          <h2>Ya está registrado en el SDP:</h2>
-          <p>Muchas gracias, ¿me podría confirmar si los últimos 4 dígitos de su teléfono siguen siendo <strong>XXXX?</strong></p>
-          
-          <!-- Contenedor para los botones Sí/No -->
-          <div class="sdp-options" id="sdpOptions">
-            <button class="sdp-btn si" onclick="mostrarRespuesta('si')">Sí, confirmo</button>
-            <button class="sdp-btn no" onclick="mostrarRespuesta('no')">No, es otro</button>
-          </div>
-
-          <!-- Contenedor para la respuesta del SÍ -->
-          <div class="sdp-response" id="sdpSi">
-            <p><strong>Muchas gracias SR / SRA XXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
-          </div>
-          
-          <!-- Contenedor para la respuesta del NO -->
-          <div class="sdp-response" id="sdpNo">
-            <p>De acuerdo, procedo a actualizar su número de teléfono, <strong>¿me lo podría volver a indicar, por favor?</strong></p>
-            <p>Le confirmo, su nuevo número es <strong>XXXX-XXXX</strong>.</p>
-            <p><strong>Muchas gracias SR / SRA XXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
-          </div>
-        </div>
-        <!-- --- FIN TARJETA MODIFICADA --- -->
-
+    <div class="elemento-filtrable bib-menu" style="margin-top:16px">
+      <h2>Menú Usuario</h2>
+      <div class="bib-botones">
+        <button class="bib-btn">Consultas</button>
+        <button class="bib-btn">Gestión de citas</button>
+        <button class="bib-btn">Gestión de perfiles</button>
+        <button class="bib-btn">Incidencias técnicas</button>
+        <button class="bib-btn">Incidencias con los médicos</button>
+        <button class="bib-btn">Incidencias con farmacias</button>
+        <button class="bib-btn">Incidencias con laboratorios</button>
+        <button class="bib-btn">Incidencias con imágenes</button>
+        <button class="bib-btn">Incidencias con proced. presenciales</button>
+        <button class="bib-btn">Gestión de recetas / órdenes de estudios</button>
+        <button class="bib-btn">Incidencias operativas</button>
+        <button class="bib-btn">Denuncias / Incidencias centro de soporte</button>
+        <button class="bib-btn">No relacionado al servicio</button>
       </div>
-
-      <div class="elemento-filtrable bib-menu" style="margin-top:16px">
-        <h2>Menú Usuario</h2>
-        <div class="bib-botones">
-          <button class="bib-btn">Consultas</button>
-          <button class="bib-btn">Gestión de citas</button>
-          <button class="bib-btn">Gestión de perfiles</button>
-          <button class="bib-btn">Incidencias técnicas</button>
-          <button class="bib-btn">Incidencias con los médicos</button>
-          <button class="bib-btn">Incidencias con farmacias</button>
-          <button class="bib-btn">Incidencias con laboratorios</button>
-          <button class="bib-btn">Incidencias con imágenes</button>
-          <button class="bib-btn">Incidencias con proced. presenciales</button>
-          <button class="bib-btn">Gestión de recetas / órdenes de estudios</button>
-          <button class="bib-btn">Incidencias operativas</button>
-          <button class="bib-btn">Denuncias / Incidencias centro de soporte</button>
-          <button class="bib-btn">No relacionado al servicio</button>
-        </div>
-      </div>
-
     </div>
 
     <div class="bib-footer">
@@ -206,7 +201,7 @@
 
   function filtrar() {
     var input = document.getElementById('buscador').value.toLowerCase();
-    var elementos = document.querySelectorAll('#contenedorFiltrable .elemento-filtrable');
+    var elementos = document.querySelectorAll('.elemento-filtrable');
     var encontrados = 0;
     elementos.forEach(function(el) {
       if (el.innerText.toLowerCase().includes(input)) {
@@ -220,20 +215,6 @@
     var visibles = grid.querySelectorAll('.elemento-filtrable[style*="block"]');
     grid.style.display = visibles.length === 0 ? 'none' : 'grid';
   }
-
-  // --- INICIO NUEVA FUNCIÓN ---
-  function mostrarRespuesta(opcion) {
-    // Ocultar los botones Sí/No
-    document.getElementById('sdpOptions').style.display = 'none';
-
-    // Mostrar el script correspondiente
-    if (opcion === 'si') {
-      document.getElementById('sdpSi').style.display = 'block';
-    } else {
-      document.getElementById('sdpNo').style.display = 'block';
-    }
-  }
-  // --- FIN NUEVA FUNCIÓN ---
 
 </script>
 <script src="notif.js"></script>
