@@ -190,9 +190,9 @@
     <p class="cat-pregunta">¿Qué necesita el usuario?</p>
 
     <div class="bib-categorias">
-      <button class="cat-btn" onclick="toggleSeccion('seccionConsultas')">Consulta<span class="cat-sub">¿Me pide que le explique algo?</span></button>
-      <button class="cat-btn" onclick="toggleSeccion('seccionGestion')">Gestión<span class="cat-sub">¿Me pide hacer o cambiar algo?</span></button>
-      <button class="cat-btn" onclick="toggleSeccion('seccionIncidencia')">Incidencia<span class="cat-sub">¿Me reporta que algo falla?</span></button>
+      <button class="cat-btn" onclick="mostrarCategoria('seccionConsultas')">Consulta<span class="cat-sub">¿Me pide que le explique algo?</span></button>
+      <button class="cat-btn" onclick="mostrarCategoria('seccionGestion')">Gestión<span class="cat-sub">¿Me pide hacer o cambiar algo?</span></button>
+      <button class="cat-btn" onclick="mostrarCategoria('seccionIncidencia')">Incidencia<span class="cat-sub">¿Me reporta que algo falla?</span></button>
     </div>
 
     <div class="bib-vacio" id="bibVacio">No se encontraron opciones que coincidan con tu búsqueda.</div>
@@ -334,6 +334,17 @@
 
   function cerrarModal(id) {
     document.getElementById(id).classList.remove('open');
+  }
+
+  function mostrarCategoria(id) {
+    var ids = ['seccionConsultas', 'seccionGestion', 'seccionIncidencia'];
+    var target = document.getElementById(id);
+    var yaAbierta = target && target.style.display === 'block';
+    ids.forEach(function(sid) {
+      var el = document.getElementById(sid);
+      if (el) el.style.display = 'none';
+    });
+    if (target && !yaAbierta) target.style.display = 'block';
   }
 
   function toggleSeccion(id) {
