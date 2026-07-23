@@ -247,28 +247,62 @@
 
   var NOMBRES_CATEGORIA = { consulta: 'Consulta', gestion: 'Gestión', incidencia: 'Incidencia' };
 
+  var ARBOL_CONSULTA = [
+    { label: 'Dudas generales del servicio', hijos: ['Opción de prueba 1', 'Opción de prueba 2'] },
+    { label: 'Dudas sobre las funciones de la aplicación', hijos: ['Opción de prueba 1', 'Opción de prueba 2'] },
+    { label: 'Otras orientaciones', hijos: ['Opción de prueba 1', 'Opción de prueba 2'] }
+  ];
+
   var OPCIONES_CATEGORIA = {
-    consulta: ['Opción de consulta de prueba 1', 'Opción de consulta de prueba 2', 'Opción de consulta de prueba 3'],
+    consulta: ARBOL_CONSULTA,
     gestion: ['Opción de gestión de prueba 1', 'Opción de gestión de prueba 2'],
     incidencia: ['Opción de incidencia de prueba 1', 'Opción de incidencia de prueba 2']
   };
 
+  var pilaVistas = [];
+  var opcionesActuales = [];
+
   function mostrarCategoria(cat) {
+    pilaVistas = [];
+    pushVistaOpciones(NOMBRES_CATEGORIA[cat], OPCIONES_CATEGORIA[cat]);
+  }
+
+  function pushVistaOpciones(titulo, opciones) {
+    pilaVistas.push({ titulo: titulo, opciones: opciones });
+    renderVistaActual();
+    actualizarRuta(rutaActual.concat([titulo]));
+  }
+
+  function renderVistaActual() {
+    var vista = pilaVistas[pilaVistas.length - 1];
+    opcionesActuales = vista.opciones;
+
     document.getElementById('flujoSDP').style.display = 'none';
     document.getElementById('vistaCategoria').style.display = 'flex';
-    document.getElementById('tituloCategoria').textContent = NOMBRES_CATEGORIA[cat];
-    document.getElementById('opcionesCategoria').innerHTML = OPCIONES_CATEGORIA[cat].map(function(op) {
-      return '<button class="bib-btn">' + op + '</button>';
+    document.getElementById('tituloCategoria').textContent = vista.titulo;
+    document.getElementById('opcionesCategoria').innerHTML = opcionesActuales.map(function(op, i) {
+      var label = typeof op === 'string' ? op : op.label;
+      return '<button class="bib-btn" onclick="clickOpcion(' + i + ')">' + label + '</button>';
     }).join('');
+  }
 
-    actualizarRuta(rutaActual.concat([NOMBRES_CATEGORIA[cat]]));
+  function clickOpcion(i) {
+    var op = opcionesActuales[i];
+    if (op && op.hijos) {
+      pushVistaOpciones(op.label, op.hijos);
+    }
   }
 
   function volverAtras() {
-    document.getElementById('vistaCategoria').style.display = 'none';
-    document.getElementById('flujoSDP').style.display = 'flex';
-
+    pilaVistas.pop();
     actualizarRuta(rutaActual.slice(0, rutaActual.length - 1));
+
+    if (pilaVistas.length === 0) {
+      document.getElementById('vistaCategoria').style.display = 'none';
+      document.getElementById('flujoSDP').style.display = 'flex';
+    } else {
+      renderVistaActual();
+    }
   }
 </script>
 <script src="notif.js"></script>
