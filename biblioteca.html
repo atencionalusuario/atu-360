@@ -84,9 +84,9 @@
 
   <div class="bib-wrap">
     <div class="bib-saludo">
-      <p>Gracias por contactar a <strong>DoctorSV</strong>, le saluda el/la agente <strong id="nombreAgente">…</strong>, <strong>¿con quién tengo el gusto?</strong></p>
-      <p>Un placer SR / SRA <strong>XXXXXXX</strong>, antes de continuar, ¿me podría indicar su <strong>número de documento?</strong></p>
-      <p>Le confirmo, su número de documento es <strong>XXXXXXX-X</strong>.</p>
+      <p>Gracias por contactar a <strong>DoctorSV</strong>, le saluda el/la agente <strong id="nombreAgente">…</strong>, ¿con quién tengo el gusto?</p>
+      <p>Un placer SR / SRA XXXXXXX, antes de continuar, ¿me podría indicar su número de documento?</p>
+      <p>Le confirmo, su número de documento es XXXXXXX-X.</p>
     </div>
 
     <p class="instruccion">Buscar el número de documento en la sección Solicitante del SDP</p>
@@ -109,6 +109,12 @@
 
     <div class="bib-saludo" id="cajaConfirmacion" style="display:none;">
       <div id="textoConfirmacion"></div>
+    </div>
+
+    <p class="instruccion" id="instRegistro" style="display:none;">Agregar al usuario como Solicitante en el SDP con los datos solicitados.</p>
+
+    <div class="bib-saludo" id="cajaRegistro" style="display:none;">
+      <p>Muchas gracias por su espera en línea, SR / SRA XXX, dígame, ¿cómo puedo ayudarle?</p>
     </div>
   </div>
 </div>
@@ -160,6 +166,10 @@
       document.getElementById('btnConfSi').classList.remove('active');
       document.getElementById('btnConfNo').classList.remove('active');
     }
+
+    var esNo = tipo === 'no';
+    document.getElementById('instRegistro').style.display = esNo ? 'block' : 'none';
+    document.getElementById('cajaRegistro').style.display = esNo ? 'block' : 'none';
   }
 
   var TEXTOS_CONFIRMACION = {
