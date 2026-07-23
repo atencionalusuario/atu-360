@@ -82,11 +82,6 @@
 
   .bib-btn-sub { background: #EEF2FF; color: #0F2070; }
   .bib-btn-sub:hover { background: #DDE5FF; }
-  .consultas-script { margin-top: 16px; padding-top: 14px; border-top: 1px solid #F1F5F9; font-family: 'Montserrat', sans-serif; font-size: 0.85rem; line-height: 1.65; color: #555; }
-  .consultas-script strong { color: #0F2070; }
-  .consultas-script.placeholder { color: #94A3B8; font-style: italic; }
-  .consultas-script h4 { font-size: 0.78rem; font-weight: 700; color: #0F2070; text-transform: uppercase; letter-spacing: 0.4px; margin: 16px 0 8px; }
-  .consultas-script h4:first-child { margin-top: 0; }
   .rama-grid { margin: 8px 0 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .rama-card { border-radius: 8px; border: 1.5px solid #E2E8F0; background: #F8FAFC; padding: 14px 16px; }
   .rama-card h4 { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #0F2070; margin-bottom: 8px; letter-spacing: 0.4px; }
@@ -104,10 +99,19 @@
   .cat-btn-cyan:hover { background: #1E93CC; }
   .cat-btn-cyan.active { background: #1E93CC; }
 
-  .cat-btn-celeste { background: #7EC8ED; }
-  .cat-btn-celeste:hover { background: #55AEDA; }
-  .cat-btn-celeste.active { background: #55AEDA; }
-  .bib-categorias-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .n3-list { display: flex; flex-direction: column; }
+  .n3-item { border-bottom: 1px solid #F1F5F9; }
+  .n3-item:last-child { border-bottom: none; }
+  .n3-btn { display: flex; align-items: center; gap: 14px; width: 100%; padding: 16px 4px; background: none; border: none; cursor: pointer; text-align: left; font-family: inherit; transition: all 0.15s; }
+  .n3-icon { flex-shrink: 0; width: 34px; height: 34px; border: 1.5px solid #29ABE2; border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #29ABE2; transition: all 0.15s; }
+  .n3-icon svg { width: 18px; height: 18px; }
+  .n3-label { font-size: 0.92rem; font-weight: 600; color: #1E293B; font-family: 'Montserrat', sans-serif; }
+  .n3-btn:hover .n3-label { color: #0F2070; }
+  .n3-item.open .n3-label { color: #0F2070; }
+  .n3-item.open .n3-icon { background: #29ABE2; color: white; }
+  .n3-script { padding: 0 4px 18px 52px; }
+  .n3-script p { font-size: 0.85rem; line-height: 1.65; color: #555; font-family: 'Montserrat', sans-serif; }
+  .n3-script p.placeholder { color: #94A3B8; font-style: italic; }
 
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,32,112,0.45); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.open { display: flex; }
@@ -146,7 +150,6 @@
     .sdp-subgrid { grid-template-columns: 1fr; }
     .rama-grid { grid-template-columns: 1fr; }
     .bib-categorias { grid-template-columns: 1fr; }
-    .bib-categorias-2 { grid-template-columns: 1fr; }
     .icon-cards { grid-template-columns: 1fr; }
     .bib-footer { flex-direction: column; align-items: flex-start; }
   }
@@ -232,7 +235,7 @@
 
     <div class="bib-vacio" id="bibVacio">No se encontraron opciones que coincidan con tu búsqueda.</div>
 
-    <div class="elemento-filtrable bib-menu" id="seccionGestion" style="margin-top:16px; display:none;">
+    <div class="bib-menu" id="seccionGestion" style="margin-top:16px; display:none;">
       <h2>Gestión</h2>
       <div class="bib-botones">
         <button class="bib-btn bib-btn-sub">Gestión de citas</button>
@@ -241,7 +244,7 @@
       </div>
     </div>
 
-    <div class="elemento-filtrable bib-menu" id="seccionIncidencia" style="margin-top:16px; display:none;">
+    <div class="bib-menu" id="seccionIncidencia" style="margin-top:16px; display:none;">
       <h2>Incidencia</h2>
       <div class="bib-botones">
         <button class="bib-btn bib-btn-sub">Incidencias técnicas</button>
@@ -256,7 +259,7 @@
       </div>
     </div>
 
-    <div class="elemento-filtrable bib-menu bib-menu-plano" id="seccionConsultas" style="margin-top:16px; display:none;">
+    <div class="bib-menu bib-menu-plano" id="seccionConsultas" style="margin-top:16px; display:none;">
       <h2>Consultas — Subtemas</h2>
       <div class="bib-categorias">
         <button class="cat-btn cat-btn-cyan" id="btnSubDudasGenerales" onclick="mostrarSubConsulta('subDudasGenerales')">Dudas generales del servicio</button>
@@ -264,39 +267,84 @@
         <button class="cat-btn cat-btn-cyan" id="btnSubOtrasOrientaciones" onclick="mostrarSubConsulta('subOtrasOrientaciones')">Otras orientaciones</button>
       </div>
 
-      <div class="elemento-filtrable bib-menu bib-menu-plano" id="subDudasGenerales" style="margin-top:16px; display:none;">
+      <div class="bib-menu bib-menu-plano" id="subDudasGenerales" style="margin-top:16px; display:none;">
         <h2>Dudas generales del servicio</h2>
-        <div class="bib-categorias">
-          <button class="cat-btn cat-btn-celeste" id="btnDG1" onclick="mostrarNivel3(['btnDG1','btnDG2','btnDG3','btnDG4','btnDG5'], 'btnDG1', 'scriptDudasGenerales', 'Orientación sobre todo el servicio')">Orientación sobre todo el servicio</button>
-          <button class="cat-btn cat-btn-celeste" id="btnDG2" onclick="mostrarNivel3(['btnDG1','btnDG2','btnDG3','btnDG4','btnDG5'], 'btnDG2', 'scriptDudasGenerales', 'Ubicación y teléfono de farmacia / laboratorio')">Ubicación y teléfono de farmacia / laboratorio</button>
-          <button class="cat-btn cat-btn-celeste" id="btnDG3" onclick="mostrarNivel3(['btnDG1','btnDG2','btnDG3','btnDG4','btnDG5'], 'btnDG3', 'scriptDudasGenerales', 'Cuáles son las especialidades médicas')">Cuáles son las especialidades médicas</button>
-          <button class="cat-btn cat-btn-celeste" id="btnDG4" onclick="mostrarNivel3(['btnDG1','btnDG2','btnDG3','btnDG4','btnDG5'], 'btnDG4', 'scriptDudasGenerales', 'Cómo retirar medicamento')">Cómo retirar medicamento</button>
-          <button class="cat-btn cat-btn-celeste" id="btnDG5" onclick="mostrarNivel3(['btnDG1','btnDG2','btnDG3','btnDG4','btnDG5'], 'btnDG5', 'scriptDudasGenerales', 'Cómo realizarse estudios')">Cómo realizarse estudios</button>
-        </div>
-        <div class="bib-menu" id="scriptDudasGenerales" style="margin-top:16px; display:none;">
-          <p class="consultas-script placeholder" id="scriptDudasGeneralesTexto">Selecciona un subtema para ver el script.</p>
+        <div class="n3-list">
+          <div class="n3-item">
+            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
+              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
+              <span class="n3-label">Orientación sobre todo el servicio</span>
+            </button>
+            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
+          </div>
+          <div class="n3-item">
+            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
+              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
+              <span class="n3-label">Ubicación y teléfono de farmacia / laboratorio</span>
+            </button>
+            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
+          </div>
+          <div class="n3-item">
+            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
+              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
+              <span class="n3-label">Cuáles son las especialidades médicas</span>
+            </button>
+            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
+          </div>
+          <div class="n3-item">
+            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
+              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
+              <span class="n3-label">Cómo retirar medicamento</span>
+            </button>
+            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
+          </div>
+          <div class="n3-item">
+            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
+              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
+              <span class="n3-label">Cómo realizarse estudios</span>
+            </button>
+            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
+          </div>
         </div>
       </div>
 
-      <div class="elemento-filtrable bib-menu bib-menu-plano" id="subDudasFunciones" style="margin-top:16px; display:none;">
+      <div class="bib-menu bib-menu-plano" id="subDudasFunciones" style="margin-top:16px; display:none;">
         <h2>Dudas sobre las funciones de la aplicación</h2>
-        <div class="bib-categorias-2">
-          <button class="cat-btn cat-btn-celeste" id="btnDF1" onclick="mostrarNivel3(['btnDF1','btnDF2'], 'btnDF1', 'scriptDudasFunciones', 'Subtema de ejemplo 1')">Subtema de ejemplo 1</button>
-          <button class="cat-btn cat-btn-celeste" id="btnDF2" onclick="mostrarNivel3(['btnDF1','btnDF2'], 'btnDF2', 'scriptDudasFunciones', 'Subtema de ejemplo 2')">Subtema de ejemplo 2</button>
-        </div>
-        <div class="bib-menu" id="scriptDudasFunciones" style="margin-top:16px; display:none;">
-          <p class="consultas-script placeholder" id="scriptDudasFuncionesTexto">Selecciona un subtema para ver el script.</p>
+        <div class="n3-list">
+          <div class="n3-item">
+            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
+              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
+              <span class="n3-label">Subtema de ejemplo 1</span>
+            </button>
+            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
+          </div>
+          <div class="n3-item">
+            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
+              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
+              <span class="n3-label">Subtema de ejemplo 2</span>
+            </button>
+            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
+          </div>
         </div>
       </div>
 
-      <div class="elemento-filtrable bib-menu bib-menu-plano" id="subOtrasOrientaciones" style="margin-top:16px; display:none;">
+      <div class="bib-menu bib-menu-plano" id="subOtrasOrientaciones" style="margin-top:16px; display:none;">
         <h2>Otras orientaciones</h2>
-        <div class="bib-categorias-2">
-          <button class="cat-btn cat-btn-celeste" id="btnOO1" onclick="mostrarNivel3(['btnOO1','btnOO2'], 'btnOO1', 'scriptOtrasOrientaciones', 'Subtema de ejemplo 1')">Subtema de ejemplo 1</button>
-          <button class="cat-btn cat-btn-celeste" id="btnOO2" onclick="mostrarNivel3(['btnOO1','btnOO2'], 'btnOO2', 'scriptOtrasOrientaciones', 'Subtema de ejemplo 2')">Subtema de ejemplo 2</button>
-        </div>
-        <div class="bib-menu" id="scriptOtrasOrientaciones" style="margin-top:16px; display:none;">
-          <p class="consultas-script placeholder" id="scriptOtrasOrientacionesTexto">Selecciona un subtema para ver el script.</p>
+        <div class="n3-list">
+          <div class="n3-item">
+            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
+              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
+              <span class="n3-label">Subtema de ejemplo 1</span>
+            </button>
+            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
+          </div>
+          <div class="n3-item">
+            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
+              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
+              <span class="n3-label">Subtema de ejemplo 2</span>
+            </button>
+            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
+          </div>
         </div>
       </div>
     </div>
@@ -355,21 +403,98 @@
   setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
 
+  var SUBCONSULTAS_DEF = [
+    { subId: 'subDudasGenerales', btnId: 'btnSubDudasGenerales' },
+    { subId: 'subDudasFunciones', btnId: 'btnSubDudasFunciones' },
+    { subId: 'subOtrasOrientaciones', btnId: 'btnSubOtrasOrientaciones' }
+  ];
+
   function filtrar() {
-    var input = document.getElementById('buscador').value.toLowerCase();
-    var elementos = document.querySelectorAll('.elemento-filtrable');
-    var encontrados = 0;
-    elementos.forEach(function(el) {
-      if (el.innerText.toLowerCase().includes(input)) {
-        el.style.display = 'block'; encontrados++;
-      } else {
-        el.style.display = 'none';
-      }
+    var q = document.getElementById('buscador').value.trim().toLowerCase();
+
+    // Tarjetas del saludo inicial (SDP)
+    var topEls = document.querySelectorAll('#bibGrid .elemento-filtrable');
+    var topVisibles = 0;
+    topEls.forEach(function(el) {
+      var m = !q || el.innerText.toLowerCase().includes(q);
+      el.style.display = m ? 'block' : 'none';
+      if (m) topVisibles++;
     });
-    document.getElementById('bibVacio').style.display = encontrados === 0 ? 'block' : 'none';
-    var grid = document.getElementById('bibGrid');
-    var visibles = grid.querySelectorAll('.elemento-filtrable[style*="block"]');
-    grid.style.display = visibles.length === 0 ? 'none' : 'grid';
+    document.getElementById('bibGrid').style.display = topVisibles === 0 ? 'none' : 'grid';
+
+    if (!q) {
+      resetNavegacion();
+      document.getElementById('bibVacio').style.display = 'none';
+      return;
+    }
+
+    var algunResultado = topVisibles > 0;
+
+    // Consultas: subtemas (nivel 2) y sus botones de nivel 3 (con su script)
+    var consultasTieneMatch = false;
+    SUBCONSULTAS_DEF.forEach(function(def) {
+      var panel = document.getElementById(def.subId);
+      var btnSub = document.getElementById(def.btnId);
+      var propioMatch = btnSub.textContent.toLowerCase().includes(q);
+      var items = panel.querySelectorAll('.n3-item');
+      var algunItemMatch = false;
+
+      items.forEach(function(item) {
+        var label = item.querySelector('.n3-label').textContent.toLowerCase();
+        var scriptBox = item.querySelector('.n3-script');
+        var script = scriptBox.textContent.toLowerCase();
+        var m = propioMatch || label.includes(q) || script.includes(q);
+        item.style.display = m ? '' : 'none';
+        var abrirScript = !propioMatch && m;
+        scriptBox.style.display = abrirScript ? 'block' : 'none';
+        item.classList.toggle('open', abrirScript);
+        if (m) algunItemMatch = true;
+      });
+
+      var subTieneMatch = propioMatch || algunItemMatch;
+      panel.style.display = subTieneMatch ? 'block' : 'none';
+      btnSub.classList.toggle('active', subTieneMatch);
+      if (subTieneMatch) { consultasTieneMatch = true; algunResultado = true; }
+    });
+    document.getElementById('seccionConsultas').style.display = consultasTieneMatch ? 'block' : 'none';
+    document.getElementById('btnCatConsulta').classList.toggle('active', consultasTieneMatch);
+
+    // Gestion e Incidencia: listas planas de botones
+    [
+      { seccionId: 'seccionGestion', btnCatId: 'btnCatGestion' },
+      { seccionId: 'seccionIncidencia', btnCatId: 'btnCatIncidencia' }
+    ].forEach(function(def) {
+      var panel = document.getElementById(def.seccionId);
+      var btns = panel.querySelectorAll('.bib-btn-sub');
+      var tieneMatch = false;
+      btns.forEach(function(btn) {
+        var m = btn.textContent.toLowerCase().includes(q);
+        btn.style.display = m ? '' : 'none';
+        if (m) tieneMatch = true;
+      });
+      panel.style.display = tieneMatch ? 'block' : 'none';
+      document.getElementById(def.btnCatId).classList.toggle('active', tieneMatch);
+      if (tieneMatch) algunResultado = true;
+    });
+
+    document.getElementById('bibVacio').style.display = algunResultado ? 'none' : 'block';
+  }
+
+  function resetNavegacion() {
+    ['seccionConsultas', 'seccionGestion', 'seccionIncidencia', 'subDudasGenerales', 'subDudasFunciones', 'subOtrasOrientaciones'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    document.querySelectorAll('.n3-item').forEach(function(item) {
+      item.style.display = '';
+      item.classList.remove('open');
+      item.querySelector('.n3-script').style.display = 'none';
+    });
+    document.querySelectorAll('.bib-btn-sub').forEach(function(btn) { btn.style.display = ''; });
+    ['btnCatConsulta', 'btnCatGestion', 'btnCatIncidencia', 'btnSubDudasGenerales', 'btnSubDudasFunciones', 'btnSubOtrasOrientaciones'].forEach(function(id) {
+      var btn = document.getElementById(id);
+      if (btn) btn.classList.remove('active');
+    });
   }
 
   function abrirModal(id) {
@@ -408,17 +533,18 @@
   function mostrarCategoria(id) { mostrarExclusivo(MAPA_CATEGORIAS, id); }
   function mostrarSubConsulta(id) { mostrarExclusivo(MAPA_SUBCONSULTA, id); }
 
-  function mostrarNivel3(botonesIds, btnActivoId, cajaId, texto) {
-    botonesIds.forEach(function(id) {
-      var b = document.getElementById(id);
-      if (b) b.classList.remove('active');
+  function mostrarNivel3Item(btn) {
+    var item = btn.closest('.n3-item');
+    var lista = item.closest('.n3-list');
+    var yaAbierto = item.classList.contains('open');
+    lista.querySelectorAll('.n3-item.open').forEach(function(i) {
+      i.classList.remove('open');
+      i.querySelector('.n3-script').style.display = 'none';
     });
-    var btn = document.getElementById(btnActivoId);
-    if (btn) btn.classList.add('active');
-    var caja = document.getElementById(cajaId);
-    if (caja) caja.style.display = 'block';
-    var texto_el = document.getElementById(cajaId + 'Texto');
-    if (texto_el) texto_el.textContent = 'Script pendiente de agregar para: ' + texto;
+    if (!yaAbierto) {
+      item.classList.add('open');
+      item.querySelector('.n3-script').style.display = 'block';
+    }
   }
 
 </script>
