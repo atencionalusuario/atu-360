@@ -39,117 +39,27 @@
   .topbar-left h2 { font-size: 0.85rem; font-weight: 600; }
   .topbar-sep { color: #CBD5E1; }
   .topbar-left p { font-size: 0.74rem; color: #94A3B8; }
-  .topbar-center { display: flex; align-items: center; gap: 10px; flex: 1; justify-content: center; margin: 0 18px; min-width: 0; }
-  .tb-clock { font-size: 0.92rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  .tb-clock { font-size: 0.92rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+
+  /* RUTA DEL AGENTE */
+  .ruta-bar { background: white; padding: 9px 24px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #E2E8F0; font-family: 'Inter', sans-serif; }
+  .ruta-item { font-size: 0.76rem; color: #94A3B8; }
+  .ruta-item.ruta-actual { color: #0F2070; font-weight: 700; }
+  .ruta-sep { color: #CBD5E1; font-size: 0.76rem; }
 
   /* BIBLIOTECA CONTENT */
   .bib-wrap { padding: 18px 22px; display: flex; flex-direction: column; gap: 12px; }
+  .bib-placeholder { background: white; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 40px 20px; text-align: center; color: #94A3B8; font-size: 0.85rem; }
   .bib-saludo { background: white; border-radius: 8px; border: 1px solid #E2E8F0; padding: 16px 20px; font-family: 'Montserrat', sans-serif; }
   .bib-saludo p { font-size: 0.84rem; line-height: 1.6; color: #374151; margin-bottom: 6px; }
   .bib-saludo p:last-child { margin-bottom: 0; }
   .bib-saludo strong { color: #0F2070; }
-  .bib-vacio { display: none; text-align: center; font-size: 0.82rem; color: #94A3B8; padding: 22px; background: white; border-radius: 8px; border: 1px solid #E2E8F0; }
-  .bib-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .bib-card { background: white; border-radius: 8px; border: 1px solid #E2E8F0; padding: 16px 18px; font-family: 'Montserrat', sans-serif; }
-  .bib-card h2 { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #0F2070; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid #F1F5F9; letter-spacing: 0.5px; }
-  .bib-card p { font-size: 0.8rem; line-height: 1.6; color: #555; margin-bottom: 8px; }
-  .bib-card p:last-child { margin-bottom: 0; }
-  .bib-card strong { color: #0F2070; }
-  .bib-menu { background: white; border-radius: 8px; border: 1px solid #E2E8F0; padding: 16px 18px; }
-  .bib-menu-plano { background: transparent; border: none; padding: 0; }
-  .bib-menu h2 { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: #0F2070; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid #F1F5F9; letter-spacing: 0.5px; font-family: 'Montserrat', sans-serif; }
-  .bib-botones { display: flex; flex-wrap: wrap; gap: 6px; }
+  .instruccion { font-style: italic; color: #94A3B8; font-size: 0.78rem; font-family: 'Inter', sans-serif; }
+  .sdp-botones { display: flex; gap: 8px; flex-wrap: wrap; }
   .bib-btn { background: #0F2070; color: white; padding: 8px 13px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; font-size: 0.73rem; font-family: 'Inter', sans-serif; transition: all 0.15s; }
   .bib-btn:hover { background: #1A3DAA; transform: translateY(-1px); }
-  .bib-footer { background: white; border-radius: 8px; border: 1px solid #E2E8F0; padding: 13px 18px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  .bib-footer-logo { font-size: 1rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; }
-  .bib-footer-btns { display: flex; gap: 6px; flex-wrap: wrap; }
-  .bib-footer-btn { padding: 7px 14px; border: none; border-radius: 6px; font-weight: 700; font-size: 0.73rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
-  .bib-footer-btn:hover { opacity: 0.88; transform: translateY(-1px); }
-  .btn-menu-f { background: #0F2070; color: white; }
-  .btn-objeciones { background: #F27C34; color: white; }
-  .btn-despedida { background: #0F2070; color: white; }
-
-  /* --- INICIO NUEVOS ESTILOS --- */
-  .sdp-subgrid { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .sdp-subcard { border-radius: 7px; border: 1.5px solid; padding: 11px 13px; }
-  .sdp-subcard h3 { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; }
-  .sdp-subcard p { font-size: 0.8rem; line-height: 1.55; color: #555; margin-bottom: 6px; }
-  .sdp-subcard p:last-child { margin-bottom: 0; }
-  .sdp-subcard strong { color: #0F2070; }
-  .sdp-subcard.si { border-color: #16A34A; background: #F0FDF4; }
-  .sdp-subcard.si h3 { color: #15803D; }
-  .sdp-subcard.no { border-color: #DC2626; background: #FEF2F2; }
-  .sdp-subcard.no h3 { color: #B91C1C; }
-
-  .bib-btn-sub { background: #EEF2FF; color: #0F2070; }
-  .bib-btn-sub:hover { background: #DDE5FF; }
-  .rama-grid { margin: 6px 0 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .rama-card { border-radius: 7px; border: 1.5px solid #E2E8F0; background: #F8FAFC; padding: 11px 13px; }
-  .rama-card h4 { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: #0F2070; margin-bottom: 6px; letter-spacing: 0.4px; }
-  .rama-card p { font-size: 0.8rem; line-height: 1.55; color: #555; margin-bottom: 6px; }
-  .rama-card p:last-child { margin-bottom: 0; }
-  .rama-card strong { color: #0F2070; }
-
-  .bib-categorias { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-  .cat-btn { background: #0F2070; color: white; border: none; border-radius: 9px; padding: 22px 14px; font-size: 1.05rem; font-weight: 700; font-family: 'Montserrat', sans-serif; cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 92px; }
-  .cat-btn:hover { background: #1A3DAA; transform: translateY(-1px); }
-  .cat-btn.active { background: #1A3DAA; }
-  .cat-sub { font-size: 0.7rem; font-weight: 400; color: #9AA8CC; font-family: 'Inter', sans-serif; }
-
-  .cat-btn-cyan { background: #29ABE2; }
-  .cat-btn-cyan:hover { background: #1E93CC; }
-  .cat-btn-cyan.active { background: #1E93CC; }
-
-  .n3-list { display: flex; flex-direction: column; }
-  .n3-item { border-bottom: 1px solid #F1F5F9; }
-  .n3-item:last-child { border-bottom: none; }
-  .n3-btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 4px; background: none; border: none; cursor: pointer; text-align: left; font-family: inherit; transition: all 0.15s; }
-  .n3-icon { flex-shrink: 0; width: 28px; height: 28px; border: 1.5px solid #29ABE2; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #29ABE2; transition: all 0.15s; }
-  .n3-icon svg { width: 15px; height: 15px; }
-  .n3-label { font-size: 0.85rem; font-weight: 600; color: #1E293B; font-family: 'Montserrat', sans-serif; }
-  .n3-btn:hover .n3-label { color: #0F2070; }
-  .n3-item.open .n3-label { color: #0F2070; }
-  .n3-item.open .n3-icon { background: #29ABE2; color: white; }
-  .n3-script { padding: 0 4px 14px 44px; }
-  .n3-script p { font-size: 0.8rem; line-height: 1.6; color: #555; font-family: 'Montserrat', sans-serif; }
-  .n3-script p.placeholder { color: #94A3B8; font-style: italic; }
-
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,32,112,0.45); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
-  .modal-overlay.open { display: flex; }
-  .modal-box { background: white; border-radius: 10px; max-width: 600px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 20px 24px; position: relative; }
-  .modal-box h2 { font-size: 1rem; font-weight: 800; color: #0F2070; text-align: center; font-family: 'Montserrat', sans-serif; margin-bottom: 16px; }
-  .modal-close { position: absolute; top: 12px; right: 14px; background: none; border: none; font-size: 1.2rem; color: #94A3B8; cursor: pointer; line-height: 1; }
-  .modal-close:hover { color: #1E293B; }
-  .modal-section-label { font-size: 0.75rem; font-style: italic; color: #64748B; margin: 14px 0 6px; font-family: 'Inter', sans-serif; }
-  .modal-section-label:first-of-type { margin-top: 0; }
-  .modal-card { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 13px 16px; font-family: 'Montserrat', sans-serif; }
-  .modal-card p { font-size: 0.82rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
-  .modal-card p:last-child { margin-bottom: 0; }
-  .modal-card strong { color: #0F2070; }
-  .modal-footer { display: flex; justify-content: flex-end; margin-top: 16px; }
-  .modal-btn-cerrar { background: #16A34A; color: white; border: none; padding: 11px 24px; border-radius: 6px; font-weight: 700; font-size: 0.9rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
-  .modal-btn-cerrar:hover { background: #15803D; }
-
-  .sticky-search { flex: 1; min-width: 170px; max-width: 320px; position: relative; }
-  .sticky-search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: #94A3B8; pointer-events: none; }
-  .sticky-search input { width: 100%; padding: 6px 10px 6px 30px; border-radius: 999px; border: 1.5px solid #E2E8F0; font-size: 0.76rem; font-family: 'Inter', sans-serif; outline: none; color: #1E293B; background: #F8FAFC; }
-  .sticky-search input:focus { border-color: #29ABE2; background: white; }
-  .sticky-cats { display: flex; gap: 6px; flex-shrink: 0; }
-  .sticky-cat-btn { display: flex; align-items: center; gap: 5px; background: #F1F5F9; color: #0F2070; border: 1.5px solid #E2E8F0; border-radius: 7px; padding: 6px 10px; font-size: 0.72rem; font-weight: 700; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: all 0.15s; white-space: nowrap; }
-  .sticky-cat-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
-  .sticky-cat-btn:hover { background: #E2E8F0; }
-  .sticky-cat-btn.active { background: #0F2070; color: white; border-color: #0F2070; }
-
-  /* --- FIN NUEVOS ESTILOS --- */
-
-  @media (max-width: 700px) {
-    .bib-grid { grid-template-columns: 1fr; }
-    .sdp-subgrid { grid-template-columns: 1fr; }
-    .rama-grid { grid-template-columns: 1fr; }
-    .bib-categorias { grid-template-columns: 1fr; }
-    .bib-footer { flex-direction: column; align-items: flex-start; }
-  }
+  .bib-btn.active { background: #1A3DAA; }
+  .placeholder { color: #94A3B8; font-style: italic; }
 </style>
 </head>
 <body>
@@ -163,222 +73,31 @@
       <span class="topbar-sep">/</span>
       <p>Guía telefónica</p>
     </div>
-    <div class="topbar-center">
-      <div class="sticky-search">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="text" id="buscador" placeholder="Buscar en tarjetas o menús..." oninput="filtrar()">
-      </div>
-      <div class="sticky-cats">
-        <button class="sticky-cat-btn" id="btnCatConsulta" onclick="mostrarCategoria('seccionConsultas')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4H8l-4.2 2.6.6-4.7A8.4 8.4 0 1 1 21 11.5Z"/></svg>
-          Consulta
-        </button>
-        <button class="sticky-cat-btn" id="btnCatGestion" onclick="mostrarCategoria('seccionGestion')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
-          Gestión
-        </button>
-        <button class="sticky-cat-btn" id="btnCatIncidencia" onclick="mostrarCategoria('seccionIncidencia')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-          Incidencia
-        </button>
-      </div>
-    </div>
     <div class="topbar-right">
       <div class="tb-clock" id="clock">--:--:--</div>
     </div>
   </div>
 
-  <div class="bib-wrap">
+  <div class="ruta-bar" id="rutaBar">
+    <span class="ruta-item ruta-actual">Inicio</span>
+  </div>
 
+  <div class="bib-wrap">
     <div class="bib-saludo">
-      <p>Gracias por contactar a <strong>DoctorSV</strong>, le saluda el/la agente <strong>XXXX XXXX</strong>, <strong>¿con quién tengo el gusto?</strong></p>
+      <p>Gracias por contactar a <strong>DoctorSV</strong>, le saluda el/la agente <strong id="nombreAgente">…</strong>, <strong>¿con quién tengo el gusto?</strong></p>
       <p>Un placer SR / SRA <strong>XXXXXXX</strong>, antes de continuar, ¿me podría indicar su <strong>número de documento?</strong></p>
       <p>Le confirmo, su número de documento es <strong>XXXXXXX-X</strong>.</p>
     </div>
 
-    <div class="bib-grid" id="bibGrid">
-      <div class="elemento-filtrable bib-card">
-        <h2>No está registrado en el SDP:</h2>
-        <p>Muchas gracias, ¿me podría indicar su <strong>fecha de nacimiento</strong> y su <strong>número de teléfono?</strong></p>
-        <p>Le confirmo: su teléfono es <strong>XXXX-XXXX</strong> y su fecha de nacimiento es <strong>XX/XX/XXXX</strong></p>
-        <p>De acuerdo, por favor, <strong>permítame un momento en línea para verificar en nuestro sistema.</strong></p>
-        <p><strong>Muchas gracias por su espera en línea, SR / SRA XXXXXXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
-      </div>
+    <p class="instruccion">Buscar el número de documento en la sección Solicitante del SDP</p>
 
-      <div class="elemento-filtrable bib-card">
-        <h2>Ya está registrado en el SDP:</h2>
-        <p>Muchas gracias, ¿me podría confirmar si los últimos 4 dígitos de su teléfono siguen siendo <strong>XXXX?</strong></p>
-
-        <div class="sdp-subgrid">
-          <div class="sdp-subcard si">
-            <h3>Sí, confirmo</h3>
-            <p><strong>Muchas gracias SR / SRA XXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
-          </div>
-          <div class="sdp-subcard no">
-            <h3>No, es otro</h3>
-            <p>De acuerdo, procedo a actualizar su número de teléfono, <strong>¿me lo podría volver a indicar, por favor?</strong></p>
-            <p>Le confirmo, su nuevo número es <strong>XXXX-XXXX</strong>.</p>
-            <p><strong>Muchas gracias SR / SRA XXXXXX, dígame, ¿cómo puedo ayudarle?</strong></p>
-          </div>
-        </div>
-      </div>
+    <div class="sdp-botones">
+      <button class="bib-btn" id="btnSdpSi" onclick="mostrarSDP('si')">Ya está registrado en el SDP</button>
+      <button class="bib-btn" id="btnSdpNo" onclick="mostrarSDP('no')">No está registrado en el SDP</button>
     </div>
 
-    <div class="bib-categorias">
-      <button class="cat-btn" id="btnCatConsultaTile" onclick="mostrarCategoria('seccionConsultas')">Consulta<span class="cat-sub">¿Me pide que le explique algo?</span></button>
-      <button class="cat-btn" id="btnCatGestionTile" onclick="mostrarCategoria('seccionGestion')">Gestión<span class="cat-sub">¿Me pide hacer o cambiar algo?</span></button>
-      <button class="cat-btn" id="btnCatIncidenciaTile" onclick="mostrarCategoria('seccionIncidencia')">Incidencia<span class="cat-sub">¿Me reporta que algo falla?</span></button>
-    </div>
-
-    <div class="bib-vacio" id="bibVacio">No se encontraron opciones que coincidan con tu búsqueda.</div>
-
-    <div class="bib-menu" id="seccionGestion" style="margin-top:12px; display:none;">
-      <h2>Gestión</h2>
-      <div class="bib-botones">
-        <button class="bib-btn bib-btn-sub">Gestión de citas</button>
-        <button class="bib-btn bib-btn-sub">Gestión de perfiles</button>
-        <button class="bib-btn bib-btn-sub">Gestión de recetas / órdenes de estudios</button>
-      </div>
-    </div>
-
-    <div class="bib-menu" id="seccionIncidencia" style="margin-top:12px; display:none;">
-      <h2>Incidencia</h2>
-      <div class="bib-botones">
-        <button class="bib-btn bib-btn-sub">Incidencias técnicas</button>
-        <button class="bib-btn bib-btn-sub">Incidencias con los médicos</button>
-        <button class="bib-btn bib-btn-sub">Incidencias con farmacias</button>
-        <button class="bib-btn bib-btn-sub">Incidencias con laboratorios</button>
-        <button class="bib-btn bib-btn-sub">Incidencias con imágenes</button>
-        <button class="bib-btn bib-btn-sub">Incidencias con proced. presenciales</button>
-        <button class="bib-btn bib-btn-sub">Incidencias operativas</button>
-        <button class="bib-btn bib-btn-sub">Denuncias / Incidencias centro de soporte</button>
-        <button class="bib-btn bib-btn-sub">No relacionado al servicio</button>
-      </div>
-    </div>
-
-    <div class="bib-menu bib-menu-plano" id="seccionConsultas" style="margin-top:12px; display:none;">
-      <h2>Consultas — Subtemas</h2>
-      <div class="bib-categorias">
-        <button class="cat-btn cat-btn-cyan" id="btnSubDudasGenerales" onclick="mostrarSubConsulta('subDudasGenerales')">Dudas generales del servicio</button>
-        <button class="cat-btn cat-btn-cyan" id="btnSubDudasFunciones" onclick="mostrarSubConsulta('subDudasFunciones')">Dudas sobre las funciones de la aplicación</button>
-        <button class="cat-btn cat-btn-cyan" id="btnSubOtrasOrientaciones" onclick="mostrarSubConsulta('subOtrasOrientaciones')">Otras orientaciones</button>
-      </div>
-
-      <div class="bib-menu bib-menu-plano" id="subDudasGenerales" style="margin-top:12px; display:none;">
-        <h2>Dudas generales del servicio</h2>
-        <div class="n3-list">
-          <div class="n3-item">
-            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
-              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
-              <span class="n3-label">Orientación sobre todo el servicio</span>
-            </button>
-            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
-          </div>
-          <div class="n3-item">
-            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
-              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
-              <span class="n3-label">Ubicación y teléfono de farmacia / laboratorio</span>
-            </button>
-            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
-          </div>
-          <div class="n3-item">
-            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
-              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
-              <span class="n3-label">Cuáles son las especialidades médicas</span>
-            </button>
-            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
-          </div>
-          <div class="n3-item">
-            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
-              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
-              <span class="n3-label">Cómo retirar medicamento</span>
-            </button>
-            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
-          </div>
-          <div class="n3-item">
-            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
-              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
-              <span class="n3-label">Cómo realizarse estudios</span>
-            </button>
-            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="bib-menu bib-menu-plano" id="subDudasFunciones" style="margin-top:12px; display:none;">
-        <h2>Dudas sobre las funciones de la aplicación</h2>
-        <div class="n3-list">
-          <div class="n3-item">
-            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
-              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
-              <span class="n3-label">Subtema de ejemplo 1</span>
-            </button>
-            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
-          </div>
-          <div class="n3-item">
-            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
-              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
-              <span class="n3-label">Subtema de ejemplo 2</span>
-            </button>
-            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="bib-menu bib-menu-plano" id="subOtrasOrientaciones" style="margin-top:12px; display:none;">
-        <h2>Otras orientaciones</h2>
-        <div class="n3-list">
-          <div class="n3-item">
-            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
-              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
-              <span class="n3-label">Subtema de ejemplo 1</span>
-            </button>
-            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
-          </div>
-          <div class="n3-item">
-            <button class="n3-btn" onclick="mostrarNivel3Item(this)">
-              <span class="n3-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/></svg></span>
-              <span class="n3-label">Subtema de ejemplo 2</span>
-            </button>
-            <div class="n3-script" style="display:none;"><p class="placeholder">Script pendiente de agregar.</p></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="bib-footer">
-      <div class="bib-footer-logo">DoctorSV</div>
-      <div class="bib-footer-btns">
-        <button class="bib-footer-btn btn-menu-f">Menú</button>
-        <button class="bib-footer-btn btn-objeciones">Objeciones y casos especiales</button>
-        <button class="bib-footer-btn btn-despedida" onclick="abrirModal('modalDespedida')">Script de despedida</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<div class="modal-overlay" id="modalDespedida" onclick="if(event.target===this) cerrarModal('modalDespedida')">
-  <div class="modal-box">
-    <button class="modal-close" onclick="cerrarModal('modalDespedida')">&times;</button>
-    <h2>Script de despedida</h2>
-
-    <p class="modal-section-label">Casos relacionados a DoctorSV</p>
-    <div class="modal-card">
-      <p>¿Le podemos asistir con alguna otra duda relacionada con DoctorSV?</p>
-      <p>De acuerdo Sr./Sra. XXX, <strong>ha sido un gusto atenderle bajo el número de gestión XXXXXXX</strong>.</p>
-      <p>En este momento lo transferiré a un breve sondeo que le permitirá evaluar el servicio recibido en esta llamada. Le agradecemos su tiempo, por favor no cuelgue la llamada.</p>
-    </div>
-
-    <p class="modal-section-label">Casos no relacionados al servicio (sin encuesta)</p>
-    <div class="modal-card">
-      <p>¿Le podemos asistir con alguna otra duda relacionada con DoctorSV?</p>
-      <p>De acuerdo Sr./Sra. XXX, un placer atenderle, estamos a la orden para apoyarle.</p>
-      <p>¡Feliz día! / ¡Feliz tarde! / ¡Feliz noche!</p>
-    </div>
-
-    <div class="modal-footer">
-      <button class="modal-btn-cerrar" onclick="cerrarModal('modalDespedida')">Cerrar</button>
+    <div class="bib-saludo" id="cajaSDP" style="display:none;">
+      <div id="textoSDP"></div>
     </div>
   </div>
 </div>
@@ -396,170 +115,32 @@
     appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
   });
   var auth = firebase.auth();
+  var db   = firebase.firestore();
 
   setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
 
-  var SUBCONSULTAS_DEF = [
-    { subId: 'subDudasGenerales', btnId: 'btnSubDudasGenerales' },
-    { subId: 'subDudasFunciones', btnId: 'btnSubDudasFunciones' },
-    { subId: 'subOtrasOrientaciones', btnId: 'btnSubOtrasOrientaciones' }
-  ];
-
-  function filtrar() {
-    var q = document.getElementById('buscador').value.trim().toLowerCase();
-
-    // Tarjetas del saludo inicial (SDP)
-    var topEls = document.querySelectorAll('#bibGrid .elemento-filtrable');
-    var topVisibles = 0;
-    topEls.forEach(function(el) {
-      var m = !q || el.innerText.toLowerCase().includes(q);
-      el.style.display = m ? 'block' : 'none';
-      if (m) topVisibles++;
+  auth.onAuthStateChanged(function(user) {
+    if (!user) return;
+    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      var nombre = (doc.exists && doc.data().nombre) ? doc.data().nombre : user.email.split('@')[0];
+      document.getElementById('nombreAgente').textContent = nombre;
     });
-    document.getElementById('bibGrid').style.display = topVisibles === 0 ? 'none' : 'grid';
+  });
 
-    if (!q) {
-      resetNavegacion();
-      document.getElementById('bibVacio').style.display = 'none';
-      return;
-    }
-
-    var algunResultado = topVisibles > 0;
-
-    // Consultas: subtemas (nivel 2) y sus botones de nivel 3 (con su script)
-    var consultasTieneMatch = false;
-    SUBCONSULTAS_DEF.forEach(function(def) {
-      var panel = document.getElementById(def.subId);
-      var btnSub = document.getElementById(def.btnId);
-      var propioMatch = btnSub.textContent.toLowerCase().includes(q);
-      var items = panel.querySelectorAll('.n3-item');
-      var algunItemMatch = false;
-
-      items.forEach(function(item) {
-        var label = item.querySelector('.n3-label').textContent.toLowerCase();
-        var scriptBox = item.querySelector('.n3-script');
-        var script = scriptBox.textContent.toLowerCase();
-        var m = propioMatch || label.includes(q) || script.includes(q);
-        item.style.display = m ? '' : 'none';
-        var abrirScript = !propioMatch && m;
-        scriptBox.style.display = abrirScript ? 'block' : 'none';
-        item.classList.toggle('open', abrirScript);
-        if (m) algunItemMatch = true;
-      });
-
-      var subTieneMatch = propioMatch || algunItemMatch;
-      panel.style.display = subTieneMatch ? 'block' : 'none';
-      btnSub.classList.toggle('active', subTieneMatch);
-      if (subTieneMatch) { consultasTieneMatch = true; algunResultado = true; }
-    });
-    document.getElementById('seccionConsultas').style.display = consultasTieneMatch ? 'block' : 'none';
-    MAPA_CATEGORIAS.seccionConsultas.forEach(function(btnId) {
-      document.getElementById(btnId).classList.toggle('active', consultasTieneMatch);
-    });
-
-    // Gestion e Incidencia: listas planas de botones
-    [
-      { seccionId: 'seccionGestion', btnCatIds: MAPA_CATEGORIAS.seccionGestion },
-      { seccionId: 'seccionIncidencia', btnCatIds: MAPA_CATEGORIAS.seccionIncidencia }
-    ].forEach(function(def) {
-      var panel = document.getElementById(def.seccionId);
-      var btns = panel.querySelectorAll('.bib-btn-sub');
-      var tieneMatch = false;
-      btns.forEach(function(btn) {
-        var m = btn.textContent.toLowerCase().includes(q);
-        btn.style.display = m ? '' : 'none';
-        if (m) tieneMatch = true;
-      });
-      panel.style.display = tieneMatch ? 'block' : 'none';
-      def.btnCatIds.forEach(function(btnId) {
-        document.getElementById(btnId).classList.toggle('active', tieneMatch);
-      });
-      if (tieneMatch) algunResultado = true;
-    });
-
-    document.getElementById('bibVacio').style.display = algunResultado ? 'none' : 'block';
-  }
-
-  function resetNavegacion() {
-    ['seccionConsultas', 'seccionGestion', 'seccionIncidencia', 'subDudasGenerales', 'subDudasFunciones', 'subOtrasOrientaciones'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el) el.style.display = 'none';
-    });
-    document.querySelectorAll('.n3-item').forEach(function(item) {
-      item.style.display = '';
-      item.classList.remove('open');
-      item.querySelector('.n3-script').style.display = 'none';
-    });
-    document.querySelectorAll('.bib-btn-sub').forEach(function(btn) { btn.style.display = ''; });
-    ['btnCatConsulta', 'btnCatConsultaTile', 'btnCatGestion', 'btnCatGestionTile', 'btnCatIncidencia', 'btnCatIncidenciaTile', 'btnSubDudasGenerales', 'btnSubDudasFunciones', 'btnSubOtrasOrientaciones'].forEach(function(id) {
-      var btn = document.getElementById(id);
-      if (btn) btn.classList.remove('active');
-    });
-  }
-
-  function abrirModal(id) {
-    document.getElementById(id).classList.add('open');
-  }
-
-  function cerrarModal(id) {
-    document.getElementById(id).classList.remove('open');
-  }
-
-  function toggleSeccion(id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    el.style.display = (el.style.display === 'none' || !el.style.display) ? 'block' : 'none';
-  }
-
-  var MAPA_CATEGORIAS = {
-    seccionConsultas: ['btnCatConsulta', 'btnCatConsultaTile'],
-    seccionGestion: ['btnCatGestion', 'btnCatGestionTile'],
-    seccionIncidencia: ['btnCatIncidencia', 'btnCatIncidenciaTile']
-  };
-  var MAPA_SUBCONSULTA = {
-    subDudasGenerales: ['btnSubDudasGenerales'],
-    subDudasFunciones: ['btnSubDudasFunciones'],
-    subOtrasOrientaciones: ['btnSubOtrasOrientaciones']
+  var TEXTOS_SDP = {
+    si: '<p>Muchas gracias, ¿me podría confirmar si los últimos 4 dígitos de su teléfono siguen siendo XXXX?</p>',
+    no: '<p>Muchas gracias, ¿me podría indicar su fecha de nacimiento y su número de teléfono?</p>' +
+        '<p>Le confirmo: su teléfono es XXXX-XXXX y su fecha de nacimiento es XX/XX/XXXX</p>' +
+        '<p>De acuerdo, por favor, permítame un momento en línea para verificar en nuestro sistema.</p>'
   };
 
-  function mostrarExclusivo(mapa, id) {
-    var target = document.getElementById(id);
-    var yaAbierta = target && target.style.display === 'block';
-    Object.keys(mapa).forEach(function(sid) {
-      var el = document.getElementById(sid);
-      if (el) el.style.display = 'none';
-      mapa[sid].forEach(function(btnId) {
-        var btn = document.getElementById(btnId);
-        if (btn) btn.classList.remove('active');
-      });
-    });
-    if (target && !yaAbierta) {
-      target.style.display = 'block';
-      mapa[id].forEach(function(btnId) {
-        var btn = document.getElementById(btnId);
-        if (btn) btn.classList.add('active');
-      });
-    }
+  function mostrarSDP(tipo) {
+    document.getElementById('btnSdpSi').classList.toggle('active', tipo === 'si');
+    document.getElementById('btnSdpNo').classList.toggle('active', tipo === 'no');
+    document.getElementById('cajaSDP').style.display = 'block';
+    document.getElementById('textoSDP').innerHTML = TEXTOS_SDP[tipo];
   }
-
-  function mostrarCategoria(id) { mostrarExclusivo(MAPA_CATEGORIAS, id); }
-  function mostrarSubConsulta(id) { mostrarExclusivo(MAPA_SUBCONSULTA, id); }
-
-  function mostrarNivel3Item(btn) {
-    var item = btn.closest('.n3-item');
-    var lista = item.closest('.n3-list');
-    var yaAbierto = item.classList.contains('open');
-    lista.querySelectorAll('.n3-item.open').forEach(function(i) {
-      i.classList.remove('open');
-      i.querySelector('.n3-script').style.display = 'none';
-    });
-    if (!yaAbierto) {
-      item.classList.add('open');
-      item.querySelector('.n3-script').style.display = 'block';
-    }
-  }
-
 </script>
 <script src="notif.js"></script>
 <script src="sidebar.js"></script>
