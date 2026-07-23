@@ -99,6 +99,17 @@
     <div class="bib-saludo" id="cajaSDP" style="display:none;">
       <div id="textoSDP"></div>
     </div>
+
+    <p class="instruccion" id="instConfirmacion" style="display:none;">Confirma con el usuario</p>
+
+    <div class="sdp-botones" id="botonesConfirmacion" style="display:none;">
+      <button class="bib-btn" id="btnConfSi" onclick="mostrarConfirmacion('si')">Sí, sigue siendo su número</button>
+      <button class="bib-btn" id="btnConfNo" onclick="mostrarConfirmacion('no')">No, cambió de número</button>
+    </div>
+
+    <div class="bib-saludo" id="cajaConfirmacion" style="display:none;">
+      <div id="textoConfirmacion"></div>
+    </div>
   </div>
 </div>
 
@@ -140,6 +151,29 @@
     document.getElementById('btnSdpNo').classList.toggle('active', tipo === 'no');
     document.getElementById('cajaSDP').style.display = 'block';
     document.getElementById('textoSDP').innerHTML = TEXTOS_SDP[tipo];
+
+    var esSi = tipo === 'si';
+    document.getElementById('instConfirmacion').style.display = esSi ? 'block' : 'none';
+    document.getElementById('botonesConfirmacion').style.display = esSi ? 'flex' : 'none';
+    if (!esSi) {
+      document.getElementById('cajaConfirmacion').style.display = 'none';
+      document.getElementById('btnConfSi').classList.remove('active');
+      document.getElementById('btnConfNo').classList.remove('active');
+    }
+  }
+
+  var TEXTOS_CONFIRMACION = {
+    si: '<p>Muchas gracias SR / SRA XXX, dígame, ¿cómo puedo ayudarle?</p>',
+    no: '<p>Con mucho gusto le ayudo a actualizarlo, ¿me indica su nuevo número de contacto?</p>' +
+        '<p>Gracias. Más adelante, antes de finalizar la atención, le ayudaré para actualizarlo en la plataforma.</p>' +
+        '<p>¿Cómo puedo ayudarle?</p>'
+  };
+
+  function mostrarConfirmacion(tipo) {
+    document.getElementById('btnConfSi').classList.toggle('active', tipo === 'si');
+    document.getElementById('btnConfNo').classList.toggle('active', tipo === 'no');
+    document.getElementById('cajaConfirmacion').style.display = 'block';
+    document.getElementById('textoConfirmacion').innerHTML = TEXTOS_CONFIRMACION[tipo];
   }
 </script>
 <script src="notif.js"></script>
