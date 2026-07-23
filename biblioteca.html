@@ -42,10 +42,6 @@
 
   /* BIBLIOTECA CONTENT */
   .bib-wrap { padding: 24px 28px; display: flex; flex-direction: column; gap: 16px; }
-  .bib-title { font-size: 1.6rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; }
-  .bib-search { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 24px; }
-  .bib-search input { width: 100%; padding: 10px 16px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.88rem; font-family: 'Inter', sans-serif; outline: none; color: #1E293B; background: #F8FAFC; transition: border 0.2s; }
-  .bib-search input:focus { border-color: #1A3DAA; box-shadow: 0 0 0 3px rgba(26,61,170,0.07); background: white; }
   .bib-saludo { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 20px 24px; font-family: 'Montserrat', sans-serif; }
   .bib-saludo p { font-size: 0.9rem; line-height: 1.7; color: #374151; margin-bottom: 8px; }
   .bib-saludo p:last-child { margin-bottom: 0; }
@@ -98,7 +94,6 @@
   .rama-card p:last-child { margin-bottom: 0; }
   .rama-card strong { color: #0F2070; }
 
-  .cat-pregunta { font-size: 1rem; font-weight: 700; color: #0F2070; font-family: 'Montserrat', sans-serif; text-align: center; }
   .bib-categorias { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
   .cat-btn { background: #0F2070; color: white; border: none; border-radius: 10px; padding: 40px 16px; font-size: 1.25rem; font-weight: 700; font-family: 'Montserrat', sans-serif; cursor: pointer; transition: all 0.15s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 128px; }
   .cat-btn:hover { background: #1A3DAA; transform: translateY(-1px); }
@@ -129,6 +124,21 @@
   .modal-footer { display: flex; justify-content: flex-end; margin-top: 20px; }
   .modal-btn-cerrar { background: #16A34A; color: white; border: none; padding: 14px 32px; border-radius: 7px; font-weight: 700; font-size: 1rem; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s; }
   .modal-btn-cerrar:hover { background: #15803D; }
+
+  .hero-banner { background: linear-gradient(135deg, #29ABE2, #1A3DAA); border-radius: 14px; padding: 44px 32px; text-align: center; }
+  .hero-banner h2 { color: white; font-size: 1.6rem; font-weight: 800; font-family: 'Montserrat', sans-serif; margin-bottom: 22px; }
+  .hero-search { max-width: 560px; margin: 0 auto; position: relative; }
+  .hero-search svg { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: #94A3B8; pointer-events: none; }
+  .hero-search input { width: 100%; padding: 16px 20px 16px 48px; border-radius: 999px; border: none; font-size: 0.95rem; font-family: 'Inter', sans-serif; outline: none; color: #1E293B; box-shadow: 0 6px 18px rgba(15,32,112,0.2); }
+  .hero-search input:focus { box-shadow: 0 6px 18px rgba(15,32,112,0.2), 0 0 0 3px rgba(255,255,255,0.5); }
+
+  .icon-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .icon-card { background: white; border: 1.5px solid #E2E8F0; border-radius: 10px; padding: 28px 16px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .icon-card:hover { border-color: #29ABE2; transform: translateY(-1px); }
+  .icon-card.active { border-color: #29ABE2; box-shadow: 0 0 0 1px #29ABE2; }
+  .icon-card svg { width: 34px; height: 34px; color: #29ABE2; }
+  .icon-card-label { font-weight: 700; color: #1E293B; font-size: 0.95rem; font-family: 'Montserrat', sans-serif; }
+  .icon-card-sub { font-size: 0.72rem; color: #94A3B8; text-align: center; }
   /* --- FIN NUEVOS ESTILOS --- */
 
   @media (max-width: 700px) {
@@ -136,6 +146,8 @@
     .sdp-subgrid { grid-template-columns: 1fr; }
     .rama-grid { grid-template-columns: 1fr; }
     .bib-categorias { grid-template-columns: 1fr; }
+    .bib-categorias-2 { grid-template-columns: 1fr; }
+    .icon-cards { grid-template-columns: 1fr; }
     .bib-footer { flex-direction: column; align-items: flex-start; }
   }
 </style>
@@ -157,8 +169,6 @@
   </div>
 
   <div class="bib-wrap">
-
-    <h1 class="bib-title">Inicio</h1>
 
     <div class="bib-saludo">
       <p>Gracias por contactar a <strong>DoctorSV</strong>, le saluda el/la agente <strong>XXXX XXXX</strong>, <strong>¿con quién tengo el gusto?</strong></p>
@@ -194,16 +204,30 @@
       </div>
     </div>
 
-    <div class="bib-search">
-      <input type="text" id="buscador" placeholder="Buscar en tarjetas o menús..." oninput="filtrar()">
+    <div class="hero-banner">
+      <h2>¿Cómo podemos ayudarle?</h2>
+      <div class="hero-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="buscador" placeholder="Buscar en tarjetas o menús..." oninput="filtrar()">
+      </div>
     </div>
 
-    <p class="cat-pregunta">¿Qué necesita el usuario?</p>
-
-    <div class="bib-categorias">
-      <button class="cat-btn" id="btnCatConsulta" onclick="mostrarCategoria('seccionConsultas')">Consulta<span class="cat-sub">¿Me pide que le explique algo?</span></button>
-      <button class="cat-btn" id="btnCatGestion" onclick="mostrarCategoria('seccionGestion')">Gestión<span class="cat-sub">¿Me pide hacer o cambiar algo?</span></button>
-      <button class="cat-btn" id="btnCatIncidencia" onclick="mostrarCategoria('seccionIncidencia')">Incidencia<span class="cat-sub">¿Me reporta que algo falla?</span></button>
+    <div class="icon-cards">
+      <button class="icon-card" id="btnCatConsulta" onclick="mostrarCategoria('seccionConsultas')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4H8l-4.2 2.6.6-4.7A8.4 8.4 0 1 1 21 11.5Z"/></svg>
+        <span class="icon-card-label">Consulta</span>
+        <span class="icon-card-sub">¿Me pide que le explique algo?</span>
+      </button>
+      <button class="icon-card" id="btnCatGestion" onclick="mostrarCategoria('seccionGestion')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+        <span class="icon-card-label">Gestión</span>
+        <span class="icon-card-sub">¿Me pide hacer o cambiar algo?</span>
+      </button>
+      <button class="icon-card" id="btnCatIncidencia" onclick="mostrarCategoria('seccionIncidencia')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+        <span class="icon-card-label">Incidencia</span>
+        <span class="icon-card-sub">¿Me reporta que algo falla?</span>
+      </button>
     </div>
 
     <div class="bib-vacio" id="bibVacio">No se encontraron opciones que coincidan con tu búsqueda.</div>
@@ -242,9 +266,12 @@
 
       <div class="elemento-filtrable bib-menu bib-menu-plano" id="subDudasGenerales" style="margin-top:16px; display:none;">
         <h2>Dudas generales del servicio</h2>
-        <div class="bib-categorias-2">
-          <button class="cat-btn cat-btn-celeste" id="btnDG1" onclick="mostrarNivel3(['btnDG1','btnDG2'], 'btnDG1', 'scriptDudasGenerales', 'Subtema de ejemplo 1')">Subtema de ejemplo 1</button>
-          <button class="cat-btn cat-btn-celeste" id="btnDG2" onclick="mostrarNivel3(['btnDG1','btnDG2'], 'btnDG2', 'scriptDudasGenerales', 'Subtema de ejemplo 2')">Subtema de ejemplo 2</button>
+        <div class="bib-categorias">
+          <button class="cat-btn cat-btn-celeste" id="btnDG1" onclick="mostrarNivel3(['btnDG1','btnDG2','btnDG3','btnDG4','btnDG5'], 'btnDG1', 'scriptDudasGenerales', 'Orientación sobre todo el servicio')">Orientación sobre todo el servicio</button>
+          <button class="cat-btn cat-btn-celeste" id="btnDG2" onclick="mostrarNivel3(['btnDG1','btnDG2','btnDG3','btnDG4','btnDG5'], 'btnDG2', 'scriptDudasGenerales', 'Ubicación y teléfono de farmacia / laboratorio')">Ubicación y teléfono de farmacia / laboratorio</button>
+          <button class="cat-btn cat-btn-celeste" id="btnDG3" onclick="mostrarNivel3(['btnDG1','btnDG2','btnDG3','btnDG4','btnDG5'], 'btnDG3', 'scriptDudasGenerales', 'Cuáles son las especialidades médicas')">Cuáles son las especialidades médicas</button>
+          <button class="cat-btn cat-btn-celeste" id="btnDG4" onclick="mostrarNivel3(['btnDG1','btnDG2','btnDG3','btnDG4','btnDG5'], 'btnDG4', 'scriptDudasGenerales', 'Cómo retirar medicamento')">Cómo retirar medicamento</button>
+          <button class="cat-btn cat-btn-celeste" id="btnDG5" onclick="mostrarNivel3(['btnDG1','btnDG2','btnDG3','btnDG4','btnDG5'], 'btnDG5', 'scriptDudasGenerales', 'Cómo realizarse estudios')">Cómo realizarse estudios</button>
         </div>
         <div class="bib-menu" id="scriptDudasGenerales" style="margin-top:16px; display:none;">
           <p class="consultas-script placeholder" id="scriptDudasGeneralesTexto">Selecciona un subtema para ver el script.</p>
