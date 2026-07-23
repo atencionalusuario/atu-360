@@ -148,7 +148,7 @@
   </div>
 
   <div id="vistaCategoria" style="display:none;">
-    <button class="bib-btn-volver" onclick="volverInicio()">&larr; Volver a Inicio</button>
+    <button class="bib-btn-volver" onclick="volverAtras()">&larr; Volver a atrás</button>
     <div class="bib-saludo">
       <h3 id="tituloCategoria" class="titulo-categoria"></h3>
       <div class="categoria-opciones" id="opcionesCategoria"></div>
@@ -264,18 +264,11 @@
     actualizarRuta(rutaActual.concat([NOMBRES_CATEGORIA[cat]]));
   }
 
-  function volverInicio() {
+  function volverAtras() {
     document.getElementById('vistaCategoria').style.display = 'none';
     document.getElementById('flujoSDP').style.display = 'flex';
 
-    ['cajaSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instRegistro', 'cajaRegistro', 'instMenu', 'botonesMenu'].forEach(function(id) {
-      document.getElementById(id).style.display = 'none';
-    });
-    ['btnSdpSi', 'btnSdpNo', 'btnConfSi', 'btnConfNo'].forEach(function(id) {
-      document.getElementById(id).classList.remove('active');
-    });
-
-    actualizarRuta([]);
+    actualizarRuta(rutaActual.slice(0, rutaActual.length - 1));
   }
 </script>
 <script src="notif.js"></script>
