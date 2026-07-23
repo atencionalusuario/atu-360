@@ -114,7 +114,7 @@
     <p class="instruccion" id="instRegistro" style="display:none;">Agregar al usuario como Solicitante en el SDP con los datos solicitados.</p>
 
     <div class="bib-saludo" id="cajaRegistro" style="display:none;">
-      <p>Muchas gracias por su espera en línea, SR / SRA XXX, dígame, ¿cómo puedo ayudarle?</p>
+      <p>Muchas gracias por su espera en línea, SR / SRA XXX, dígame, <strong>¿cómo puedo ayudarle?</strong></p>
     </div>
   </div>
 </div>
@@ -145,6 +145,15 @@
     });
   });
 
+  function actualizarRuta(pasos) {
+    var crumbs = ['Inicio'].concat(pasos);
+    document.getElementById('rutaBar').innerHTML = crumbs.map(function(label, i) {
+      var esActual = i === crumbs.length - 1;
+      var span = '<span class="ruta-item' + (esActual ? ' ruta-actual' : '') + '">' + label + '</span>';
+      return i === 0 ? span : '<span class="ruta-sep">&gt;</span>' + span;
+    }).join('');
+  }
+
   var TEXTOS_SDP = {
     si: '<p>Muchas gracias, ¿me podría confirmar si los últimos 4 dígitos de su teléfono siguen siendo XXXX?</p>',
     no: '<p>Muchas gracias, ¿me podría indicar su fecha de nacimiento y su número de teléfono?</p>' +
@@ -170,13 +179,15 @@
     var esNo = tipo === 'no';
     document.getElementById('instRegistro').style.display = esNo ? 'block' : 'none';
     document.getElementById('cajaRegistro').style.display = esNo ? 'block' : 'none';
+
+    actualizarRuta([esSi ? 'Está en SDP' : 'No está en SDP']);
   }
 
   var TEXTOS_CONFIRMACION = {
-    si: '<p>Muchas gracias SR / SRA XXX, dígame, ¿cómo puedo ayudarle?</p>',
+    si: '<p>Muchas gracias SR / SRA XXX, dígame, <strong>¿cómo puedo ayudarle?</strong></p>',
     no: '<p>Con mucho gusto le ayudo a actualizarlo, ¿me indica su nuevo número de contacto?</p>' +
         '<p>Gracias. Más adelante, antes de finalizar la atención, le ayudaré para actualizarlo en la plataforma.</p>' +
-        '<p>¿Cómo puedo ayudarle?</p>'
+        '<p><strong>¿Cómo puedo ayudarle?</strong></p>'
   };
 
   function mostrarConfirmacion(tipo) {
@@ -184,6 +195,8 @@
     document.getElementById('btnConfNo').classList.toggle('active', tipo === 'no');
     document.getElementById('cajaConfirmacion').style.display = 'block';
     document.getElementById('textoConfirmacion').innerHTML = TEXTOS_CONFIRMACION[tipo];
+
+    actualizarRuta(['Está en SDP', tipo === 'si' ? 'Mismo número' : 'Cambió de número']);
   }
 </script>
 <script src="notif.js"></script>
