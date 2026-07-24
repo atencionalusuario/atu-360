@@ -22,6 +22,7 @@ var BADGES_DEF = [
 var ITEMS_NAV = {
   home:        { id: 'home',        label: 'Inicio',             url: BASE+'home.html',        icon: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>' },
   flash:       { id: 'flash',       label: 'Flash Informativos', url: BASE+'flash.html',       icon: '<path d="M4 22h16a2 2 0 000-4H4v4z"/><path d="M18 18V2H6a2 2 0 00-2 2v14"/>', badge: true },
+  notificaciones: { id: 'notificaciones', label: 'Notificaciones', url: BASE+'notificaciones.html', icon: '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>', badge: true, badgeId: 'notifNavBadge' },
   solicitudes: { id: 'solicitudes', label: 'Solicitudes',        url: BASE+'solicitudes.html', icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>' },
   biblioteca:  { id: 'biblioteca',  label: 'Biblioteca',         url: BASE+'biblioteca.html',  icon: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' },
   miturno:     { id: 'miturno',     label: 'Mi Turno',           url: BASE+'miturno.html',     icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>' },
@@ -43,6 +44,7 @@ var ITEMS_NAV = {
   'jefe-transporte':  { id: 'jefe-transporte',  label: 'Transporte',         url: BASE+'transporte.html',     icon: '<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>' },
   'jefe-perfil':      { id: 'jefe-perfil',      label: 'Mi Perfil',          url: BASE+'perfil.html',         icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
   // Supervisor items — páginas standalone
+  'sup-notif':        { id: 'sup-notif',        label: 'Notificaciones',     url: BASE+'notificaciones.html', icon: '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>', badge: true, badgeId: 'notifNavBadge' },
   'sup-badges':       { id: 'sup-badges',       label: 'Badges',             url: BASE+'badges.html',         icon: '<circle cx="12" cy="8" r="6"/><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/>' },
   'sup-licencias':    { id: 'sup-licencias',    label: 'Licencias',          url: BASE+'licencias.html',      icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/>' },
   'sup-jornada':      { id: 'sup-jornada',      label: 'Home',               url: BASE+'home.html',           icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>' },
@@ -62,15 +64,15 @@ var ITEMS_NAV = {
 // reportes:  ítems del bloque "Reportes" (puede ser vacío)
 var NAV_POR_ROL = {
   agente: {
-    principal: ['home', 'flash', 'solicitudes', 'biblioteca', 'miturno'],
+    principal: ['home', 'flash', 'notificaciones', 'solicitudes', 'biblioteca', 'miturno'],
     reportes:  ['metricas', 'transporte', 'perfil']
   },
   'agente-inmersion': {
-    principal: ['home', 'flash', 'biblioteca', 'miturno'],
+    principal: ['home', 'flash', 'notificaciones', 'biblioteca', 'miturno'],
     reportes:  ['transporte', 'perfil']
   },
   formacion: {
-    principal: ['home', 'flash', 'solicitudes', 'biblioteca', 'miturno'],
+    principal: ['home', 'flash', 'notificaciones', 'solicitudes', 'biblioteca', 'miturno'],
     reportes:  ['metricas', 'transporte', 'perfil']
   },
   admin: {
@@ -82,7 +84,7 @@ var NAV_POR_ROL = {
     reportes:  []
   },
   supervisor: {
-    principal: ['sup-jornada','sup-turno','sup-monitoreo','sup-metricas','sup-flash','sup-solicitudes','sup-acciones','sup-licencias','sup-badges','sup-biblioteca','sup-transporte','sup-perfil'],
+    principal: ['sup-jornada','sup-turno','sup-monitoreo','sup-metricas','sup-flash','sup-notif','sup-solicitudes','sup-acciones','sup-licencias','sup-badges','sup-biblioteca','sup-transporte','sup-perfil'],
     reportes:  []
   },
   wfm: {
@@ -119,7 +121,7 @@ function renderSidebar(paginaActiva, rol) {
       var elemIdAttr = item.elemId ? ' id="' + item.elemId + '"' : '';
       var clickHandler = item.onclick ? item.onclick : 'window.location.href=\'' + item.url + '\'';
       var badgeHtml = item.badge
-        ? '<span id="flashBadge" style="display:none;background:#EF4444;color:white;font-size:0.58rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:auto;"></span>'
+        ? '<span id="' + (item.badgeId || 'flashBadge') + '" style="display:none;background:#EF4444;color:white;font-size:0.58rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:auto;"></span>'
         : '';
       return '<div class="nav-item' + isActive + '"' + elemIdAttr + ' onclick="' + clickHandler + '">'
         + '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' + item.icon + '</svg>'
@@ -219,6 +221,21 @@ function cargarFlashBadge(uid, db) {
     });
 }
 
+function cargarNotifBadge(uid, rol, db) {
+  var targets = [uid, 'todos', rol];
+  db.collection('notificaciones').where('uid', 'in', targets).get()
+    .then(function(snap) {
+      var sinLeer = 0;
+      snap.forEach(function(d) {
+        var data = d.data();
+        if (!(data.leidaPor || []).includes(uid)) sinLeer++;
+      });
+      var badge = document.getElementById('notifNavBadge');
+      if (badge && sinLeer > 0) { badge.textContent = sinLeer > 9 ? '9+' : sinLeer; badge.style.display = 'inline'; }
+    })
+    .catch(function(e) { console.warn('notif badge:', e.message); });
+}
+
 function detectarPagina() {
   var url = window.location.pathname;
   if (url.indexOf('badges') > -1)         return 'jefe-badges';
@@ -297,6 +314,7 @@ function initSidebar() {
       var conBadges = ['agente', 'supervisor', 'formacion'].indexOf(rol) > -1;
       if (conBadges) cargarBadges(user.uid, db);
       cargarFlashBadge(user.uid, db);
+      cargarNotifBadge(user.uid, rol, db);
     });
   });
 }
