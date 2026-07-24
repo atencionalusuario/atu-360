@@ -107,6 +107,7 @@
   </div>
 
   <div class="content">
+    <div id="borradoresBox"></div>
     <div id="postsList"><div class="loading"><div class="spinner"></div><br>Cargando publicaciones...</div></div>
   </div>
 </div>
@@ -134,11 +135,18 @@
       </div>
       <div>
         <label>Contenido *</label>
+        <div style="display:flex;gap:5px;margin-bottom:6px">
+          <button type="button" onclick="fmtFlash('negrita')" title="Negrita" style="width:32px;height:30px;border:1px solid #E2E8F0;border-radius:6px;background:white;cursor:pointer;font-family:inherit;font-size:0.85rem;font-weight:800;color:#374151">B</button>
+          <button type="button" onclick="fmtFlash('cursiva')" title="Cursiva" style="width:32px;height:30px;border:1px solid #E2E8F0;border-radius:6px;background:white;cursor:pointer;font-family:inherit;font-size:0.85rem;font-style:italic;color:#374151">I</button>
+          <button type="button" onclick="fmtFlash('tachado')" title="Tachado" style="width:32px;height:30px;border:1px solid #E2E8F0;border-radius:6px;background:white;cursor:pointer;font-family:inherit;font-size:0.85rem;text-decoration:line-through;color:#374151">S</button>
+        </div>
         <textarea id="mContenido" placeholder="Escribe el contenido..."></textarea>
+        <div style="font-size:0.68rem;color:#94A3B8;margin-top:4px">Formato: <strong>**negrita**</strong>, <em>_cursiva_</em>, <s>~~tachado~~</s></div>
       </div>
     </div>
     <div class="modal-foot">
       <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-cancel" id="btnBorrador" onclick="guardarBorrador()">Guardar borrador</button>
       <button class="btn-pub" id="btnPublicar" onclick="publicar()">Publicar ahora</button>
     </div>
   </div>
@@ -179,22 +187,63 @@
       rolUsuario = doc.exists ? doc.data().rol : null;
       if (rolUsuario === 'jefe' || rolUsuario === 'superadmin') {
         document.getElementById('btnNuevo').classList.add('visible');
+        cargarBorradores();
       }
     });
     cargarPosts();
     cargarMisLecturas();
   });
 
-  function abrirModal() {
-    document.getElementById('mTitulo').value = '';
-    document.getElementById('mCat').value = 'actualizacion';
-    document.getElementById('mContenido').value = '';
+  var _editId = null;
+  var borradores = [];
+
+  function abrirModal(id) {
+    _editId = (typeof id === 'string') ? id : null;
+    var p = _editId ? borradores.find(function(x){ return x.id === _editId; }) : null;
+    document.getElementById('mTitulo').value    = p ? (p.titulo || '') : '';
+    document.getElementById('mCat').value       = p ? (p.categoria || 'actualizacion') : 'actualizacion';
+    document.getElementById('mContenido').value = p ? (p.contenido || '') : '';
+    document.querySelector('#modalOverlay h3').textContent = _editId ? 'Editar borrador' : 'Nueva publicación';
     document.getElementById('modalOverlay').classList.add('show');
     document.getElementById('mTitulo').focus();
   }
 
   function cerrarModal() {
     document.getElementById('modalOverlay').classList.remove('show');
+    _editId = null;
+  }
+
+  // Inserta marcadores de formato alrededor de la selección del textarea
+  function fmtFlash(tipo) {
+    var ta = document.getElementById('mContenido');
+    var s = ta.selectionStart, e = ta.selectionEnd, v = ta.value, sel = v.substring(s, e);
+    var w  = tipo === 'negrita' ? '**' : tipo === 'cursiva' ? '_' : '~~';
+    var ph = tipo === 'negrita' ? 'negrita' : tipo === 'cursiva' ? 'cursiva' : 'tachado';
+    var ins = w + (sel || ph) + w;
+    ta.value = v.substring(0, s) + ins + v.substring(e);
+    ta.focus();
+    var pos = s + ins.length;
+    ta.setSelectionRange(pos, pos);
+  }
+
+  function guardarBorrador() {
+    var titulo    = document.getElementById('mTitulo').value.trim();
+    var cat       = document.getElementById('mCat').value;
+    var contenido = document.getElementById('mContenido').value.trim();
+    if (!titulo && !contenido) { showToast('Escribe al menos un título o contenido.'); return; }
+    var btn = document.getElementById('btnBorrador');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    var data = {
+      titulo: titulo, categoria: cat, contenido: contenido, estado: 'borrador',
+      autorUid: currentUser.uid, autorNombre: currentUser.email.split('@')[0],
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    var op;
+    if (_editId) { op = db.collection('flash_posts').doc(_editId).update(data); }
+    else { data.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp(); op = db.collection('flash_posts').add(data); }
+    op.then(function() { cerrarModal(); showToast('Borrador guardado.'); })
+      .catch(function(e) { console.error(e); showToast('Error al guardar el borrador.'); })
+      .finally(function() { btn.disabled = false; btn.textContent = 'Guardar borrador'; });
   }
 
   function publicar() {
@@ -204,24 +253,81 @@
     if (!titulo || !contenido) { showToast('Completa el título y el contenido.'); return; }
     var btn = document.getElementById('btnPublicar');
     btn.disabled = true; btn.textContent = 'Publicando...';
-    db.collection('flash_posts').add({
-      titulo:             titulo,
-      categoria:          cat,
-      contenido:          contenido,
-      estado:             'publicado',
-      autorUid:           currentUser.uid,
-      autorNombre:        currentUser.email.split('@')[0],
-      fechaCreacion:      firebase.firestore.FieldValue.serverTimestamp(),
+    var data = {
+      titulo: titulo, categoria: cat, contenido: contenido, estado: 'publicado',
+      autorUid: currentUser.uid, autorNombre: currentUser.email.split('@')[0],
+      fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(function() {
-      cerrarModal();
-      showToast('Publicado correctamente.');
-    }).catch(function(e) {
-      showToast('Error al publicar.');
-      console.error(e);
-    }).finally(function() {
-      btn.disabled = false; btn.textContent = 'Publicar ahora';
+    };
+    var op = _editId ? db.collection('flash_posts').doc(_editId).update(data)
+                     : db.collection('flash_posts').add(data);
+    op.then(function() { cerrarModal(); showToast('Publicado correctamente.'); })
+      .catch(function(e) { showToast('Error al publicar.'); console.error(e); })
+      .finally(function() { btn.disabled = false; btn.textContent = 'Publicar ahora'; });
+  }
+
+  // ── Borradores (jefe/superadmin) ────────────────────────────────────────────
+  function cargarBorradores() {
+    db.collection('flash_posts')
+      .where('estado', '==', 'borrador')
+      .onSnapshot(function(snap) {
+        borradores = [];
+        snap.forEach(function(doc) {
+          var d = doc.data();
+          if (d.autorUid === currentUser.uid) borradores.push(Object.assign({ id: doc.id }, d));
+        });
+        borradores.sort(function(a,b){ return (b.fechaActualizacion?b.fechaActualizacion.seconds:0)-(a.fechaActualizacion?a.fechaActualizacion.seconds:0); });
+        renderBorradores();
+      }, function(e){ console.warn('borradores:', e.message); });
+  }
+
+  function renderBorradores() {
+    var box = document.getElementById('borradoresBox');
+    if (!box) return;
+    if (!borradores.length) { box.innerHTML = ''; return; }
+    var bstyle = 'padding:5px 12px;border-radius:6px;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid';
+    var html = '<div style="margin-bottom:28px"><div style="font-size:0.72rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Borradores</div>';
+    borradores.forEach(function(p) {
+      html += '<div class="blog-entry" style="border-left:3px solid #F59E0B;margin-bottom:12px">'
+        + '<div style="padding:14px 20px;display:flex;align-items:center;gap:12px">'
+        + '<span class="post-cat '+(p.categoria||'')+'">'+escHtml(CATS[p.categoria]||p.categoria||'General')+'</span>'
+        + '<div style="flex:1;min-width:0">'
+        + '<div style="font-weight:700;color:#1E293B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml(p.titulo||'(Sin título)')+'</div>'
+        + '<div style="font-size:0.72rem;color:#94A3B8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml((p.contenido||'').substring(0,90))+'</div>'
+        + '</div>'
+        + '<button onclick="abrirModal(\''+p.id+'\')" style="'+bstyle+' #C7D2FE;background:white;color:#1A3DAA">Editar</button>'
+        + '<button onclick="publicarBorrador(\''+p.id+'\')" style="'+bstyle+' transparent;background:#1A3DAA;color:white">Publicar</button>'
+        + '<button onclick="eliminarBorrador(\''+p.id+'\')" style="'+bstyle+' #FECACA;background:#FEF2F2;color:#DC2626">Eliminar</button>'
+        + '</div></div>';
     });
+    html += '</div>';
+    box.innerHTML = html;
+  }
+
+  function publicarBorrador(id) {
+    if (!confirm('¿Publicar este borrador ahora?')) return;
+    db.collection('flash_posts').doc(id).update({
+      estado: 'publicado',
+      fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
+      fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){ showToast('Publicado correctamente.'); })
+      .catch(function(e){ console.error(e); showToast('No se pudo publicar.'); });
+  }
+
+  function eliminarBorrador(id) {
+    if (!confirm('¿Eliminar este borrador? Esta acción no se puede deshacer.')) return;
+    db.collection('flash_posts').doc(id).delete()
+      .then(function(){ showToast('Borrador eliminado.'); })
+      .catch(function(e){ console.error(e); showToast('No se pudo eliminar.'); });
+  }
+
+  // Formato seguro: escapa todo y luego convierte SOLO los marcadores controlados
+  function formatFlash(s) {
+    var t = escHtml(s);
+    t = t.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+    t = t.replace(/~~([^~\n]+)~~/g, '<s>$1</s>');
+    t = t.replace(/_([^_\n]+)_/g, '<em>$1</em>');
+    return t;
   }
 
   function showToast(msg) {
@@ -286,7 +392,7 @@
         +'</div>'
         +'<div class="entry-title">'+escHtml(p.titulo)+'</div>'
         +'<div class="entry-date"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'+fecha+'</div>'
-        +'<div class="entry-body">'+escHtml(p.contenido)+'</div>'
+        +'<div class="entry-body">'+formatFlash(p.contenido)+'</div>'
         +'<div class="entry-footer">'
         +'<div class="leido-status'+(leido?' done':'')+'">'
         +'<div class="leido-check'+(leido?' done':'')+'">'+
