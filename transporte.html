@@ -458,17 +458,87 @@
     return (momento.getTime() - Date.now()) > 48 * 3600 * 1000;
   }
 
-  window.cancelarFecha = function(id, fecha) {
+  // ===== EDITAR RESERVA (modal) =====
+  var _edId = null, _edFechas = [];
+
+  window.abrirEditar = function(id) {
     var r = _reservas.find(function(x){ return x.id === id; });
     if (!r) return;
-    if (!esCancelable(fecha, r.hora)) { showToast('Esa fecha ya no se puede cancelar (faltan menos de 48 horas).'); return; }
-    if (!confirm('¿Cancelar el transporte del ' + formatFecha(fecha) + '?')) return;
-    var restantes = (r.fechas || []).filter(function(f){ return f !== fecha; });
-    var ref = db.collection('transporte').doc(id);
-    var op = restantes.length === 0 ? ref.delete() : ref.update({ fechas: restantes });
-    op.then(function(){ showToast(restantes.length === 0 ? 'Reserva cancelada.' : 'Fecha cancelada.'); })
-      .catch(function(e){ console.error(e); showToast('No se pudo cancelar. Intenta de nuevo.'); });
+    _edId = id;
+    _edFechas = (r.fechas || []).slice();
+    var m = document.getElementById('edModal') || crearModalEditar();
+    document.getElementById('edRuta').textContent = (r.ruta || RUTAS[r.tipo] || r.tipo) + ' · ' + (r.tipo === 'entrada' ? 'Entrada' : 'Salida');
+    document.getElementById('edHora').value = r.hora || '00:00';
+    renderEdFechas();
+    m.style.display = 'flex';
   };
+
+  function renderEdFechas() {
+    var r = _reservas.find(function(x){ return x.id === _edId; });
+    var horaRef = r ? r.hora : '00:00';
+    document.getElementById('edFechas').innerHTML = _edFechas.length
+      ? _edFechas.map(function(f){
+          var canc = esCancelable(f, horaRef);
+          return '<span style="display:inline-flex;align-items:center;gap:4px;background:'+(canc?'#EEF2FF':'#F1F5F9')+';color:'+(canc?'#1A3DAA':'#94A3B8')+';border-radius:6px;padding:3px 8px;font-size:0.78rem;font-weight:600;margin:3px 5px 3px 0" title="'+(canc?'':'A menos de 48h — no se puede quitar')+'">'
+            + formatFecha(f)
+            + (canc ? '<button onclick="edQuitarFecha(\''+f+'\')" title="Quitar fecha" style="border:none;background:none;color:#DC2626;cursor:pointer;font-size:1rem;line-height:1;padding:0 0 0 3px">&times;</button>' : ' 🔒')
+            + '</span>';
+        }).join('')
+      : '<span style="font-size:0.8rem;color:#DC2626;font-weight:600">Sin fechas — al guardar se cancelará la reserva.</span>';
+  }
+
+  window.edQuitarFecha = function(f) {
+    var r = _reservas.find(function(x){ return x.id === _edId; });
+    if (r && !esCancelable(f, r.hora)) { showToast('Esa fecha está a menos de 48 horas.'); return; }
+    _edFechas = _edFechas.filter(function(x){ return x !== f; });
+    renderEdFechas();
+  };
+
+  function cerrarEdicion() {
+    var m = document.getElementById('edModal'); if (m) m.style.display = 'none';
+    _edId = null; _edFechas = [];
+  }
+
+  function guardarEdicion() {
+    if (!_edId) return;
+    var hora = document.getElementById('edHora').value;
+    var ref = db.collection('transporte').doc(_edId);
+    if (_edFechas.length === 0) {
+      if (!confirm('No quedan fechas. ¿Cancelar la reserva completa?')) return;
+      ref.delete().then(function(){ cerrarEdicion(); showToast('Reserva cancelada.'); })
+        .catch(function(e){ console.error(e); showToast('No se pudo guardar los cambios.'); });
+    } else {
+      ref.update({ fechas: _edFechas, hora: hora })
+        .then(function(){ cerrarEdicion(); showToast('Reserva actualizada.'); })
+        .catch(function(e){ console.error(e); showToast('No se pudo guardar los cambios.'); });
+    }
+  }
+
+  function crearModalEditar() {
+    var horas = '';
+    for (var h = 0; h < 24; h++) { var v = pad(h) + ':00'; horas += '<option value="'+v+'">'+v+'</option>'; }
+    var ov = document.createElement('div');
+    ov.id = 'edModal';
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.4);z-index:9999;display:none;align-items:center;justify-content:center;';
+    ov.innerHTML =
+      '<div style="background:white;border-radius:12px;width:440px;max-width:92vw;padding:24px;box-shadow:0 24px 48px rgba(0,0,0,0.18)">'
+      +'<div style="font-size:0.98rem;font-weight:700;color:#1E293B;margin-bottom:4px">Editar reserva</div>'
+      +'<div id="edRuta" style="font-size:0.8rem;color:#64748B;margin-bottom:16px"></div>'
+      +'<div style="font-size:0.75rem;font-weight:700;color:#374151;margin-bottom:6px">Fechas</div>'
+      +'<div id="edFechas" style="display:flex;flex-wrap:wrap;margin-bottom:6px"></div>'
+      +'<div style="font-size:0.68rem;color:#94A3B8;margin-bottom:16px">Solo puedes quitar fechas con más de 48 horas de anticipación.</div>'
+      +'<div style="font-size:0.75rem;font-weight:700;color:#374151;margin-bottom:6px">Hora</div>'
+      +'<select id="edHora" style="width:100%;padding:9px 12px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:0.85rem;font-family:inherit;background:white;outline:none">'+horas+'</select>'
+      +'<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px">'
+      +'<button id="edCancel" style="padding:9px 16px;border:1.5px solid #E2E8F0;border-radius:7px;background:white;font-size:0.82rem;font-weight:600;color:#374151;cursor:pointer;font-family:inherit">Cancelar</button>'
+      +'<button id="edOk" style="padding:9px 16px;border:none;border-radius:7px;background:#1A3DAA;color:white;font-size:0.82rem;font-weight:700;cursor:pointer;font-family:inherit">Guardar cambios</button>'
+      +'</div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function(e){ if (e.target === ov) cerrarEdicion(); });
+    document.getElementById('edCancel').addEventListener('click', cerrarEdicion);
+    document.getElementById('edOk').addEventListener('click', guardarEdicion);
+    return ov;
+  }
 
   function renderLista(items) {
     var el = document.getElementById('tpLista');
@@ -484,21 +554,8 @@
       var fechasStr = r.fechas && r.fechas.length
         ? r.fechas.map(function(f){ return formatFecha(f); }).join(', ')
         : '—';
-      var editable = (r.estado || 'pendiente') === 'pendiente';
-      var fechasHtml;
-      if (editable && r.fechas && r.fechas.length) {
-        fechasHtml = '<div style="display:flex;flex-wrap:wrap;gap:5px;margin:4px 0">'
-          + r.fechas.map(function(f){
-              var canc = esCancelable(f, r.hora);
-              return '<span style="display:inline-flex;align-items:center;gap:3px;background:'+(canc?'#EEF2FF':'#F1F5F9')+';color:'+(canc?'#1A3DAA':'#94A3B8')+';border-radius:6px;padding:2px 6px;font-size:0.72rem;font-weight:600" title="'+(canc?'':'A menos de 48h — no editable')+'">'
-                + formatFecha(f)
-                + (canc ? '<button onclick="cancelarFecha(\''+r.id+'\',\''+f+'\')" title="Cancelar esta fecha" style="border:none;background:none;color:#DC2626;cursor:pointer;font-size:0.95rem;line-height:1;padding:0 0 0 2px">&times;</button>' : '')
-                + '</span>';
-            }).join('')
-          + '</div>';
-      } else {
-        fechasHtml = '<div class="tp-item-fechas">' + fechasStr + '</div>';
-      }
+      var puedeEditar = (r.estado || 'pendiente') === 'pendiente'
+        && (r.fechas || []).some(function(f){ return esCancelable(f, r.hora); });
       var ts = r.fechaSolicitud ? r.fechaSolicitud.toDate().toLocaleString('es-SV',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
       html += '<div class="tp-item">'
         + '<div class="tp-item-icon ' + r.tipo + '">'
@@ -508,9 +565,10 @@
         + '</div>'
         + '<div class="tp-item-body">'
         + '<div class="tp-item-ruta">' + (r.ruta || RUTAS[r.tipo] || r.tipo) + '</div>'
-        + fechasHtml
+        + '<div class="tp-item-fechas">' + fechasStr + '</div>'
         + '<div class="tp-item-hora">&#x1F552; ' + (r.hora || '—') + '</div>'
         + '<div class="tp-item-meta">Solicitado: ' + ts + '</div>'
+        + (puedeEditar ? '<button onclick="abrirEditar(\''+r.id+'\')" style="margin-top:8px;padding:5px 14px;border:1px solid #C7D2FE;border-radius:6px;background:white;color:#1A3DAA;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit">Editar</button>' : '')
         + '</div>'
         + '<span class="tp-estado ' + (r.estado||'pendiente') + '">' + ucFirst(r.estado||'pendiente') + '</span>'
         + '</div>';
