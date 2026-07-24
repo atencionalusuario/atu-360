@@ -171,6 +171,9 @@
   var currentUser = null;
   var posts = [];
   var misLecturas = {};
+  var lecturasPorPost = {};   // postId -> { uid: true } (todas las lecturas)
+  var audiencia = [];         // usuarios activos que deben leer el flash
+  var esGestor = false;       // jefe / formacion / superadmin (ven estadísticas)
 
   var CATS = { actualizacion:'Actualización', noticia:'Noticia', cambio:'Cambio', urgente:'Urgente' };
 
@@ -189,6 +192,8 @@
         document.getElementById('btnNuevo').classList.add('visible');
         cargarBorradores();
       }
+      esGestor = ['jefe','formacion','superadmin'].indexOf(rolUsuario) >= 0;
+      if (esGestor) { cargarAudiencia(); cargarLecturasTodas(); }
     });
     cargarPosts();
     cargarMisLecturas();
@@ -330,6 +335,100 @@
     return t;
   }
 
+  // ── Estadísticas de lectura (jefe / formación) ──────────────────────────────
+  function statsBar(p) {
+    if (!esGestor) return '';
+    var readers = lecturasPorPost[p.id] || {};
+    var total  = audiencia.length;
+    var leidos = audiencia.filter(function(u){ return readers[u.id]; }).length;
+    var faltan = total - leidos;
+    return '<div style="padding:10px 28px;background:#F8FAFC;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between;gap:12px">'
+      + '<span style="font-size:0.78rem;color:#475569;font-weight:600">&#x1F4CA; <strong style="color:#1A3DAA">'+leidos+'</strong> de '+total+' han leído</span>'
+      + '<button onclick="verNoLeidos(\''+p.id+'\')" style="padding:5px 12px;border:1px solid #C7D2FE;border-radius:6px;background:white;color:#1A3DAA;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit">Ver no leídos ('+faltan+')</button>'
+      + '</div>';
+  }
+
+  function cargarAudiencia() {
+    var consumidores = ['agente','agente-inmersion','supervisor','formacion'];
+    db.collection('usuarios').get().then(function(snap) {
+      audiencia = [];
+      snap.forEach(function(doc) {
+        var d = doc.data();
+        if (d.activo === false) return;
+        if (consumidores.indexOf(d.rol) < 0) return;
+        audiencia.push({ id: doc.id, nombre: d.nombre || d.email || '(sin nombre)', supervisor: d.supervisor || d.emailSupervisor || '—' });
+      });
+      renderPosts();
+    }).catch(function(e){ console.warn('audiencia:', e.message); });
+  }
+
+  function cargarLecturasTodas() {
+    db.collection('flash_lecturas').onSnapshot(function(snap) {
+      lecturasPorPost = {};
+      snap.forEach(function(doc) {
+        var d = doc.data();
+        if (!d.postId || !d.uid) return;
+        if (!lecturasPorPost[d.postId]) lecturasPorPost[d.postId] = {};
+        lecturasPorPost[d.postId][d.uid] = true;
+      });
+      renderPosts();
+    }, function(e){ console.warn('lecturas:', e.message); });
+  }
+
+  var _nlLista = [];
+
+  window.verNoLeidos = function(postId) {
+    var readers = lecturasPorPost[postId] || {};
+    var noLeidos = audiencia.filter(function(u){ return !readers[u.id]; });
+    noLeidos.sort(function(a,b){
+      var s = (a.supervisor||'').localeCompare(b.supervisor||'','es');
+      return s !== 0 ? s : (a.nombre||'').localeCompare(b.nombre||'','es');
+    });
+    _nlLista = noLeidos;
+    var post = posts.find(function(x){ return x.id === postId; });
+    var m = document.getElementById('nlModal') || crearModalNoLeidos();
+    document.getElementById('nlTitulo').textContent  = 'No han leído: ' + (post ? (post.titulo || '') : '');
+    document.getElementById('nlResumen').textContent = noLeidos.length + ' de ' + audiencia.length + ' pendientes';
+    var body = document.getElementById('nlBody');
+    body.innerHTML = noLeidos.length
+      ? noLeidos.map(function(u){
+          return '<div style="display:flex;justify-content:space-between;gap:12px;padding:9px 4px;border-bottom:1px solid #F1F5F9;font-size:0.8rem">'
+            + '<span style="color:#1E293B;font-weight:600">'+escHtml(u.nombre)+'</span>'
+            + '<span style="color:#94A3B8">'+escHtml(u.supervisor)+'</span>'
+            + '</div>';
+        }).join('')
+      : '<div style="padding:24px;text-align:center;color:#16A34A;font-size:0.85rem;font-weight:600">&#x2713; Todos han leído esta publicación.</div>';
+    m.style.display = 'flex';
+  };
+
+  function crearModalNoLeidos() {
+    var ov = document.createElement('div');
+    ov.id = 'nlModal';
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.4);z-index:9999;display:none;align-items:center;justify-content:center;';
+    ov.innerHTML =
+      '<div style="background:white;border-radius:12px;width:460px;max-width:92vw;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 24px 48px rgba(0,0,0,0.18)">'
+      +'<div style="padding:20px 24px 12px;border-bottom:1px solid #F1F5F9">'
+      +'<div id="nlTitulo" style="font-size:0.95rem;font-weight:700;color:#1E293B"></div>'
+      +'<div id="nlResumen" style="font-size:0.75rem;color:#94A3B8;margin-top:2px"></div>'
+      +'<div style="display:flex;justify-content:space-between;margin-top:10px;font-size:0.62rem;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:0.5px"><span>Persona</span><span>Supervisor</span></div>'
+      +'</div>'
+      +'<div id="nlBody" style="overflow-y:auto;padding:6px 24px;flex:1"></div>'
+      +'<div style="padding:14px 24px;border-top:1px solid #F1F5F9;display:flex;justify-content:flex-end;gap:8px">'
+      +'<button id="nlCopiar" style="padding:8px 14px;border:1px solid #E2E8F0;border-radius:7px;background:white;font-size:0.8rem;font-weight:600;color:#374151;cursor:pointer;font-family:inherit">Copiar lista</button>'
+      +'<button id="nlCerrar" style="padding:8px 14px;border:none;border-radius:7px;background:#1A3DAA;color:white;font-size:0.8rem;font-weight:700;cursor:pointer;font-family:inherit">Cerrar</button>'
+      +'</div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function(e){ if (e.target === ov) ov.style.display='none'; });
+    document.getElementById('nlCerrar').addEventListener('click', function(){ ov.style.display='none'; });
+    document.getElementById('nlCopiar').addEventListener('click', function(){
+      if (!_nlLista.length) { showToast('No hay pendientes para copiar.'); return; }
+      var txt = _nlLista.map(function(u){ return u.nombre + '\t' + u.supervisor; }).join('\n');
+      if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){ showToast('Lista copiada.'); }, function(){ showToast('No se pudo copiar.'); });
+      else showToast('Copia no disponible en este navegador.');
+    });
+    return ov;
+  }
+
   function showToast(msg) {
     var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
     setTimeout(function(){ t.classList.remove('show'); }, 3000);
@@ -393,6 +492,7 @@
         +'<div class="entry-title">'+escHtml(p.titulo)+'</div>'
         +'<div class="entry-date"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'+fecha+'</div>'
         +'<div class="entry-body">'+formatFlash(p.contenido)+'</div>'
+        + statsBar(p)
         +'<div class="entry-footer">'
         +'<div class="leido-status'+(leido?' done':'')+'">'
         +'<div class="leido-check'+(leido?' done':'')+'">'+
