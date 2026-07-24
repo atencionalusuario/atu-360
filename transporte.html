@@ -447,6 +447,29 @@
       }, function(e){ console.error(e); });
   }
 
+  var _reservas = [];
+
+  // >48h de anticipación respecto a la fecha+hora de esa reserva
+  function esCancelable(fecha, hora) {
+    if (!fecha) return false;
+    var h = (hora && /^\d{1,2}:\d{2}$/.test(hora)) ? hora : '00:00';
+    var momento = new Date(fecha + 'T' + h + ':00');
+    if (isNaN(momento.getTime())) return false;
+    return (momento.getTime() - Date.now()) > 48 * 3600 * 1000;
+  }
+
+  window.cancelarFecha = function(id, fecha) {
+    var r = _reservas.find(function(x){ return x.id === id; });
+    if (!r) return;
+    if (!esCancelable(fecha, r.hora)) { showToast('Esa fecha ya no se puede cancelar (faltan menos de 48 horas).'); return; }
+    if (!confirm('¿Cancelar el transporte del ' + formatFecha(fecha) + '?')) return;
+    var restantes = (r.fechas || []).filter(function(f){ return f !== fecha; });
+    var ref = db.collection('transporte').doc(id);
+    var op = restantes.length === 0 ? ref.delete() : ref.update({ fechas: restantes });
+    op.then(function(){ showToast(restantes.length === 0 ? 'Reserva cancelada.' : 'Fecha cancelada.'); })
+      .catch(function(e){ console.error(e); showToast('No se pudo cancelar. Intenta de nuevo.'); });
+  };
+
   function renderLista(items) {
     var el = document.getElementById('tpLista');
     var hoyStr = toISO(new Date());
@@ -454,12 +477,28 @@
       if (!r.fechas || r.fechas.length === 0) return true;
       return r.fechas.some(function(f) { return f >= hoyStr; });
     });
+    _reservas = items;
     if (items.length === 0) { el.innerHTML = '<div class="tp-empty">Sin reservas aún</div>'; return; }
     var html = '';
     items.forEach(function(r) {
       var fechasStr = r.fechas && r.fechas.length
         ? r.fechas.map(function(f){ return formatFecha(f); }).join(', ')
         : '—';
+      var editable = (r.estado || 'pendiente') === 'pendiente';
+      var fechasHtml;
+      if (editable && r.fechas && r.fechas.length) {
+        fechasHtml = '<div style="display:flex;flex-wrap:wrap;gap:5px;margin:4px 0">'
+          + r.fechas.map(function(f){
+              var canc = esCancelable(f, r.hora);
+              return '<span style="display:inline-flex;align-items:center;gap:3px;background:'+(canc?'#EEF2FF':'#F1F5F9')+';color:'+(canc?'#1A3DAA':'#94A3B8')+';border-radius:6px;padding:2px 6px;font-size:0.72rem;font-weight:600" title="'+(canc?'':'A menos de 48h — no editable')+'">'
+                + formatFecha(f)
+                + (canc ? '<button onclick="cancelarFecha(\''+r.id+'\',\''+f+'\')" title="Cancelar esta fecha" style="border:none;background:none;color:#DC2626;cursor:pointer;font-size:0.95rem;line-height:1;padding:0 0 0 2px">&times;</button>' : '')
+                + '</span>';
+            }).join('')
+          + '</div>';
+      } else {
+        fechasHtml = '<div class="tp-item-fechas">' + fechasStr + '</div>';
+      }
       var ts = r.fechaSolicitud ? r.fechaSolicitud.toDate().toLocaleString('es-SV',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : '—';
       html += '<div class="tp-item">'
         + '<div class="tp-item-icon ' + r.tipo + '">'
@@ -469,7 +508,7 @@
         + '</div>'
         + '<div class="tp-item-body">'
         + '<div class="tp-item-ruta">' + (r.ruta || RUTAS[r.tipo] || r.tipo) + '</div>'
-        + '<div class="tp-item-fechas">' + fechasStr + '</div>'
+        + fechasHtml
         + '<div class="tp-item-hora">&#x1F552; ' + (r.hora || '—') + '</div>'
         + '<div class="tp-item-meta">Solicitado: ' + ts + '</div>'
         + '</div>'
