@@ -188,12 +188,13 @@
     currentUser = user;
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
       rolUsuario = doc.exists ? doc.data().rol : null;
-      if (rolUsuario === 'jefe' || rolUsuario === 'superadmin') {
+      esGestor = ['jefe','formacion','superadmin'].indexOf(rolUsuario) >= 0;
+      if (esGestor) {
         document.getElementById('btnNuevo').classList.add('visible');
         cargarBorradores();
+        cargarAudiencia();
+        cargarLecturasTodas();
       }
-      esGestor = ['jefe','formacion','superadmin'].indexOf(rolUsuario) >= 0;
-      if (esGestor) { cargarAudiencia(); cargarLecturasTodas(); }
     });
     cargarPosts();
     cargarMisLecturas();
