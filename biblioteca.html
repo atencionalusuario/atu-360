@@ -68,8 +68,9 @@
   .bib-btn-volver { align-self: flex-start; background: none; border: none; color: #1A3DAA; font-weight: 600; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; padding: 4px 0; }
   .bib-btn-volver:hover { text-decoration: underline; }
   .titulo-categoria { font-size: 0.95rem; font-weight: 700; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 10px; }
-  .categoria-opciones { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .categoria-opciones .bib-btn { width: 100%; min-width: 0; text-align: left; }
+  .categoria-opciones { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .categoria-opciones.dos-columnas { display: grid; grid-template-columns: 1fr 1fr; }
+  .categoria-opciones.dos-columnas .bib-btn { width: 100%; min-width: 0; text-align: left; }
 </style>
 </head>
 <body>
@@ -302,7 +303,9 @@
     document.getElementById('flujoSDP').style.display = 'none';
     document.getElementById('vistaCategoria').style.display = 'flex';
     document.getElementById('tituloCategoria').textContent = vista.titulo;
-    document.getElementById('opcionesCategoria').innerHTML = opcionesActuales.map(function(op, i) {
+    var contenedor = document.getElementById('opcionesCategoria');
+    contenedor.classList.toggle('dos-columnas', opcionesActuales.length > 8);
+    contenedor.innerHTML = opcionesActuales.map(function(op, i) {
       var label = typeof op === 'string' ? op : op.label;
       return '<button class="bib-btn" onclick="clickOpcion(' + i + ')">' + label + '</button>';
     }).join('');
