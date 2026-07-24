@@ -524,8 +524,8 @@
 +'<option value="horas-extras"'+(s&&s.tipo==='horas-extras'?' selected':'')+'>Horas extras</option>'
 +'</select></div>'
       +'<div class="field-row">'
-      +'<div><label class="field-label">Fecha inicio <span class="field-req">*</span></label><input type="date" id="fFechaInicio" value="'+(s&&s.fechaInicio?s.fechaInicio:'')+'"></div>'
-      +'<div><label class="field-label">Fecha fin <span class="field-req">*</span></label><input type="date" id="fFechaFin" value="'+(s&&s.fechaFin?s.fechaFin:'')+'"></div>'
+      +'<div><label class="field-label">Fecha inicio <span class="field-req">*</span></label><input type="date" id="fFechaInicio" value="'+(s&&s.fechaInicio?s.fechaInicio:'')+'" onchange="document.getElementById(\'fFechaFin\').min=this.value; if(document.getElementById(\'fFechaFin\').value&&document.getElementById(\'fFechaFin\').value<this.value)document.getElementById(\'fFechaFin\').value=this.value;"></div>'
+      +'<div><label class="field-label">Fecha fin <span class="field-req">*</span></label><input type="date" id="fFechaFin" value="'+(s&&s.fechaFin?s.fechaFin:'')+'" min="'+(s&&s.fechaInicio?s.fechaInicio:'')+'"></div>'
       +'</div>'
       +'<div class="field-row">'
       +'<div><label class="field-label">Hora inicio <span class="field-req">*</span></label><input type="time" id="fHoraInicio" value="'+(s&&s.horaInicio?s.horaInicio:'')+'"></div>'
@@ -615,7 +615,9 @@
 
     if (estado !== 'borrador') {
       if (!fi || !ff)  { showToast('Selecciona las fechas de la solicitud.'); return; }
+      if (ff < fi)     { showToast('La fecha de fin no puede ser anterior a la fecha de inicio.'); return; }
       if (!hi || !hf)  { showToast('Selecciona la hora de inicio y hora de fin.'); return; }
+      if (ff === fi && hf <= hi) { showToast('En el mismo día, la hora de fin debe ser posterior a la de inicio.'); return; }
       if (!com)        { showToast('Agrega un comentario.'); return; }
     }
 
