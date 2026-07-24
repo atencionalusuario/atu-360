@@ -654,6 +654,7 @@
 
     document.getElementById('dpFooter').innerHTML=
       '<button class="btn-sec" onclick="abrirModalForm(\''+u.id+'\')">Editar</button>'
+      +'<button class="btn-sec" onclick="resetPass(\''+u.id+'\')">Restablecer contraseña</button>'
       +(u.activo
         ?'<button class="btn-danger" onclick="pedirConfirm(\''+u.id+'\',false)">Desactivar</button>'
         :'<button class="btn-pri-sm" onclick="cambiarEstado(\''+u.id+'\',true)">Activar</button>')
@@ -862,6 +863,15 @@
       .catch(function(err){ showToast('Error al actualizar.'); console.error(err); });
   }
   function cerrarConfirm(){ document.getElementById('modalConfirm').classList.remove('show'); }
+
+  function resetPass(id){
+    var u=usuarios.find(function(x){return x.id===id;});
+    if(!u||!u.email){ showToast('Este usuario no tiene correo registrado.'); return; }
+    if(!confirm('¿Enviar un correo de restablecimiento de contraseña a '+u.email+'?\n\nEl usuario recibirá un enlace para definir una nueva contraseña.')) return;
+    auth.sendPasswordResetEmail(u.email)
+      .then(function(){ showToast('Correo de restablecimiento enviado a '+u.email+'.'); })
+      .catch(function(e){ console.error(e); showToast('No se pudo enviar el correo: '+(e.code||e.message)); });
+  }
 
   function pedirEliminar(id){
     var u=usuarios.find(function(x){return x.id===id;});
