@@ -40,10 +40,6 @@
   .topbar-left h2 { font-size: 0.85rem; font-weight: 600; }
   .topbar-sep { color: #CBD5E1; }
   .topbar-left p { font-size: 0.74rem; color: #94A3B8; }
-  .topbar-search { flex: 1; max-width: 360px; margin: 0 24px; position: relative; }
-  .topbar-search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: #94A3B8; pointer-events: none; }
-  .topbar-search input { width: 100%; padding: 7px 12px 7px 32px; border-radius: 999px; border: 1.5px solid #E2E8F0; background: #F8FAFC; font-size: 0.78rem; font-family: 'Inter', sans-serif; outline: none; color: #1E293B; }
-  .topbar-search input:focus { border-color: #29ABE2; background: white; }
   .tb-clock { font-size: 0.92rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
 
   /* RUTA DEL AGENTE */
@@ -75,6 +71,13 @@
   .bib-btn-volver { align-self: flex-start; background: none; border: none; color: #1A3DAA; font-weight: 600; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; padding: 4px 0; }
   .bib-btn-volver:hover { text-decoration: underline; }
   .titulo-categoria { font-size: 0.95rem; font-weight: 700; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 10px; }
+  .caja-busqueda-cat { width: 100%; max-width: 640px; text-align: center; }
+  .pregunta-categoria { font-size: 1.1rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 6px; }
+  .caja-busqueda-cat .instruccion { display: block; margin-bottom: 14px; }
+  .busqueda-input-wrap { position: relative; max-width: 420px; margin: 0 auto; }
+  .busqueda-input-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #94A3B8; pointer-events: none; }
+  .busqueda-input-wrap input { width: 100%; padding: 10px 14px 10px 38px; border-radius: 999px; border: 1.5px solid #E2E8F0; background: #F8FAFC; font-size: 0.85rem; font-family: 'Inter', sans-serif; outline: none; color: #1E293B; }
+  .busqueda-input-wrap input:focus { border-color: #29ABE2; background: white; }
   .categoria-opciones { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .categoria-opciones .bib-btn { width: 380px; }
   .categoria-opciones.dos-columnas { display: grid; grid-template-columns: 1fr 1fr; }
@@ -91,10 +94,6 @@
       <h2>Biblioteca</h2>
       <span class="topbar-sep">/</span>
       <p>Guía telefónica</p>
-    </div>
-    <div class="topbar-search">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-      <input type="text" id="buscadorTop" placeholder="Buscar...">
     </div>
     <div class="topbar-right">
       <div class="tb-clock" id="clock">--:--:--</div>
@@ -162,6 +161,16 @@
 
   <div id="vistaCategoria" style="display:none;">
     <button class="bib-btn-volver" onclick="volverAtras()">&larr; Volver a atrás</button>
+
+    <div class="caja-busqueda-cat" id="cajaBusquedaCategoria" style="display:none;">
+      <h2 class="pregunta-categoria">¿Qué tipo de información necesita el usuario?</h2>
+      <p class="instruccion">Puedes buscar por palabra clave o hacer clic en los botones.</p>
+      <div class="busqueda-input-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="buscadorCategoria" placeholder="Buscar...">
+      </div>
+    </div>
+
     <div class="bib-saludo">
       <h3 id="tituloCategoria" class="titulo-categoria"></h3>
       <div class="categoria-opciones" id="opcionesCategoria"></div>
@@ -316,14 +325,17 @@
 
   var OPCIONES_CATEGORIA = {
     consulta: ARBOL_CONSULTA,
-    gestion: ['Opción de gestión de prueba 1', 'Opción de gestión de prueba 2'],
+    gestion: ['Gestión de citas', 'Gestión de perfiles', 'Gestión de recetas / órdenes', 'Gestiones programa crónicos'],
     incidencia: ['Opción de incidencia de prueba 1', 'Opción de incidencia de prueba 2']
   };
 
   var pilaVistas = [];
   var opcionesActuales = [];
 
+  var categoriaActualId = null;
+
   function mostrarCategoria(cat) {
+    categoriaActualId = cat;
     pilaVistas = [];
     pushVistaOpciones(NOMBRES_CATEGORIA[cat], OPCIONES_CATEGORIA[cat]);
   }
@@ -351,6 +363,11 @@
 
     document.getElementById('flujoSDP').style.display = 'none';
     document.getElementById('vistaCategoria').style.display = 'flex';
+
+    var esNivelPrincipal = pilaVistas.length === 1;
+    var mostrarBusqueda = esNivelPrincipal && categoriaActualId === 'consulta';
+    document.getElementById('cajaBusquedaCategoria').style.display = mostrarBusqueda ? 'block' : 'none';
+
     document.getElementById('tituloCategoria').textContent = vista.titulo;
     var contenedor = document.getElementById('opcionesCategoria');
     contenedor.classList.toggle('dos-columnas', opcionesActuales.length > 8);
