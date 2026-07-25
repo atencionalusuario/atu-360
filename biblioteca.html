@@ -46,6 +46,8 @@
   .ruta-bar { background: white; padding: 9px 24px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #E2E8F0; font-family: 'Inter', sans-serif; }
   .ruta-item { font-size: 0.76rem; color: #94A3B8; }
   .ruta-item.ruta-actual { color: #0F2070; font-weight: 700; }
+  .ruta-item.ruta-link { cursor: pointer; }
+  .ruta-item.ruta-link:hover { color: #1A3DAA; text-decoration: underline; }
   .ruta-sep { color: #CBD5E1; font-size: 0.76rem; }
 
   /* BIBLIOTECA CONTENT */
@@ -185,16 +187,33 @@
     });
   });
 
-  var rutaActual = [];
+  function irAInicio() {
+    pilaVistas = [];
+    document.getElementById('vistaCategoria').style.display = 'none';
+    document.getElementById('flujoSDP').style.display = 'flex';
+    ['cajaSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instRegistro', 'cajaRegistro', 'instMenu', 'botonesMenu'].forEach(function(id) {
+      document.getElementById(id).style.display = 'none';
+    });
+    ['btnSdpSi', 'btnSdpNo', 'btnConfSi', 'btnConfNo'].forEach(function(id) {
+      document.getElementById(id).classList.remove('active');
+    });
+  }
 
-  function actualizarRuta(pasos) {
-    rutaActual = pasos;
-    var crumbs = ['Inicio'].concat(rutaActual);
-    document.getElementById('rutaBar').innerHTML = crumbs.map(function(label, i) {
-      var esActual = i === crumbs.length - 1;
-      var span = '<span class="ruta-item' + (esActual ? ' ruta-actual' : '') + '">' + label + '</span>';
+  var historial = [{ label: 'Inicio', restaurar: irAInicio }];
+
+  function renderRuta() {
+    document.getElementById('rutaBar').innerHTML = historial.map(function(c, i) {
+      var esActual = i === historial.length - 1;
+      var span = '<span class="ruta-item' + (esActual ? ' ruta-actual' : ' ruta-link') +
+        '"' + (esActual ? '' : ' onclick="irACrumb(' + i + ')"') + '>' + c.label + '</span>';
       return i === 0 ? span : '<span class="ruta-sep">&gt;</span>' + span;
     }).join('');
+  }
+
+  function irACrumb(indice) {
+    historial[indice].restaurar();
+    historial = historial.slice(0, indice + 1);
+    renderRuta();
   }
 
   var TEXTOS_SDP = {
@@ -213,11 +232,11 @@
     var esSi = tipo === 'si';
     document.getElementById('instConfirmacion').style.display = esSi ? 'block' : 'none';
     document.getElementById('botonesConfirmacion').style.display = esSi ? 'flex' : 'none';
-    if (!esSi) {
-      document.getElementById('cajaConfirmacion').style.display = 'none';
-      document.getElementById('btnConfSi').classList.remove('active');
-      document.getElementById('btnConfNo').classList.remove('active');
-    }
+
+    // El paso de confirmacion aun no se ha elegido de nuevo, se oculta siempre al reentrar aqui
+    document.getElementById('cajaConfirmacion').style.display = 'none';
+    document.getElementById('btnConfSi').classList.remove('active');
+    document.getElementById('btnConfNo').classList.remove('active');
 
     var esNo = tipo === 'no';
     document.getElementById('instRegistro').style.display = esNo ? 'block' : 'none';
@@ -226,7 +245,12 @@
     document.getElementById('instMenu').style.display = esNo ? 'block' : 'none';
     document.getElementById('botonesMenu').style.display = esNo ? 'flex' : 'none';
 
-    actualizarRuta([esSi ? 'Está en SDP' : 'No está en SDP']);
+    pilaVistas = [];
+    document.getElementById('vistaCategoria').style.display = 'none';
+    document.getElementById('flujoSDP').style.display = 'flex';
+
+    historial = [historial[0], { label: esSi ? 'Está en SDP' : 'No está en SDP', restaurar: function() { mostrarSDP(tipo); } }];
+    renderRuta();
   }
 
   var TEXTOS_CONFIRMACION = {
@@ -245,7 +269,11 @@
     document.getElementById('instMenu').style.display = 'block';
     document.getElementById('botonesMenu').style.display = 'flex';
 
-    actualizarRuta(['Está en SDP', tipo === 'si' ? 'Mismo número' : 'Cambió de número']);
+    historial = historial.slice(0, 2).concat([{
+      label: tipo === 'si' ? 'Mismo número' : 'Cambió de número',
+      restaurar: function() { mostrarSDP('si'); mostrarConfirmacion(tipo); }
+    }]);
+    renderRuta();
   }
 
   var NOMBRES_CATEGORIA = { consulta: 'Consulta', gestion: 'Gestión', incidencia: 'Incidencia' };
@@ -295,7 +323,18 @@
   function pushVistaOpciones(titulo, opciones) {
     pilaVistas.push({ titulo: titulo, opciones: opciones });
     renderVistaActual();
-    actualizarRuta(rutaActual.concat([titulo]));
+
+    var snapshot = pilaVistas.slice();
+    historial = historial.concat([{
+      label: titulo,
+      restaurar: function() {
+        document.getElementById('flujoSDP').style.display = 'none';
+        document.getElementById('vistaCategoria').style.display = 'flex';
+        pilaVistas = snapshot.slice();
+        renderVistaActual();
+      }
+    }]);
+    renderRuta();
   }
 
   function renderVistaActual() {
@@ -321,14 +360,8 @@
   }
 
   function volverAtras() {
-    pilaVistas.pop();
-    actualizarRuta(rutaActual.slice(0, rutaActual.length - 1));
-
-    if (pilaVistas.length === 0) {
-      document.getElementById('vistaCategoria').style.display = 'none';
-      document.getElementById('flujoSDP').style.display = 'flex';
-    } else {
-      renderVistaActual();
+    if (historial.length > 1) {
+      irACrumb(historial.length - 2);
     }
   }
 </script>
