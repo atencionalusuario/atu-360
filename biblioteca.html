@@ -78,6 +78,15 @@
   .busqueda-input-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #94A3B8; pointer-events: none; }
   .busqueda-input-wrap input { width: 100%; padding: 10px 14px 10px 38px; border-radius: 999px; border: 1.5px solid #E2E8F0; background: #F8FAFC; font-size: 0.85rem; font-family: 'Inter', sans-serif; outline: none; color: #1E293B; }
   .busqueda-input-wrap input:focus { border-color: #29ABE2; background: white; }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,32,112,0.45); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: white; border-radius: 10px; max-width: 560px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 22px 26px; position: relative; }
+  .modal-close { position: absolute; top: 12px; right: 14px; background: none; border: none; font-size: 1.2rem; color: #94A3B8; cursor: pointer; line-height: 1; }
+  .modal-close:hover { color: #1E293B; }
+  .modal-titulo { font-size: 1rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 14px; padding-right: 20px; }
+  .modal-cuerpo p { font-size: 0.85rem; line-height: 1.65; color: #374151; margin-bottom: 10px; font-family: 'Montserrat', sans-serif; }
+  .modal-cuerpo p:last-child { margin-bottom: 0; }
   .categoria-opciones { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .categoria-opciones .bib-btn { width: 380px; }
   .categoria-opciones.dos-columnas { display: grid; grid-template-columns: 1fr 1fr; }
@@ -167,7 +176,7 @@
       <p class="instruccion">Puedes buscar por palabra clave o hacer clic en los botones.</p>
       <div class="busqueda-input-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="text" id="buscadorCategoria" placeholder="Buscar...">
+        <input type="text" id="buscadorCategoria" placeholder="Buscar..." oninput="buscarEnCategoria(this.value)">
       </div>
     </div>
 
@@ -175,6 +184,14 @@
       <h3 id="tituloCategoria" class="titulo-categoria"></h3>
       <div class="categoria-opciones" id="opcionesCategoria"></div>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalTexto" onclick="if(event.target===this) cerrarModalTexto()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="cerrarModalTexto()">&times;</button>
+    <h3 id="modalTituloTexto" class="modal-titulo"></h3>
+    <div id="modalCuerpoTexto" class="modal-cuerpo"></div>
   </div>
 </div>
 
@@ -297,7 +314,10 @@
 
   var ARBOL_CONSULTA = [
     { label: 'Dudas generales del servicio', hijos: [
-      'Orientación sobre todo el servicio',
+      { label: 'Orientación sobre todo el servicio', texto:
+        '<p>El servicio de DoctorSV ha sido desarrollado como una alternativa a la atención presencial, para recibir atención médica sin necesidad de trasladarse a un centro de salud.</p>' +
+        '<p>A través de la aplicación DoctorSV usted podrá ser atendido de forma remota por un médico general en el momento que usted lo requiera y en el lugar donde se encuentre.</p>'
+      },
       'Ubicación de farmacias / laboratorios',
       'Información sobre la cita médica',
       'Usuario recibió un contacto previo'
@@ -337,7 +357,63 @@
   function mostrarCategoria(cat) {
     categoriaActualId = cat;
     pilaVistas = [];
+    var buscador = document.getElementById('buscadorCategoria');
+    if (buscador) buscador.value = '';
     pushVistaOpciones(NOMBRES_CATEGORIA[cat], OPCIONES_CATEGORIA[cat]);
+  }
+
+  function aplanarArbol(items, ancestros) {
+    var resultado = [];
+    items.forEach(function(item) {
+      var label = typeof item === 'string' ? item : item.label;
+      resultado.push({ label: label, ancestros: ancestros });
+      if (item && item.hijos) {
+        resultado = resultado.concat(aplanarArbol(item.hijos, ancestros.concat([{ label: label, opciones: item.hijos }])));
+      }
+    });
+    return resultado;
+  }
+
+  var resultadosBusquedaActuales = [];
+
+  function buscarEnCategoria(q) {
+    q = q.trim().toLowerCase();
+    var contenedor = document.getElementById('opcionesCategoria');
+
+    if (!q) {
+      renderVistaActual();
+      return;
+    }
+
+    var arbol = OPCIONES_CATEGORIA[categoriaActualId] || [];
+    resultadosBusquedaActuales = aplanarArbol(arbol, []).filter(function(n) {
+      return n.label.toLowerCase().includes(q);
+    });
+
+    document.getElementById('tituloCategoria').textContent = 'Resultados de la búsqueda';
+
+    if (resultadosBusquedaActuales.length === 0) {
+      contenedor.classList.remove('dos-columnas');
+      contenedor.innerHTML = '<p class="placeholder">No se encontraron resultados.</p>';
+      return;
+    }
+
+    contenedor.classList.toggle('dos-columnas', resultadosBusquedaActuales.length > 8);
+    contenedor.innerHTML = resultadosBusquedaActuales.map(function(r, i) {
+      return '<button class="bib-btn" onclick="irAResultadoBusqueda(' + i + ')">' + r.label + '</button>';
+    }).join('');
+  }
+
+  function irAResultadoBusqueda(i) {
+    var nodo = resultadosBusquedaActuales[i];
+    document.getElementById('buscadorCategoria').value = '';
+    if (nodo.ancestros.length === 0) {
+      renderVistaActual();
+    } else {
+      nodo.ancestros.forEach(function(paso) {
+        pushVistaOpciones(paso.label, paso.opciones);
+      });
+    }
   }
 
   function pushVistaOpciones(titulo, opciones) {
@@ -381,7 +457,19 @@
     var op = opcionesActuales[i];
     if (op && op.hijos) {
       pushVistaOpciones(op.label, op.hijos);
+    } else if (op && op.texto) {
+      abrirModalTexto(op.label, op.texto);
     }
+  }
+
+  function abrirModalTexto(titulo, texto) {
+    document.getElementById('modalTituloTexto').textContent = titulo;
+    document.getElementById('modalCuerpoTexto').innerHTML = texto;
+    document.getElementById('modalTexto').classList.add('open');
+  }
+
+  function cerrarModalTexto() {
+    document.getElementById('modalTexto').classList.remove('open');
   }
 
   function volverAtras() {
