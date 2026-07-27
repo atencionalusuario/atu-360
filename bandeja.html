@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<script src="mobile-guard.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/atu-360/">
+<title>ATU 360 — Mi Bandeja</title>
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="base.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter','Segoe UI',sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+
+  .content { padding: 24px 28px; display: flex; flex-direction: column; gap: 18px; flex: 1; }
+  .tabs-bar { display: flex; gap: 0; border-bottom: 1px solid #E2E8F0; background: white; border-radius: 10px 10px 0 0; padding: 0 12px; }
+  .tab-btn { padding: 12px 16px; font-size: 0.8rem; font-weight: 600; color: #94A3B8; border: none; background: none; cursor: pointer; font-family: inherit; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tab-btn.active { color: #1A3DAA; border-bottom-color: #1A3DAA; }
+
+  .stats-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .tag { font-size: 0.72rem; font-weight: 600; color: #475569; background: white; border: 1px solid #E2E8F0; padding: 6px 12px; border-radius: 999px; }
+  .tag b { color: #1A3DAA; }
+
+  .section-title { font-size: 0.72rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; }
+  .tbl-wrap { border: 1px solid #E2E8F0; border-radius: 10px; overflow: auto; background: white; max-height: 420px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  th { text-align: left; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; font-weight: 700; padding: 10px 12px; border-bottom: 1px solid #E2E8F0; background: #F8FAFC; position: sticky; top: 0; }
+  td { padding: 10px 12px; border-bottom: 1px solid #F1F5F9; vertical-align: middle; }
+  .mono { font-family: ui-monospace, Menlo, monospace; }
+  .estado-pill { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 9px; border-radius: 999px; }
+  .estado-pill.pendiente            { background: #F1F5F9; color: #64748B; }
+  .estado-pill.contactado           { background: #F0FDF4; color: #16A34A; }
+  .estado-pill.no-contesto          { background: #FEF2F2; color: #DC2626; }
+  .estado-pill.numero-equivocado    { background: #F1F5F9; color: #64748B; }
+  .estado-pill.llamar-nuevamente    { background: #FFFBEB; color: #B45309; }
+  .estado-pill.cerrado-sin-contacto { background: #F1F5F9; color: #94A3B8; }
+  .btn-llamar { padding: 7px 14px; background: #1A3DAA; color: white; border: none; border-radius: 7px; font-size: 0.76rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-llamar:hover { opacity: 0.88; }
+  .btn-ver { padding: 7px 14px; background: white; color: #374151; border: 1px solid #E2E8F0; border-radius: 7px; font-size: 0.76rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+  .empty-state { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 48px 24px; text-align: center; }
+  .empty-state p { font-size: 0.82rem; color: #94A3B8; margin-top: 12px; }
+  .loading { font-size: 0.82rem; color: #94A3B8; text-align: center; padding: 24px; }
+
+  /* Modal de llamada */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.4); z-index: 200; display: none; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 40px 20px; }
+  .modal-overlay.show { display: flex; }
+  .modal-box { background: white; border-radius: 12px; width: 620px; max-width: 96vw; box-shadow: 0 24px 48px rgba(0,0,0,0.15); }
+  .modal-head { padding: 20px 24px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .modal-title { font-size: 0.95rem; font-weight: 700; }
+  .modal-sub { font-size: 0.72rem; color: #94A3B8; margin-top: 3px; }
+  .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; max-height: 68vh; overflow-y: auto; }
+  .modal-foot { padding: 16px 24px; border-top: 1px solid #F1F5F9; display: flex; justify-content: flex-end; gap: 8px; }
+  .btn-icon { width: 30px; height: 30px; border: 1px solid #E2E8F0; border-radius: 6px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #64748B; flex-shrink: 0; }
+  .btn-sec { padding: 9px 16px; border: 1.5px solid #E2E8F0; border-radius: 7px; background: white; font-size: 0.8rem; font-weight: 600; color: #374151; cursor: pointer; font-family: inherit; }
+  .btn-pri { padding: 9px 18px; border: none; border-radius: 7px; background: #1A3DAA; color: white; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-danger { padding: 9px 18px; border: none; border-radius: 7px; background: #DC2626; color: white; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+
+  .telefonos-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tel-chip { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 999px; padding: 6px 14px; font-size: 0.8rem; font-family: ui-monospace, Menlo, monospace; }
+  .estado-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip-btn { padding: 8px 14px; border-radius: 8px; border: 1.5px solid #E2E8F0; background: white; font-size: 0.8rem; font-weight: 600; color: #374151; cursor: pointer; font-family: inherit; }
+  .chip-btn.on { background: #1A3DAA; color: white; border-color: #1A3DAA; }
+  .chip-btn.danger { color: #DC2626; border-color: #FECACA; }
+
+  .field-label { font-size: 0.78rem; font-weight: 600; color: #374151; margin-bottom: 6px; display: block; }
+  select, textarea, input[type="date"], input[type="time"] {
+    width: 100%; padding: 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 8px;
+    font-size: 0.84rem; color: #1E293B; background: #F8FAFC; outline: none; transition: border 0.2s; font-family: inherit;
+  }
+  textarea { resize: vertical; min-height: 60px; }
+  .preg-card { border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px 14px; background: #F8FAFC; }
+  .preg-texto { font-size: 0.84rem; font-weight: 600; color: #1E293B; margin-bottom: 8px; }
+  .intentos-info { font-size: 0.72rem; color: #94A3B8; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="sidebar"></div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Mi Bandeja</h2>
+      <span class="topbar-sep">/</span>
+      <p id="topbarSub">Cargando...</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="tabsBar" class="tabs-bar" style="display:none"></div>
+    <div id="bandejaBody"><div class="loading">Cargando...</div></div>
+  </div>
+</div>
+
+<!-- Modal de llamada -->
+<div class="modal-overlay" id="modalLlamada">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="mTitulo">—</div>
+        <div class="modal-sub" id="mSub">—</div>
+      </div>
+      <button class="btn-icon" onclick="cerrarModalLlamada()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <span class="field-label">Teléfonos</span>
+        <div class="telefonos-row" id="mTelefonos"></div>
+      </div>
+      <div>
+        <span class="field-label">Estado de la llamada</span>
+        <div class="estado-chips" id="mEstados"></div>
+        <div class="intentos-info" id="mIntentosInfo" style="margin-top:8px"></div>
+      </div>
+      <div id="mPreguntas" style="display:none;flex-direction:column;gap:10px"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-sec" onclick="cerrarModalLlamada()">Cancelar</button>
+      <button class="btn-pri" id="btnGuardarLlamada" onclick="guardarLlamada()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+  var ROLES_PERMITIDOS = ['agente','agente-inmersion'];
+
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var db   = firebase.firestore();
+  var auth = firebase.auth();
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  var currentUser = null;
+  var registros = [];       // todos los registros asignados a este agente (bases en curso)
+  var basesMap = {};        // baseId -> base doc
+  var baseActivaId = null;
+  var registroActivo = null;
+  var respuestasActuales = {};
+
+  var ESTADOS_REG = {
+    'pendiente':'Pendiente','contactado':'Contactado','no-contesto':'No contestó',
+    'numero-equivocado':'Número equivocado','llamar-nuevamente':'Llamar nuevamente','cerrado-sin-contacto':'Cerrado sin contacto'
+  };
+
+  function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+  auth.onAuthStateChanged(function(user){
+    if(!user){ window.location.href = BASE + 'login.html'; return; }
+    db.collection('usuarios').doc(user.uid).get().then(function(doc){
+      if(!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)){
+        window.location.href = BASE + 'home.html'; return;
+      }
+      currentUser = user;
+      cargarBandeja();
+    });
+  });
+
+  function cargarBandeja(){
+    db.collection('base_registros').where('agenteUid','==',currentUser.uid).onSnapshot(function(snap){
+      var regs = [];
+      snap.forEach(function(d){ regs.push(Object.assign({id:d.id}, d.data())); });
+      var idsBases = Array.from(new Set(regs.map(function(r){ return r.baseId; })));
+      var faltantes = idsBases.filter(function(id){ return !basesMap[id]; });
+      Promise.all(faltantes.map(function(id){
+        return db.collection('bases').doc(id).get().then(function(bd){ if(bd.exists) basesMap[id] = Object.assign({id:bd.id}, bd.data()); });
+      })).then(function(){
+        registros = regs.filter(function(r){ var b = basesMap[r.baseId]; return b && b.estado === 'en-curso'; });
+        renderTabs();
+      });
+    }, function(e){ console.error(e); showToast('Error al cargar tu bandeja.'); });
+  }
+
+  function renderTabs(){
+    var idsBases = Array.from(new Set(registros.map(function(r){ return r.baseId; })));
+    var tabsBar = document.getElementById('tabsBar');
+    if(idsBases.length === 0){
+      tabsBar.style.display = 'none';
+      document.getElementById('topbarSub').textContent = 'Sin bases asignadas';
+      document.getElementById('bandejaBody').innerHTML = '<div class="empty-state"><p>No tienes registros asignados por ahora. Cuando un supervisor te asigne una base, aparecerá aquí.</p></div>';
+      return;
+    }
+    if(!baseActivaId || idsBases.indexOf(baseActivaId) < 0) baseActivaId = idsBases[0];
+    document.getElementById('topbarSub').textContent = idsBases.length + ' base' + (idsBases.length!==1?'s':'') + ' asignada' + (idsBases.length!==1?'s':'');
+    if(idsBases.length > 1){
+      tabsBar.style.display = 'flex';
+      tabsBar.innerHTML = idsBases.map(function(id){
+        var b = basesMap[id];
+        return '<button class="tab-btn'+(id===baseActivaId?' active':'')+'" onclick="cambiarTabBase(\''+id+'\')">'+escHtml(b?b.titulo:'—')+'</button>';
+      }).join('');
+    } else {
+      tabsBar.style.display = 'none';
+    }
+    renderBandejaBody();
+  }
+
+  function cambiarTabBase(id){ baseActivaId = id; renderTabs(); }
+
+  function renderBandejaBody(){
+    var b = basesMap[baseActivaId];
+    var rows = registros.filter(function(r){ return r.baseId === baseActivaId; });
+    var pendientes = rows.filter(function(r){ return r.estado !== 'contactado' && r.estado !== 'cerrado-sin-contacto'; });
+    var completados = rows.filter(function(r){ return r.estado === 'contactado' || r.estado === 'cerrado-sin-contacto'; });
+
+    var html = '<div class="stats-row">'
+      + '<span class="tag"><b>'+rows.length+'</b> asignados</span>'
+      + '<span class="tag"><b>'+completados.filter(function(r){return r.estado==='contactado';}).length+'</b> contactados</span>'
+      + '<span class="tag"><b>'+pendientes.length+'</b> por contactar</span>'
+      + '</div>';
+
+    html += '<div><div class="section-title" style="margin-bottom:8px">Por contactar ('+pendientes.length+')</div>';
+    html += '<div class="tbl-wrap"><table><thead><tr><th>Código</th><th>Nombre</th><th>Teléfonos</th><th>Estado</th><th>Intentos</th><th></th></tr></thead><tbody>';
+    if(pendientes.length === 0){
+      html += '<tr><td colspan="6"><div class="empty-state" style="border:none;padding:26px"><p>Bandeja al día. No quedan registros por contactar.</p></div></td></tr>';
+    } else {
+      pendientes.forEach(function(r){
+        html += '<tr><td class="mono">'+escHtml(r.codigo)+'</td><td>'+escHtml(r.nombre)+'</td>'
+          + '<td class="mono">'+escHtml((r.telefonos||[]).join(' · '))+'</td>'
+          + '<td><span class="estado-pill '+r.estado+'">'+escHtml(ESTADOS_REG[r.estado]||r.estado)+'</span></td>'
+          + '<td class="mono">'+(r.intentos||0)+'/'+(b.maxIntentos||3)+'</td>'
+          + '<td><button class="btn-llamar" onclick="abrirModalLlamada(\''+r.id+'\')">'+(r.estado==='pendiente'?'Contactar':'Reintentar')+'</button></td></tr>';
+      });
+    }
+    html += '</tbody></table></div></div>';
+
+    html += '<div><div class="section-title" style="margin-bottom:8px">Registro completado ('+completados.length+')</div>';
+    if(completados.length === 0){
+      html += '<div class="empty-state"><p>Aún no hay registros contactados o cerrados.</p></div>';
+    } else {
+      html += '<div class="tbl-wrap"><table><thead><tr><th>Código</th><th>Nombre</th><th>Estado</th><th>Actividades</th><th></th></tr></thead><tbody>';
+      completados.forEach(function(r){
+        html += '<tr><td class="mono">'+escHtml(r.codigo)+'</td><td>'+escHtml(r.nombre)+'</td>'
+          + '<td><span class="estado-pill '+r.estado+'">'+escHtml(ESTADOS_REG[r.estado]||r.estado)+'</span></td>'
+          + '<td class="mono">'+((r.actividades||[]).length)+'</td>'
+          + '<td><button class="btn-ver" onclick="abrirModalLlamada(\''+r.id+'\')">Ver / editar</button></td></tr>';
+      });
+      html += '</tbody></table></div>';
+    }
+    html += '</div>';
+
+    document.getElementById('bandejaBody').innerHTML = html;
+  }
+
+  // ── Modal de llamada ─────────────────────────────────────────────────────────
+  var ESTADOS_SELECCIONABLES = ['contactado','no-contesto','numero-equivocado','llamar-nuevamente'];
+
+  window.abrirModalLlamada = function(regId){
+    var r = registros.find(function(x){ return x.id === regId; });
+    if(!r) return;
+    registroActivo = r;
+    respuestasActuales = {};
+    var b = basesMap[r.baseId];
+    document.getElementById('mTitulo').textContent = r.nombre;
+    document.getElementById('mSub').textContent = r.codigo + (b ? ' · ' + b.titulo : '');
+    document.getElementById('mTelefonos').innerHTML = (r.telefonos||[]).length
+      ? (r.telefonos||[]).map(function(t){ return '<span class="tel-chip">📱 '+escHtml(t)+'</span>'; }).join('')
+      : '<span class="csv-hint">Sin teléfonos registrados</span>';
+    document.getElementById('mIntentosInfo').textContent = 'Intentos: ' + (r.intentos||0) + '/' + (b?b.maxIntentos:3) + '. Al llegar al máximo sin contactar, se cierra automáticamente.';
+    renderEstadoChips(null);
+    document.getElementById('mPreguntas').style.display = 'none';
+    document.getElementById('modalLlamada').classList.add('show');
+  };
+
+  function renderEstadoChips(seleccionado){
+    var el = document.getElementById('mEstados');
+    var chips = ESTADOS_SELECCIONABLES.map(function(k){
+      return '<button class="chip-btn'+(seleccionado===k?' on':'')+'" onclick="seleccionarEstado(\''+k+'\')">'+ESTADOS_REG[k]+'</button>';
+    }).join('');
+    chips += '<button class="chip-btn danger" onclick="cerrarSinContacto()">Cerrar por no contacto</button>';
+    el.innerHTML = chips;
+  }
+
+  window.seleccionarEstado = function(k){
+    renderEstadoChips(k);
+    var pregDiv = document.getElementById('mPreguntas');
+    if(k === 'contactado'){
+      var b = basesMap[registroActivo.baseId];
+      var preguntas = (b && b.preguntas) || [];
+      if(preguntas.length === 0){
+        pregDiv.style.display = 'none';
+      } else {
+        pregDiv.style.display = 'flex';
+        pregDiv.innerHTML = preguntas.map(function(q){ return renderPreguntaCampo(q); }).join('');
+      }
+    } else {
+      pregDiv.style.display = 'none';
+    }
+    document.getElementById('btnGuardarLlamada').dataset.estado = k;
+  };
+
+  function renderPreguntaCampo(q){
+    var body = '';
+    if(q.tipo === 'sino'){
+      body = '<div class="estado-chips">'
+        + ['Sí','No'].map(function(op){ return '<button type="button" class="chip-btn" data-preg="'+q.id+'" onclick="responderChip(this,\''+q.id+'\',\''+op+'\',false)">'+op+'</button>'; }).join('')
+        + '</div>';
+    } else if(q.tipo === 'multiple'){
+      body = '<div class="estado-chips">'
+        + (q.opciones||[]).map(function(op){ return '<button type="button" class="chip-btn" data-preg="'+q.id+'" onclick="responderChip(this,\''+q.id+'\',\''+escHtml(op)+'\',true)">'+escHtml(op)+'</button>'; }).join('')
+        + '</div>';
+    } else if(q.tipo === 'lista'){
+      body = '<select onchange="responderCampo(\''+q.id+'\',this.value)"><option value="">Selecciona una opción</option>'
+        + (q.opciones||[]).map(function(op){ return '<option value="'+escHtml(op)+'">'+escHtml(op)+'</option>'; }).join('') + '</select>';
+    } else if(q.tipo === 'fecha'){
+      body = '<input type="date" onchange="responderCampo(\''+q.id+'\',this.value)">';
+    } else if(q.tipo === 'hora'){
+      body = '<input type="time" onchange="responderCampo(\''+q.id+'\',this.value)">';
+    } else {
+      body = '<textarea placeholder="Respuesta..." onchange="responderCampo(\''+q.id+'\',this.value)"></textarea>';
+    }
+    return '<div class="preg-card"><div class="preg-texto">'+escHtml(q.texto)+'</div>'+body+'</div>';
+  }
+
+  window.responderCampo = function(qid, val){ respuestasActuales[qid] = val; };
+  window.responderChip = function(btn, qid, val, multi){
+    if(multi){
+      var arr = Array.isArray(respuestasActuales[qid]) ? respuestasActuales[qid] : [];
+      if(arr.indexOf(val) >= 0){ arr = arr.filter(function(x){ return x !== val; }); btn.classList.remove('on'); }
+      else { arr = arr.concat([val]); btn.classList.add('on'); }
+      respuestasActuales[qid] = arr;
+    } else {
+      respuestasActuales[qid] = val;
+      var hermanos = document.querySelectorAll('[data-preg="'+qid+'"]');
+      hermanos.forEach(function(h){ h.classList.remove('on'); });
+      btn.classList.add('on');
+    }
+  };
+
+  function cerrarModalLlamada(){
+    document.getElementById('modalLlamada').classList.remove('show');
+    registroActivo = null; respuestasActuales = {};
+  }
+
+  window.cerrarSinContacto = function(){
+    if(!registroActivo) return;
+    if(!confirm('¿Cerrar este registro por no contacto? No volverá a aparecer en la bandeja.')) return;
+    db.collection('base_registros').doc(registroActivo.id).update({
+      estado: 'cerrado-sin-contacto', fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){ showToast('Registro cerrado.'); cerrarModalLlamada(); })
+      .catch(function(e){ console.error(e); showToast('No se pudo cerrar el registro.'); });
+  };
+
+  window.guardarLlamada = function(){
+    var estado = document.getElementById('btnGuardarLlamada').dataset.estado;
+    if(!estado){ showToast('Selecciona el estado de la llamada.'); return; }
+    var r = registroActivo, b = basesMap[r.baseId];
+    var maxIntentos = (b && b.maxIntentos) || 3;
+
+    var update = { fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp() };
+
+    if(estado === 'contactado'){
+      var actividades = (r.actividades || []).slice();
+      actividades.push(respuestasActuales);
+      update.estado = 'contactado';
+      update.actividades = actividades;
+    } else {
+      var nuevosIntentos = (r.intentos || 0) + 1;
+      var cierraAuto = nuevosIntentos >= maxIntentos;
+      update.intentos = nuevosIntentos;
+      update.estado = cierraAuto ? 'cerrado-sin-contacto' : estado;
+    }
+
+    var btn = document.getElementById('btnGuardarLlamada');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    db.collection('base_registros').doc(r.id).update(update)
+      .then(function(){
+        showToast(update.estado === 'cerrado-sin-contacto' && estado !== 'contactado'
+          ? 'Cerrado por no contacto tras ' + update.intentos + ' intentos (máximo ' + maxIntentos + ').'
+          : 'Registrado: ' + (ESTADOS_REG[update.estado] || update.estado) + '.');
+        cerrarModalLlamada();
+      })
+      .catch(function(e){ console.error(e); showToast('No se pudo guardar.'); })
+      .finally(function(){ btn.disabled = false; btn.textContent = 'Guardar'; });
+  };
+
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3500);
+  }
+</script>
+<script src="notif.js"></script>
+<script src="sidebar.js"></script>
+<script>
+  initSidebar();
+  initNotif(db, auth);
+</script>
+</body>
+</html>

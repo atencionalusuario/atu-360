@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<script src="mobile-guard.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/atu-360/">
+<title>ATU 360 — Bases</title>
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="base.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter','Segoe UI',sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+  .btn-nueva { padding: 8px 16px; background: #1A3DAA; color: white; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; }
+  .btn-nueva:hover { opacity: 0.88; }
+
+  .content { padding: 24px 28px; display: flex; flex-direction: column; gap: 20px; flex: 1; }
+  .bases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .base-card { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 16px 18px; cursor: pointer; transition: all 0.15s; }
+  .base-card:hover { border-color: #CBD5E1; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+  .base-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .estado-pill { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 9px; border-radius: 999px; }
+  .estado-pill.en-curso   { background: #F0FDF4; color: #16A34A; }
+  .estado-pill.finalizada { background: #F1F5F9; color: #64748B; }
+  .base-titulo { font-size: 0.95rem; font-weight: 700; color: #1E293B; }
+  .base-meta { font-size: 0.72rem; color: #94A3B8; margin-top: 4px; }
+  .base-stats { display: flex; gap: 14px; margin-top: 12px; font-size: 0.75rem; color: #475569; }
+  .base-stats b { color: #1E293B; }
+  .bar-track { height: 7px; border-radius: 999px; background: #F1F5F9; overflow: hidden; margin-top: 10px; }
+  .bar-fill { height: 100%; background: #16A34A; }
+
+  .empty-state { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 48px 24px; text-align: center; }
+  .empty-state p { font-size: 0.82rem; color: #94A3B8; margin-top: 12px; }
+  .loading { font-size: 0.82rem; color: #94A3B8; text-align: center; padding: 24px; }
+
+  /* Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.4); z-index: 200; display: none; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 40px 20px; }
+  .modal-overlay.show { display: flex; }
+  .modal-box { background: white; border-radius: 12px; width: 720px; max-width: 96vw; box-shadow: 0 24px 48px rgba(0,0,0,0.15); }
+  .modal-head { padding: 20px 24px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; }
+  .modal-title { font-size: 0.95rem; font-weight: 700; }
+  .modal-sub { font-size: 0.72rem; color: #94A3B8; margin-top: 2px; }
+  .modal-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 18px; max-height: 70vh; overflow-y: auto; }
+  .modal-foot { padding: 16px 24px; border-top: 1px solid #F1F5F9; display: flex; justify-content: flex-end; gap: 8px; }
+  .section-title { font-size: 0.72rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .field-label { font-size: 0.78rem; font-weight: 600; color: #374151; margin-bottom: 6px; display: block; }
+  .field-req { color: #DC2626; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  input[type="text"], input[type="date"], input[type="number"], select, textarea {
+    width: 100%; padding: 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 8px;
+    font-size: 0.84rem; color: #1E293B; background: #F8FAFC; outline: none;
+    transition: border 0.2s; font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus { border-color: #1A3DAA; box-shadow: 0 0 0 3px rgba(26,61,170,0.07); background: white; }
+  textarea { resize: vertical; min-height: 60px; }
+  .btn-sec { padding: 9px 16px; border: 1.5px solid #E2E8F0; border-radius: 7px; background: white; font-size: 0.8rem; font-weight: 600; color: #374151; cursor: pointer; font-family: inherit; }
+  .btn-sec:hover { border-color: #CBD5E1; }
+  .btn-pri { padding: 9px 18px; border: none; border-radius: 7px; background: #1A3DAA; color: white; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-pri:hover { opacity: 0.88; }
+  .btn-pri:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .preg-card { border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px 14px; background: #F8FAFC; display: flex; flex-direction: column; gap: 8px; }
+  .preg-top { display: flex; gap: 8px; align-items: center; }
+  .preg-top input { flex: 1; }
+  .preg-top select { width: 160px; flex-shrink: 0; }
+  .btn-icon { width: 30px; height: 30px; border: 1px solid #E2E8F0; border-radius: 6px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #64748B; flex-shrink: 0; }
+  .btn-icon:hover { background: #FEF2F2; color: #DC2626; border-color: #FECACA; }
+  .opciones-list { display: flex; flex-direction: column; gap: 6px; }
+  .opcion-row { display: flex; gap: 6px; align-items: center; }
+  .opcion-row input { flex: 1; }
+  .link-btn { color: #1A3DAA; font-weight: 600; font-size: 0.78rem; cursor: pointer; background: none; border: none; font-family: inherit; padding: 0; text-align: left; }
+
+  .upload-area { border: 2px dashed #E2E8F0; border-radius: 10px; padding: 18px; text-align: center; cursor: pointer; background: #F8FAFC; }
+  .upload-area:hover { border-color: #1A3DAA; background: #EEF2FF; }
+  .upload-area.has-file { border-color: #16A34A; background: #F0FDF4; border-style: solid; }
+  #fileInputBase { display: none; }
+  .csv-hint { font-size: 0.68rem; color: #94A3B8; margin-top: 6px; }
+
+  .agente-check { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-bottom: 1px solid #F1F5F9; font-size: 0.82rem; }
+  .agente-check input { width: 16px; height: 16px; }
+  .agentes-box { border: 1px solid #E2E8F0; border-radius: 8px; max-height: 200px; overflow-y: auto; }
+
+  .tbl-wrap { border: 1px solid #E2E8F0; border-radius: 10px; overflow: auto; background: white; max-height: 480px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  th { text-align: left; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; font-weight: 700; padding: 10px 12px; border-bottom: 1px solid #E2E8F0; background: #F8FAFC; position: sticky; top: 0; }
+  td { padding: 10px 12px; border-bottom: 1px solid #F1F5F9; }
+  .mono { font-family: ui-monospace, Menlo, monospace; }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="sidebar"></div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Bases</h2>
+      <span class="topbar-sep">/</span>
+      <p id="topbarSub">Cargando...</p>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-nueva" id="btnNueva" style="display:none" onclick="abrirModalBase()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nueva base
+      </button>
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="listaBases"><div class="loading">Cargando...</div></div>
+    <div id="detalleBase"></div>
+  </div>
+</div>
+
+<!-- Modal nueva base -->
+<div class="modal-overlay" id="modalBase">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title">Nueva base</div>
+        <div class="modal-sub">Crea una base de registros y repártela entre tus agentes</div>
+      </div>
+      <button class="btn-icon" onclick="cerrarModalBase()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="section-title">Datos generales</div>
+        <div class="field-row">
+          <div><label class="field-label">Título <span class="field-req">*</span></label><input type="text" id="bTitulo" placeholder="Ej. Seguimiento julio"></div>
+          <div><label class="field-label">Máximo de intentos <span class="field-req">*</span></label><input type="number" id="bMaxIntentos" value="3" min="1" max="10"></div>
+        </div>
+        <div class="field-row" style="margin-top:14px">
+          <div><label class="field-label">Fecha inicio <span class="field-req">*</span></label><input type="date" id="bFechaDesde"></div>
+          <div><label class="field-label">Fecha fin <span class="field-req">*</span></label><input type="date" id="bFechaHasta"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">Preguntas del formulario (cuando se marca "Contactado")</div>
+        <div id="pregList" style="display:flex;flex-direction:column;gap:10px"></div>
+        <button class="link-btn" style="margin-top:8px" onclick="agregarPregunta()">＋ Agregar pregunta</button>
+      </div>
+
+      <div>
+        <div class="section-title">Cargar registros (CSV)</div>
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInputBase').click()">
+          <div style="font-size:1.4rem;margin-bottom:6px">📄</div>
+          <div style="font-size:0.82rem;color:#64748B;font-weight:600">Haz clic para subir un archivo CSV</div>
+          <div class="csv-hint">Columnas: codigo, nombre, telefono (o telefono1/telefono2)</div>
+        </div>
+        <div id="csvInfo" class="csv-hint"></div>
+      </div>
+
+      <div>
+        <div class="section-title">Agentes que recibirán registros</div>
+        <div class="agentes-box" id="agentesBox"><div class="loading">Cargando agentes...</div></div>
+        <div id="asignacionPreview" class="csv-hint" style="margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-sec" onclick="cerrarModalBase()">Cancelar</button>
+      <button class="btn-pri" id="btnCrearBase" onclick="crearBase()">Crear base</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="fileInputBase" accept=".csv">
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+  var ROLES_PERMITIDOS = ['supervisor','jefe','superadmin'];
+  var ROLES_PROYECTO_RESTRINGIDO = ['jefe']; // supervisor se filtra por sus propias bases, no por proyecto
+
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var db   = firebase.firestore();
+  var auth = firebase.auth();
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  var currentUser = null, miRolG = '', miProyectoG = '', miNombreG = '', miEmailG = '';
+  var bases = [], registrosPorBase = {}; // baseId -> [registros] (solo la base abierta en el detalle)
+  var baseSeleccionada = null;
+  var agentesDisponibles = [];
+  var preguntas = [];
+  var csvRegistros = [];
+
+  function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+  auth.onAuthStateChanged(function(user){
+    if(!user){ window.location.href = BASE + 'login.html'; return; }
+    db.collection('usuarios').doc(user.uid).get().then(function(doc){
+      if(!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)){
+        window.location.href = BASE + 'home.html'; return;
+      }
+      currentUser = user;
+      miRolG      = doc.data().rol || '';
+      miProyectoG = doc.data().proyecto || '';
+      miNombreG   = doc.data().nombre || user.email.split('@')[0];
+      miEmailG    = user.email;
+      document.getElementById('btnNueva').style.display = 'flex';
+      cargarAgentes();
+      cargarBases();
+    });
+  });
+
+  // ── Carga de bases ────────────────────────────────────────────────────────────
+  function cargarBases(){
+    var q;
+    if(miRolG === 'supervisor'){
+      q = db.collection('bases').where('creadoPorUid','==',currentUser.uid);
+    } else if(ROLES_PROYECTO_RESTRINGIDO.includes(miRolG)){
+      q = db.collection('bases').where('proyecto','==',miProyectoG);
+    } else {
+      q = db.collection('bases'); // superadmin: todas
+    }
+    q.onSnapshot(function(snap){
+      bases = [];
+      snap.forEach(function(d){ bases.push(Object.assign({id:d.id}, d.data())); });
+      bases.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0) - (a.fechaCreacion?a.fechaCreacion.seconds:0); });
+      renderListaBases();
+    }, function(e){ console.error(e); showToast('Error al cargar las bases.'); });
+  }
+
+  function renderListaBases(){
+    document.getElementById('topbarSub').textContent = bases.length + ' base' + (bases.length!==1?'s':'');
+    var el = document.getElementById('listaBases');
+    if(bases.length === 0){
+      el.innerHTML = '<div class="empty-state"><p>No hay bases aún. Crea la primera para asignar registros a tu equipo.</p></div>';
+      return;
+    }
+    // contar registros por base (una lectura ligera; solo para el resumen de tarjetas)
+    Promise.all(bases.map(function(b){
+      return db.collection('base_registros').where('baseId','==',b.id).get().then(function(snap){
+        var total = snap.size, contactados = 0;
+        snap.forEach(function(d){ if(d.data().estado === 'contactado') contactados++; });
+        return { id: b.id, total: total, contactados: contactados };
+      });
+    })).then(function(stats){
+      var byId = {}; stats.forEach(function(s){ byId[s.id] = s; });
+      var html = '<div class="bases-grid">';
+      bases.forEach(function(b){
+        var st = byId[b.id] || {total:0, contactados:0};
+        var pct = st.total ? Math.round(st.contactados/st.total*100) : 0;
+        html += '<div class="base-card" onclick="abrirDetalleBase(\''+b.id+'\')">'
+          + '<div class="base-top"><span class="estado-pill '+(b.estado||'en-curso')+'">'+(b.estado==='finalizada'?'Finalizada':'En curso')+'</span></div>'
+          + '<div class="base-titulo">'+escHtml(b.titulo)+'</div>'
+          + '<div class="base-meta">'+escHtml(b.fechaDesde)+(b.fechaHasta && b.fechaHasta!==b.fechaDesde ? ' – '+escHtml(b.fechaHasta) : '')+'</div>'
+          + '<div class="base-stats"><span><b>'+st.total+'</b> registros</span><span><b>'+st.contactados+'</b> contactados</span></div>'
+          + '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%"></div></div>'
+          + '</div>';
+      });
+      html += '</div>';
+      document.getElementById('listaBases').innerHTML = html;
+    });
+  }
+
+  function toggleEstadoBase(id, estadoActual){
+    var nuevo = estadoActual === 'finalizada' ? 'en-curso' : 'finalizada';
+    db.collection('bases').doc(id).update({ estado: nuevo })
+      .then(function(){ showToast(nuevo === 'finalizada' ? 'Base finalizada.' : 'Base reactivada.'); })
+      .catch(function(e){ console.error(e); showToast('No se pudo actualizar la base.'); });
+  }
+
+  // ── Detalle de una base ──────────────────────────────────────────────────────
+  window.abrirDetalleBase = function(id){
+    baseSeleccionada = id;
+    var b = bases.find(function(x){ return x.id === id; });
+    if(!b) return;
+    var el = document.getElementById('detalleBase');
+    el.innerHTML = '<div class="loading">Cargando registros...</div>';
+    db.collection('base_registros').where('baseId','==',id).get().then(function(snap){
+      var rows = [];
+      snap.forEach(function(d){ rows.push(Object.assign({id:d.id}, d.data())); });
+      rows.sort(function(a,b2){ return (a.codigo||'').localeCompare(b2.codigo||''); });
+      registrosPorBase[id] = rows;
+      renderDetalleBase(b, rows);
+    }).catch(function(e){ console.error(e); el.innerHTML = '<div class="empty-state"><p>Error al cargar los registros.</p></div>'; });
+  };
+
+  var ESTADOS_REG = {
+    'pendiente':'Pendiente','contactado':'Contactado','no-contesto':'No contestó',
+    'numero-equivocado':'Número equivocado','llamar-nuevamente':'Llamar nuevamente','cerrado-sin-contacto':'Cerrado sin contacto'
+  };
+
+  function renderDetalleBase(b, rows){
+    var html = '<div class="base-card" style="cursor:default">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">'
+      + '<div><div class="base-titulo">'+escHtml(b.titulo)+'</div><div class="base-meta">'+rows.length+' registros · máx. '+ (b.maxIntentos||3) +' intentos</div></div>'
+      + '<button class="btn-sec" onclick="toggleEstadoBase(\''+b.id+'\',\''+(b.estado||'en-curso')+'\')">'+(b.estado==='finalizada'?'Reactivar':'Finalizar')+'</button>'
+      + '</div></div>'
+      + '<div class="tbl-wrap" style="margin-top:14px"><table><thead><tr><th>Código</th><th>Nombre</th><th>Teléfonos</th><th>Agente</th><th>Estado</th><th>Intentos</th></tr></thead><tbody>';
+    if(rows.length === 0){
+      html += '<tr><td colspan="6"><div class="empty-state" style="border:none"><p>Esta base no tiene registros.</p></div></td></tr>';
+    } else {
+      rows.forEach(function(r){
+        html += '<tr><td class="mono">'+escHtml(r.codigo)+'</td><td>'+escHtml(r.nombre)+'</td>'
+          + '<td class="mono">'+escHtml((r.telefonos||[]).join(' · '))+'</td>'
+          + '<td>'+escHtml(r.agenteNombre||'—')+'</td>'
+          + '<td>'+escHtml(ESTADOS_REG[r.estado]||r.estado||'Pendiente')+'</td>'
+          + '<td class="mono">'+(r.intentos||0)+'/'+(b.maxIntentos||3)+'</td></tr>';
+      });
+    }
+    html += '</tbody></table></div>';
+    document.getElementById('detalleBase').innerHTML = html;
+  }
+
+  // ── Agentes disponibles para asignar ────────────────────────────────────────
+  function cargarAgentes(){
+    var q;
+    if(miRolG === 'supervisor'){
+      q = db.collection('usuarios').where('emailSupervisor','==',miEmailG).where('activo','==',true);
+    } else {
+      // jefe / superadmin: todos los agentes de su proyecto (jefe) o de cualquiera (superadmin)
+      q = db.collection('usuarios').where('activo','==',true);
+    }
+    q.get().then(function(snap){
+      agentesDisponibles = [];
+      snap.forEach(function(d){
+        var x = d.data();
+        if(['agente','agente-inmersion'].indexOf(x.rol) < 0) return;
+        if(ROLES_PROYECTO_RESTRINGIDO.includes(miRolG) && x.proyecto !== miProyectoG) return;
+        agentesDisponibles.push({ id: d.id, nombre: x.nombre || x.email, email: x.email });
+      });
+      agentesDisponibles.sort(function(a,b){ return (a.nombre||'').localeCompare(b.nombre||''); });
+      renderAgentesBox();
+    }).catch(function(e){ console.error(e); });
+  }
+
+  function renderAgentesBox(){
+    var el = document.getElementById('agentesBox');
+    if(agentesDisponibles.length === 0){ el.innerHTML = '<div class="loading">No tienes agentes disponibles.</div>'; return; }
+    el.innerHTML = agentesDisponibles.map(function(a){
+      return '<label class="agente-check"><input type="checkbox" class="agChk" value="'+a.id+'" checked onchange="actualizarPreviewAsignacion()"><span>'+escHtml(a.nombre)+'</span></label>';
+    }).join('');
+    actualizarPreviewAsignacion();
+  }
+
+  function agentesSeleccionados(){
+    return Array.prototype.slice.call(document.querySelectorAll('.agChk:checked')).map(function(el){ return el.value; });
+  }
+
+  function actualizarPreviewAsignacion(){
+    var ags = agentesSeleccionados();
+    var n = csvRegistros.length;
+    var el = document.getElementById('asignacionPreview');
+    if(!ags.length || !n){ el.textContent = ''; return; }
+    var per = Math.floor(n/ags.length), resto = n % ags.length;
+    el.textContent = n + ' registros entre ' + ags.length + ' agente(s): ' + per + ' c/u' + (resto? ' (los primeros ' + resto + ' reciben uno más)' : '') + '.';
+  }
+
+  // ── Preguntas del formulario ─────────────────────────────────────────────────
+  var Q_TIPOS = { sino:'Sí / No', multiple:'Selección múltiple', lista:'Lista desplegable', abierta:'Abierta', fecha:'Fecha', hora:'Hora' };
+
+  function agregarPregunta(){
+    preguntas.push({ id: 'q'+(preguntas.length+1)+'_'+Date.now(), texto: '', tipo: 'abierta', opciones: [] });
+    renderPreguntas();
+  }
+  function eliminarPregunta(idx){ preguntas.splice(idx,1); renderPreguntas(); }
+  function cambiarTipoPregunta(idx, tipo){ preguntas[idx].tipo = tipo; if(['multiple','lista'].indexOf(tipo)>=0 && !preguntas[idx].opciones.length) preguntas[idx].opciones = ['','']; renderPreguntas(); }
+  function actualizarTextoPregunta(idx, val){ preguntas[idx].texto = val; }
+  function agregarOpcion(idx){ preguntas[idx].opciones.push(''); renderPreguntas(); }
+  function actualizarOpcion(idx, oIdx, val){ preguntas[idx].opciones[oIdx] = val; }
+  function eliminarOpcion(idx, oIdx){ preguntas[idx].opciones.splice(oIdx,1); renderPreguntas(); }
+
+  function renderPreguntas(){
+    var el = document.getElementById('pregList');
+    if(preguntas.length === 0){ el.innerHTML = '<div class="csv-hint">Sin preguntas — el agente solo marcará el estado de la llamada.</div>'; return; }
+    el.innerHTML = preguntas.map(function(q, idx){
+      var opts = ['multiple','lista'].indexOf(q.tipo) >= 0
+        ? '<div class="opciones-list">' + q.opciones.map(function(o, oIdx){
+            return '<div class="opcion-row"><input type="text" value="'+escHtml(o)+'" placeholder="Opción" onchange="actualizarOpcion('+idx+','+oIdx+',this.value)">'
+              + '<button class="btn-icon" onclick="eliminarOpcion('+idx+','+oIdx+')">✕</button></div>';
+          }).join('') + '<button class="link-btn" onclick="agregarOpcion('+idx+')">＋ Agregar opción</button></div>'
+        : '';
+      return '<div class="preg-card">'
+        + '<div class="preg-top"><input type="text" value="'+escHtml(q.texto)+'" placeholder="Texto de la pregunta" onchange="actualizarTextoPregunta('+idx+',this.value)">'
+        + '<select onchange="cambiarTipoPregunta('+idx+',this.value)">' + Object.keys(Q_TIPOS).map(function(k){ return '<option value="'+k+'"'+(q.tipo===k?' selected':'')+'>'+Q_TIPOS[k]+'</option>'; }).join('') + '</select>'
+        + '<button class="btn-icon" onclick="eliminarPregunta('+idx+')">✕</button></div>'
+        + opts
+        + '</div>';
+    }).join('');
+  }
+
+  // ── Carga de CSV ─────────────────────────────────────────────────────────────
+  function detectarSeparador(linea){ return ((linea.match(/;/g)||[]).length > (linea.match(/,/g)||[]).length) ? ';' : ','; }
+
+  document.getElementById('fileInputBase').addEventListener('change', function(e){
+    var file = e.target.files[0]; if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){ procesarCsvBase(ev.target.result, file.name); };
+    reader.readAsText(file, 'UTF-8');
+    this.value = '';
+  });
+
+  function procesarCsvBase(texto, nombreArchivo){
+    var lineas = texto.trim().split('\n');
+    if(lineas.length < 2){ showToast('Archivo vacío.'); return; }
+    var sep = detectarSeparador(lineas[0]);
+    var headers = lineas[0].split(sep).map(function(h){ return h.trim().toLowerCase(); });
+    var out = [], omitidos = 0;
+    lineas.slice(1).forEach(function(linea){
+      if(!linea.trim()) return;
+      var cols = linea.split(sep).map(function(c){ return c.trim(); });
+      var fila = {}; headers.forEach(function(h,j){ fila[h] = cols[j] || ''; });
+      var codigo = fila.codigo || fila.code || '';
+      var nombre = fila.nombre || fila.name || '';
+      if(!codigo || !nombre){ omitidos++; return; }
+      var tels = [];
+      Object.keys(fila).forEach(function(k){ if(/telefono|tel\d|fono|celular|movil/.test(k) && fila[k]) tels.push(fila[k]); });
+      var camposExtra = {};
+      Object.keys(fila).forEach(function(k){ if(['codigo','code','nombre','name'].indexOf(k) < 0 && !/telefono|tel\d|fono|celular|movil/.test(k)) camposExtra[k] = fila[k]; });
+      out.push({ codigo: codigo, nombre: nombre, telefonos: tels, camposExtra: camposExtra });
+    });
+    csvRegistros = out;
+    var area = document.getElementById('uploadArea');
+    if(out.length){ area.classList.add('has-file'); }
+    document.getElementById('csvInfo').textContent = out.length + ' registros cargados de «' + nombreArchivo + '»' + (omitidos? ' · ' + omitidos + ' omitidos (sin código o nombre)' : '') + '.';
+    actualizarPreviewAsignacion();
+  }
+
+  // ── Modal ────────────────────────────────────────────────────────────────────
+  function abrirModalBase(){
+    document.getElementById('bTitulo').value = '';
+    document.getElementById('bMaxIntentos').value = 3;
+    document.getElementById('bFechaDesde').value = '';
+    document.getElementById('bFechaHasta').value = '';
+    document.getElementById('uploadArea').classList.remove('has-file');
+    document.getElementById('csvInfo').textContent = '';
+    csvRegistros = [];
+    preguntas = [];
+    renderPreguntas();
+    renderAgentesBox();
+    document.getElementById('modalBase').classList.add('show');
+  }
+  function cerrarModalBase(){ document.getElementById('modalBase').classList.remove('show'); }
+
+  function crearBase(){
+    var titulo = document.getElementById('bTitulo').value.trim();
+    var maxIntentos = parseInt(document.getElementById('bMaxIntentos').value) || 3;
+    var fDesde = document.getElementById('bFechaDesde').value;
+    var fHasta = document.getElementById('bFechaHasta').value || fDesde;
+    var ags = agentesSeleccionados();
+
+    if(!titulo){ showToast('Escribe un título para la base.'); return; }
+    if(!fDesde){ showToast('Selecciona la fecha de inicio.'); return; }
+    if(fHasta < fDesde){ showToast('La fecha fin no puede ser anterior a la fecha de inicio.'); return; }
+    if(csvRegistros.length === 0){ showToast('Carga un archivo CSV con al menos un registro.'); return; }
+    if(ags.length === 0){ showToast('Selecciona al menos un agente.'); return; }
+
+    var preguntasLimpias = preguntas.filter(function(q){ return q.texto.trim(); }).map(function(q){
+      return { id: q.id, texto: q.texto.trim(), tipo: q.tipo, opciones: (q.opciones||[]).map(function(o){ return o.trim(); }).filter(Boolean) };
+    });
+
+    var btn = document.getElementById('btnCrearBase');
+    btn.disabled = true; btn.textContent = 'Creando...';
+
+    var baseDoc = {
+      titulo: titulo, proyecto: miProyectoG, creadoPorUid: currentUser.uid, creadoPorNombre: miNombreG, creadoPorRol: miRolG,
+      fechaDesde: fDesde, fechaHasta: fHasta, maxIntentos: maxIntentos, preguntas: preguntasLimpias,
+      estado: 'en-curso', fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    db.collection('bases').add(baseDoc).then(function(ref){
+      var baseId = ref.id;
+      var agentesMap = ags.map(function(id){ return agentesDisponibles.find(function(a){ return a.id === id; }); }).filter(Boolean);
+      var chunks = [], size = 400; // margen bajo el límite de 500 por batch
+      for(var i=0;i<csvRegistros.length;i+=size) chunks.push(csvRegistros.slice(i,i+size));
+      var startIdx = 0;
+      var promise = Promise.resolve();
+      chunks.forEach(function(chunk){
+        promise = promise.then(function(){
+          var batch = db.batch();
+          chunk.forEach(function(reg, i){
+            var globalIdx = startIdx + i;
+            var ag = agentesMap[globalIdx % agentesMap.length];
+            var docRef = db.collection('base_registros').doc();
+            batch.set(docRef, {
+              baseId: baseId, codigo: reg.codigo, nombre: reg.nombre, telefonos: reg.telefonos, camposExtra: reg.camposExtra,
+              agenteUid: ag.id, agenteNombre: ag.nombre, estado: 'pendiente', intentos: 0, actividades: [],
+              fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+            });
+          });
+          startIdx += chunk.length;
+          return batch.commit();
+        });
+      });
+      return promise;
+    }).then(function(){
+      showToast('Base creada: ' + csvRegistros.length + ' registros entre ' + ags.length + ' agente(s).');
+      cerrarModalBase();
+    }).catch(function(e){
+      console.error(e); showToast('Error al crear la base: ' + e.message);
+    }).finally(function(){
+      btn.disabled = false; btn.textContent = 'Crear base';
+    });
+  }
+
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3500);
+  }
+</script>
+<script src="notif.js"></script>
+<script src="sidebar.js"></script>
+<script>
+  initSidebar();
+  initNotif(db, auth);
+</script>
+</body>
+</html>

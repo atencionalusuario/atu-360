@@ -29,6 +29,7 @@ var ITEMS_NAV = {
   metricas:    { id: 'metricas',    label: 'Mis Métricas',       url: BASE+'metricas.html',    icon: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' },
   transporte:  { id: 'transporte',  label: 'Transporte',         url: BASE+'transporte.html',  icon: '<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>' },
   perfil:      { id: 'perfil',      label: 'Mi Perfil',  url: BASE+'perfil.html',          icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
+  bandeja:     { id: 'bandeja',     label: 'Mi Bandeja', url: BASE+'bandeja.html',         icon: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>' },
   // Jefe / WFM items — páginas standalone
   'jefe-usuarios':    { id: 'jefe-usuarios',    label: 'Usuarios',           url: BASE+'usuarios.html',       icon: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>' },
   'jefe-notif':       { id: 'jefe-notif',       label: 'Notificaciones',     url: BASE+'notificaciones.html', icon: '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>' },
@@ -43,6 +44,7 @@ var ITEMS_NAV = {
   'jefe-badges':      { id: 'jefe-badges',      label: 'Badges',             url: BASE+'badges.html',         icon: '<circle cx="12" cy="8" r="6"/><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/>' },
   'jefe-transporte':  { id: 'jefe-transporte',  label: 'Transporte',         url: BASE+'transporte.html',     icon: '<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>' },
   'jefe-perfil':      { id: 'jefe-perfil',      label: 'Mi Perfil',          url: BASE+'perfil.html',         icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
+  'jefe-bases':       { id: 'jefe-bases',       label: 'Bases',              url: BASE+'bases.html',          icon: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>' },
   // Supervisor items — páginas standalone
   'sup-notif':        { id: 'sup-notif',        label: 'Notificaciones',     url: BASE+'notificaciones.html', icon: '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>', badge: true, badgeId: 'notifNavBadge' },
   'sup-badges':       { id: 'sup-badges',       label: 'Badges',             url: BASE+'badges.html',         icon: '<circle cx="12" cy="8" r="6"/><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/>' },
@@ -57,6 +59,7 @@ var ITEMS_NAV = {
   'sup-biblioteca':   { id: 'sup-biblioteca',   label: 'Biblioteca',         url: BASE+'biblioteca.html',     icon: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' },
   'sup-transporte':   { id: 'sup-transporte',   label: 'Transporte',         url: BASE+'transporte.html',     icon: '<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>' },
   'sup-perfil':       { id: 'sup-perfil',       label: 'Mi Perfil',          url: BASE+'perfil.html',         icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
+  'sup-bases':        { id: 'sup-bases',        label: 'Bases',              url: BASE+'bases.html',          icon: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>' },
 };
 
 // Navegación por rol
@@ -64,11 +67,11 @@ var ITEMS_NAV = {
 // reportes:  ítems del bloque "Reportes" (puede ser vacío)
 var NAV_POR_ROL = {
   agente: {
-    principal: ['home', 'flash', 'notificaciones', 'solicitudes', 'biblioteca', 'miturno'],
+    principal: ['home', 'bandeja', 'flash', 'notificaciones', 'solicitudes', 'biblioteca', 'miturno'],
     reportes:  ['metricas', 'transporte', 'perfil']
   },
   'agente-inmersion': {
-    principal: ['home', 'flash', 'notificaciones', 'biblioteca', 'miturno'],
+    principal: ['home', 'bandeja', 'flash', 'notificaciones', 'biblioteca', 'miturno'],
     reportes:  ['transporte', 'perfil']
   },
   formacion: {
@@ -80,11 +83,11 @@ var NAV_POR_ROL = {
     reportes:  []
   },
   jefe: {
-    principal: ['jefe-usuarios','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
+    principal: ['jefe-usuarios','jefe-bases','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
     reportes:  []
   },
   supervisor: {
-    principal: ['sup-jornada','sup-turno','sup-monitoreo','sup-metricas','sup-flash','sup-notif','sup-solicitudes','sup-acciones','sup-licencias','sup-badges','sup-biblioteca','sup-transporte','sup-perfil'],
+    principal: ['sup-jornada','sup-turno','sup-monitoreo','sup-bases','sup-metricas','sup-flash','sup-notif','sup-solicitudes','sup-acciones','sup-licencias','sup-badges','sup-biblioteca','sup-transporte','sup-perfil'],
     reportes:  []
   },
   wfm: {
@@ -92,7 +95,7 @@ var NAV_POR_ROL = {
     reportes:  []
   },
   superadmin: {
-    principal: ['jefe-usuarios','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
+    principal: ['jefe-usuarios','jefe-bases','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
     reportes:  []
   },
   // Fallback para cualquier otro rol que use sidebar.js
