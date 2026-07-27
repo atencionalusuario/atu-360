@@ -295,7 +295,7 @@
       var domingo = new Date(lunes); domingo.setDate(lunes.getDate() + 6);
       ['rptMDesde','rptADesde'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=fmtISO(lunes); });
       ['rptMHasta','rptAHasta'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=fmtISO(domingo); });
-    });
+    }).catch(function(e){ console.error(e); showToast('Error al cargar usuarios.'); });
   }
 
   // ── Presets de fecha ──────────────────────────────────────────────────────────
