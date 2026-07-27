@@ -436,6 +436,8 @@
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
 
   var ROLES_PERMITIDOS = ['jefe','wfm','admin','superadmin'];
+  var ROLES_PROYECTO_RESTRINGIDO = ['jefe','admin','wfm']; // ven/editan solo su proyecto; superadmin ve todos
+  var miRolG = '', miProyectoG = '';
 
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
@@ -444,6 +446,8 @@
         window.location.href = BASE + 'home.html'; return;
       }
       currentUser = user;
+      miRolG      = doc.data().rol || '';
+      miProyectoG = doc.data().proyecto || '';
       cargarUsuarios();
     });
   });
@@ -459,7 +463,9 @@
 
   // ── Carga ────────────────────────────────────────────────────────────────────
   function cargarUsuarios() {
-    db.collection('usuarios').orderBy('nombre','asc').onSnapshot(function(snap) {
+    var q = db.collection('usuarios');
+    if (ROLES_PROYECTO_RESTRINGIDO.includes(miRolG)) q = q.where('proyecto', '==', miProyectoG);
+    q.orderBy('nombre','asc').onSnapshot(function(snap) {
       usuarios = [];
       snap.forEach(function(doc) {
         var d = doc.data();
@@ -702,11 +708,14 @@
       +'<div class="field"><label>Canal</label><select id="fCanal"><option value="">— Selecciona —</option>'
       +opt('Telefónico',u&&u.canal)+opt('Chat',u&&u.canal)+opt('Email',u&&u.canal)+opt('Presencial',u&&u.canal)+opt('Otro',u&&u.canal)
       +'</select></div>'
-      +'<div class="field"><label>Proyecto <span class="field-req">*</span></label><select id="fProyecto"><option value="">— Selecciona —</option>'
-      +'<option value="doctorsv"'+(u&&u.proyecto==='doctorsv'?' selected':'')+'>DoctorSV</option>'
-      +'<option value="educacion"'+(u&&u.proyecto==='educacion'?' selected':'')+'>Educación</option>'
-      +'<option value="marn"'+(u&&u.proyecto==='marn'?' selected':'')+'>MARN</option>'
-      +'<option value="global"'+(u&&u.proyecto==='global'?' selected':'')+'>Global</option>'
+      +'<div class="field"><label>Proyecto <span class="field-req">*</span></label><select id="fProyecto"'+(ROLES_PROYECTO_RESTRINGIDO.includes(miRolG)?' disabled':'')+'>'
+      +(ROLES_PROYECTO_RESTRINGIDO.includes(miRolG)
+        ? '<option value="'+miProyectoG+'" selected>'+(LABELS_PROY[miProyectoG]||miProyectoG)+'</option>'
+        : '<option value="">— Selecciona —</option>'
+          +'<option value="doctorsv"'+(u&&u.proyecto==='doctorsv'?' selected':'')+'>DoctorSV</option>'
+          +'<option value="educacion"'+(u&&u.proyecto==='educacion'?' selected':'')+'>Educación</option>'
+          +'<option value="marn"'+(u&&u.proyecto==='marn'?' selected':'')+'>MARN</option>'
+          +'<option value="global"'+(u&&u.proyecto==='global'?' selected':'')+'>Global</option>')
       +'</select></div>'
       +'<div class="field"><label>Rol <span class="field-req">*</span></label><select id="fRol"><option value="">— Selecciona —</option>'
       +'<option value="agente"'+(u&&u.rol==='agente'?' selected':'')+'>Agente</option>'
@@ -764,6 +773,8 @@
       else { el.style.borderColor=''; }
     });
     if(primero){ primero.scrollIntoView({behavior:'smooth',block:'center'}); showToast('Completa los campos marcados en rojo.'); return; }
+
+    if (ROLES_PROYECTO_RESTRINGIDO.includes(miRolG)) proyecto = miProyectoG; // defensa: nunca fuera del proyecto propio
 
     var togEl=document.getElementById('togVeh'), veh=togEl?togEl._on:false;
     var datos={
@@ -929,6 +940,7 @@
       if(!linea.trim()) return;
       var cols=linea.split(sep).map(function(c){return c.trim();}),fila={};
       headers.forEach(function(h,j){fila[h]=cols[j]||'';});
+      if (ROLES_PROYECTO_RESTRINGIDO.includes(miRolG)) fila.proyecto = miProyectoG; // fuerza el proyecto propio, ignora la columna del CSV
       var fecha=normalizarFecha(fila.fechaingreso||'');
       var errs=[];
       if(!fila.nombre) errs.push('Nombre');

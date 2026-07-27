@@ -166,19 +166,30 @@
       if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
         window.location.href = BASE + 'home.html'; return;
       }
-      var rol   = doc.data().rol;
-      var email = user.email;
-      iniciarTiempoReal(rol, email);
+      var rol      = doc.data().rol;
+      var email    = user.email;
+      var proyecto = doc.data().proyecto || '';
+      iniciarTiempoReal(rol, email, proyecto);
     });
   });
 
-  function iniciarTiempoReal(rol, email) {
+  var ROLES_PROYECTO_RESTRINGIDO_RT = ['jefe','admin','wfm'];
+
+  function iniciarTiempoReal(rol, email, proyecto) {
     miRol = rol; miEmail = email;
-    var query = db.collection('usuarios')
-      .where('rol', 'in', ['agente', 'agente-inmersion', 'supervisor']);
+    var query;
     if (rol === 'supervisor') {
       query = db.collection('usuarios')
         .where('emailSupervisor', '==', email);
+    } else if (ROLES_PROYECTO_RESTRINGIDO_RT.includes(rol)) {
+      // jefe/admin/wfm: solo su propio proyecto
+      query = db.collection('usuarios')
+        .where('rol', 'in', ['agente', 'agente-inmersion', 'supervisor'])
+        .where('proyecto', '==', proyecto);
+    } else {
+      // superadmin: toda la organización
+      query = db.collection('usuarios')
+        .where('rol', 'in', ['agente', 'agente-inmersion', 'supervisor']);
     }
     query.onSnapshot(function(snap) {
       agentes = [];

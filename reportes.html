@@ -234,7 +234,11 @@
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
 
   var ROLES_PERMITIDOS = ['jefe','wfm','admin','superadmin'];
+  var ROLES_PROYECTO_RESTRINGIDO = ['jefe','admin','wfm'];
   var usuarios = [];
+  var miRolG = '', miProyectoG = '';
+  var emailsPermitidos = null; // null = sin restricción (superadmin); objeto = whitelist por proyecto
+  var uidsPermitidos    = null;
 
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
@@ -242,6 +246,8 @@
       if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
         window.location.href = BASE + 'home.html'; return;
       }
+      miRolG      = doc.data().rol || '';
+      miProyectoG = doc.data().proyecto || '';
       iniciar();
     });
   });
@@ -262,12 +268,18 @@
 
   // ── Iniciar ───────────────────────────────────────────────────────────────────
   function iniciar() {
-    db.collection('usuarios').orderBy('nombre','asc').get().then(function(snap) {
+    var q = db.collection('usuarios');
+    if (ROLES_PROYECTO_RESTRINGIDO.includes(miRolG)) q = q.where('proyecto','==',miProyectoG);
+    q.orderBy('nombre','asc').get().then(function(snap) {
       usuarios = [];
       snap.forEach(function(doc) {
         var d = doc.data();
         if (d.rol !== 'superadmin') usuarios.push(Object.assign({ id: doc.id }, d));
       });
+      if (ROLES_PROYECTO_RESTRINGIDO.includes(miRolG)) {
+        emailsPermitidos = {}; uidsPermitidos = {};
+        usuarios.forEach(function(u){ if (u.email) emailsPermitidos[u.email] = true; uidsPermitidos[u.id] = true; });
+      }
       // Poblar selectores de agente
       var opts = usuarios.map(function(u){
         return '<option value="'+escHtml(u.email)+'">'+escHtml(u.nombre)+'</option>';
@@ -358,6 +370,7 @@
         snap.forEach(function(doc) {
           var d = doc.data();
           if (agente && d.email !== agente) return;
+          if (emailsPermitidos && !emailsPermitidos[d.email]) return;
           if (tipo === 'marcajes') {
             rows.push([d.fecha||'', nombreDeEmail(d.email)||d.email||'', d.email||'', d.tipo||'', d.hora||'']);
           } else {
@@ -396,6 +409,7 @@
         snap.forEach(function(doc) {
           var d = doc.data();
           if (agente && d.agenteEmail !== agente) return;
+          if (emailsPermitidos && !emailsPermitidos[d.agenteEmail]) return;
           if (estado === 'pendiente') { if ((d.estado||'').indexOf('pendiente') !== 0) return; }
           else if (estado && d.estado !== estado) return;
           var fCreacion = d.fechaCreacion ? new Date(d.fechaCreacion.seconds*1000).toLocaleDateString('es-SV') : '';
@@ -451,6 +465,7 @@
       var rows = [];
       docs.forEach(function(doc) {
         var d = doc.data(); if (!d.dias) return;
+        if (uidsPermitidos && !uidsPermitidos[doc.id]) return;
         var u = usuarios.find(function(x){ return x.id === doc.id; }) || {};
         Object.keys(d.dias).sort().forEach(function(fecha) {
           if (fecha < desde || fecha > hasta) return;

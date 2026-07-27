@@ -169,6 +169,7 @@
 <script>
   var BASE = 'https://atencionalusuario.github.io/atu-360/';
   var ROLES_PERMITIDOS = ['jefe','admin','superadmin','supervisor'];
+  var ROLES_PROYECTO_RESTRINGIDO = ['jefe','admin','wfm'];
   var LABELS_ROL = { agente:'Agente', 'agente-inmersion':'Agente inmersión', supervisor:'Supervisor', formacion:'Formación', admin:'Admin', wfm:'WFM', jefe:'Jefe', superadmin:'Superadmin' };
 
   initSidebar();
@@ -210,11 +211,20 @@
       });
   });
 
+  var ROLES_BADGE = ['agente','agente-inmersion','supervisor','formacion'];
+
   function cargarUsuarios() {
-    var campo = (rolUsuario === 'supervisor') ? 'emailSupervisor' : 'emailJefe';
-    db.collection('usuarios')
-      .where(campo, '==', currentUser.email)
-      .where('activo', '==', true)
+    var q;
+    if (rolUsuario === 'supervisor') {
+      q = db.collection('usuarios').where('emailSupervisor', '==', currentUser.email);
+    } else if (ROLES_PROYECTO_RESTRINGIDO.includes(rolUsuario)) {
+      // jefe/admin/wfm: personal operativo de su propio proyecto
+      q = db.collection('usuarios').where('proyecto', '==', perfilUsuario.proyecto || '').where('rol', 'in', ROLES_BADGE);
+    } else {
+      // superadmin: toda la organización
+      q = db.collection('usuarios').where('rol', 'in', ROLES_BADGE);
+    }
+    q.where('activo', '==', true)
       .get()
       .then(function(snap) {
         usuarios = [];

@@ -339,19 +339,52 @@
       }, console.error);
   }
 
-  /* ---------- CARGA COLA JEFE ---------- */
+  /* ---------- CARGA COLA JEFE / ADMIN / SUPERADMIN ---------- */
+  var emailsProyectoAdmin = null; // whitelist de emails del propio proyecto (solo rol admin)
+
   function cargarCola() {
     if (unsubCola) unsubCola();
+
+    if (rolUsuario === 'jefe') {
+      // Un jefe solo ve las solicitudes que le llegan a él directamente (ya acotado a su proyecto
+      // porque el jefe asignado a un agente siempre pertenece al mismo proyecto que ese agente).
+      unsubCola = db.collection('solicitudes')
+        .where('emailJefe', '==', currentUser.email)
+        .where('estado', '==', 'pendiente-admin')
+        .onSnapshot(function(snap){ aplicarCola(snap, false); }, console.error);
+      return;
+    }
+
+    // admin / superadmin: no son "jefe" de nadie vía emailJefe, así que ven toda la cola;
+    // admin se acota a su propio proyecto, superadmin ve todos los proyectos.
+    if (rolUsuario === 'admin' && !emailsProyectoAdmin) {
+      db.collection('usuarios').where('proyecto', '==', perfilUsuario.proyecto || '').get()
+        .then(function(snap) {
+          emailsProyectoAdmin = {};
+          snap.forEach(function(d){ var e = d.data().email; if (e) emailsProyectoAdmin[e] = true; });
+          suscribirColaAmplia();
+        });
+    } else {
+      suscribirColaAmplia();
+    }
+  }
+
+  function suscribirColaAmplia() {
     unsubCola = db.collection('solicitudes')
-      .where('emailJefe', '==', currentUser.email)
       .where('estado', '==', 'pendiente-admin')
-      .onSnapshot(function(snap) {
-        var lista = [];
-        snap.forEach(function(doc){ lista.push(Object.assign({id:doc.id}, doc.data())); });
-        lista.sort(function(a,b){ return (a.fechaCreacion?a.fechaCreacion.seconds:0) - (b.fechaCreacion?b.fechaCreacion.seconds:0); });
-        if (tabActual === 'cola') { solicitudes = lista; renderListaEquipo(lista); }
-        else solicitudes = lista;
-      }, console.error);
+      .onSnapshot(function(snap){ aplicarCola(snap, true); }, console.error);
+  }
+
+  function aplicarCola(snap, filtrarPorProyectoAdmin) {
+    var lista = [];
+    snap.forEach(function(doc) {
+      var d = Object.assign({id:doc.id}, doc.data());
+      if (filtrarPorProyectoAdmin && rolUsuario === 'admin' && emailsProyectoAdmin && !emailsProyectoAdmin[d.agenteEmail]) return;
+      lista.push(d);
+    });
+    lista.sort(function(a,b){ return (a.fechaCreacion?a.fechaCreacion.seconds:0) - (b.fechaCreacion?b.fechaCreacion.seconds:0); });
+    if (tabActual === 'cola') { solicitudes = lista; renderListaEquipo(lista); }
+    else solicitudes = lista;
   }
 
   /* ---------- RENDER LISTAS ---------- */

@@ -144,6 +144,8 @@
 <script>
   var BASE = 'https://atencionalusuario.github.io/atu-360/';
   var ROLES_PERMITIDOS = ['supervisor','jefe','wfm','admin','superadmin'];
+  var ROLES_PROYECTO_RESTRINGIDO = ['jefe','admin','wfm'];
+  var miProyectoG = '';
 
   firebase.initializeApp({
     apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
@@ -177,8 +179,9 @@
         currentUser   = user;
         perfilUsuario = doc.data();
         rolUsuario    = perfilUsuario.rol;
+        miProyectoG   = perfilUsuario.proyecto || '';
         document.getElementById('topbarSub').textContent =
-          rolUsuario === 'supervisor' ? 'Mi equipo' : 'Equipo completo';
+          rolUsuario === 'supervisor' ? 'Mi equipo' : (ROLES_PROYECTO_RESTRINGIDO.includes(rolUsuario) ? 'Mi proyecto' : 'Equipo completo');
         cargarEquipo();
         suscribirAcciones();
       });
@@ -186,28 +189,58 @@
 
   /* ── CARGA EQUIPO ─────────────────────────────────────────────────── */
   function cargarEquipo() {
-    var q = rolUsuario === 'supervisor'
-      ? db.collection('usuarios').where('emailSupervisor','==',currentUser.email).where('activo','==',true)
-      : db.collection('usuarios').where('emailJefe','==',currentUser.email).where('activo','==',true);
-    q.get().then(function(snap) {
+    var q;
+    if (rolUsuario === 'supervisor') {
+      q = db.collection('usuarios').where('emailSupervisor','==',currentUser.email);
+    } else if (ROLES_PROYECTO_RESTRINGIDO.includes(rolUsuario)) {
+      // jefe/admin/wfm: todo el personal activo de su propio proyecto
+      q = db.collection('usuarios').where('proyecto','==',miProyectoG);
+    } else {
+      // superadmin: toda la organización
+      q = db.collection('usuarios');
+    }
+    q.where('activo','==',true).get().then(function(snap) {
       equipoUsuarios = [];
       snap.forEach(function(d){ equipoUsuarios.push(Object.assign({ id: d.id }, d.data())); });
       equipoUsuarios.sort(function(a,b){ return (a.nombre||'').localeCompare(b.nombre||'','es'); });
+      recalcAcciones();
     });
   }
 
   /* ── SUSCRIPCIÓN ACCIONES ─────────────────────────────────────────── */
+  var todasAcciones = [];
+
   function suscribirAcciones() {
     if (_unsub) _unsub();
-    var campo = rolUsuario === 'supervisor' ? 'emailSupervisor' : 'emailJefe';
-    _unsub = db.collection('acciones_personal')
-      .where(campo, '==', currentUser.email)
-      .onSnapshot(function(snap) {
-        acciones = [];
-        snap.forEach(function(d){ acciones.push(Object.assign({ id: d.id }, d.data())); });
-        acciones.sort(function(a,b){ return (b.fecha||'').localeCompare(a.fecha||''); });
-        renderLista();
-      }, function(e){ console.error('acciones', e); });
+    if (rolUsuario === 'supervisor') {
+      _unsub = db.collection('acciones_personal')
+        .where('emailSupervisor', '==', currentUser.email)
+        .onSnapshot(function(snap) {
+          todasAcciones = [];
+          snap.forEach(function(d){ todasAcciones.push(Object.assign({ id: d.id }, d.data())); });
+          recalcAcciones();
+        }, function(e){ console.error('acciones', e); });
+    } else {
+      // jefe/admin/wfm/superadmin: se acota luego por equipoUsuarios (proyecto propio o toda la org)
+      _unsub = db.collection('acciones_personal')
+        .onSnapshot(function(snap) {
+          todasAcciones = [];
+          snap.forEach(function(d){ todasAcciones.push(Object.assign({ id: d.id }, d.data())); });
+          recalcAcciones();
+        }, function(e){ console.error('acciones', e); });
+    }
+  }
+
+  function recalcAcciones() {
+    if (rolUsuario === 'supervisor') {
+      acciones = todasAcciones.slice();
+    } else {
+      var idsEquipo = {};
+      equipoUsuarios.forEach(function(u){ idsEquipo[u.id] = true; });
+      acciones = todasAcciones.filter(function(a){ return idsEquipo[a.subjectUid]; });
+    }
+    acciones.sort(function(a,b){ return (b.fecha||'').localeCompare(a.fecha||''); });
+    renderLista();
   }
 
   /* ── LISTA ────────────────────────────────────────────────────────── */
@@ -322,7 +355,7 @@
       +'<div><label class="field-label">Persona <span class="field-req">*</span></label>'
       +'<select id="fPersona" onchange="autoEmail()">'
       +'<option value="">— Selecciona —</option>'
-      +equipoUsuarios.map(function(u){ return '<option value="'+u.id+'" data-email="'+escHtml(u.email||'')+'" data-nombre="'+escHtml(u.nombre||u.email||'')+'" data-rol="'+escHtml(u.rol||'')+'" data-sup="'+escHtml(u.emailSupervisor||'')+'" data-jefe="'+escHtml(u.emailJefe||'')+'">'+escHtml(u.nombre||u.email||'?')+'</option>'; }).join('')
+      +equipoUsuarios.map(function(u){ return '<option value="'+u.id+'" data-email="'+escHtml(u.email||'')+'" data-nombre="'+escHtml(u.nombre||u.email||'')+'" data-rol="'+escHtml(u.rol||'')+'" data-sup="'+escHtml(u.emailSupervisor||'')+'" data-jefe="'+escHtml(u.emailJefe||'')+'" data-proyecto="'+escHtml(u.proyecto||'')+'">'+escHtml(u.nombre||u.email||'?')+'</option>'; }).join('')
       +'</select></div>'
       +'<div><label class="field-label">Correo</label>'
       +'<input type="text" id="fCorreo" readonly style="background:#F1F5F9;color:#64748B" placeholder="Se completa al seleccionar persona"></div>'
@@ -368,6 +401,7 @@
     var nombre  = opt ? (opt.getAttribute('data-nombre')||'') : '';
     var supEmail  = opt ? (opt.getAttribute('data-sup')||'')  : '';
     var jefeEmail = opt ? (opt.getAttribute('data-jefe')||'') : '';
+    var proyecto  = opt ? (opt.getAttribute('data-proyecto')||'') : '';
 
     if (!uid)   { alert('Selecciona una persona.'); return; }
     if (!fecha) { alert('Indica la fecha.'); return; }
@@ -381,6 +415,7 @@
       subjectNombre: nombre,
       emailSupervisor: supEmail,
       emailJefe:       jefeEmail,
+      proyecto:        proyecto,
       fecha:           fecha,
       comentarios:     com,
       creadorUid:      currentUser.uid,

@@ -251,6 +251,8 @@
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
 
   var ROLES_PERMITIDOS = ['jefe','wfm','admin','superadmin'];
+  var ROLES_PROYECTO_RESTRINGIDO = ['jefe','admin','wfm'];
+  var miProyectoG = '', miRolG = '';
   var LABELS_PROY = { doctorsv:'DoctorSV', educacion:'Educación', marn:'MARN', global:'Global' };
   var MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   var DAYS  = ['lunes','martes','miercoles','jueves','viernes','sabado','domingo'];
@@ -271,6 +273,8 @@
       if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
         window.location.href = BASE + 'home.html'; return;
       }
+      miProyectoG = doc.data().proyecto || '';
+      miRolG      = doc.data().rol || '';
       cargarPlantillas();
       cargarAgentes();
     });
@@ -397,7 +401,9 @@
 
   // ── AGENTES (carga para Asignar y Ver agentes) ────────────────────────────────
   function cargarAgentes() {
-    db.collection('usuarios').where('rol','in',['agente','agente-inmersion','supervisor']).get()
+    var q = db.collection('usuarios').where('rol','in',['agente','agente-inmersion','supervisor']);
+    if (ROLES_PROYECTO_RESTRINGIDO.includes(miRolG)) q = q.where('proyecto','==',miProyectoG);
+    q.get()
       .then(function(snap) {
         agentes = [];
         snap.forEach(function(doc){ agentes.push(Object.assign({ id: doc.id }, doc.data())); });
