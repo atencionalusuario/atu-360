@@ -44,6 +44,7 @@ var ITEMS_NAV = {
   'jefe-badges':      { id: 'jefe-badges',      label: 'Badges',             url: BASE+'badges.html',         icon: '<circle cx="12" cy="8" r="6"/><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/>' },
   'jefe-transporte':  { id: 'jefe-transporte',  label: 'Transporte',         url: BASE+'transporte.html',     icon: '<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>' },
   'jefe-perfil':      { id: 'jefe-perfil',      label: 'Mi Perfil',          url: BASE+'perfil.html',         icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
+  'wfm-jornada':      { id: 'wfm-jornada',      label: 'Inicio',             url: BASE+'home.html',           icon: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>' },
   'jefe-bases':       { id: 'jefe-bases',       label: 'Bases',              url: BASE+'bases.html',          icon: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>' },
   // Supervisor items — páginas standalone
   'sup-notif':        { id: 'sup-notif',        label: 'Notificaciones',     url: BASE+'notificaciones.html', icon: '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>', badge: true, badgeId: 'notifNavBadge' },
@@ -91,7 +92,7 @@ var NAV_POR_ROL = {
     reportes:  []
   },
   wfm: {
-    principal: ['jefe-usuarios','jefe-solicitudes','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
+    principal: ['wfm-jornada','jefe-usuarios','jefe-solicitudes','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
     reportes:  []
   },
   superadmin: {
