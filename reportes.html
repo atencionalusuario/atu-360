@@ -41,6 +41,16 @@
   .btn-download:hover { opacity: 0.88; }
   .btn-download:disabled { opacity: 0.5; cursor: not-allowed; }
 
+  .btn-sheets {
+    padding: 8px 16px; background: white; color: #1A3DAA; border: 1.5px solid #1A3DAA; border-radius: 8px;
+    font-size: 0.78rem; font-weight: 700; cursor: pointer; font-family: inherit;
+    display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+    transition: opacity 0.15s;
+  }
+  .btn-sheets:hover { opacity: 0.75; }
+  .btn-sheets:disabled { opacity: 0.5; cursor: not-allowed; }
+  .rpt-header .btns { display: flex; gap: 8px; flex-shrink: 0; }
+
   .info-ok   { color: #16A34A; }
   .info-warn { color: #B45309; }
   .info-err  { color: #DC2626; }
@@ -71,10 +81,13 @@
           <div class="rpt-title">Marcajes</div>
           <div class="rpt-sub">Registros de entrada y salida</div>
         </div>
-        <button class="btn-download" onclick="descargar('marcajes')">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Descargar CSV
-        </button>
+        <div class="btns">
+          <button class="btn-download" onclick="descargar('marcajes','csv')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Descargar CSV
+          </button>
+          <button class="btn-sheets" onclick="descargar('marcajes','sheets')">Exportar a Sheets</button>
+        </div>
       </div>
       <div class="rpt-body">
         <div class="preset-group">
@@ -96,10 +109,13 @@
           <div class="rpt-title">Auxiliares</div>
           <div class="rpt-sub">Tiempos de auxiliar por agente</div>
         </div>
-        <button class="btn-download" onclick="descargar('auxiliares')">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Descargar CSV
-        </button>
+        <div class="btns">
+          <button class="btn-download" onclick="descargar('auxiliares','csv')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Descargar CSV
+          </button>
+          <button class="btn-sheets" onclick="descargar('auxiliares','sheets')">Exportar a Sheets</button>
+        </div>
       </div>
       <div class="rpt-body">
         <div class="preset-group">
@@ -121,10 +137,13 @@
           <div class="rpt-title">Solicitudes</div>
           <div class="rpt-sub">Permisos y solicitudes de los agentes</div>
         </div>
-        <button class="btn-download" onclick="descargarSolicitudes()">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Descargar CSV
-        </button>
+        <div class="btns">
+          <button class="btn-download" onclick="descargarSolicitudes('csv')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Descargar CSV
+          </button>
+          <button class="btn-sheets" onclick="descargarSolicitudes('sheets')">Exportar a Sheets</button>
+        </div>
       </div>
       <div class="rpt-body">
         <div class="preset-group">
@@ -152,10 +171,13 @@
           <div class="rpt-title">Nómina de usuarios</div>
           <div class="rpt-sub">Snapshot del estado actual del equipo</div>
         </div>
-        <button class="btn-download" onclick="descargarNomina()">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Descargar CSV
-        </button>
+        <div class="btns">
+          <button class="btn-download" onclick="descargarNomina('csv')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Descargar CSV
+          </button>
+          <button class="btn-sheets" onclick="descargarNomina('sheets')">Exportar a Sheets</button>
+        </div>
       </div>
       <div class="rpt-body">
         <select class="rpt-select" id="rptNProy" style="min-width:160px">
@@ -191,10 +213,13 @@
           <div class="rpt-title">Turnos asignados</div>
           <div class="rpt-sub">Días laborales y de descanso por agente</div>
         </div>
-        <button class="btn-download" onclick="descargarTurnos()">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Descargar CSV
-        </button>
+        <div class="btns">
+          <button class="btn-download" onclick="descargarTurnos('csv')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Descargar CSV
+          </button>
+          <button class="btn-sheets" onclick="descargarTurnos('sheets')">Exportar a Sheets</button>
+        </div>
       </div>
       <div class="rpt-body">
         <div class="preset-group">
@@ -217,6 +242,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://accounts.google.com/gsi/client"></script>
 <script>
   var BASE = 'https://atencionalusuario.github.io/atu-360/';
 
@@ -343,6 +369,60 @@
     URL.revokeObjectURL(url);
   }
 
+  // ── Exportar a Google Sheets ──────────────────────────────────────────────────
+  var GOOGLE_CLIENT_ID = '1323633730-jiq1879p8bqs0vccbuokqb245kcrab1h.apps.googleusercontent.com';
+  var sheetsTokenClient = null, sheetsAccessToken = null;
+
+  function getSheetsTokenClient() {
+    if (sheetsTokenClient) return sheetsTokenClient;
+    sheetsTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/spreadsheets',
+      callback: function(){}
+    });
+    return sheetsTokenClient;
+  }
+
+  function pedirTokenSheets() {
+    return new Promise(function(resolve, reject) {
+      var client = getSheetsTokenClient();
+      client.callback = function(resp) {
+        if (resp.error) { reject(resp); return; }
+        sheetsAccessToken = resp.access_token;
+        resolve(sheetsAccessToken);
+      };
+      client.requestAccessToken({ prompt: sheetsAccessToken ? '' : 'consent' });
+    });
+  }
+
+  // rows incluye la fila de encabezados como primer elemento
+  function exportarASheets(rows, titulo) {
+    showToast('Abriendo Google...');
+    pedirTokenSheets().then(function(token) {
+      return fetch('https://sheets.googleapis.com/v4/spreadsheets', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ properties: { title: 'ATU 360 — ' + titulo } })
+      }).then(function(r){ return r.json(); }).then(function(sheet) {
+        if (sheet.error) throw sheet.error;
+        var spreadsheetId = sheet.spreadsheetId;
+        var sheetName = sheet.sheets[0].properties.title;
+        return fetch('https://sheets.googleapis.com/v4/spreadsheets/' + spreadsheetId + '/values/' + encodeURIComponent(sheetName + '!A1') + '?valueInputOption=USER_ENTERED', {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ values: rows })
+        }).then(function(r){ return r.json(); }).then(function(res) {
+          if (res.error) throw res.error;
+          window.open(sheet.spreadsheetUrl, '_blank');
+          showToast('Exportado a Google Sheets.');
+        });
+      });
+    }).catch(function(e) {
+      console.error(e);
+      showToast('No se pudo exportar a Sheets' + (e && e.message ? ': ' + e.message : '.'));
+    });
+  }
+
   function setInfo(id, msg, cls) {
     var el = document.getElementById(id); if (!el) return;
     el.textContent = msg;
@@ -350,7 +430,7 @@
   }
 
   // ── Descarga marcajes / auxiliares ────────────────────────────────────────────
-  function descargar(tipo) {
+  function descargar(tipo, modo) {
     var pfx    = tipo === 'marcajes' ? 'M' : 'A';
     var desde  = document.getElementById('rpt'+pfx+'Desde').value;
     var hasta  = document.getElementById('rpt'+pfx+'Hasta').value;
@@ -384,13 +464,14 @@
         var headers = tipo === 'marcajes'
           ? ['Fecha','Agente','Email','Tipo','Hora']
           : ['Fecha','Agente','Email','Auxiliar','Inicio','Fin','Duración (min)'];
-        exportCSV([headers].concat(rows), tipo+'_'+desde+'_'+hasta+'.csv');
+        if (modo === 'sheets') exportarASheets([headers].concat(rows), tipo+' '+desde+'_'+hasta);
+        else exportCSV([headers].concat(rows), tipo+'_'+desde+'_'+hasta+'.csv');
       })
       .catch(function(e) { setInfo(infoId, 'Error al cargar datos.', 'info-err'); showToast('Error: '+e.message); });
   }
 
   // ── Descarga solicitudes ──────────────────────────────────────────────────────
-  function descargarSolicitudes() {
+  function descargarSolicitudes(modo) {
     var desde  = document.getElementById('rptSDesde').value;
     var hasta  = document.getElementById('rptSHasta').value;
     var agente = document.getElementById('rptSAgente').value;
@@ -420,13 +501,15 @@
         var n = rows.length;
         setInfo('rptSInfo', n + ' registro' + (n===1?'':'s') + ' encontrado' + (n===1?'':'s'), n ? 'info-ok' : 'info-warn');
         if (!n) { showToast('No hay registros en ese rango.'); return; }
-        exportCSV([['Fecha solicitud','Agente','Email','Tipo','Fecha inicio','Fecha fin','Hora inicio','Hora fin','Comentarios','Estado','Nota rechazo','Fecha resolución']].concat(rows), 'solicitudes_'+desde+'_'+hasta+'.csv');
+        var headers = ['Fecha solicitud','Agente','Email','Tipo','Fecha inicio','Fecha fin','Hora inicio','Hora fin','Comentarios','Estado','Nota rechazo','Fecha resolución'];
+        if (modo === 'sheets') exportarASheets([headers].concat(rows), 'Solicitudes '+desde+'_'+hasta);
+        else exportCSV([headers].concat(rows), 'solicitudes_'+desde+'_'+hasta+'.csv');
       })
       .catch(function(e) { setInfo('rptSInfo','Error al cargar datos.','info-err'); showToast('Error: '+e.message); });
   }
 
   // ── Descarga nómina ───────────────────────────────────────────────────────────
-  function descargarNomina() {
+  function descargarNomina(modo) {
     var proy   = document.getElementById('rptNProy').value;
     var rol    = document.getElementById('rptNRol').value;
     var estado = document.getElementById('rptNEstado').value;
@@ -443,11 +526,13 @@
     var rows = lista.map(function(u) {
       return [u.nombre||'', u.email||'', u.documento||'', u.cargo||'', u.proyecto||'', u.rol||'', u.canal||'', u.supervisor||'', u.fechaIngreso||'', diasDesde(u.fechaIngreso), u.vehiculo?'Sí':'No', u.activo?'Activo':'Inactivo'];
     });
-    exportCSV([['Nombre','Email','Documento','Cargo','Proyecto','Rol','Canal','Supervisor','Fecha ingreso','Antigüedad (días)','Vehículo','Estado']].concat(rows), 'nomina.csv');
+    var headers = ['Nombre','Email','Documento','Cargo','Proyecto','Rol','Canal','Supervisor','Fecha ingreso','Antigüedad (días)','Vehículo','Estado'];
+    if (modo === 'sheets') exportarASheets([headers].concat(rows), 'Nómina');
+    else exportCSV([headers].concat(rows), 'nomina.csv');
   }
 
   // ── Descarga turnos ───────────────────────────────────────────────────────────
-  function descargarTurnos() {
+  function descargarTurnos(modo) {
     var desde  = document.getElementById('rptTDesde').value;
     var hasta  = document.getElementById('rptTHasta').value;
     var agente = document.getElementById('rptTAgente').value;
@@ -477,7 +562,9 @@
       var n = rows.length;
       setInfo('rptTInfo', n + ' registro' + (n===1?'':'s') + ' encontrado' + (n===1?'':'s'), n ? 'info-ok' : 'info-warn');
       if (!n) { showToast('No hay registros en ese rango.'); return; }
-      exportCSV([['Fecha','Agente','Email','Plantilla','Horario','Estado']].concat(rows), 'turnos_'+desde+'_'+hasta+'.csv');
+      var headers = ['Fecha','Agente','Email','Plantilla','Horario','Estado'];
+      if (modo === 'sheets') exportarASheets([headers].concat(rows), 'Turnos '+desde+'_'+hasta);
+      else exportCSV([headers].concat(rows), 'turnos_'+desde+'_'+hasta+'.csv');
     }).catch(function(e) { setInfo('rptTInfo','Error al cargar datos.','info-err'); showToast('Error: '+e.message); });
   }
 
