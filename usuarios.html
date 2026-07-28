@@ -459,6 +459,29 @@
   var modoForm          = null;
   var dir1 = 'asc', dir2 = 'asc';
 
+  // ── Persistir orden de columnas ────────────────────────────────────────────────
+  var CLAVE_ORDEN_USUARIOS = 'atu360_usuarios_orden';
+  function guardarOrden(){
+    localStorage.setItem(CLAVE_ORDEN_USUARIOS, JSON.stringify({
+      sort1: document.getElementById('sort1').value, dir1: dir1,
+      sort2: document.getElementById('sort2').value, dir2: dir2
+    }));
+  }
+  function restaurarOrden(){
+    try {
+      var raw = localStorage.getItem(CLAVE_ORDEN_USUARIOS);
+      if(!raw) return;
+      var o = JSON.parse(raw);
+      if(o.sort1 != null) document.getElementById('sort1').value = o.sort1;
+      if(o.sort2 != null) document.getElementById('sort2').value = o.sort2;
+      dir1 = o.dir1 === 'desc' ? 'desc' : 'asc';
+      dir2 = o.dir2 === 'desc' ? 'desc' : 'asc';
+      document.getElementById('btnDir1').className = 'btn-dir '+dir1;
+      document.getElementById('btnDir2').className = 'btn-dir '+dir2;
+    } catch(e){}
+  }
+  restaurarOrden();
+
   var LABELS_ROL  = { agente:'Agente', 'agente-inmersion':'Agente Inmersión', supervisor:'Supervisor', formacion:'Formación', admin:'Admin', wfm:'WFM', jefe:'Jefe', superadmin:'Superadmin' };
   var LABELS_PROY = { doctorsv:'DoctorSV', educacion:'Educación', marn:'MARN', global:'Global' };
 
@@ -588,6 +611,7 @@
       if(th.dataset.col===c1) th.className+=(dir1==='asc'?' sort-asc':' sort-desc');
       else if(c2&&th.dataset.col===c2) th.className+=(dir2==='asc'?' sort-sec-asc':' sort-sec-desc');
     });
+    guardarOrden();
     renderTabla(lista);
   }
 
