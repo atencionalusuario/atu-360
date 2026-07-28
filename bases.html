@@ -241,6 +241,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://accounts.google.com/gsi/client"></script>
 <script>
   var BASE = 'https://atencionalusuario.github.io/atu-360/';
   var ROLES_PERMITIDOS = ['supervisor','jefe','superadmin'];
@@ -370,6 +371,7 @@
       + '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">'
       + '<div><div class="base-titulo">'+escHtml(b.titulo)+'</div><div class="base-meta">'+rows.length+' registros · máx. '+ (b.maxIntentos||3) +' intentos</div></div>'
       + '<div style="display:flex;gap:8px">'
+      + '<button class="btn-sec" onclick="exportarASheets(\''+b.id+'\')" id="btnExportSheets">Exportar a Sheets</button>'
       + '<button class="btn-sec" onclick="abrirReasignar(\''+b.id+'\')">Reasignar</button>'
       + '<button class="btn-sec" onclick="toggleEstadoBase(\''+b.id+'\',\''+(b.estado||'en-curso')+'\')">'+(b.estado==='finalizada'?'Reactivar':'Finalizar')+'</button>'
       + '</div>'
@@ -680,6 +682,86 @@
       btn.disabled = false; btn.textContent = 'Reasignar';
     });
   }
+
+  // ── Exportar a Google Sheets ─────────────────────────────────────────────────
+  var GOOGLE_CLIENT_ID = '1323633730-jiq1879p8bqs0vccbuokqb245kcrab1h.apps.googleusercontent.com';
+  var sheetsTokenClient = null, sheetsAccessToken = null;
+
+  function getSheetsTokenClient(){
+    if(sheetsTokenClient) return sheetsTokenClient;
+    sheetsTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/spreadsheets',
+      callback: function(){} // se sobreescribe en cada solicitud
+    });
+    return sheetsTokenClient;
+  }
+
+  function pedirTokenSheets(){
+    return new Promise(function(resolve, reject){
+      var client = getSheetsTokenClient();
+      client.callback = function(resp){
+        if(resp.error){ reject(resp); return; }
+        sheetsAccessToken = resp.access_token;
+        resolve(sheetsAccessToken);
+      };
+      client.requestAccessToken({ prompt: sheetsAccessToken ? '' : 'consent' });
+    });
+  }
+
+  window.exportarASheets = function(baseId){
+    var b = bases.find(function(x){ return x.id === baseId; });
+    var rows = registrosPorBase[baseId] || [];
+    if(!b) return;
+    if(rows.length === 0){ showToast('Esta base no tiene registros para exportar.'); return; }
+
+    var btn = document.getElementById('btnExportSheets');
+    if(btn){ btn.disabled = true; btn.textContent = 'Exportando...'; }
+
+    pedirTokenSheets().then(function(token){
+      var headers = ['Código','Nombre','Teléfonos','Agente','Estado','Intentos'];
+      var preguntasBase = b.preguntas || [];
+      preguntasBase.forEach(function(q){ headers.push(q.texto); });
+
+      var values = [headers];
+      rows.forEach(function(r){
+        var ultimaActividad = (r.actividades && r.actividades.length) ? r.actividades[r.actividades.length-1] : {};
+        var fila = [
+          r.codigo || '', r.nombre || '', (r.telefonos||[]).join(' / '),
+          r.agenteNombre || '', ESTADOS_REG[r.estado] || r.estado || 'Pendiente', r.intentos || 0
+        ];
+        preguntasBase.forEach(function(q){
+          var v = ultimaActividad ? ultimaActividad[q.id] : null;
+          fila.push(Array.isArray(v) ? v.join(', ') : (v == null ? '' : v));
+        });
+        values.push(fila);
+      });
+
+      return fetch('https://sheets.googleapis.com/v4/spreadsheets', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ properties: { title: 'ATU 360 — ' + b.titulo } })
+      }).then(function(r){ return r.json(); }).then(function(sheet){
+        if(sheet.error) throw sheet.error;
+        var spreadsheetId = sheet.spreadsheetId;
+        var sheetName = sheet.sheets[0].properties.title;
+        return fetch('https://sheets.googleapis.com/v4/spreadsheets/' + spreadsheetId + '/values/' + encodeURIComponent(sheetName + '!A1') + '?valueInputOption=USER_ENTERED', {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ values: values })
+        }).then(function(r){ return r.json(); }).then(function(res){
+          if(res.error) throw res.error;
+          window.open(sheet.spreadsheetUrl, '_blank');
+          showToast('Base exportada a Google Sheets.');
+        });
+      });
+    }).catch(function(e){
+      console.error(e);
+      showToast('No se pudo exportar a Sheets' + (e && e.message ? ': ' + e.message : '.'));
+    }).finally(function(){
+      if(btn){ btn.disabled = false; btn.textContent = 'Exportar a Sheets'; }
+    });
+  };
 
   // ── Dashboard de avance ──────────────────────────────────────────────────────
   var registrosDashboard = {}; // baseId -> [registros]
