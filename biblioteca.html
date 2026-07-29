@@ -69,8 +69,8 @@
   .placeholder { color: #94A3B8; font-style: italic; }
 
   #vistaCategoria { width: 100%; max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-  .bib-btn-volver { align-self: flex-start; background: none; border: none; color: #1A3DAA; font-weight: 600; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; padding: 4px 0; }
-  .bib-btn-volver:hover { text-decoration: underline; }
+  .bib-btn-volver { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; background: #EEF2FF; color: #1A3DAA; border: none; border-radius: 999px; font-weight: 600; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; padding: 8px 16px 8px 12px; transition: all 0.15s; }
+  .bib-btn-volver:hover { background: #DDE5FF; transform: translateX(-2px); }
   .titulo-categoria { font-size: 0.95rem; font-weight: 700; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 10px; }
   .caja-busqueda-cat { width: 100%; max-width: 640px; text-align: center; }
   .pregunta-categoria { font-size: 1.1rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 6px; }
@@ -449,8 +449,7 @@
     document.getElementById('flujoSDP').style.display = 'none';
     document.getElementById('vistaCategoria').style.display = 'flex';
 
-    var esNivelPrincipal = pilaVistas.length === 1;
-    var mostrarBusqueda = esNivelPrincipal && categoriaActualId === 'consulta';
+    var mostrarBusqueda = pilaVistas.length <= 2 && categoriaActualId === 'consulta';
     document.getElementById('cajaBusquedaCategoria').style.display = mostrarBusqueda ? 'block' : 'none';
 
     document.getElementById('tituloCategoria').textContent = vista.titulo;
