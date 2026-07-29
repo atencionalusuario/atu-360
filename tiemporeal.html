@@ -20,6 +20,13 @@
   .stat-chip.activos   .stat-chip-val { color: #16A34A; }
   .stat-chip.inactivos .stat-chip-val { color: #DC2626; }
 
+  /* RESUMEN DE AUXILIARES */
+  .rt-aux-grid  { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; flex-shrink: 0; }
+  .rt-aux-card  { background: white; border: 1px solid #E2E8F0; border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 3px; }
+  .rt-aux-label { font-size: 0.65rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; }
+  .rt-aux-val   { font-size: 1.5rem; font-weight: 800; line-height: 1.2; }
+  .rt-aux-sub   { font-size: 0.68rem; color: #94A3B8; }
+
   /* CONTROLES */
   .controles  { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; flex-shrink: 0; }
   .ctrl-input { padding: 8px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.78rem; font-family: inherit; color: #1E293B; background: white; outline: none; width: 200px; }
@@ -87,6 +94,9 @@
       <div class="stat-chip inactivos"><div class="stat-chip-val">—</div><div class="stat-chip-label">Fuera</div></div>
       <div class="stat-chip"><div class="stat-chip-val">—</div><div class="stat-chip-label">Total agentes</div></div>
     </div>
+
+    <!-- RESUMEN DE AUXILIARES -->
+    <div class="rt-aux-grid" id="rtAuxGrid"></div>
 
     <!-- CONTROLES -->
     <div class="controles">
@@ -246,6 +256,37 @@
 
     document.getElementById('totalLabel').textContent = soloAgentes.length + ' de ' + totalAgentes + ' agentes';
     document.getElementById('rtCount').textContent    = soloAgentes.length + ' de ' + totalAgentes + ' agentes';
+
+    // Resumen de auxiliares (equipo completo, sin filtros)
+    var soloAgentesTodos = agentes.filter(function(a){ return a.rol !== 'supervisor'; });
+    var enLineaTodos = soloAgentesTodos.filter(function(a){ return !!a.enLinea; });
+    var porEstado = {};
+    enLineaTodos.forEach(function(a){ var e = a.estadoActual || 'Fuera'; porEstado[e] = (porEstado[e]||0)+1; });
+    var enGestion = (porEstado['Inbound']||0) + (porEstado['Outbound']||0);
+    var segsProm = 0;
+    if (enLineaTodos.length) {
+      var sumaSeg = 0, conFecha = 0;
+      enLineaTodos.forEach(function(a){
+        if (!a.estadoDesde) return;
+        var d = a.estadoDesde.toDate ? a.estadoDesde.toDate() : new Date(a.estadoDesde);
+        sumaSeg += Math.floor((new Date() - d) / 1000); conFecha++;
+      });
+      if (conFecha) segsProm = Math.round(sumaSeg / conFecha);
+    }
+    function auxCard(val, color, label, sub) {
+      return '<div class="rt-aux-card"><div class="rt-aux-label">'+label+'</div><div class="rt-aux-val" style="color:'+color+'">'+val+'</div>'
+        + (sub ? '<div class="rt-aux-sub">'+sub+'</div>' : '') + '</div>';
+    }
+    document.getElementById('rtAuxGrid').innerHTML =
+        auxCard(enLineaTodos.length, '#16A34A', 'Agentes disponibles', 'de ' + totalAgentes + ' activos')
+      + auxCard(enGestion, '#1A3DAA', 'En llamada', 'en tiempo real')
+      + auxCard(pad(Math.floor(segsProm/60))+':'+pad(segsProm%60), '#1E293B', 'Duración promedio', 'en estado actual')
+      + auxCard(porEstado['Baño']||0,               RT_ESTADOS['Baño'].text,               'En baño')
+      + auxCard(porEstado['Break']||0,               RT_ESTADOS['Break'].text,               'En break')
+      + auxCard(porEstado['Comida']||0,              RT_ESTADOS['Comida'].text,              'En comida')
+      + auxCard(porEstado['Capacitación']||0,        RT_ESTADOS['Capacitación'].text,        'En capacitación')
+      + auxCard(porEstado['Pausa administrativa']||0,RT_ESTADOS['Pausa administrativa'].text,'En personal')
+      + auxCard(porEstado['Feedback']||0,             RT_ESTADOS['Feedback'].text,            'En retroalimentación');
 
     // Actualizar filtro de estados
     var filtEl  = document.getElementById('rtFiltEst');
