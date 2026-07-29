@@ -196,6 +196,8 @@
     <button class="modal-close" onclick="cerrarModalTexto()">&times;</button>
     <h3 id="modalTituloTexto" class="modal-titulo"></h3>
     <div id="modalCuerpoTexto" class="modal-cuerpo"></div>
+    <div class="sdp-botones" id="modalSubBotones" style="display:none;"></div>
+    <div id="modalSubTexto" class="modal-cuerpo" style="display:none;"></div>
     <p class="modal-tipificacion"><strong>Tipificación:</strong> <span id="modalTipificacion"></span></p>
     <div class="modal-footer">
       <button class="bib-btn">Despedida</button>
@@ -324,8 +326,23 @@
     { label: 'Dudas generales del servicio', hijos: [
       { label: 'Orientación sobre todo el servicio', texto:
         '<p>El servicio de DoctorSV ha sido desarrollado como una alternativa a la atención presencial, para recibir atención médica sin necesidad de trasladarse a un centro de salud.</p>' +
-        '<p>A través de la aplicación DoctorSV usted podrá ser atendido de forma remota por un médico general en el momento que usted lo requiera y en el lugar donde se encuentre.</p>',
-        tipificacion: 'Consultas > Información general del servicio > Orientación sobre todo el servicio'
+        '<p>A través de la aplicación DoctorSV usted podrá ser atendido de forma remota por un médico general en el momento que usted lo requiera y en el lugar donde se encuentre.</p>' +
+        '<p>Le comento que la aplicación es muy fácil de instalar, primero debe descargarla en las tiendas de aplicaciones, buscándola con el nombre <strong>"Doctorsv"</strong>. Si usted tiene 18 años en adelante, podrá registrarse y hacer una cita. Si gusta, lo puedo ayudar con el paso a paso para descargarla y registrarse.</p>',
+        tipificacion: 'Consultas > Información general del servicio > Orientación sobre todo el servicio',
+        subBotones: [
+          { label: 'Descarga Android', texto:
+            '<p>Ahora ingrese a <strong>Google Play Store</strong>, la tienda de aplicaciones.</p>' +
+            '<p>En la parte superior de la pantalla podrá ubicar el buscador. Allí escriba <strong>"Doctorsv"</strong>.</p>' +
+            '<p>El siguiente paso es pulsar donde dice <strong>"Instalar"</strong>.</p>' +
+            '<p>Esperemos un instante mientras se descarga e instala.</p>' +
+            '<p>Luego, en esa misma pantalla pulse <strong>"Abrir"</strong>.</p>'
+          },
+          { label: 'Descarga iOS', texto:
+            '<p>Ahora ingrese a la <strong>App Store</strong>, la tienda de aplicaciones. En la parte inferior de la pantalla podrá ubicar el buscador. Allí escriba <strong>Doctorsv</strong>.</p>' +
+            '<p>El siguiente paso es pulsar el botón que dice <strong>"Obtener"</strong> (o, en su defecto, le aparecerá un ícono que parece una nube con una flecha hacia abajo). Espere un instante mientras se descarga e instala la aplicación.</p>' +
+            '<p>Luego, en esa misma pantalla pulse <strong>"Abrir"</strong>.</p>'
+          }
+        ]
       },
       'Ubicación de farmacias / laboratorios',
       'Información sobre la cita médica',
@@ -466,19 +483,46 @@
     if (op && op.hijos) {
       pushVistaOpciones(op.label, op.hijos);
     } else if (op && op.texto) {
-      abrirModalTexto(op.label, op.texto, op.tipificacion);
+      abrirModalTexto(op.label, op.texto, op.tipificacion, op.subBotones);
     }
   }
 
-  function abrirModalTexto(titulo, texto, tipificacion) {
+  var subBotonesActuales = [];
+
+  function abrirModalTexto(titulo, texto, tipificacion, subBotones) {
     document.getElementById('modalTituloTexto').textContent = titulo;
     document.getElementById('modalCuerpoTexto').innerHTML = texto;
+
+    subBotonesActuales = subBotones || [];
+    var contBotones = document.getElementById('modalSubBotones');
+    var contSubTexto = document.getElementById('modalSubTexto');
+    contSubTexto.style.display = 'none';
+    contSubTexto.innerHTML = '';
+    if (subBotonesActuales.length) {
+      contBotones.style.display = 'flex';
+      contBotones.innerHTML = subBotonesActuales.map(function(b, i) {
+        return '<button class="bib-btn" onclick="mostrarSubBotonModal(' + i + ')">' + b.label + '</button>';
+      }).join('');
+    } else {
+      contBotones.style.display = 'none';
+      contBotones.innerHTML = '';
+    }
     document.getElementById('modalTipificacion').textContent = tipificacion || '';
     document.getElementById('modalTexto').classList.add('open');
   }
 
   function cerrarModalTexto() {
     document.getElementById('modalTexto').classList.remove('open');
+  }
+
+  function mostrarSubBotonModal(i) {
+    var b = subBotonesActuales[i];
+    document.querySelectorAll('#modalSubBotones .bib-btn').forEach(function(btn, idx) {
+      btn.classList.toggle('active', idx === i);
+    });
+    var contSubTexto = document.getElementById('modalSubTexto');
+    contSubTexto.style.display = 'block';
+    contSubTexto.innerHTML = b.texto;
   }
 
   function volverAtras() {
