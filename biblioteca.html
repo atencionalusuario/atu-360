@@ -88,6 +88,11 @@
   .modal-titulo { font-size: 1rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 14px; padding-right: 20px; }
   .modal-cuerpo p { font-size: 0.85rem; line-height: 1.65; color: #374151; margin-bottom: 10px; font-family: 'Montserrat', sans-serif; }
   .modal-cuerpo p:last-child { margin-bottom: 0; }
+  .modal-cuerpo ol { margin: 0 0 10px 20px; }
+  .modal-cuerpo li { font-size: 0.85rem; line-height: 1.65; color: #374151; margin-bottom: 6px; font-family: 'Montserrat', sans-serif; }
+  .modal-cuerpo li:last-child { margin-bottom: 0; }
+  .modal-subtitulo { font-size: 0.88rem; font-weight: 700; color: #0F2070; font-family: 'Montserrat', sans-serif; margin: 18px 0 8px; }
+  .modal-subtitulo:first-child { margin-top: 0; }
   .modal-tipificacion { font-size: 0.76rem; color: #94A3B8; margin-top: 16px; padding-top: 12px; border-top: 1px solid #F1F5F9; font-family: 'Inter', sans-serif; }
   .modal-tipificacion strong { color: #64748B; font-weight: 600; }
   .modal-footer { display: flex; justify-content: flex-end; margin-top: 18px; }
@@ -324,26 +329,67 @@
 
   var ARBOL_CONSULTA = [
     { label: 'Dudas generales del servicio', hijos: [
-      { label: 'Orientación sobre todo el servicio', texto:
-        '<p>El servicio de DoctorSV ha sido desarrollado como una alternativa a la atención presencial, para recibir atención médica sin necesidad de trasladarse a un centro de salud.</p>' +
-        '<p>A través de la aplicación DoctorSV usted podrá ser atendido de forma remota por un médico general en el momento que usted lo requiera y en el lugar donde se encuentre.</p>' +
-        '<p>Le comento que la aplicación es muy fácil de instalar, primero debe descargarla en las tiendas de aplicaciones, buscándola con el nombre <strong>"Doctorsv"</strong>. Si usted tiene 18 años en adelante, podrá registrarse y hacer una cita. Si gusta, lo puedo ayudar con el paso a paso para descargarla y registrarse.</p>',
-        tipificacion: 'Consultas > Información general del servicio > Orientación sobre todo el servicio',
-        subBotones: [
-          { label: 'Descarga Android', texto:
+      { label: 'Orientación sobre todo el servicio', hijos: [
+        { label: 'Introducción a DoctorSV',
+          tipificacion: 'Consultas > Información general del servicio > Orientación sobre todo el servicio > Introducción a DoctorSV',
+          texto:
+            '<p>El servicio de DoctorSV ha sido desarrollado como una alternativa a la atención presencial, para recibir atención médica sin necesidad de trasladarse a un centro de salud.</p>' +
+            '<p>A través de la aplicación DoctorSV usted podrá ser atendido de forma remota por un médico general en el momento que usted lo requiera y en el lugar donde se encuentre.</p>' +
+            '<p>Le comento que la aplicación es muy fácil de instalar, primero debe descargarla en las tiendas de aplicaciones, buscándola con el nombre <strong>"Doctorsv"</strong>. Si usted tiene 18 años en adelante, podrá registrarse y hacer una cita. Si gusta, lo puedo ayudar con el paso a paso para descargarla y registrarse.</p>'
+        },
+        { label: 'Descarga Android',
+          tipificacion: 'Consultas > Información general del servicio > Orientación sobre todo el servicio > Descarga Android',
+          texto:
             '<p>Ahora ingrese a <strong>Google Play Store</strong>, la tienda de aplicaciones.</p>' +
             '<p>En la parte superior de la pantalla podrá ubicar el buscador. Allí escriba <strong>"Doctorsv"</strong>.</p>' +
             '<p>El siguiente paso es pulsar donde dice <strong>"Instalar"</strong>.</p>' +
             '<p>Esperemos un instante mientras se descarga e instala.</p>' +
             '<p>Luego, en esa misma pantalla pulse <strong>"Abrir"</strong>.</p>'
-          },
-          { label: 'Descarga iOS', texto:
+        },
+        { label: 'Descarga iOS',
+          tipificacion: 'Consultas > Información general del servicio > Orientación sobre todo el servicio > Descarga iOS',
+          texto:
             '<p>Ahora ingrese a la <strong>App Store</strong>, la tienda de aplicaciones. En la parte inferior de la pantalla podrá ubicar el buscador. Allí escriba <strong>Doctorsv</strong>.</p>' +
             '<p>El siguiente paso es pulsar el botón que dice <strong>"Obtener"</strong> (o, en su defecto, le aparecerá un ícono que parece una nube con una flecha hacia abajo). Espere un instante mientras se descarga e instala la aplicación.</p>' +
             '<p>Luego, en esa misma pantalla pulse <strong>"Abrir"</strong>.</p>'
-          }
-        ]
-      },
+        },
+        { label: 'Cómo registrarse',
+          tipificacion: 'Consultas > Información general del servicio > Orientación sobre todo el servicio > Cómo registrarse',
+          texto:
+            '<p>Con gusto le ayudo en el proceso para registrarse en la aplicación.</p>' +
+            '<p>Para iniciar, pulse el ícono de la aplicación, que lo llevará a la pantalla principal. Una vez allí, seleccione el botón <strong>"Regístrate"</strong> (en la parte inferior). El primer paso es ingresar el tipo de documento de identidad con el cual se va a registrar (puede ser DUI, pasaporte salvadoreño o carnet de residente). En el campo siguiente, escribirá su número de documento y su fecha de nacimiento.</p>' +
+            '<p>En la siguiente pantalla podrá ver sus nombres y apellidos de forma precargada. Justo debajo puede ingresar su correo electrónico y número de teléfono. Luego, debe pulsar para recibir el código de verificación vía SMS; recibirá en su teléfono un código de 6 dígitos que ingresará posteriormente. Podrá ver un mensaje confirmando el envío del código y debe presionar <strong>"Aceptar"</strong>. En este paso deberá completar sus datos para crear la cuenta, colocando su dirección, ocupación, escolaridad y al finalizar pulsar el botón <strong>"Continuar"</strong>.</p>' +
+            '<p>Debe ingresar el código de verificación que recibió vía SMS y establecer una contraseña para su cuenta, la cual deberá tener números y/o letras y estar conformada por 8 caracteres como mínimo. Por último, debe aceptar los Términos y Condiciones de la aplicación y hacer clic en <strong>"Enviar"</strong>. Cuando ya esté registrado/a, aparecerá el mensaje <strong>"Registro Exitoso"</strong>. Pulse <strong>"Continuar"</strong> para observar tutorial de pantallas de uso de la aplicación o pulse <strong>"Menú Principal"</strong> para iniciar sesión y hacer uso del servicio.</p>'
+        },
+        { label: 'Cómo ingresar',
+          tipificacion: 'Consultas > Información general del servicio > Orientación sobre todo el servicio > Cómo ingresar',
+          texto:
+            '<p>Para ingresar a la aplicación usted deberá pulsar la opción <strong>"Iniciar Sesión"</strong> ubicada en la parte inferior de la pantalla inicial de la aplicación.</p>' +
+            '<p>En la siguiente pantalla, ingrese el tipo y el número de documento con el cual se registró y contraseña.</p>' +
+            '<p>Una vez ingresados esos datos estará dentro de la aplicación y podrá ver las diferentes secciones como: mi cita médica, recetas, estudios clínicos, antecedentes, entre otras.</p>'
+        },
+        { label: 'Cómo hacer una cita',
+          tipificacion: 'Consultas > Información general del servicio > Orientación sobre todo el servicio > Cómo hacer una cita',
+          texto:
+            '<p>En la pantalla principal de su aplicación, puede seleccionar el botón <strong>"Hacer cita médica virtual"</strong>. En la siguiente pantalla, seleccione para quién va a ser la cita; si es para usted, seleccione su nombre y pulse el botón <strong>"Siguiente"</strong>. Luego debe descartar que presente una emergencia, pulsando el botón <strong>"No, presento otros síntomas"</strong>.</p>' +
+            '<p>Justo después deberá aceptar los Términos y Condiciones, el Consentimiento Informado y la Política y Aviso de Privacidad, luego pulse el botón <strong>"Hacer cita médica virtual"</strong>. En la siguiente pantalla usted podrá ver la opción más próxima de videollamada disponible.</p>' +
+            '<p>En caso que usted requiera una cita en otro día u horario deberá seleccionar la opción <strong>"Ver más fechas u horarios"</strong>. Elija la cita de su preferencia y pulse el botón <strong>"Hacer cita médica virtual"</strong> y se mostrará la confirmación de su cita médica con el detalle de fecha y hora.</p>' +
+            '<p>El siguiente paso será brindarle más datos al médico mediante un cuestionario acerca de su salud. Este paso es opcional. Puede pulsar en <strong>"Continuar"</strong> o en <strong>"Prefiero no responder"</strong>.</p>' +
+            '<p>Usted podrá ver la cita agendada en la pantalla principal de la aplicación o en la sección <strong>"Mis Citas"</strong> al inferior de la pantalla.</p>'
+        },
+        { label: 'Cómo conectarse a la videollamada',
+          tipificacion: 'Consultas > Información general del servicio > Orientación sobre todo el servicio > Cómo conectarse a la videollamada',
+          texto:
+            '<p>Con gusto le ayudo. Podrá ingresar a su cita médica, siga los siguientes pasos:</p>' +
+            '<ol>' +
+              '<li>Ingrese a la aplicación buscando el ícono de DoctorSV en su teléfono.</li>' +
+              '<li>Ubique en la pantalla principal la sección Mi cita médica y seleccione <strong>"Unirse a la videoconsulta"</strong> en la cita médica agendada.</li>' +
+              '<li>La aplicación lo llevará a Google Meet. Deberá seleccionar la cuenta de correo con la que se unirá a la videollamada. Si su teléfono es marca Huawei, no será necesario tener Google Meet, podrá ingresar sin problemas.</li>' +
+              '<li>Habilite micrófono y cámara y seleccione <strong>"solicitar unirse"</strong>.</li>' +
+              '<li>Espere en línea mientras el médico le permite ingresar a la videollamada.</li>' +
+            '</ol>'
+        }
+      ] },
       'Ubicación de farmacias / laboratorios',
       'Información sobre la cita médica',
       'Usuario recibió un contacto previo'
@@ -483,7 +529,7 @@
     if (op && op.hijos) {
       pushVistaOpciones(op.label, op.hijos);
     } else if (op && op.texto) {
-      abrirModalTexto(op.label, op.texto, op.tipificacion, op.subBotones);
+      abrirModalTexto(op.tituloModal || op.label, op.texto, op.tipificacion, op.subBotones);
     }
   }
 
