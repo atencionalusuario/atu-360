@@ -232,11 +232,14 @@
   initNotif(db, auth);
 
   // Cargar nombre del agente y restaurar estado del día
+  var rolG = '';
+
   firebase.auth().onAuthStateChanged(function(user) {
     if (!user) return;
 
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
       var nombre = doc.exists ? doc.data().nombre : user.email.split('@')[0];
+      rolG = doc.exists ? (doc.data().rol || '') : '';
       document.getElementById('greetName').textContent = nombre;
     });
 
@@ -458,6 +461,7 @@
         activarBtn(document.querySelector('[data-nombre="Pausa administrativa"]'));
         actualizarEstadoActual('Pausa administrativa', { entradaDesde: firebase.firestore.FieldValue.serverTimestamp() });
         guardarMarcaje('entrada',now,foto);
+        registrarLog('inicio-turno', firebase.auth().currentUser.email+' ('+(LABELS_ROL[rolG]||rolG)+') marcó entrada de turno');
       } else {
         estado='terminado'; clearInterval(jornIv);
         if(auxActivo) registrarAux(now);
@@ -471,6 +475,7 @@
         document.getElementById('auxSub').textContent='La jornada ha finalizado.';
         actualizarEstadoActual('Jornada finalizada', { entradaDesde: null });
         guardarMarcaje('salida',now,foto);
+        registrarLog('fin-turno', firebase.auth().currentUser.email+' ('+(LABELS_ROL[rolG]||rolG)+') marcó salida de turno');
       }
     },700);
   }
@@ -517,8 +522,10 @@
     if(!btn||estado!=='dentro') return;
     var nuevo=btn.getAttribute('data-nombre');
     if(auxActivo===nuevo) return;
+    var anterior=auxActivo;
     if(auxActivo) registrarAux(new Date());
     activarBtn(btn);
+    registrarLog('cambio-auxiliar', firebase.auth().currentUser.email+' cambió de auxiliar'+(anterior?': '+anterior+' → '+nuevo:' (inicial: '+nuevo+')'));
   });
 
   function activarBtn(btn, inicio, noPersistir){

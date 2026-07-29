@@ -173,6 +173,15 @@
 
   var RUTAS = { agente: BASE+'home.html', 'agente-inmersion': BASE+'home.html', formacion: BASE+'home.html', admin: BASE+'usuarios.html', wfm: BASE+'usuarios.html', jefe: BASE+'usuarios.html', superadmin: BASE+'usuarios.html', supervisor: BASE+'tiemporeal.html' }; // v2
 
+  var LABELS_ROL_LOG = { agente:'Agente', 'agente-inmersion':'Agente Inmersión', supervisor:'Supervisor', formacion:'Formación', admin:'Admin', wfm:'WFM', jefe:'Jefe', superadmin:'Superadmin' };
+  function registrarLogLogin(uid, email, rol) {
+    return db.collection('logs').add({
+      uid: uid, email: email, accion: 'inicio-sesion',
+      detalle: email + ' (' + (LABELS_ROL_LOG[rol]||rol) + ') inició sesión',
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(function(e){ console.error('log:', e); });
+  }
+
   firebase.initializeApp({
     apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
     authDomain:        "atu-360.firebaseapp.com",
@@ -269,6 +278,7 @@
         var rol  = doc.data().rol;
         var ruta = RUTAS[rol];
         if (!ruta) throw { code: 'auth/unknown-role' };
+        var logPromise = registrarLogLogin(loggedUser.uid, loggedUser.email, rol);
 
         if (doc.data().primerAcceso) {
           _cpUser   = loggedUser;
@@ -285,7 +295,7 @@
         sessionStorage.setItem('atu_rol',    rol);
         sessionStorage.setItem('atu_nombre', doc.data().nombre || '');
         localStorage.setItem('atu360_session_start', Date.now().toString());
-        window.location.href = ruta;
+        logPromise.finally(function(){ window.location.href = ruta; });
       })
       .catch(function(e) {
         var msg = 'Correo o contraseña incorrectos.';

@@ -1,5 +1,16 @@
 var BASE = 'https://atencionalusuario.github.io/atu-360/'; // v2
 
+// ── Logs de usuarios (inicio/cierre de sesión, turnos, cambio de auxiliar) ──────
+function registrarLog(accion, detalle, extra) {
+  var u = firebase.auth().currentUser;
+  if (!u) return Promise.resolve();
+  var data = Object.assign({
+    uid: u.uid, email: u.email, accion: accion, detalle: detalle,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  }, extra || {});
+  return firebase.firestore().collection('logs').add(data).catch(function(e){ console.error('log:', e); });
+}
+
 var BADGES_DEF = [
   { id: 'puntualidad-oro',    icon: '📅', nivel: 'gold',    label: 'Puntualidad Oro' },
   { id: 'puntualidad-plata',  icon: '📅', nivel: 'silver',  label: 'Puntualidad Plata' },
@@ -45,6 +56,7 @@ var ITEMS_NAV = {
   'jefe-transporte':  { id: 'jefe-transporte',  label: 'Transporte',         url: BASE+'transporte.html',     icon: '<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>' },
   'jefe-perfil':      { id: 'jefe-perfil',      label: 'Mi Perfil',          url: BASE+'perfil.html',         icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
   'wfm-jornada':      { id: 'wfm-jornada',      label: 'Inicio',             url: BASE+'home.html',           icon: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>' },
+  'super-logs':       { id: 'super-logs',       label: 'Logs de usuarios',   url: BASE+'logs.html',           icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/>' },
   'jefe-bases':       { id: 'jefe-bases',       label: 'Bases',              url: BASE+'bases.html',          icon: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>' },
   // Supervisor items — páginas standalone
   'sup-notif':        { id: 'sup-notif',        label: 'Notificaciones',     url: BASE+'notificaciones.html', icon: '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>', badge: true, badgeId: 'notifNavBadge' },
@@ -96,7 +108,7 @@ var NAV_POR_ROL = {
     reportes:  []
   },
   superadmin: {
-    principal: ['jefe-usuarios','jefe-bases','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
+    principal: ['jefe-usuarios','jefe-bases','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','super-logs','jefe-transporte','jefe-perfil'],
     reportes:  []
   },
   // Fallback para cualquier otro rol que use sidebar.js
@@ -166,9 +178,13 @@ function renderSidebar(paginaActiva, rol) {
   document.querySelector('.sidebar').innerHTML = html;
 
   document.getElementById('btnLogout').addEventListener('click', function() {
+    var u = firebase.auth().currentUser;
+    var detalle = (u ? u.email : 'Usuario') + ' (' + (LABELS_ROL[rol] || rol) + ') cerró sesión';
     localStorage.removeItem('atu360_session_start');
-    firebase.auth().signOut().then(function() {
-      window.location.href = BASE + 'login.html';
+    registrarLog('cierre-sesion', detalle).finally(function() {
+      firebase.auth().signOut().then(function() {
+        window.location.href = BASE + 'login.html';
+      });
     });
   });
 }
@@ -248,6 +264,7 @@ function detectarPagina() {
   if (url.indexOf('notificaciones') > -1) return 'jefe-notif';
   if (url.indexOf('tiemporeal') > -1)     return 'jefe-tiemporeal';
   if (url.indexOf('reportes') > -1)       return 'jefe-reportes';
+  if (url.indexOf('logs') > -1)           return 'super-logs';
   if (url.indexOf('turno') > -1)          return 'jefe-turno';
   if (url.indexOf('metricas') > -1)       return 'jefe-metricas';
   if (url.indexOf('flash') > -1)          return 'jefe-flash';
