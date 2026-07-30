@@ -512,7 +512,7 @@
     document.getElementById('flujoSDP').style.display = 'none';
     document.getElementById('vistaCategoria').style.display = 'flex';
 
-    var mostrarBusqueda = pilaVistas.length <= 2 && categoriaActualId === 'consulta';
+    var mostrarBusqueda = categoriaActualId === 'consulta';
     document.getElementById('cajaBusquedaCategoria').style.display = mostrarBusqueda ? 'block' : 'none';
 
     document.getElementById('tituloCategoria').textContent = vista.titulo;
