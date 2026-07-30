@@ -121,6 +121,17 @@
   .cintillo-btn.cintillo-ayuda:hover { background: #1E93CC; }
   .cintillo-btn.cintillo-gem { background: linear-gradient(135deg, #4285F4, #9B72CB, #D96570); }
   .cintillo-btn.cintillo-gem:hover { filter: brightness(1.08); }
+  .cintillo-btn.cintillo-busqueda { background: #0F2070; }
+  .cintillo-btn.cintillo-busqueda:hover { background: #1A3DAA; }
+  .cintillo-btn.cintillo-arriba { background: #64748B; }
+  .cintillo-btn.cintillo-arriba:hover { background: #475569; }
+
+  .busqueda-global-input-wrap { display: flex; align-items: center; gap: 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
+  .busqueda-global-input-wrap svg { width: 18px; height: 18px; color: #94A3B8; flex-shrink: 0; }
+  .busqueda-global-input-wrap input { border: none; background: none; outline: none; width: 100%; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: #374151; }
+  .busqueda-global-resultados { display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; }
+  .busqueda-global-resultados .bib-btn { width: 100%; text-align: left; }
+  .busqueda-global-resultados .bib-btn small { display: block; font-weight: 400; opacity: 0.75; font-size: 0.7rem; margin-top: 2px; }
 
   .modal-ayuda-cuerpo p { font-size: 0.85rem; line-height: 1.65; color: #374151; margin-bottom: 10px; font-family: 'Montserrat', sans-serif; }
   .modal-ayuda-cuerpo p:last-child { margin-bottom: 0; }
@@ -226,11 +237,17 @@
   <button class="cintillo-btn" title="Ir a Inicio" onclick="irACrumb(0)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg>
   </button>
+  <button class="cintillo-btn cintillo-busqueda" title="Buscar en toda la biblioteca" onclick="abrirModalBusquedaGlobal()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+  </button>
   <button class="cintillo-btn cintillo-ayuda" title="¿Cómo tipificar?" onclick="abrirModalAyuda()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 17v-5"/><circle cx="12" cy="8.2" r="0.1" fill="currentColor" stroke-width="1.5"/></svg>
   </button>
   <button class="cintillo-btn cintillo-gem" title="Asistente Gemini" onclick="window.open('https://gemini.google.com/u/1/gem/54309f25a04c', '_blank')">
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.6 4.6 3.4 7.4 8 8-4.6.6-7.4 3.4-8 8-.6-4.6-3.4-7.4-8-8 4.6-.6 7.4-3.4 8-8Z"/></svg>
+  </button>
+  <button class="cintillo-btn cintillo-arriba" title="Ir arriba" onclick="irArriba()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
   </button>
 </div>
 
@@ -258,6 +275,18 @@
       <p>Al finalizar la atención, registra esa misma ruta en el campo de tipificación del sistema de gestión, seleccionando cada nivel en el orden en que aparece aquí.</p>
       <p>Esto asegura que la llamada quede clasificada correctamente para las métricas del equipo.</p>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalBusquedaGlobal" onclick="if(event.target===this) cerrarModalBusquedaGlobal()">
+  <div class="modal-box" style="max-width:560px;">
+    <button class="modal-close" onclick="cerrarModalBusquedaGlobal()">&times;</button>
+    <h3 class="modal-titulo">Buscar en toda la biblioteca</h3>
+    <div class="busqueda-global-input-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="text" id="inputBusquedaGlobal" placeholder="Buscar en Consulta, Gestión e Incidencia..." oninput="buscarGlobal(this.value)">
+    </div>
+    <div class="busqueda-global-resultados" id="resultadosBusquedaGlobal"></div>
   </div>
 </div>
 
@@ -649,6 +678,62 @@
 
   function cerrarModalAyuda() {
     document.getElementById('modalAyudaTipificacion').classList.remove('open');
+  }
+
+  function irArriba() {
+    var main = document.querySelector('.main');
+    main.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  var resultadosBusquedaGlobal = [];
+
+  function abrirModalBusquedaGlobal() {
+    document.getElementById('inputBusquedaGlobal').value = '';
+    document.getElementById('resultadosBusquedaGlobal').innerHTML = '';
+    document.getElementById('modalBusquedaGlobal').classList.add('open');
+    document.getElementById('inputBusquedaGlobal').focus();
+  }
+
+  function cerrarModalBusquedaGlobal() {
+    document.getElementById('modalBusquedaGlobal').classList.remove('open');
+  }
+
+  function buscarGlobal(q) {
+    q = q.trim().toLowerCase();
+    var contenedor = document.getElementById('resultadosBusquedaGlobal');
+
+    if (!q) {
+      contenedor.innerHTML = '';
+      return;
+    }
+
+    resultadosBusquedaGlobal = [];
+    Object.keys(OPCIONES_CATEGORIA).forEach(function(cat) {
+      aplanarArbol(OPCIONES_CATEGORIA[cat], []).forEach(function(n) {
+        if (n.label.toLowerCase().includes(q)) {
+          resultadosBusquedaGlobal.push({ label: n.label, cat: cat, ancestros: n.ancestros });
+        }
+      });
+    });
+
+    if (resultadosBusquedaGlobal.length === 0) {
+      contenedor.innerHTML = '<p class="placeholder">No se encontraron resultados.</p>';
+      return;
+    }
+
+    contenedor.innerHTML = resultadosBusquedaGlobal.map(function(r, i) {
+      var ruta = [NOMBRES_CATEGORIA[r.cat]].concat(r.ancestros.map(function(a) { return a.label; })).join(' > ');
+      return '<button class="bib-btn" onclick="irAResultadoGlobal(' + i + ')">' + r.label + '<small>' + ruta + '</small></button>';
+    }).join('');
+  }
+
+  function irAResultadoGlobal(i) {
+    var nodo = resultadosBusquedaGlobal[i];
+    cerrarModalBusquedaGlobal();
+    mostrarCategoria(nodo.cat);
+    nodo.ancestros.forEach(function(paso) {
+      pushVistaOpciones(paso.label, paso.opciones);
+    });
   }
 
   function mostrarSubBotonModal(i) {
