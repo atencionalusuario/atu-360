@@ -75,9 +75,9 @@
   .hist-field input { padding: 8px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.8rem; font-family: inherit; color: #1E293B; background: #F8FAFC; outline: none; }
   .hist-field input:focus { border-color: #1A3DAA; background: white; }
   .hist-tbl-wrap { flex: 1; overflow: auto; border: 1px solid #E2E8F0; border-radius: 10px; background: white; }
-  table.hist-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-  table.hist-table th { text-align: left; font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; font-weight: 700; padding: 10px 14px; border-bottom: 1.5px solid #E2E8F0; background: #F8FAFC; position: sticky; top: 0; white-space: nowrap; }
-  table.hist-table td { padding: 10px 14px; border-bottom: 1px solid #F1F5F9; color: #374151; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.hist-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 0.8rem; min-width: 900px; }
+  table.hist-table th { text-align: left; font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; font-weight: 700; padding: 10px 12px; border-bottom: 1.5px solid #E2E8F0; background: #F8FAFC; position: sticky; top: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  table.hist-table td { padding: 10px 12px; border-bottom: 1px solid #F1F5F9; color: #374151; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   table.hist-table tr.hist-total td { font-weight: 700; color: #1E293B; background: #F8FAFC; border-top: 1.5px solid #E2E8F0; border-bottom: none; }
   .hist-nombre { font-weight: 600; color: #1E293B; }
 
