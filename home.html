@@ -415,7 +415,15 @@
 
   function startCamera(){
     navigator.mediaDevices.getUserMedia({ video:{ facingMode:'user' }, audio:false })
-      .then(function(s){ camStream=s; document.getElementById('camVideo').srcObject=s; })
+      .then(function(s){
+        // Si el modal ya se cerró (cancelado) antes de que el navegador entregara el
+        // stream, detenerlo de inmediato para no dejar la cámara encendida sin uso.
+        if(!document.getElementById('overlay').classList.contains('show')){
+          s.getTracks().forEach(function(t){t.stop();});
+          return;
+        }
+        camStream=s; document.getElementById('camVideo').srcObject=s;
+      })
       .catch(function(){
         document.getElementById('camVideo').style.display='none';
         document.getElementById('camHint').style.display='none';
@@ -423,7 +431,15 @@
       });
   }
 
-  function stopCamera(){ if(camStream){ camStream.getTracks().forEach(function(t){t.stop();}); camStream=null; } }
+  function stopCamera(){
+    if(camStream){ camStream.getTracks().forEach(function(t){t.stop();}); camStream=null; }
+    var v = document.getElementById('camVideo');
+    if(v) v.srcObject = null;
+  }
+
+  // Salvaguarda: si la pestaña se cierra o navega con el modal abierto, apagar la cámara.
+  window.addEventListener('pagehide', stopCamera);
+  window.addEventListener('beforeunload', stopCamera);
 
   function capturePhoto(){
     var v=document.getElementById('camVideo'), c=document.getElementById('camCanvas');
