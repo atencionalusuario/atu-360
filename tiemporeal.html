@@ -14,7 +14,8 @@
 
   /* STATS */
   .stats-row     { display: flex; gap: 10px; flex-shrink: 0; flex-wrap: wrap; }
-  .stat-chip     { background: white; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
+  .stats-row + .stats-row { margin-top: -4px; }
+  .stat-chip     { background: white; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 10px; flex: 1 1 0; min-width: 160px; }
   .stat-chip-val { font-size: 1.3rem; font-weight: 800; color: #1A3DAA; line-height: 1; }
   .stat-chip-label { font-size: 0.68rem; color: #94A3B8; font-weight: 500; }
   .stat-chip.activos   .stat-chip-val { color: #16A34A; }
@@ -89,10 +90,13 @@
   <div class="body-wrap">
 
     <!-- STATS -->
-    <div class="stats-row" id="rtStats">
-      <div class="stat-chip activos"><div class="stat-chip-val">—</div><div class="stat-chip-label">En línea</div></div>
-      <div class="stat-chip inactivos"><div class="stat-chip-val">—</div><div class="stat-chip-label">Fuera</div></div>
-      <div class="stat-chip"><div class="stat-chip-val">—</div><div class="stat-chip-label">Total agentes</div></div>
+    <div style="display:flex;flex-direction:column;gap:10px;flex-shrink:0" id="rtStats">
+      <div class="stats-row" id="rtStatsSup" style="display:none"></div>
+      <div class="stats-row" id="rtStatsAgentes">
+        <div class="stat-chip"><div class="stat-chip-val">—</div><div class="stat-chip-label">Total agentes</div></div>
+        <div class="stat-chip activos"><div class="stat-chip-val">—</div><div class="stat-chip-label">En línea</div></div>
+        <div class="stat-chip inactivos"><div class="stat-chip-val">—</div><div class="stat-chip-label">Fuera</div></div>
+      </div>
     </div>
 
     <!-- RESUMEN DE AUXILIARES -->
@@ -249,19 +253,23 @@
       return '<div class="stat-chip '+cls+'" onclick="setFiltroLinea(\''+fv+'\')" style="cursor:pointer;'+(sel?'outline:2px solid #1A3DAA;outline-offset:-2px;':'')+'">'
         +'<div class="stat-chip-val">'+val+'</div><div class="stat-chip-label">'+label+'</div></div>';
     }
-    var statsHtml = '';
+    var supStatsEl = document.getElementById('rtStatsSup');
     if (miRol !== 'supervisor') {
-      var supEnLinea    = supervisores.filter(function(a){ return !!a.enLinea; }).length;
-      var supTotal      = supervisores.length;
-      statsHtml += '<div class="stat-chip"><div class="stat-chip-val" style="color:#1A3DAA">'+supTotal+'</div><div class="stat-chip-label">Total supervisores</div></div>'
+      var supEnLinea = supervisores.filter(function(a){ return !!a.enLinea; }).length;
+      var supTotal   = supervisores.length;
+      supStatsEl.style.display = 'flex';
+      supStatsEl.innerHTML =
+          '<div class="stat-chip"><div class="stat-chip-val" style="color:#1A3DAA">'+supTotal+'</div><div class="stat-chip-label">Total supervisores</div></div>'
         + '<div class="stat-chip activos"><div class="stat-chip-val">'+supEnLinea+'</div><div class="stat-chip-label">Supervisores en línea</div></div>'
         + '<div class="stat-chip inactivos"><div class="stat-chip-val">'+(supTotal-supEnLinea)+'</div><div class="stat-chip-label">Supervisores fuera</div></div>';
+    } else {
+      supStatsEl.style.display = 'none';
+      supStatsEl.innerHTML = '';
     }
-    statsHtml +=
+    document.getElementById('rtStatsAgentes').innerHTML =
         statChip('',          totalAgentes,               'Total agentes', '')
       + statChip('activos',   enLineaTotal,               'En línea',      'online')
       + statChip('inactivos', (totalAgentes-enLineaTotal), 'Fuera',         'offline');
-    document.getElementById('rtStats').innerHTML = statsHtml;
 
     document.getElementById('totalLabel').textContent = soloAgentes.length + ' de ' + totalAgentes + ' agentes';
     document.getElementById('rtCount').textContent    = soloAgentes.length + ' de ' + totalAgentes + ' agentes';
