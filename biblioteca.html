@@ -107,6 +107,8 @@
   .cintillo-btn svg { width: 20px; height: 20px; }
   .cintillo-btn.cintillo-ayuda { background: #29ABE2; }
   .cintillo-btn.cintillo-ayuda:hover { background: #1E93CC; }
+  .cintillo-btn.cintillo-gem { background: linear-gradient(135deg, #4285F4, #9B72CB, #D96570); }
+  .cintillo-btn.cintillo-gem:hover { filter: brightness(1.08); }
 
   .modal-ayuda-cuerpo p { font-size: 0.85rem; line-height: 1.65; color: #374151; margin-bottom: 10px; font-family: 'Montserrat', sans-serif; }
   .modal-ayuda-cuerpo p:last-child { margin-bottom: 0; }
@@ -214,6 +216,9 @@
   </button>
   <button class="cintillo-btn cintillo-ayuda" title="¿Cómo tipificar?" onclick="abrirModalAyuda()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 17v-5"/><circle cx="12" cy="8.2" r="0.1" fill="currentColor" stroke-width="1.5"/></svg>
+  </button>
+  <button class="cintillo-btn cintillo-gem" title="Asistente Gemini" onclick="window.open('https://gemini.google.com/u/1/gem/54309f25a04c', '_blank')">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.6 4.6 3.4 7.4 8 8-4.6.6-7.4 3.4-8 8-.6-4.6-3.4-7.4-8-8 4.6-.6 7.4-3.4 8-8Z"/></svg>
   </button>
 </div>
 
