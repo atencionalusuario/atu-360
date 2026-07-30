@@ -100,6 +100,18 @@
   .categoria-opciones .bib-btn { width: 380px; }
   .categoria-opciones.dos-columnas { display: grid; grid-template-columns: 1fr 1fr; }
   .categoria-opciones.dos-columnas .bib-btn { width: 100%; min-width: 0; text-align: left; }
+
+  .cintillo-lateral { position: fixed; top: 50%; right: 0; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; background: white; padding: 10px 8px; border-radius: 14px 0 0 14px; box-shadow: -3px 0 16px rgba(15,32,112,0.14); border: 1px solid #E2E8F0; border-right: none; z-index: 50; }
+  .cintillo-btn { width: 42px; height: 42px; border-radius: 50%; background: #0F2070; color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
+  .cintillo-btn:hover { background: #1A3DAA; transform: scale(1.07); }
+  .cintillo-btn svg { width: 20px; height: 20px; }
+  .cintillo-btn.cintillo-ayuda { background: #29ABE2; }
+  .cintillo-btn.cintillo-ayuda:hover { background: #1E93CC; }
+
+  .modal-ayuda-cuerpo p { font-size: 0.85rem; line-height: 1.65; color: #374151; margin-bottom: 10px; font-family: 'Montserrat', sans-serif; }
+  .modal-ayuda-cuerpo p:last-child { margin-bottom: 0; }
+  .modal-ayuda-cuerpo strong { color: #0F2070; }
+  .modal-ayuda-ejemplo { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px 14px; font-size: 0.8rem; color: #0F2070; font-weight: 600; margin: 6px 0 14px; }
 </style>
 </head>
 <body>
@@ -196,6 +208,15 @@
   </div>
 </div>
 
+<div class="cintillo-lateral">
+  <button class="cintillo-btn" title="Ir a Inicio" onclick="irACrumb(0)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg>
+  </button>
+  <button class="cintillo-btn cintillo-ayuda" title="¿Cómo tipificar?" onclick="abrirModalAyuda()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 17v-5"/><circle cx="12" cy="8.2" r="0.1" fill="currentColor" stroke-width="1.5"/></svg>
+  </button>
+</div>
+
 <div class="modal-overlay" id="modalTexto" onclick="if(event.target===this) cerrarModalTexto()">
   <div class="modal-box">
     <button class="modal-close" onclick="cerrarModalTexto()">&times;</button>
@@ -206,6 +227,19 @@
     <p class="modal-tipificacion"><strong>Tipificación:</strong> <span id="modalTipificacion"></span></p>
     <div class="modal-footer">
       <button class="bib-btn">Despedida</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalAyudaTipificacion" onclick="if(event.target===this) cerrarModalAyuda()">
+  <div class="modal-box" style="max-width:520px;">
+    <button class="modal-close" onclick="cerrarModalAyuda()">&times;</button>
+    <h3 class="modal-titulo">¿Cómo tipificar?</h3>
+    <div class="modal-ayuda-cuerpo">
+      <p>Al final de cada tarjeta de información encontrarás una línea de <strong>Tipificación</strong>, con la ruta completa de dónde se ubica ese contenido dentro del menú.</p>
+      <div class="modal-ayuda-ejemplo">Consultas &gt; Información general del servicio &gt; Orientación sobre todo el servicio</div>
+      <p>Al finalizar la atención, registra esa misma ruta en el campo de tipificación del sistema de gestión, seleccionando cada nivel en el orden en que aparece aquí.</p>
+      <p>Esto asegura que la llamada quede clasificada correctamente para las métricas del equipo.</p>
     </div>
   </div>
 </div>
@@ -556,6 +590,14 @@
 
   function cerrarModalTexto() {
     document.getElementById('modalTexto').classList.remove('open');
+  }
+
+  function abrirModalAyuda() {
+    document.getElementById('modalAyudaTipificacion').classList.add('open');
+  }
+
+  function cerrarModalAyuda() {
+    document.getElementById('modalAyudaTipificacion').classList.remove('open');
   }
 
   function mostrarSubBotonModal(i) {
