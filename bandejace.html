@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script src="mobile-guard.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/atu-360/">
+<title>ATU 360 — Actividades CE</title>
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="base.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter','Segoe UI',sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+
+  .content { padding: 24px 28px; display: flex; flex-direction: column; gap: 18px; flex: 1; }
+  .tabs-bar { display: flex; gap: 0; border-bottom: 1px solid #E2E8F0; background: white; border-radius: 10px 10px 0 0; padding: 0 12px; }
+  .tab-btn { padding: 12px 16px; font-size: 0.8rem; font-weight: 600; color: #94A3B8; border: none; background: none; cursor: pointer; font-family: inherit; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tab-btn.active { color: #1A3DAA; border-bottom-color: #1A3DAA; }
+
+  .stats-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .tag { font-size: 0.72rem; font-weight: 600; color: #475569; background: white; border: 1px solid #E2E8F0; padding: 6px 12px; border-radius: 999px; }
+  .tag b { color: #1A3DAA; }
+
+  .section-title { font-size: 0.72rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; }
+  .tbl-wrap { border: 1px solid #E2E8F0; border-radius: 10px; overflow: auto; background: white; max-height: 420px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  th { text-align: left; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; font-weight: 700; padding: 10px 12px; border-bottom: 1px solid #E2E8F0; background: #F8FAFC; position: sticky; top: 0; }
+  td { padding: 10px 12px; border-bottom: 1px solid #F1F5F9; vertical-align: middle; }
+  .mono { font-family: ui-monospace, Menlo, monospace; }
+  .estado-pill { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 9px; border-radius: 999px; }
+  .estado-pill.pendiente            { background: #F1F5F9; color: #64748B; }
+  .estado-pill.contactado           { background: #F0FDF4; color: #16A34A; }
+  .estado-pill.no-contesto          { background: #FEF2F2; color: #DC2626; }
+  .estado-pill.numero-equivocado    { background: #F1F5F9; color: #64748B; }
+  .estado-pill.llamar-nuevamente    { background: #FFFBEB; color: #B45309; }
+  .estado-pill.cerrado-sin-contacto { background: #F1F5F9; color: #94A3B8; }
+  .btn-llamar { padding: 7px 14px; background: #1A3DAA; color: white; border: none; border-radius: 7px; font-size: 0.76rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-llamar:hover { opacity: 0.88; }
+  .btn-ver { padding: 7px 14px; background: white; color: #374151; border: 1px solid #E2E8F0; border-radius: 7px; font-size: 0.76rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+  .empty-state { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 48px 24px; text-align: center; }
+  .empty-state p { font-size: 0.82rem; color: #94A3B8; margin-top: 12px; }
+  .loading { font-size: 0.82rem; color: #94A3B8; text-align: center; padding: 24px; }
+
+  /* Modal de llamada */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.4); z-index: 200; display: none; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 40px 20px; }
+  .modal-overlay.show { display: flex; }
+  .modal-box { background: white; border-radius: 12px; width: 760px; max-width: 96vw; box-shadow: 0 24px 48px rgba(0,0,0,0.15); }
+  .modal-head { padding: 20px 24px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .modal-title { font-size: 0.95rem; font-weight: 700; }
+  .modal-sub { font-size: 0.72rem; color: #94A3B8; margin-top: 3px; }
+  .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; max-height: 68vh; overflow-y: auto; }
+  .modal-foot { padding: 16px 24px; border-top: 1px solid #F1F5F9; display: flex; justify-content: flex-end; gap: 8px; }
+  .btn-icon { width: 30px; height: 30px; border: 1px solid #E2E8F0; border-radius: 6px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #64748B; flex-shrink: 0; }
+  .btn-sec { padding: 9px 16px; border: 1.5px solid #E2E8F0; border-radius: 7px; background: white; font-size: 0.8rem; font-weight: 600; color: #374151; cursor: pointer; font-family: inherit; }
+  .btn-pri { padding: 9px 18px; border: none; border-radius: 7px; background: #1A3DAA; color: white; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+
+  .telefonos-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tel-chip { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 999px; padding: 6px 14px; font-size: 0.8rem; font-family: ui-monospace, Menlo, monospace; }
+  .estado-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip-btn { padding: 8px 14px; border-radius: 8px; border: 1.5px solid #E2E8F0; background: white; font-size: 0.8rem; font-weight: 600; color: #374151; cursor: pointer; font-family: inherit; }
+  .chip-btn.on { background: #1A3DAA; color: white; border-color: #1A3DAA; }
+  .chip-btn.danger { color: #DC2626; border-color: #FECACA; }
+
+  .field-label { font-size: 0.78rem; font-weight: 600; color: #374151; margin-bottom: 6px; display: block; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  select, textarea, input[type="date"], input[type="time"], input[type="text"] {
+    width: 100%; padding: 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 8px;
+    font-size: 0.84rem; color: #1E293B; background: #F8FAFC; outline: none; transition: border 0.2s; font-family: inherit;
+  }
+  select:focus, textarea:focus, input:focus { border-color: #1A3DAA; box-shadow: 0 0 0 3px rgba(26,61,170,0.07); background: white; }
+  textarea { resize: vertical; min-height: 60px; }
+  .intentos-info { font-size: 0.72rem; color: #94A3B8; }
+  .link-btn { color: #1A3DAA; font-weight: 600; font-size: 0.78rem; cursor: pointer; background: none; border: none; font-family: inherit; padding: 0; text-align: left; }
+
+  .act-card { border: 1px solid #E2E8F0; border-radius: 10px; padding: 14px 16px; background: #F8FAFC; display: flex; flex-direction: column; gap: 12px; position: relative; }
+  .act-card .act-remove { position: absolute; top: 10px; right: 10px; }
+  .act-card .tag-multi { display: flex; gap: 6px; flex-wrap: wrap; }
+  .act-card .tag-multi button { padding: 6px 12px; border-radius: 999px; border: 1.5px solid #E2E8F0; background: white; font-size: 0.76rem; font-weight: 600; color: #374151; cursor: pointer; font-family: inherit; }
+  .act-card .tag-multi button.on { background: #1A3DAA; color: white; border-color: #1A3DAA; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="sidebar"></div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Actividades CE</h2>
+      <span class="topbar-sep">/</span>
+      <p id="topbarSub">Cargando...</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="tabsBar" class="tabs-bar" style="display:none"></div>
+    <div id="bandejaBody"><div class="loading">Cargando...</div></div>
+  </div>
+</div>
+
+<!-- Modal de llamada -->
+<div class="modal-overlay" id="modalLlamada">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="mTitulo">—</div>
+        <div class="modal-sub" id="mSub">—</div>
+      </div>
+      <button class="btn-icon" onclick="cerrarModalLlamada()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div>
+        <span class="field-label">Teléfonos</span>
+        <div class="telefonos-row" id="mTelefonos"></div>
+      </div>
+      <div>
+        <span class="field-label">Estado de la llamada</span>
+        <div class="estado-chips" id="mEstados"></div>
+        <div class="intentos-info" id="mIntentosInfo" style="margin-top:8px"></div>
+      </div>
+      <div id="mActividades" style="display:none;flex-direction:column;gap:12px"></div>
+      <button class="link-btn" id="mBtnAgregarAct" style="display:none" onclick="agregarActividadDraft()">＋ Agregar otra actividad</button>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-sec" onclick="cerrarModalLlamada()">Cancelar</button>
+      <button class="btn-pri" id="btnGuardarLlamada" onclick="guardarLlamada()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+  var ROLES_PERMITIDOS = ['agente','agente-inmersion'];
+
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var db   = firebase.firestore();
+  var auth = firebase.auth();
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  var currentUser = null;
+  var registros = [];      // todos los registros de CE asignados a este agente
+  var semanasMap = {};     // semanaId -> semana doc
+  var semanaActivaId = null;
+  var registroActivo = null;
+  var actividadesDraft = [];
+
+  var ESTADOS_REG = {
+    'pendiente':'Pendiente','contactado':'Contactado','no-contesto':'No contestó',
+    'numero-equivocado':'Número equivocado','llamar-nuevamente':'Llamar nuevamente','cerrado-sin-contacto':'Cerrado por no contacto'
+  };
+  var TIPOS_ACTIVIDAD = ['Reunión','Visita externa','Día deportivo','Excursión','Entrega de notas','Examen/Prueba','Asueto/Feriado','Jornada de salud','Otros'];
+  var SECCIONES_CE = ['Parvularia','Primer ciclo','Segundo ciclo','Tercer ciclo','Bachillerato'];
+  var PARTICIPANTES_CE = ['Ninguno','Institución externa','Autoridad','Fundación','Cooperante','Padres de familia','Otros'];
+
+  function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+  auth.onAuthStateChanged(function(user){
+    if(!user){ window.location.href = BASE + 'login.html'; return; }
+    db.collection('usuarios').doc(user.uid).get().then(function(doc){
+      if(!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)){
+        window.location.href = BASE + 'home.html'; return;
+      }
+      currentUser = user;
+      cargarBandeja();
+    });
+  });
+
+  function cargarBandeja(){
+    db.collection('ce_registros').where('agenteUid','==',currentUser.uid).onSnapshot(function(snap){
+      var regs = [];
+      snap.forEach(function(d){ regs.push(Object.assign({id:d.id}, d.data())); });
+      var idsSemanas = Array.from(new Set(regs.map(function(r){ return r.semanaId; })));
+      var faltantes = idsSemanas.filter(function(id){ return !semanasMap[id]; });
+      Promise.all(faltantes.map(function(id){
+        return db.collection('ce_semanas').doc(id).get().then(function(sd){ if(sd.exists) semanasMap[id] = Object.assign({id:sd.id}, sd.data()); });
+      })).then(function(){
+        registros = regs.filter(function(r){ var s = semanasMap[r.semanaId]; return s && s.estado === 'en-curso'; });
+        renderTabs();
+      });
+    }, function(e){ console.error(e); showToast('Error al cargar tu bandeja.'); });
+  }
+
+  function renderTabs(){
+    var idsSemanas = Array.from(new Set(registros.map(function(r){ return r.semanaId; })));
+    var tabsBar = document.getElementById('tabsBar');
+    if(idsSemanas.length === 0){
+      tabsBar.style.display = 'none';
+      document.getElementById('topbarSub').textContent = 'Sin semanas asignadas';
+      document.getElementById('bandejaBody').innerHTML = '<div class="empty-state"><p>No tienes Centros Educativos asignados por ahora. Cuando un supervisor te asigne una semana, aparecerá aquí.</p></div>';
+      return;
+    }
+    if(!semanaActivaId || idsSemanas.indexOf(semanaActivaId) < 0) semanaActivaId = idsSemanas[0];
+    document.getElementById('topbarSub').textContent = idsSemanas.length + ' semana' + (idsSemanas.length!==1?'s':'') + ' asignada' + (idsSemanas.length!==1?'s':'');
+    if(idsSemanas.length > 1){
+      tabsBar.style.display = 'flex';
+      tabsBar.innerHTML = idsSemanas.map(function(id){
+        var s = semanasMap[id];
+        return '<button class="tab-btn'+(id===semanaActivaId?' active':'')+'" onclick="cambiarTabSemana(\''+id+'\')">'+escHtml(s?s.titulo:'—')+'</button>';
+      }).join('');
+    } else {
+      tabsBar.style.display = 'none';
+    }
+    renderBandejaBody();
+  }
+
+  function cambiarTabSemana(id){ semanaActivaId = id; renderTabs(); }
+
+  function renderBandejaBody(){
+    var s = semanasMap[semanaActivaId];
+    var rows = registros.filter(function(r){ return r.semanaId === semanaActivaId; });
+    var pendientes = rows.filter(function(r){ return r.estado !== 'contactado' && r.estado !== 'cerrado-sin-contacto'; });
+    var completados = rows.filter(function(r){ return r.estado === 'contactado' || r.estado === 'cerrado-sin-contacto'; });
+
+    var html = '<div class="stats-row">'
+      + '<span class="tag"><b>'+rows.length+'</b> asignados</span>'
+      + '<span class="tag"><b>'+completados.filter(function(r){return r.estado==='contactado';}).length+'</b> contactados</span>'
+      + '<span class="tag"><b>'+pendientes.length+'</b> por contactar</span>'
+      + '</div>';
+
+    html += '<div><div class="section-title" style="margin-bottom:8px">Por contactar ('+pendientes.length+')</div>';
+    html += '<div class="tbl-wrap"><table><thead><tr><th>Código</th><th>Nombre</th><th>Depto/Municipio</th><th>Teléfonos</th><th>Estado</th><th>Intentos</th><th></th></tr></thead><tbody>';
+    if(pendientes.length === 0){
+      html += '<tr><td colspan="7"><div class="empty-state" style="border:none;padding:26px"><p>Bandeja al día. No quedan Centros Educativos por contactar.</p></div></td></tr>';
+    } else {
+      pendientes.forEach(function(r){
+        html += '<tr><td class="mono">'+escHtml(r.codigo)+'</td><td>'+escHtml(r.nombre)+'</td>'
+          + '<td>'+escHtml(r.departamento||'')+(r.municipio?' · '+escHtml(r.municipio):'')+'</td>'
+          + '<td class="mono">'+escHtml((r.telefonos||[]).join(' · '))+'</td>'
+          + '<td><span class="estado-pill '+r.estado+'">'+escHtml(ESTADOS_REG[r.estado]||r.estado)+'</span></td>'
+          + '<td class="mono">'+(r.intentos||0)+'/'+(s.maxIntentos||3)+'</td>'
+          + '<td><button class="btn-llamar" onclick="abrirModalLlamada(\''+r.id+'\')">'+(r.estado==='pendiente'?'Contactar':'Reintentar')+'</button></td></tr>';
+      });
+    }
+    html += '</tbody></table></div></div>';
+
+    html += '<div><div class="section-title" style="margin-bottom:8px">Registro completado ('+completados.length+')</div>';
+    if(completados.length === 0){
+      html += '<div class="empty-state"><p>Aún no hay Centros Educativos contactados o cerrados.</p></div>';
+    } else {
+      html += '<div class="tbl-wrap"><table><thead><tr><th>Código</th><th>Nombre</th><th>Estado</th><th>Actividades</th><th></th></tr></thead><tbody>';
+      completados.forEach(function(r){
+        html += '<tr><td class="mono">'+escHtml(r.codigo)+'</td><td>'+escHtml(r.nombre)+'</td>'
+          + '<td><span class="estado-pill '+r.estado+'">'+escHtml(ESTADOS_REG[r.estado]||r.estado)+'</span></td>'
+          + '<td class="mono">'+((r.actividades||[]).length)+'</td>'
+          + '<td><button class="btn-ver" onclick="abrirModalLlamada(\''+r.id+'\')">Ver / editar</button></td></tr>';
+      });
+      html += '</tbody></table></div>';
+    }
+    html += '</div>';
+
+    document.getElementById('bandejaBody').innerHTML = html;
+  }
+
+  // ── Modal de llamada ─────────────────────────────────────────────────────────
+  var ESTADOS_SELECCIONABLES = ['contactado','no-contesto','numero-equivocado','llamar-nuevamente'];
+
+  window.abrirModalLlamada = function(regId){
+    var r = registros.find(function(x){ return x.id === regId; });
+    if(!r) return;
+    registroActivo = r;
+    actividadesDraft = (r.actividades||[]).map(function(a){ return Object.assign({}, a); });
+    var s = semanasMap[r.semanaId];
+    document.getElementById('mTitulo').textContent = r.nombre;
+    document.getElementById('mSub').textContent = r.codigo + (s ? ' · ' + s.titulo : '') + (r.departamento ? ' · ' + r.departamento : '');
+    document.getElementById('mTelefonos').innerHTML = (r.telefonos||[]).length
+      ? (r.telefonos||[]).map(function(t){ return '<span class="tel-chip">📱 '+escHtml(t)+'</span>'; }).join('')
+      : '<span class="csv-hint">Sin teléfonos registrados</span>';
+    document.getElementById('mIntentosInfo').textContent = 'Intentos: ' + (r.intentos||0) + '/' + (s?s.maxIntentos:3) + '. Al llegar al máximo sin contactar, se cierra automáticamente.';
+    renderEstadoChips(r.estado === 'contactado' ? 'contactado' : null);
+    if(r.estado === 'contactado'){ mostrarActividades(); } else { ocultarActividades(); }
+    document.getElementById('modalLlamada').classList.add('show');
+  };
+
+  function renderEstadoChips(seleccionado){
+    var el = document.getElementById('mEstados');
+    var chips = ESTADOS_SELECCIONABLES.map(function(k){
+      return '<button class="chip-btn'+(seleccionado===k?' on':'')+'" onclick="seleccionarEstado(\''+k+'\')">'+ESTADOS_REG[k]+'</button>';
+    }).join('');
+    chips += '<button class="chip-btn danger" onclick="cerrarSinContacto()">Cerrar por no contacto</button>';
+    el.innerHTML = chips;
+  }
+
+  window.seleccionarEstado = function(k){
+    renderEstadoChips(k);
+    document.getElementById('btnGuardarLlamada').dataset.estado = k;
+    if(k === 'contactado') mostrarActividades(); else ocultarActividades();
+  };
+
+  function mostrarActividades(){
+    document.getElementById('mActividades').style.display = 'flex';
+    document.getElementById('mBtnAgregarAct').style.display = 'block';
+    if(actividadesDraft.length === 0) actividadesDraft.push(actividadVacia());
+    renderActividadesDraft();
+  }
+  function ocultarActividades(){
+    document.getElementById('mActividades').style.display = 'none';
+    document.getElementById('mBtnAgregarAct').style.display = 'none';
+  }
+
+  function actividadVacia(){
+    return { tipo:'', otroComentario:'', fecha:'', hora:'', afecta:'', alcance:'todo', secciones:[], participantes:[], suspension:'', descripcion:'' };
+  }
+
+  window.agregarActividadDraft = function(){ actividadesDraft.push(actividadVacia()); renderActividadesDraft(); };
+  window.eliminarActividadDraft = function(idx){ actividadesDraft.splice(idx,1); renderActividadesDraft(); };
+  window.actualizarActividadCampo = function(idx, campo, val){ actividadesDraft[idx][campo] = val; };
+  window.toggleActividadMulti = function(idx, campo, val, btn){
+    var arr = actividadesDraft[idx][campo] || [];
+    var i = arr.indexOf(val);
+    if(i >= 0){ arr.splice(i,1); btn.classList.remove('on'); } else { arr.push(val); btn.classList.add('on'); }
+    actividadesDraft[idx][campo] = arr;
+  };
+  window.cambiarAlcanceActividad = function(idx, val){
+    actividadesDraft[idx].alcance = val;
+    renderActividadesDraft();
+  };
+
+  function renderActividadesDraft(){
+    var el = document.getElementById('mActividades');
+    el.innerHTML = actividadesDraft.map(function(a, idx){
+      var esOtro = a.tipo === 'Otros';
+      return '<div class="act-card">'
+        + (actividadesDraft.length > 1 ? '<button class="btn-icon act-remove" onclick="eliminarActividadDraft('+idx+')" title="Quitar actividad">✕</button>' : '')
+        + '<div><span class="field-label">Actividad '+(idx+1)+'</span></div>'
+        + '<div class="field-row">'
+        + '<div><label class="field-label">Tipo de actividad</label><select onchange="actualizarActividadCampo('+idx+',\'tipo\',this.value);renderActividadesDraft()">'
+        + '<option value="">Selecciona...</option>' + TIPOS_ACTIVIDAD.map(function(t){ return '<option value="'+t+'"'+(a.tipo===t?' selected':'')+'>'+t+'</option>'; }).join('') + '</select></div>'
+        + '<div><label class="field-label">Fecha</label><input type="date" value="'+escHtml(a.fecha)+'" onchange="actualizarActividadCampo('+idx+',\'fecha\',this.value)"></div>'
+        + '</div>'
+        + (esOtro ? '<div><label class="field-label">Comentario (tipo «Otros»)</label><input type="text" value="'+escHtml(a.otroComentario)+'" onchange="actualizarActividadCampo('+idx+',\'otroComentario\',this.value)"></div>' : '')
+        + '<div class="field-row">'
+        + '<div><label class="field-label">Hora (opcional)</label><input type="time" value="'+escHtml(a.hora)+'" onchange="actualizarActividadCampo('+idx+',\'hora\',this.value)"></div>'
+        + '<div><label class="field-label">Afecta</label><select onchange="actualizarActividadCampo('+idx+',\'afecta\',this.value)">'
+        + '<option value="">Selecciona...</option>' + ['Clases','Asistencia','Ambos'].map(function(t){ return '<option value="'+t+'"'+(a.afecta===t?' selected':'')+'>'+t+'</option>'; }).join('') + '</select></div>'
+        + '</div>'
+        + '<div><label class="field-label">Alcance</label><div class="tag-multi">'
+        + '<button type="button" class="'+(a.alcance==='todo'?'on':'')+'" onclick="cambiarAlcanceActividad('+idx+',\'todo\')">Todo el CE</button>'
+        + '<button type="button" class="'+(a.alcance==='secciones'?'on':'')+'" onclick="cambiarAlcanceActividad('+idx+',\'secciones\')">Algunas secciones</button>'
+        + '</div></div>'
+        + (a.alcance==='secciones' ? '<div><label class="field-label">Secciones</label><div class="tag-multi">'
+          + SECCIONES_CE.map(function(s){ return '<button type="button" class="'+((a.secciones||[]).indexOf(s)>=0?'on':'')+'" onclick="toggleActividadMulti('+idx+',\'secciones\',\''+s+'\',this)">'+s+'</button>'; }).join('')
+          + '</div></div>' : '')
+        + '<div><label class="field-label">Participantes</label><div class="tag-multi">'
+        + PARTICIPANTES_CE.map(function(p){ return '<button type="button" class="'+((a.participantes||[]).indexOf(p)>=0?'on':'')+'" onclick="toggleActividadMulti('+idx+',\'participantes\',\''+p+'\',this)">'+p+'</button>'; }).join('')
+        + '</div></div>'
+        + '<div><label class="field-label">Suspensión de clases</label><div class="tag-multi">'
+        + ['Total','Parcial','No'].map(function(s){ return '<button type="button" class="'+(a.suspension===s?'on':'')+'" onclick="actualizarActividadCampo('+idx+',\'suspension\',\''+s+'\');renderActividadesDraft()">'+s+'</button>'; }).join('')
+        + '</div></div>'
+        + '<div><label class="field-label">Descripción / observaciones</label><textarea onchange="actualizarActividadCampo('+idx+',\'descripcion\',this.value)">'+escHtml(a.descripcion)+'</textarea></div>'
+        + '</div>';
+    }).join('');
+  }
+
+  function cerrarModalLlamada(){
+    document.getElementById('modalLlamada').classList.remove('show');
+    registroActivo = null; actividadesDraft = [];
+  }
+
+  window.cerrarSinContacto = function(){
+    if(!registroActivo) return;
+    if(!window.confirm('¿Cerrar este Centro Educativo por no contacto? No volverá a aparecer en la bandeja.')) return;
+    db.collection('ce_registros').doc(registroActivo.id).update({
+      estado: 'cerrado-sin-contacto', fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){ showToast('Registro cerrado.'); cerrarModalLlamada(); })
+      .catch(function(e){ console.error(e); showToast('No se pudo cerrar el registro.'); });
+  };
+
+  window.guardarLlamada = function(){
+    var estado = document.getElementById('btnGuardarLlamada').dataset.estado;
+    if(!estado){ showToast('Selecciona el estado de la llamada.'); return; }
+    var r = registroActivo, s = semanasMap[r.semanaId];
+    var maxIntentos = (s && s.maxIntentos) || 3;
+
+    var update = { fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp() };
+
+    if(estado === 'contactado'){
+      update.estado = 'contactado';
+      update.actividades = actividadesDraft;
+    } else {
+      var nuevosIntentos = (r.intentos || 0) + 1;
+      var cierraAuto = nuevosIntentos >= maxIntentos;
+      update.intentos = nuevosIntentos;
+      update.estado = cierraAuto ? 'cerrado-sin-contacto' : estado;
+    }
+
+    var btn = document.getElementById('btnGuardarLlamada');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    db.collection('ce_registros').doc(r.id).update(update)
+      .then(function(){
+        showToast(update.estado === 'cerrado-sin-contacto' && estado !== 'contactado'
+          ? 'Cerrado por no contacto tras ' + update.intentos + ' intentos (máximo ' + maxIntentos + ').'
+          : 'Registrado: ' + (ESTADOS_REG[update.estado] || update.estado) + '.');
+        cerrarModalLlamada();
+      })
+      .catch(function(e){ console.error(e); showToast('No se pudo guardar.'); })
+      .finally(function(){ btn.disabled = false; btn.textContent = 'Guardar'; });
+  };
+
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3500);
+  }
+</script>
+<script src="notif.js"></script>
+<script src="sidebar.js"></script>
+<script>
+  initSidebar();
+  initNotif(db, auth);
+</script>
+</body>
+</html>
