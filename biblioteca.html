@@ -68,8 +68,8 @@
   .bib-btn.active { background: #1A3DAA; }
   .placeholder { color: #94A3B8; font-style: italic; }
 
-  #vistaCategoria { width: 100%; max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: max-width 0.2s; }
-  #vistaCategoria.vista-categoria-ancha { max-width: 960px; }
+  #vistaCategoria { width: 100%; max-width: 640px; margin: 0 auto; padding: 0 22px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: max-width 0.2s; }
+  #vistaCategoria.vista-categoria-ancha { max-width: 1040px; padding: 0 90px 0 22px; }
   .bib-btn-volver { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; background: #EEF2FF; color: #1A3DAA; border: none; border-radius: 999px; font-weight: 600; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; padding: 8px 16px 8px 12px; transition: all 0.15s; }
   .bib-btn-volver:hover { background: #DDE5FF; transform: translateX(-2px); }
   .titulo-categoria { font-size: 0.95rem; font-weight: 700; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 10px; }
@@ -102,16 +102,14 @@
   .categoria-opciones.dos-columnas { display: grid; grid-template-columns: 1fr 1fr; }
   .categoria-opciones.dos-columnas .bib-btn { width: 100%; min-width: 0; text-align: left; }
 
-  .categoria-opciones.vista-tarjetas { display: flex; flex-direction: column; align-items: stretch; gap: 16px; width: 100%; }
-  .tarjetas-botones { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 4px; }
-  .tarjetas-botones .bib-btn { width: 380px; }
-  .tarjeta-script { background: white; border: 1px solid #E2E8F0; border-radius: 10px; padding: 28px 40px; width: 100%; box-sizing: border-box; }
-  .tarjeta-script h4 { font-family: 'Montserrat', sans-serif; color: #0F2070; font-size: 1.05rem; margin: 0 0 14px; }
-  .tarjeta-script-cuerpo p { font-size: 0.9rem; line-height: 1.75; color: #374151; margin-bottom: 12px; }
+  #tarjetasScripts.vista-tarjetas { display: flex; flex-direction: column; align-items: stretch; gap: 18px; width: 100%; max-width: 1040px; margin: 6px auto 0; }
+  .tarjeta-script { background: white; border: 1px solid #E2E8F0; border-radius: 10px; padding: 22px 40px; width: 100%; box-sizing: border-box; }
+  .tarjeta-script h4 { font-family: 'Montserrat', sans-serif; color: #0F2070; font-size: 1.05rem; margin: 0 0 12px; }
+  .tarjeta-script-cuerpo p { font-size: 0.9rem; line-height: 1.6; color: #374151; margin-bottom: 10px; }
   .tarjeta-script-cuerpo p:last-child { margin-bottom: 0; }
   .tarjeta-script-cuerpo strong { color: #0F2070; }
-  .tarjeta-script-cuerpo ol { padding-left: 20px; font-size: 0.9rem; line-height: 1.75; color: #374151; }
-  .tarjeta-script-cuerpo li { margin-bottom: 10px; }
+  .tarjeta-script-cuerpo ol { padding-left: 20px; font-size: 0.9rem; line-height: 1.6; color: #374151; }
+  .tarjeta-script-cuerpo li { margin-bottom: 8px; }
   .tarjeta-script .modal-tipificacion { margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9; font-size: 0.78rem; }
 
   .cintillo-lateral { position: fixed; top: 50%; right: 0; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; background: white; padding: 10px 8px; border-radius: 14px 0 0 14px; box-shadow: -3px 0 16px rgba(15,32,112,0.14); border: 1px solid #E2E8F0; border-right: none; z-index: 50; }
@@ -234,6 +232,8 @@
       <h3 id="tituloCategoria" class="titulo-categoria"></h3>
       <div class="categoria-opciones" id="opcionesCategoria"></div>
     </div>
+
+    <div id="tarjetasScripts"></div>
   </div>
 </div>
 
@@ -626,17 +626,17 @@
 
     document.getElementById('tituloCategoria').textContent = vista.titulo;
     var contenedor = document.getElementById('opcionesCategoria');
+    var contenedorTarjetas = document.getElementById('tarjetasScripts');
 
     if (vista.tarjetas) {
-      contenedor.classList.remove('dos-columnas');
-      contenedor.classList.add('vista-tarjetas');
-
-      var botones = opcionesActuales.map(function(op, i) {
+      contenedor.classList.remove('dos-columnas', 'vista-tarjetas');
+      contenedor.innerHTML = opcionesActuales.map(function(op, i) {
         var label = typeof op === 'string' ? op : op.label;
         return '<button class="bib-btn" onclick="irATarjeta(' + i + ')">' + label + '</button>';
       }).join('');
 
-      var tarjetas = opcionesActuales.map(function(op, i) {
+      contenedorTarjetas.className = 'vista-tarjetas';
+      contenedorTarjetas.innerHTML = opcionesActuales.map(function(op, i) {
         if (typeof op === 'string' || !op.texto) return '';
         return '<div class="tarjeta-script" id="tarjeta-' + i + '">' +
           '<h4>' + (op.tituloModal || op.label) + '</h4>' +
@@ -644,11 +644,11 @@
           (op.tipificacion ? '<p class="modal-tipificacion"><strong>Tipificación:</strong> <span>' + op.tipificacion + '</span></p>' : '') +
           '</div>';
       }).join('');
-
-      contenedor.innerHTML = '<div class="tarjetas-botones">' + botones + '</div>' + tarjetas;
       return;
     }
 
+    contenedorTarjetas.className = '';
+    contenedorTarjetas.innerHTML = '';
     contenedor.classList.remove('vista-tarjetas');
     contenedor.classList.toggle('dos-columnas', opcionesActuales.length > 8);
     contenedor.innerHTML = opcionesActuales.map(function(op, i) {
