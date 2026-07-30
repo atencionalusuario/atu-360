@@ -15,7 +15,9 @@
   /* STATS */
   .stats-row     { display: flex; gap: 10px; flex-shrink: 0; flex-wrap: wrap; }
   .stats-row + .stats-row { margin-top: -4px; }
-  .stat-chip     { background: white; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 10px; flex: 1 1 0; min-width: 160px; }
+  .stat-chip     { background: white; border: 1.5px solid #1A3DAA; border-radius: 8px; padding: 10px 16px; display: flex; align-items: center; gap: 10px; flex: 1 1 0; min-width: 160px; cursor: pointer; transition: box-shadow 0.15s; }
+  .stat-chip:hover { box-shadow: 0 2px 8px rgba(26,61,170,0.12); }
+  .stat-chip.selected { box-shadow: 0 0 0 2px rgba(26,61,170,0.25); }
   .stat-chip-val { font-size: 1.3rem; font-weight: 800; color: #1A3DAA; line-height: 1; }
   .stat-chip-label { font-size: 0.68rem; color: #94A3B8; font-weight: 500; }
   .stat-chip.activos   .stat-chip-val { color: #16A34A; }
@@ -175,6 +177,54 @@
     renderRT();
   };
 
+  window.handleStatClick = function(key, fv){
+    if (fv) setFiltroLinea(fv);
+    mostrarListaRT(key);
+  };
+
+  // ── Modal: listado de personas por tarjeta ──────────────────────────────────────
+  function crearModalListado() {
+    var ov = document.createElement('div');
+    ov.id = 'lstModal';
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.4);z-index:9999;display:none;align-items:flex-start;justify-content:center;padding:60px 20px;overflow-y:auto;';
+    ov.innerHTML =
+      '<div style="background:white;border-radius:12px;width:420px;max-width:92vw;box-shadow:0 24px 48px rgba(0,0,0,0.18);max-height:76vh;display:flex;flex-direction:column;">'
+      +'<div style="padding:18px 20px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">'
+      +'<div id="lstTitulo" style="font-size:0.92rem;font-weight:700;color:#1E293B"></div>'
+      +'<button id="lstClose" style="border:none;background:none;cursor:pointer;font-size:1.1rem;color:#94A3B8;line-height:1">✕</button>'
+      +'</div>'
+      +'<div id="lstBody" style="padding:6px 20px;overflow-y:auto"></div>'
+      +'</div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function(e){ if (e.target === ov) ov.style.display = 'none'; });
+    document.getElementById('lstClose').addEventListener('click', function(){ ov.style.display = 'none'; });
+    return ov;
+  }
+
+  window.mostrarListaRT = function(key) {
+    var data = (window._rtListas || {})[key];
+    if (!data) return;
+    var m = document.getElementById('lstModal') || crearModalListado();
+    document.getElementById('lstTitulo').textContent = data.titulo + ' (' + data.items.length + ')';
+    var body = document.getElementById('lstBody');
+    if (data.items.length === 0) {
+      body.innerHTML = '<div style="padding:24px 4px;text-align:center;color:#94A3B8;font-size:0.82rem">Sin registros.</div>';
+    } else {
+      var lista = data.items.slice().sort(function(a,b){ return (a.nombre||'').localeCompare(b.nombre||'','es'); });
+      body.innerHTML = lista.map(function(a){
+        var estado = a.enLinea ? (a.estadoActual || 'En línea') : 'Fuera';
+        var pLabel = LABELS_PROY[a.proyecto] || '';
+        return '<div style="display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #F1F5F9">'
+          + '<div style="width:8px;height:8px;border-radius:50%;flex-shrink:0;background:'+(a.enLinea?'#16A34A':'#CBD5E1')+'"></div>'
+          + '<div style="flex:1;min-width:0">'
+          + '<div style="font-size:0.82rem;font-weight:600;color:#1E293B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escHtml(a.nombre||a.email||'?')+'</div>'
+          + '<div style="font-size:0.68rem;color:#94A3B8">'+escHtml(estado)+(pLabel?' · '+pLabel:'')+'</div>'
+          + '</div></div>';
+      }).join('');
+    }
+    m.style.display = 'flex';
+  };
+
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
@@ -248,28 +298,40 @@
     // Stats
     var enLineaTotal = agentes.filter(function(a){ return !!a.enLinea && a.rol !== 'supervisor'; }).length;
     var totalAgentes = agentes.filter(function(a){ return a.rol !== 'supervisor'; }).length;
-    function statChip(cls, val, label, fv){
-      var sel = filtroLinea === fv;
-      return '<div class="stat-chip '+cls+'" onclick="setFiltroLinea(\''+fv+'\')" style="cursor:pointer;'+(sel?'outline:2px solid #1A3DAA;outline-offset:-2px;':'')+'">'
+    function statChip(cls, val, label, fv, key){
+      var sel = fv && filtroLinea === fv;
+      return '<div class="stat-chip '+cls+(sel?' selected':'')+'" onclick="handleStatClick(\''+key+'\',\''+fv+'\')">'
         +'<div class="stat-chip-val">'+val+'</div><div class="stat-chip-label">'+label+'</div></div>';
     }
+
+    var agentesRol = agentes.filter(function(a){ return a.rol !== 'supervisor'; });
+    var listas = {
+      'sup-total':   { titulo: 'Total supervisores',    items: supervisores },
+      'sup-online':  { titulo: 'Supervisores en línea', items: supervisores.filter(function(a){ return !!a.enLinea; }) },
+      'sup-offline': { titulo: 'Supervisores fuera',    items: supervisores.filter(function(a){ return !a.enLinea; }) },
+      'ag-total':    { titulo: 'Total agentes',         items: agentesRol },
+      'ag-online':   { titulo: 'Agentes en línea',      items: agentesRol.filter(function(a){ return !!a.enLinea; }) },
+      'ag-offline':  { titulo: 'Agentes fuera',         items: agentesRol.filter(function(a){ return !a.enLinea; }) }
+    };
+    window._rtListas = listas;
+
     var supStatsEl = document.getElementById('rtStatsSup');
     if (miRol !== 'supervisor') {
       var supEnLinea = supervisores.filter(function(a){ return !!a.enLinea; }).length;
       var supTotal   = supervisores.length;
       supStatsEl.style.display = 'flex';
       supStatsEl.innerHTML =
-          '<div class="stat-chip"><div class="stat-chip-val" style="color:#1A3DAA">'+supTotal+'</div><div class="stat-chip-label">Total supervisores</div></div>'
-        + '<div class="stat-chip activos"><div class="stat-chip-val">'+supEnLinea+'</div><div class="stat-chip-label">Supervisores en línea</div></div>'
-        + '<div class="stat-chip inactivos"><div class="stat-chip-val">'+(supTotal-supEnLinea)+'</div><div class="stat-chip-label">Supervisores fuera</div></div>';
+          '<div class="stat-chip" onclick="mostrarListaRT(\'sup-total\')"><div class="stat-chip-val" style="color:#1A3DAA">'+supTotal+'</div><div class="stat-chip-label">Total supervisores</div></div>'
+        + '<div class="stat-chip activos" onclick="mostrarListaRT(\'sup-online\')"><div class="stat-chip-val">'+supEnLinea+'</div><div class="stat-chip-label">Supervisores en línea</div></div>'
+        + '<div class="stat-chip inactivos" onclick="mostrarListaRT(\'sup-offline\')"><div class="stat-chip-val">'+(supTotal-supEnLinea)+'</div><div class="stat-chip-label">Supervisores fuera</div></div>';
     } else {
       supStatsEl.style.display = 'none';
       supStatsEl.innerHTML = '';
     }
     document.getElementById('rtStatsAgentes').innerHTML =
-        statChip('',          totalAgentes,               'Total agentes', '')
-      + statChip('activos',   enLineaTotal,               'En línea',      'online')
-      + statChip('inactivos', (totalAgentes-enLineaTotal), 'Fuera',         'offline');
+        statChip('',          totalAgentes,               'Total agentes', '',        'ag-total')
+      + statChip('activos',   enLineaTotal,               'En línea',      'online',  'ag-online')
+      + statChip('inactivos', (totalAgentes-enLineaTotal), 'Fuera',         'offline', 'ag-offline');
 
     document.getElementById('totalLabel').textContent = soloAgentes.length + ' de ' + totalAgentes + ' agentes';
     document.getElementById('rtCount').textContent    = soloAgentes.length + ' de ' + totalAgentes + ' agentes';
