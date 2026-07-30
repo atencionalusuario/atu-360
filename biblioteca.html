@@ -101,6 +101,18 @@
   .categoria-opciones.dos-columnas { display: grid; grid-template-columns: 1fr 1fr; }
   .categoria-opciones.dos-columnas .bib-btn { width: 100%; min-width: 0; text-align: left; }
 
+  .categoria-opciones.vista-tarjetas { display: flex; flex-direction: column; align-items: stretch; gap: 16px; width: 100%; }
+  .tarjetas-botones { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .tarjetas-botones .bib-btn { width: 380px; }
+  .tarjeta-script { background: white; border: 1px solid #E2E8F0; border-radius: 10px; padding: 20px 24px; width: 100%; box-sizing: border-box; }
+  .tarjeta-script h4 { font-family: 'Montserrat', sans-serif; color: #0F2070; font-size: 1rem; margin: 0 0 12px; }
+  .tarjeta-script-cuerpo p { font-size: 0.84rem; line-height: 1.6; color: #374151; margin-bottom: 10px; }
+  .tarjeta-script-cuerpo p:last-child { margin-bottom: 0; }
+  .tarjeta-script-cuerpo strong { color: #0F2070; }
+  .tarjeta-script-cuerpo ol { padding-left: 20px; font-size: 0.84rem; line-height: 1.6; color: #374151; }
+  .tarjeta-script-cuerpo li { margin-bottom: 8px; }
+  .tarjeta-script .modal-tipificacion { margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9; font-size: 0.78rem; }
+
   .cintillo-lateral { position: fixed; top: 50%; right: 0; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; background: white; padding: 10px 8px; border-radius: 14px 0 0 14px; box-shadow: -3px 0 16px rgba(15,32,112,0.14); border: 1px solid #E2E8F0; border-right: none; z-index: 50; }
   .cintillo-btn { width: 42px; height: 42px; border-radius: 50%; background: #0F2070; color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
   .cintillo-btn:hover { background: #1A3DAA; transform: scale(1.07); }
@@ -368,7 +380,7 @@
 
   var ARBOL_CONSULTA = [
     { label: 'Dudas generales del servicio', hijos: [
-      { label: 'Orientación sobre todo el servicio', hijos: [
+      { label: 'Orientación sobre todo el servicio', vistaTarjetas: true, hijos: [
         { label: 'Introducción a DoctorSV',
           tipificacion: 'Consultas > Información general del servicio > Orientación sobre todo el servicio > Introducción a DoctorSV',
           texto:
@@ -529,8 +541,8 @@
     }
   }
 
-  function pushVistaOpciones(titulo, opciones) {
-    pilaVistas.push({ titulo: titulo, opciones: opciones });
+  function pushVistaOpciones(titulo, opciones, tarjetas) {
+    pilaVistas.push({ titulo: titulo, opciones: opciones, tarjetas: !!tarjetas });
     renderVistaActual();
 
     var snapshot = pilaVistas.slice();
@@ -558,6 +570,30 @@
 
     document.getElementById('tituloCategoria').textContent = vista.titulo;
     var contenedor = document.getElementById('opcionesCategoria');
+
+    if (vista.tarjetas) {
+      contenedor.classList.remove('dos-columnas');
+      contenedor.classList.add('vista-tarjetas');
+
+      var botones = opcionesActuales.map(function(op, i) {
+        var label = typeof op === 'string' ? op : op.label;
+        return '<button class="bib-btn" onclick="irATarjeta(' + i + ')">' + label + '</button>';
+      }).join('');
+
+      var tarjetas = opcionesActuales.map(function(op, i) {
+        if (typeof op === 'string' || !op.texto) return '';
+        return '<div class="tarjeta-script" id="tarjeta-' + i + '">' +
+          '<h4>' + (op.tituloModal || op.label) + '</h4>' +
+          '<div class="tarjeta-script-cuerpo">' + op.texto + '</div>' +
+          (op.tipificacion ? '<p class="modal-tipificacion"><strong>Tipificación:</strong> <span>' + op.tipificacion + '</span></p>' : '') +
+          '</div>';
+      }).join('');
+
+      contenedor.innerHTML = '<div class="tarjetas-botones">' + botones + '</div>' + tarjetas;
+      return;
+    }
+
+    contenedor.classList.remove('vista-tarjetas');
     contenedor.classList.toggle('dos-columnas', opcionesActuales.length > 8);
     contenedor.innerHTML = opcionesActuales.map(function(op, i) {
       var label = typeof op === 'string' ? op : op.label;
@@ -565,10 +601,15 @@
     }).join('');
   }
 
+  function irATarjeta(i) {
+    var el = document.getElementById('tarjeta-' + i);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   function clickOpcion(i) {
     var op = opcionesActuales[i];
     if (op && op.hijos) {
-      pushVistaOpciones(op.label, op.hijos);
+      pushVistaOpciones(op.label, op.hijos, op.vistaTarjetas);
     } else if (op && op.texto) {
       abrirModalTexto(op.tituloModal || op.label, op.texto, op.tipificacion, op.subBotones);
     }
