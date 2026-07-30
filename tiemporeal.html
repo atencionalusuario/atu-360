@@ -408,18 +408,12 @@
       document.getElementById('histTbody').innerHTML = '<tr><td colspan="10"><div class="empty-state">Sin agentes para mostrar.</div></td></tr>';
       return;
     }
-    var tot = { loginSeg:0, banio:0, brk:0, comida:0, capacitacion:0, personal:0, feedback:0 };
     var html = filas.map(function(f){
-      tot.loginSeg += f.loginSeg; tot.banio += f.banio; tot.brk += f.brk; tot.comida += f.comida;
-      tot.capacitacion += f.capacitacion; tot.personal += f.personal; tot.feedback += f.feedback;
       return '<tr><td class="hist-nombre">'+escHtml(f.nombre)+'</td>'
         + '<td>'+fmtHora(f.primer)+'</td><td>'+fmtHora(f.ultimo)+'</td><td>'+fmtHM(f.loginSeg)+'</td>'
         + '<td>'+fmtHM(f.banio)+'</td><td>'+fmtHM(f.brk)+'</td><td>'+fmtHM(f.comida)+'</td>'
         + '<td>'+fmtHM(f.capacitacion)+'</td><td>'+fmtHM(f.personal)+'</td><td>'+fmtHM(f.feedback)+'</td></tr>';
     }).join('');
-    html += '<tr class="hist-total"><td>Total</td><td>—</td><td>—</td>'
-      + '<td>'+fmtHM(tot.loginSeg)+'</td><td>'+fmtHM(tot.banio)+'</td><td>'+fmtHM(tot.brk)+'</td><td>'+fmtHM(tot.comida)+'</td>'
-      + '<td>'+fmtHM(tot.capacitacion)+'</td><td>'+fmtHM(tot.personal)+'</td><td>'+fmtHM(tot.feedback)+'</td></tr>';
     document.getElementById('histTbody').innerHTML = html;
   }
 
