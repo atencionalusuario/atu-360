@@ -63,6 +63,24 @@
 
   .empty-state { text-align: center; padding: 60px 24px; color: #94A3B8; font-size: 0.82rem; }
 
+  /* TABS */
+  .tr-tabs-bar { display: flex; gap: 0; border-bottom: 1px solid #E2E8F0; flex-shrink: 0; }
+  .tr-tab-btn { padding: 10px 16px; font-size: 0.82rem; font-weight: 600; color: #94A3B8; border: none; background: none; cursor: pointer; font-family: inherit; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tr-tab-btn.active { color: #1A3DAA; border-bottom-color: #1A3DAA; }
+
+  /* HISTORIAL */
+  .hist-filtros { background: white; border-radius: 10px; border: 1px solid #E2E8F0; padding: 14px 18px; display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; flex-shrink: 0; }
+  .hist-field { display: flex; flex-direction: column; gap: 5px; }
+  .hist-field label { font-size: 0.72rem; font-weight: 600; color: #64748B; }
+  .hist-field input { padding: 8px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px; font-size: 0.8rem; font-family: inherit; color: #1E293B; background: #F8FAFC; outline: none; }
+  .hist-field input:focus { border-color: #1A3DAA; background: white; }
+  .hist-tbl-wrap { flex: 1; overflow: auto; border: 1px solid #E2E8F0; border-radius: 10px; background: white; }
+  table.hist-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  table.hist-table th { text-align: left; font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; font-weight: 700; padding: 10px 14px; border-bottom: 1.5px solid #E2E8F0; background: #F8FAFC; position: sticky; top: 0; white-space: nowrap; }
+  table.hist-table td { padding: 10px 14px; border-bottom: 1px solid #F1F5F9; color: #374151; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.hist-table tr.hist-total td { font-weight: 700; color: #1E293B; background: #F8FAFC; border-top: 1.5px solid #E2E8F0; border-bottom: none; }
+  .hist-nombre { font-weight: 600; color: #1E293B; }
+
   /* Auto-refresh indicator */
   .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #16A34A; display: inline-block; margin-right: 5px; animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
@@ -90,6 +108,14 @@
 
   <!-- CUERPO -->
   <div class="body-wrap">
+
+    <!-- TABS -->
+    <div class="tr-tabs-bar">
+      <button class="tr-tab-btn active" id="trTabVivo" onclick="cambiarVistaTR('vivo')">Tiempo real</button>
+      <button class="tr-tab-btn" id="trTabHist" onclick="cambiarVistaTR('historial')">Historial diario</button>
+    </div>
+
+    <div id="vistaTR_vivo" style="flex:1;display:flex;flex-direction:column;gap:14px;overflow:hidden">
 
     <!-- STATS -->
     <div style="display:flex;flex-direction:column;gap:10px;flex-shrink:0" id="rtStats">
@@ -123,6 +149,34 @@
     <!-- GRUPOS -->
     <div class="scroll-area" id="rtGrid">
       <div class="empty-state">Cargando…</div>
+    </div>
+
+    </div>
+
+    <!-- HISTORIAL DIARIO -->
+    <div id="vistaTR_historial" style="display:none;flex:1;flex-direction:column;gap:14px;overflow:hidden">
+      <div class="hist-filtros">
+        <div class="hist-field">
+          <label>Desde</label>
+          <input type="date" id="histDesde" onchange="cargarHistorial()">
+        </div>
+        <div class="hist-field">
+          <label>Hasta</label>
+          <input type="date" id="histHasta" onchange="cargarHistorial()">
+        </div>
+        <span class="count-label" id="histInfo"></span>
+      </div>
+      <div class="hist-tbl-wrap">
+        <table class="hist-table">
+          <thead>
+            <tr>
+              <th>Agente</th><th>Primer login</th><th>Último logout</th><th>Login</th>
+              <th>Baño</th><th>Break</th><th>Comida</th><th>Capacitación</th><th>Personal</th><th>Retroalimentación</th>
+            </tr>
+          </thead>
+          <tbody id="histTbody"><tr><td colspan="10"><div class="empty-state">Cargando…</div></td></tr></tbody>
+        </table>
+      </div>
     </div>
 
   </div>
@@ -270,6 +324,104 @@
   function pad(n) { return String(n).padStart(2, '0'); }
   function iniciales(n) { return (n||'?').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase(); }
   function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // ── Tabs: Tiempo real / Historial diario ────────────────────────────────────────
+  window.cambiarVistaTR = function(v){
+    document.getElementById('trTabVivo').classList.toggle('active', v === 'vivo');
+    document.getElementById('trTabHist').classList.toggle('active', v === 'historial');
+    document.getElementById('vistaTR_vivo').style.display     = v === 'vivo' ? 'flex' : 'none';
+    document.getElementById('vistaTR_historial').style.display = v === 'historial' ? 'flex' : 'none';
+    if (v === 'historial') {
+      if (!document.getElementById('histDesde').value) {
+        var hoy = new Date();
+        var iso = hoy.getFullYear()+'-'+pad(hoy.getMonth()+1)+'-'+pad(hoy.getDate());
+        document.getElementById('histDesde').value = iso;
+        document.getElementById('histHasta').value = iso;
+      }
+      cargarHistorial();
+    }
+  };
+
+  // ── Historial diario: login/logout y tiempo por auxiliar, por agente ────────────
+  window.cargarHistorial = function(){
+    var desde = document.getElementById('histDesde').value;
+    var hasta = document.getElementById('histHasta').value;
+    if (!desde || !hasta) return;
+    document.getElementById('histTbody').innerHTML = '<tr><td colspan="10"><div class="empty-state">Cargando…</div></td></tr>';
+
+    var desdeTs = firebase.firestore.Timestamp.fromDate(new Date(desde+'T00:00:00'));
+    var hastaTs = firebase.firestore.Timestamp.fromDate(new Date(hasta+'T23:59:59'));
+    var roster  = agentes.filter(function(a){ return a.rol !== 'supervisor'; });
+    var emailsSet = {}; roster.forEach(function(a){ emailsSet[a.email] = true; });
+
+    Promise.all([
+      db.collection('marcajes').where('timestamp','>=',desdeTs).where('timestamp','<=',hastaTs).get(),
+      db.collection('auxiliares').where('timestamp','>=',desdeTs).where('timestamp','<=',hastaTs).get()
+    ]).then(function(res){
+      var porAgente = {};
+      roster.forEach(function(a){
+        porAgente[a.email] = { nombre: a.nombre||a.email, primer: null, ultimo: null, entradasPorFecha: {}, salidasPorFecha: {}, aux: {} };
+      });
+      res[0].forEach(function(d){
+        var m = d.data(); var p = porAgente[m.email]; if (!p) return;
+        var ts = m.timestamp ? m.timestamp.toDate() : null; if (!ts) return;
+        if (m.tipo === 'entrada') {
+          if (!p.primer || ts < p.primer) p.primer = ts;
+          if (!p.entradasPorFecha[m.fecha]) p.entradasPorFecha[m.fecha] = ts;
+        } else if (m.tipo === 'salida') {
+          if (!p.ultimo || ts > p.ultimo) p.ultimo = ts;
+          p.salidasPorFecha[m.fecha] = ts;
+        }
+      });
+      res[1].forEach(function(d){
+        var x = d.data(); var p = porAgente[x.email]; if (!p) return;
+        p.aux[x.auxiliar] = (p.aux[x.auxiliar]||0) + (x.duracion_seg||0);
+      });
+
+      var filas = roster.map(function(a){
+        var p = porAgente[a.email];
+        var loginSeg = 0;
+        Object.keys(p.entradasPorFecha).forEach(function(fecha){
+          var e = p.entradasPorFecha[fecha], s = p.salidasPorFecha[fecha];
+          if (e && s) loginSeg += Math.floor((s - e) / 1000);
+        });
+        return {
+          nombre: p.nombre, primer: p.primer, ultimo: p.ultimo, loginSeg: loginSeg,
+          banio: p.aux['Baño']||0, brk: p.aux['Break']||0, comida: p.aux['Comida']||0,
+          capacitacion: p.aux['Capacitación']||0, personal: p.aux['Pausa administrativa']||0, feedback: p.aux['Feedback']||0
+        };
+      });
+      filas.sort(function(a,b){ return a.nombre.localeCompare(b.nombre,'es'); });
+      renderHistorial(filas);
+    }).catch(function(e){
+      console.error(e);
+      document.getElementById('histTbody').innerHTML = '<tr><td colspan="10"><div class="empty-state">Error al cargar el historial.</div></td></tr>';
+    });
+  };
+
+  function fmtHora(d){ return d ? d.toLocaleTimeString('es-SV',{hour:'2-digit',minute:'2-digit'}) : '—'; }
+  function fmtHM(seg){ var h=Math.floor(seg/3600), m=Math.floor((seg%3600)/60); return pad(h)+':'+pad(m); }
+
+  function renderHistorial(filas){
+    document.getElementById('histInfo').textContent = filas.length + ' agente(s)';
+    if (filas.length === 0) {
+      document.getElementById('histTbody').innerHTML = '<tr><td colspan="10"><div class="empty-state">Sin agentes para mostrar.</div></td></tr>';
+      return;
+    }
+    var tot = { loginSeg:0, banio:0, brk:0, comida:0, capacitacion:0, personal:0, feedback:0 };
+    var html = filas.map(function(f){
+      tot.loginSeg += f.loginSeg; tot.banio += f.banio; tot.brk += f.brk; tot.comida += f.comida;
+      tot.capacitacion += f.capacitacion; tot.personal += f.personal; tot.feedback += f.feedback;
+      return '<tr><td class="hist-nombre">'+escHtml(f.nombre)+'</td>'
+        + '<td>'+fmtHora(f.primer)+'</td><td>'+fmtHora(f.ultimo)+'</td><td>'+fmtHM(f.loginSeg)+'</td>'
+        + '<td>'+fmtHM(f.banio)+'</td><td>'+fmtHM(f.brk)+'</td><td>'+fmtHM(f.comida)+'</td>'
+        + '<td>'+fmtHM(f.capacitacion)+'</td><td>'+fmtHM(f.personal)+'</td><td>'+fmtHM(f.feedback)+'</td></tr>';
+    }).join('');
+    html += '<tr class="hist-total"><td>Total</td><td>—</td><td>—</td>'
+      + '<td>'+fmtHM(tot.loginSeg)+'</td><td>'+fmtHM(tot.banio)+'</td><td>'+fmtHM(tot.brk)+'</td><td>'+fmtHM(tot.comida)+'</td>'
+      + '<td>'+fmtHM(tot.capacitacion)+'</td><td>'+fmtHM(tot.personal)+'</td><td>'+fmtHM(tot.feedback)+'</td></tr>';
+    document.getElementById('histTbody').innerHTML = html;
+  }
 
   function renderRT() {
     var busq   = document.getElementById('rtBusq').value;
