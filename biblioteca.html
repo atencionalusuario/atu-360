@@ -126,6 +126,9 @@
   .cintillo-btn.cintillo-busqueda:hover { background: #1A3DAA; }
   .cintillo-btn.cintillo-arriba { background: #64748B; }
   .cintillo-btn.cintillo-arriba:hover { background: #475569; }
+  .cintillo-separador { width: 26px; height: 1px; background: #E2E8F0; margin: 2px auto; }
+  .cintillo-btn.cintillo-cat { background: #1A3DAA; }
+  .cintillo-btn.cintillo-cat:hover { background: #0F2070; }
 
   .busqueda-global-input-wrap { display: flex; align-items: center; gap: 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
   .busqueda-global-input-wrap svg { width: 18px; height: 18px; color: #94A3B8; flex-shrink: 0; }
@@ -219,7 +222,7 @@
     <button class="bib-btn-volver" onclick="volverAtras()">&larr; Volver a atrás</button>
 
     <div class="caja-busqueda-cat" id="cajaBusquedaCategoria" style="display:none;">
-      <h2 class="pregunta-categoria">¿Qué tipo de información necesita el usuario?</h2>
+      <h2 class="pregunta-categoria" id="preguntaCategoria">¿Qué tipo de información necesita el usuario?</h2>
       <p class="instruccion">Puedes buscar por palabra clave o hacer clic en los botones.</p>
       <div class="busqueda-input-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -241,6 +244,21 @@
   <button class="cintillo-btn cintillo-busqueda" title="Buscar en toda la biblioteca" onclick="abrirModalBusquedaGlobal()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
   </button>
+
+  <div class="cintillo-separador"></div>
+
+  <button class="cintillo-btn cintillo-cat" title="Ir a Consulta" onclick="mostrarCategoria('consulta')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  </button>
+  <button class="cintillo-btn cintillo-cat" title="Ir a Gestión" onclick="mostrarCategoria('gestion')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  </button>
+  <button class="cintillo-btn cintillo-cat" title="Ir a Incidencia" onclick="mostrarCategoria('incidencia')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+  </button>
+
+  <div class="cintillo-separador"></div>
+
   <button class="cintillo-btn cintillo-ayuda" title="¿Cómo tipificar?" onclick="abrirModalAyuda()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 17v-5"/><circle cx="12" cy="8.2" r="0.1" fill="currentColor" stroke-width="1.5"/></svg>
   </button>
@@ -407,6 +425,11 @@
   }
 
   var NOMBRES_CATEGORIA = { consulta: 'Consulta', gestion: 'Gestión', incidencia: 'Incidencia' };
+  var CATEGORIAS_CON_BUSQUEDA = {
+    consulta: '¿Qué tipo de información necesita el usuario?',
+    gestion: '¿Qué gestión necesita el usuario que hagamos?',
+    incidencia: '¿Qué salió mal? ¿Qué aspecto no cumplió con los estándares? ¿Qué falló?'
+  };
 
   var ARBOL_CONSULTA = [
     { label: 'Dudas generales del servicio', hijos: [
@@ -595,8 +618,9 @@
     document.getElementById('flujoSDP').style.display = 'none';
     document.getElementById('vistaCategoria').style.display = 'flex';
 
-    var mostrarBusqueda = categoriaActualId === 'consulta';
-    document.getElementById('cajaBusquedaCategoria').style.display = mostrarBusqueda ? 'block' : 'none';
+    var preguntaBusqueda = CATEGORIAS_CON_BUSQUEDA[categoriaActualId];
+    document.getElementById('cajaBusquedaCategoria').style.display = preguntaBusqueda ? 'block' : 'none';
+    if (preguntaBusqueda) document.getElementById('preguntaCategoria').textContent = preguntaBusqueda;
 
     document.getElementById('vistaCategoria').classList.toggle('vista-categoria-ancha', !!vista.tarjetas);
 
