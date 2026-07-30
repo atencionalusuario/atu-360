@@ -262,25 +262,12 @@
     var enLineaTodos = soloAgentesTodos.filter(function(a){ return !!a.enLinea; });
     var porEstado = {};
     enLineaTodos.forEach(function(a){ var e = a.estadoActual || 'Fuera'; porEstado[e] = (porEstado[e]||0)+1; });
-    var enGestion = (porEstado['Inbound']||0) + (porEstado['Outbound']||0);
-    var segsProm = 0;
-    if (enLineaTodos.length) {
-      var sumaSeg = 0, conFecha = 0;
-      enLineaTodos.forEach(function(a){
-        if (!a.estadoDesde) return;
-        var d = a.estadoDesde.toDate ? a.estadoDesde.toDate() : new Date(a.estadoDesde);
-        sumaSeg += Math.floor((new Date() - d) / 1000); conFecha++;
-      });
-      if (conFecha) segsProm = Math.round(sumaSeg / conFecha);
-    }
     function auxCard(val, color, label, sub) {
       return '<div class="rt-aux-card"><div class="rt-aux-label">'+label+'</div><div class="rt-aux-val" style="color:'+color+'">'+val+'</div>'
         + (sub ? '<div class="rt-aux-sub">'+sub+'</div>' : '') + '</div>';
     }
     document.getElementById('rtAuxGrid').innerHTML =
         auxCard(enLineaTodos.length, '#16A34A', 'Agentes disponibles', 'de ' + totalAgentes + ' activos')
-      + auxCard(enGestion, '#1A3DAA', 'En llamada', 'en tiempo real')
-      + auxCard(pad(Math.floor(segsProm/60))+':'+pad(segsProm%60), '#1E293B', 'Duración promedio', 'en estado actual')
       + auxCard(porEstado['Baño']||0,               RT_ESTADOS['Baño'].text,               'En baño')
       + auxCard(porEstado['Break']||0,               RT_ESTADOS['Break'].text,               'En break')
       + auxCard(porEstado['Comida']||0,              RT_ESTADOS['Comida'].text,              'En comida')
