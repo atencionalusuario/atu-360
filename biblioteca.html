@@ -659,7 +659,12 @@
 
   function irATarjeta(i) {
     var el = document.getElementById('tarjeta-' + i);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!el) return;
+    var main = document.querySelector('.main');
+    var topbar = document.querySelector('.topbar');
+    var offset = (topbar ? topbar.offsetHeight : 0) + 20;
+    var destino = el.getBoundingClientRect().top - main.getBoundingClientRect().top + main.scrollTop - offset;
+    main.scrollTo({ top: destino, behavior: 'smooth' });
   }
 
   function clickOpcion(i) {
