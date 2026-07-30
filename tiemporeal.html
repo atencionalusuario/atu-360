@@ -268,11 +268,13 @@
     }
     document.getElementById('rtAuxGrid').innerHTML =
         auxCard(enLineaTodos.length, '#16A34A', 'Agentes disponibles', 'de ' + totalAgentes + ' activos')
-      + auxCard(porEstado['Baño']||0,               RT_ESTADOS['Baño'].text,               'En baño')
+      + auxCard(porEstado['Pausa administrativa']||0,RT_ESTADOS['Pausa administrativa'].text,'En pausa administrativa')
+      + auxCard(porEstado['Inbound']||0,              RT_ESTADOS['Inbound'].text,             'En Inbound')
+      + auxCard(porEstado['Outbound']||0,             RT_ESTADOS['Outbound'].text,            'En Outbound')
       + auxCard(porEstado['Break']||0,               RT_ESTADOS['Break'].text,               'En break')
+      + auxCard(porEstado['Baño']||0,               RT_ESTADOS['Baño'].text,               'En baño')
       + auxCard(porEstado['Comida']||0,              RT_ESTADOS['Comida'].text,              'En comida')
       + auxCard(porEstado['Capacitación']||0,        RT_ESTADOS['Capacitación'].text,        'En capacitación')
-      + auxCard(porEstado['Pausa administrativa']||0,RT_ESTADOS['Pausa administrativa'].text,'En personal')
       + auxCard(porEstado['Feedback']||0,             RT_ESTADOS['Feedback'].text,            'En retroalimentación');
 
     // Actualizar filtro de estados
