@@ -612,14 +612,34 @@
 
   function aplanarArbol(items, ancestros) {
     var resultado = [];
-    items.forEach(function(item) {
+    items.forEach(function(item, i) {
       var label = typeof item === 'string' ? item : item.label;
-      resultado.push({ label: label, ancestros: ancestros });
+      resultado.push({ label: label, ancestros: ancestros, item: item, index: i });
       if (item && item.hijos) {
-        resultado = resultado.concat(aplanarArbol(item.hijos, ancestros.concat([{ label: label, opciones: item.hijos }])));
+        resultado = resultado.concat(aplanarArbol(item.hijos, ancestros.concat([{ label: label, opciones: item.hijos, tarjetas: !!item.vistaTarjetas }])));
       }
     });
     return resultado;
+  }
+
+  function irANodoBusqueda(nodo) {
+    nodo.ancestros.forEach(function(paso) {
+      pushVistaOpciones(paso.label, paso.opciones, paso.tarjetas);
+    });
+
+    var item = nodo.item;
+    if (typeof item === 'string') return;
+
+    var vistaActual = nodo.ancestros.length ? nodo.ancestros[nodo.ancestros.length - 1] : null;
+    if (item.hijos) {
+      pushVistaOpciones(item.label, item.hijos, !!item.vistaTarjetas);
+    } else if (item.texto) {
+      if (vistaActual && vistaActual.tarjetas) {
+        irATarjeta(nodo.index);
+      } else {
+        abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones);
+      }
+    }
   }
 
   var resultadosBusquedaActuales = [];
@@ -657,11 +677,8 @@
     document.getElementById('buscadorCategoria').value = '';
     if (nodo.ancestros.length === 0) {
       renderVistaActual();
-    } else {
-      nodo.ancestros.forEach(function(paso) {
-        pushVistaOpciones(paso.label, paso.opciones);
-      });
     }
+    irANodoBusqueda(nodo);
   }
 
   function pushVistaOpciones(titulo, opciones, tarjetas) {
@@ -821,7 +838,7 @@
     Object.keys(OPCIONES_CATEGORIA).forEach(function(cat) {
       aplanarArbol(OPCIONES_CATEGORIA[cat], []).forEach(function(n) {
         if (n.label.toLowerCase().includes(q)) {
-          resultadosBusquedaGlobal.push({ label: n.label, cat: cat, ancestros: n.ancestros });
+          resultadosBusquedaGlobal.push({ label: n.label, cat: cat, ancestros: n.ancestros, item: n.item, index: n.index });
         }
       });
     });
@@ -841,9 +858,7 @@
     var nodo = resultadosBusquedaGlobal[i];
     cerrarModalBusquedaGlobal();
     mostrarCategoria(nodo.cat);
-    nodo.ancestros.forEach(function(paso) {
-      pushVistaOpciones(paso.label, paso.opciones);
-    });
+    irANodoBusqueda(nodo);
   }
 
   function mostrarSubBotonModal(i) {
