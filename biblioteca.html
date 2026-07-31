@@ -44,7 +44,7 @@
   .tb-clock { font-size: 0.92rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
 
   /* RUTA DEL AGENTE */
-  .ruta-bar { background: white; padding: 9px 24px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #E2E8F0; font-family: 'Inter', sans-serif; }
+  .ruta-bar { background: white; padding: 9px 24px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #E2E8F0; font-family: 'Inter', sans-serif; position: sticky; top: 50px; z-index: 9; }
   .ruta-item { font-size: 0.76rem; color: #94A3B8; }
   .ruta-item.ruta-actual { color: #0F2070; font-weight: 700; }
   .ruta-item.ruta-link { cursor: pointer; }
@@ -749,7 +749,8 @@
     if (!el) return;
     var main = document.querySelector('.main');
     var topbar = document.querySelector('.topbar');
-    var offset = (topbar ? topbar.offsetHeight : 0) + 20;
+    var rutaBar = document.querySelector('.ruta-bar');
+    var offset = (topbar ? topbar.offsetHeight : 0) + (rutaBar ? rutaBar.offsetHeight : 0) + 20;
     var destino = el.getBoundingClientRect().top - main.getBoundingClientRect().top + main.scrollTop - offset;
     main.scrollTo({ top: destino, behavior: 'smooth' });
   }
