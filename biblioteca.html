@@ -541,7 +541,30 @@
             '</ol>'
         }
       ] },
-      'Ubicación de farmacias / laboratorios',
+      { label: 'Ubicación de farmacias / laboratorios',
+        tipificacion: 'Consultas > Información general del servicio > Ubicación de farmacias / laboratorios',
+        texto:
+          '<p>Con mucho gusto le puedo ayudar a ubicar la farmacia / laboratorio que usted requiere.</p>' +
+          '<p>Si tiene la aplicación DoctorSV a la mano, le puedo guiar para que pueda ver las opciones más cercanas a su ubicación. Además podrá tener la función del mapa para ayudarle a llegar.</p>' +
+          '<p><strong>¿Le gustaría que le guíe?</strong></p>',
+        subBotones: [
+          { label: 'Quiere paso a paso en la aplicación',
+            texto:
+              '<p>Le voy a ir diciendo el paso a paso para que usted mismo pueda ver la información.</p>' +
+              '<p><em>(Imágenes de la app y mapa)</em></p>'
+          },
+          { label: 'Quiere la información en llamada',
+            texto:
+              '<p>De acuerdo, muchas gracias. ¿Me podría indicar, por favor, en qué municipio o distrito se encuentra?</p>' +
+              '<p>Muchas gracias. Por favor permítame un momento en línea mientras ubico la información para guiarle.</p>' +
+              '<p>Como información adicional, le comento que también puede ubicar la farmacia o laboratorio más cercano utilizando la aplicación DoctorSV, en la opción <strong>"Ver farmacias cercanas"</strong>.</p>'
+          },
+          { label: 'El usuario lo va a buscar en la app',
+            texto:
+              '<p>¡Excelente! De esta manera, a través de la aplicación DoctorSV usted podrá ubicar nuestras farmacias y laboratorios afiliados de forma rápida cada vez que lo necesite.</p>'
+          }
+        ]
+      },
       'Información sobre la cita médica',
       'Usuario recibió un contacto previo'
     ] },
