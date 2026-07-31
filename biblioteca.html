@@ -191,7 +191,11 @@
       <div id="textoConfirmacion"></div>
     </div>
 
+    <p class="instruccion" id="instHold" style="display:none;">Poner el hold al usuario.</p>
+
     <p class="instruccion" id="instRegistro" style="display:none;">Agregar al usuario como Solicitante en el SDP con los datos solicitados.</p>
+
+    <p class="instruccion" id="instRetomar" style="display:none;">Retomar la llamada:</p>
 
     <div class="bib-saludo" id="cajaRegistro" style="display:none;">
       <p>Muchas gracias por su espera en línea, SR / SRA XXX, dígame, <strong>¿cómo puedo ayudarle?</strong></p>
@@ -339,7 +343,7 @@
     pilaVistas = [];
     document.getElementById('vistaCategoria').style.display = 'none';
     document.getElementById('flujoSDP').style.display = 'flex';
-    ['cajaSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instRegistro', 'cajaRegistro', 'instMenu', 'botonesMenu'].forEach(function(id) {
+    ['cajaSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'botonesMenu'].forEach(function(id) {
       document.getElementById(id).style.display = 'none';
     });
     ['btnSdpSi', 'btnSdpNo', 'btnConfSi', 'btnConfNo'].forEach(function(id) {
@@ -387,7 +391,9 @@
     document.getElementById('btnConfNo').classList.remove('active');
 
     var esNo = tipo === 'no';
+    document.getElementById('instHold').style.display = esNo ? 'block' : 'none';
     document.getElementById('instRegistro').style.display = esNo ? 'block' : 'none';
+    document.getElementById('instRetomar').style.display = esNo ? 'block' : 'none';
     document.getElementById('cajaRegistro').style.display = esNo ? 'block' : 'none';
 
     document.getElementById('instMenu').style.display = esNo ? 'block' : 'none';
