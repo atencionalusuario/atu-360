@@ -127,6 +127,15 @@
   .cintillo-separador { width: 26px; height: 1px; background: #E2E8F0; margin: 2px auto; }
   .cintillo-btn.cintillo-cat { background: #1A3DAA; }
   .cintillo-btn.cintillo-cat:hover { background: #0F2070; }
+  .cintillo-btn.cintillo-despedida { background: #0D9488; }
+  .cintillo-btn.cintillo-despedida:hover { background: #0B7A70; }
+
+  .modal-despedida-cuerpo .despedida-etiqueta { font-family: 'Montserrat', sans-serif; font-size: 0.78rem; font-weight: 600; font-style: italic; color: #64748B; margin: 0 0 8px; }
+  .modal-despedida-cuerpo .despedida-caja { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 18px 22px; margin-bottom: 20px; }
+  .modal-despedida-cuerpo .despedida-caja:last-child { margin-bottom: 0; }
+  .modal-despedida-cuerpo .despedida-caja p { font-size: 0.86rem; line-height: 1.65; color: #374151; margin-bottom: 10px; }
+  .modal-despedida-cuerpo .despedida-caja p:last-child { margin-bottom: 0; }
+  .modal-despedida-cuerpo .despedida-caja strong { color: #0F2070; }
 
   .busqueda-global-input-wrap { display: flex; align-items: center; gap: 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
   .busqueda-global-input-wrap svg { width: 18px; height: 18px; color: #94A3B8; flex-shrink: 0; }
@@ -266,6 +275,16 @@
   <button class="cintillo-btn cintillo-ayuda" title="¿Cómo tipificar?" onclick="abrirModalAyuda()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 17v-5"/><circle cx="12" cy="8.2" r="0.1" fill="currentColor" stroke-width="1.5"/></svg>
   </button>
+  <button class="cintillo-btn cintillo-despedida" title="Script de despedida" onclick="abrirModalDespedida()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12"/>
+      <path d="M11 11.5V4.5a1.5 1.5 0 0 1 3 0V12"/>
+      <path d="M14 12V6.5a1.5 1.5 0 0 1 3 0V13"/>
+      <path d="M17 13.5V9a1.5 1.5 0 0 1 3 0v5.5a6.5 6.5 0 0 1-6.5 6.5h-1a7 7 0 0 1-5.6-2.8L4 18.5c-.7-.9-.5-1.9.3-2.5.7-.5 1.7-.4 2.3.3L8 18"/>
+      <path d="M3 4.5c1.2-1 2.6-1.3 4-1" opacity="0.6"/>
+      <path d="M2.5 8c1.3-.4 2.7-.4 4 .2" opacity="0.6"/>
+    </svg>
+  </button>
   <button class="cintillo-btn cintillo-gem" title="Asistente Gemini" onclick="window.open('https://gemini.google.com/u/1/gem/54309f25a04c', '_blank')">
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.6 4.6 3.4 7.4 8 8-4.6.6-7.4 3.4-8 8-.6-4.6-3.4-7.4-8-8 4.6-.6 7.4-3.4 8-8Z"/></svg>
   </button>
@@ -310,6 +329,28 @@
       <input type="text" id="inputBusquedaGlobal" placeholder="Buscar en Consulta, Gestión e Incidencia..." oninput="buscarGlobal(this.value)">
     </div>
     <div class="busqueda-global-resultados" id="resultadosBusquedaGlobal"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalDespedida" onclick="if(event.target===this) cerrarModalDespedida()">
+  <div class="modal-box" style="max-width:640px;">
+    <button class="modal-close" onclick="cerrarModalDespedida()">&times;</button>
+    <h3 class="modal-titulo">Script de despedida</h3>
+    <div class="modal-despedida-cuerpo">
+      <p class="despedida-etiqueta">Casos relacionados a DoctorSv</p>
+      <div class="despedida-caja">
+        <p>¿Le podemos asistir con alguna otra duda relacionada con DoctorSv?</p>
+        <p>De acuerdo Sr./Sra.xxx, <strong>ha sido un gusto atenderle bajo el número de gestión XXXXXXX</strong>.</p>
+        <p>En este momento lo transferiré a un breve sondeo que le permitirá evaluar el servicio recibido en esta llamada. Le agradecemos su tiempo, por favor no cuelgue la llamada.</p>
+      </div>
+
+      <p class="despedida-etiqueta">Casos no relacionados al servicio (sin encuesta)</p>
+      <div class="despedida-caja">
+        <p>¿Le podemos asistir con alguna otra duda relacionada con DoctorSv?</p>
+        <p>De acuerdo Sr./Sra.xxx, un placer atenderle, estamos a la orden para apoyarle.</p>
+        <p>¡Feliz día! / ¡Feliz tarde! / ¡Feliz noche!</p>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -734,6 +775,14 @@
 
   function cerrarModalBusquedaGlobal() {
     document.getElementById('modalBusquedaGlobal').classList.remove('open');
+  }
+
+  function abrirModalDespedida() {
+    document.getElementById('modalDespedida').classList.add('open');
+  }
+
+  function cerrarModalDespedida() {
+    document.getElementById('modalDespedida').classList.remove('open');
   }
 
   function buscarGlobal(q) {
