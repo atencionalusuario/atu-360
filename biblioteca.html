@@ -393,6 +393,7 @@
   }
 
   var historial = [{ label: 'Inicio', restaurar: irAInicio }];
+  var historialBaseMenu = 1;
 
   function renderRuta() {
     document.getElementById('rutaBar').innerHTML = historial.map(function(c, i) {
@@ -445,6 +446,7 @@
     document.getElementById('flujoSDP').style.display = 'flex';
 
     historial = [historial[0], { label: esSi ? 'Está en SDP' : 'No está en SDP', restaurar: function() { mostrarSDP(tipo); } }];
+    historialBaseMenu = historial.length;
     renderRuta();
   }
 
@@ -468,6 +470,7 @@
       label: tipo === 'si' ? 'Mismo número' : 'Cambió de número',
       restaurar: function() { mostrarSDP('si'); mostrarConfirmacion(tipo); }
     }]);
+    historialBaseMenu = historial.length;
     renderRuta();
   }
 
@@ -602,11 +605,15 @@
 
   var categoriaActualId = null;
 
+  var historialBaseCategoria = 0;
+
   function mostrarCategoria(cat) {
     categoriaActualId = cat;
     pilaVistas = [];
     var buscador = document.getElementById('buscadorCategoria');
     if (buscador) buscador.value = '';
+    historial = historial.slice(0, historialBaseMenu);
+    historialBaseCategoria = historial.length;
     pushVistaOpciones(NOMBRES_CATEGORIA[cat], OPCIONES_CATEGORIA[cat]);
   }
 
@@ -623,6 +630,11 @@
   }
 
   function irANodoBusqueda(nodo) {
+    pilaVistas = pilaVistas.slice(0, 1);
+    historial = historial.slice(0, historialBaseCategoria + 1);
+    renderRuta();
+    renderVistaActual();
+
     nodo.ancestros.forEach(function(paso) {
       pushVistaOpciones(paso.label, paso.opciones, paso.tarjetas);
     });
@@ -675,9 +687,6 @@
   function irAResultadoBusqueda(i) {
     var nodo = resultadosBusquedaActuales[i];
     document.getElementById('buscadorCategoria').value = '';
-    if (nodo.ancestros.length === 0) {
-      renderVistaActual();
-    }
     irANodoBusqueda(nodo);
   }
 
