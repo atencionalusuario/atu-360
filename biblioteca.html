@@ -573,17 +573,79 @@
       'Información sobre la cita médica',
       'Usuario recibió un contacto previo'
     ] },
-    { label: 'Dudas sobre las funciones de la aplicación', hijos: [
-      'Cómo cambiar la contraseña',
-      'Cómo conectarse a la videoconsulta',
+    { label: 'Dudas sobre las funciones de la aplicación', vistaTarjetas: true, hijos: [
+      { label: 'Cómo cambiar la contraseña',
+        tipificacion: 'Consultas > Dudas sobre las funciones de la aplicación > Cómo cambiar la contraseña',
+        texto:
+          '<p>Para cambiar su contraseña deberá ingresar en <strong>"Perfil"</strong> y seleccionar <strong>"Configuración"</strong>.</p>' +
+          '<p>Seleccione <strong>"Cambiar contraseña"</strong> y pulse la opción <strong>"Continuar"</strong> para recibir el código de verificación vía SMS.</p>' +
+          '<p>Ingrese el código de verificación de 6 dígitos.</p>' +
+          '<p>Luego debe establecer una contraseña para su cuenta, la cual deberá tener números y/o letras y como mínimo debe estar conformada por 8 caracteres. Por último, debe dar clic en <strong>"Enviar"</strong> y la contraseña se habrá cambiado exitosamente.</p>'
+      },
+      { label: 'Cómo conectarse a la videoconsulta',
+        tipificacion: 'Consultas > Dudas sobre las funciones de la aplicación > Cómo conectarse a la videoconsulta',
+        texto:
+          '<p>Con gusto le ayudo, para ingresar a su cita médica, siga los siguientes pasos:</p>' +
+          '<ol>' +
+            '<li>Ingrese a la aplicación buscando el ícono de DoctorSV en su teléfono.</li>' +
+            '<li>Seleccione en la pantalla principal la opción <strong>"Mis citas"</strong> y seleccione <strong>"Unirse a la videoconsulta"</strong> en la cita médica agendada.</li>' +
+            '<li>Podrá tener su cita médica desde la aplicación o a través de Google Meet.</li>' +
+            '<li>Habilite micrófono y cámara.</li>' +
+            '<li>Espere en línea mientras el médico le permite ingresar a la videollamada.</li>' +
+          '</ol>'
+      },
       'Cómo actualizar la app',
+      { label: 'Cómo hacer una cita médica propia',
+        tipificacion: 'Consultas > Dudas sobre las funciones de la aplicación > Cómo hacer una cita médica propia',
+        texto:
+          '<p>Con gusto le explico cómo hacer una cita.</p>' +
+          '<p>En la pantalla principal de su aplicación, puede seleccionar el botón <strong>"Hacer cita médica virtual"</strong>. En la siguiente pantalla, seleccione para quién va a ser la cita; si es para usted, seleccione su nombre y pulse el botón <strong>"Siguiente"</strong>. Luego debe descartar que presente una emergencia, para hacerlo pulse el botón <strong>"No, ninguno"</strong>.</p>' +
+          '<p>Justo después deberá agregar los síntomas que está experimentando actualmente. Luego debe aceptar los Términos y Condiciones, el Consentimiento Informado y la Política y Aviso de Privacidad, y pulsar el botón <strong>"Hacer cita médica virtual"</strong>. En la siguiente pantalla podrá ver las opciones más próximas de videollamadas posibles.</p>' +
+          '<p>En caso que requiera una cita en otro día u horario deberá seleccionar la opción <strong>"Siguiente día"</strong>. Elija la cita de su preferencia y pulse el botón <strong>"Hacer cita médica virtual"</strong> y se mostrará la confirmación de su cita médica con el detalle de fecha y hora.</p>' +
+          '<p>Podrá ver la cita agendada en la pantalla principal de la aplicación o en la sección <strong>"Mis Citas"</strong> al inferior de la pantalla.</p>'
+      },
       'Cómo hacer una cita médica a familiar',
-      'Cómo hacer una cita médica propia',
-      'Cómo modificar cita',
-      'Cómo cancelar cita',
-      'Cómo registrar a un familiar en la cuenta',
-      'Cómo ver estudios médicos',
-      'Cómo ver constancia médica',
+      { label: 'Cómo modificar cita',
+        tipificacion: 'Consultas > Dudas sobre las funciones de la aplicación > Cómo modificar cita',
+        texto:
+          '<p>De acuerdo, le ayudaremos en el proceso para modificar su cita.</p>' +
+          '<p>Veo en sistema que usted tiene una cita pautada para el día XX-XX-XXXX a las XX:XX am/pm, ¿esta es la cita que desea modificar?</p>' +
+          '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM/PM. ¿Le parece bien?</p>' +
+          '<p><strong>Sí:</strong> Excelente, queda programada su cita el día XXXXXX XX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+          '<p><strong>No:</strong> ¿Le gustaría un día diferente o una hora diferente? Excelente, queda programada su cita con el/la médico XXXXXXXX XXXXXXX, el día XXXXXX XX a las XX de la tarde / de la mañana.</p>'
+      },
+      { label: 'Cómo cancelar cita',
+        tipificacion: 'Consultas > Dudas sobre las funciones de la aplicación > Cómo cancelar cita',
+        texto:
+          '<p>De acuerdo, le ayudaremos en el proceso para cancelar su cita. ¿Me podría confirmar si su cita agendada es con un médico general o con un médico especialista?</p>' +
+          '<p><strong>Médico general:</strong> Muy bien, en este momento puedo confirmar en sistema que usted tiene una cita pautada para el día XX-XX-XXXX a las XX:XX am/pm, ¿esta es la cita que desea cancelar? De acuerdo, en este momento procederé a cancelar la cita que nos menciona.</p>' +
+          '<p><strong>Médico especialista:</strong> Antes de proceder, nos gustaría comentarle que al cancelar esta cita podría perderse la continuidad de su proceso médico. Si en un futuro desea consultar nuevamente con un especialista, tendría que comenzar el proceso desde el inicio, agendando primero una cita con un médico general. ¿Desea que cancelemos su cita con el especialista, o prefiere modificar el horario?</p>'
+      },
+      { label: 'Cómo registrar a un familiar en la cuenta',
+        tipificacion: 'Consultas > Dudas sobre las funciones de la aplicación > Cómo registrar a un familiar en la cuenta',
+        texto:
+          '<p>Para poder registrar a su familiar, ingrese en la sección de <strong>Perfil</strong> (ícono de una persona ubicado en la parte inferior derecha). Allí pulse sobre el botón <strong>"Pacientes"</strong>.</p>' +
+          '<p>Seleccione el botón azul <strong>"+ Agregar otro paciente"</strong> ubicado en la parte inferior de la pantalla.</p>' +
+          '<p><strong>Menor de edad:</strong> en caso que desee agregar a un menor de edad, marque el recuadro de la pregunta <strong>"¿Es menor de edad?"</strong>. Debe seleccionar si el menor posee algún documento de identidad; si no es así, seleccione <strong>"No, no posee documento"</strong>. Luego acepte el consentimiento, ingrese la fecha de nacimiento, los nombres y el sexo. Después podrá agregar más información del menor y su parentesco.</p>' +
+          '<p><strong>Adulto:</strong> para agregar un adulto, deberá elegir el tipo de documento, ingresar el número de documento, la fecha de nacimiento y aceptar el consentimiento informado.</p>' +
+          '<p>De esta manera el familiar queda agregado y podrá hacer uso del servicio a través de su cuenta.</p>'
+      },
+      { label: 'Cómo ver estudios médicos',
+        tipificacion: 'Consultas > Dudas sobre las funciones de la aplicación > Cómo ver estudios médicos',
+        texto:
+          '<p>Con mucho gusto le apoyo para que visualice el estatus de su orden de estudio.</p>' +
+          '<p>Ingrese a la aplicación DoctorSV y seleccione la opción <strong>"Estudios clínicos"</strong> (ícono de un corazón).</p>' +
+          '<p>Verá los estudios clínicos emitidos, empezando por el más reciente. Podrá filtrar los estudios por paciente, por tipo de estudio y por estado.</p>' +
+          '<p>En la parte inferior podrá ver el estado de los estudios. Si está <strong>"En Proceso"</strong>, deberá esperar a que pase a <strong>"Procesado"</strong> para agendar una cita médica de seguimiento para la lectura de los resultados.</p>' +
+          '<p>Al hacer clic en el estudio, podrá ver el motivo, tipo de examen y el código QR.</p>'
+      },
+      { label: 'Cómo ver constancia médica',
+        tipificacion: 'Consultas > Dudas sobre las funciones de la aplicación > Cómo ver constancia médica',
+        texto:
+          '<p>Con gusto le ayudo: en la pantalla de inicio de la aplicación ingrese en la sección <strong>"Constancia Médica"</strong>. Allí podrá visualizar sus constancias médicas emitidas, empezando por la más reciente. También podrá filtrarlas por paciente o por estado.</p>' +
+          '<p>La constancia médica puede estar <strong>"vigente"</strong> o <strong>"inactiva"</strong> cuando ya haya caducado.</p>' +
+          '<p>Al seleccionar la opción <strong>"Ver Constancia"</strong> se podrán observar los detalles. En esa misma pantalla también podrá descargar su constancia en formato PDF, o pulsar sobre <strong>"Compartir constancia"</strong> para obtener un enlace y enviarlo por otro medio.</p>'
+      },
       'Cómo ver recetas',
       'Cómo ver referencia externa',
       'Cómo tomarse los signos vitales'
