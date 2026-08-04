@@ -758,12 +758,13 @@
   function irATarjeta(i) {
     var el = document.getElementById('tarjeta-' + i);
     if (!el) return;
-    var main = document.querySelector('.main');
     var topbar = document.querySelector('.topbar');
     var rutaBar = document.querySelector('.ruta-bar');
     var offset = (topbar ? topbar.offsetHeight : 0) + (rutaBar ? rutaBar.offsetHeight : 0) + 20;
-    var destino = el.getBoundingClientRect().top - main.getBoundingClientRect().top + main.scrollTop - offset;
-    main.scrollTo({ top: destino, behavior: 'smooth' });
+    el.style.scrollMarginTop = offset + 'px';
+    requestAnimationFrame(function() {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   }
 
   function clickOpcion(i) {
