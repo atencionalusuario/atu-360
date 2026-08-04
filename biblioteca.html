@@ -651,9 +651,46 @@
       'Cómo tomarse los signos vitales'
     ] },
     { label: 'Otras orientaciones', hijos: [
-      'Usuario en sala de espera',
-      'Recomendaciones para conectarse a videollamada',
-      'Recomendaciones para cita vía telefónica',
+      { label: 'Usuario en sala de espera',
+        tipificacion: 'Consultas > Otras orientaciones > Usuario en sala de espera',
+        texto:
+          '<svg viewBox="0 0 640 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:600px;display:block;margin:0 auto 18px;">' +
+            '<rect x="20" y="20" width="213" height="46" fill="#93C5FD"/>' +
+            '<rect x="233" y="20" width="170" height="46" fill="#86EFAC"/>' +
+            '<rect x="403" y="20" width="217" height="46" fill="#FDBA74"/>' +
+            '<text x="126" y="48" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="700" font-size="15" fill="#1E293B">Cómo conectarse</text>' +
+            '<text x="318" y="48" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="700" font-size="15" fill="#1E293B">Sala de espera</text>' +
+            '<text x="511" y="48" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="700" font-size="13" fill="#1E293B">No se conectó el médico</text>' +
+            '<line x1="20" y1="90" x2="620" y2="90" stroke="#334155" stroke-width="2"/>' +
+            '<line x1="233" y1="80" x2="233" y2="100" stroke="#334155" stroke-width="2"/>' +
+            '<line x1="403" y1="80" x2="403" y2="100" stroke="#334155" stroke-width="2"/>' +
+            '<text x="233" y="14" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#334155">00:00</text>' +
+            '<text x="403" y="14" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#334155">00:30</text>' +
+            '<text x="233" y="112" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#334155">Inicio de la</text>' +
+            '<text x="233" y="126" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#334155">consulta</text>' +
+            '<text x="403" y="112" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#334155">Fin de la</text>' +
+            '<text x="403" y="126" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#334155">consulta</text>' +
+          '</svg>' +
+          '<p>Comprendo lo que me comenta. En este momento nuestra recomendación es que se mantenga con la aplicación abierta en la pantalla de espera. El médico va a iniciar la consulta en cualquier momento.</p>' +
+          '<p>En caso de que pasen 30 minutos desde la hora pautada para su consulta, puede comunicarse nuevamente con nosotros para ayudarle.</p>'
+      },
+      { label: 'Recomendaciones para conectarse a videollamada',
+        tipificacion: 'Consultas > Otras orientaciones > Recomendaciones para conectarse a videollamada',
+        texto:
+          '<p>1) Busque un lugar con buena iluminación, buena conexión a internet o señal móvil y que esté apartado del ruido.</p>' +
+          '<p>2) Procure conectarse <strong>puntualmente</strong> a la videollamada. Estará en la sala de espera desde <strong>la aplicación o en Google Meet</strong> hasta que el médico le brinde acceso.</p>' +
+          '<p>3) Asegúrese que el dispositivo que usará tenga habilitado el <strong>micrófono</strong>, la <strong>cámara</strong> y cuente con suficiente <strong>carga en la batería</strong>.</p>' +
+          '<p>4) Si tiene algún inconveniente o duda, <strong>se puede comunicar con nosotros y con todo gusto le atenderemos</strong>.</p>'
+      },
+      { label: 'Recomendaciones para cita vía telefónica',
+        tipificacion: 'Consultas > Otras orientaciones > Recomendaciones para cita vía telefónica',
+        texto:
+          '<p>1) Busque un lugar con buena señal móvil y que esté apartado del ruido, donde usted se pueda sentir <strong>cómodo y en confianza</strong> con el médico.</p>' +
+          '<p>2) El médico <strong>le llamará puntualmente al número de teléfono registrado</strong>. Si no recibe la llamada, por favor póngase en contacto con nosotros al <strong>136</strong>.</p>' +
+          '<p>3) Asegúrese que el dispositivo cuente con suficiente <strong>carga en la batería</strong>.</p>' +
+          '<p>4) Tenga a la mano <strong>papel y lápiz</strong> para anotar todas las indicaciones e información que le brinde el médico.</p>' +
+          '<p>5) Tenga en cuenta que la cita será con un <strong>médico general</strong> y tendrá una duración estimada de <strong>30 minutos</strong>. El médico le podrá brindar un diagnóstico, y <strong>de ser necesario</strong>, emitirá la receta y los estudios médicos pertinentes.</p>'
+      },
       'Orientación de salud'
     ] }
   ];
