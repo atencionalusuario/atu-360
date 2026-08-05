@@ -161,6 +161,12 @@
   .triage-criterio-texto p { font-size: 0.82rem; line-height: 1.55; color: #374151; margin: 0; }
   .triage-acciones { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
   .triage-btn-si { background: #C2410C; }
+  .btn-si-verde { background: #16A34A; }
+  .btn-si-verde:hover { background: #15803D; }
+  .btn-no-rojo { background: #DC2626; }
+  .btn-no-rojo:hover { background: #B91C1C; }
+  .btn-amarillo-cupo { background: #D97706; }
+  .btn-amarillo-cupo:hover { background: #B45309; }
   .triage-btn-si:hover { background: #9A3412; }
   .triage-resultado { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px; }
   .triage-resultado:last-child { margin-bottom: 0; }
@@ -833,7 +839,82 @@
             }
           ]
         },
-        'Referencia con especialista',
+        { label: 'Referencia con especialista',
+          tipificacion: 'Gestión > Gestión de citas > Referencia con especialista',
+          texto:
+            '<p>Con mucho gusto le ayudo a agendar su cita con el médico especialista.</p>' +
+            '<p style="text-align:center; color:#64748B; font-style:italic; margin-bottom:14px;">Instrucción:<br>Buscar en SDP si tiene ticket de referencia abierto. ¿Tiene ticket abierto?</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'referenciaSiTicket\', \'referenciaNoTicket\')">Sí tiene ticket abierto</button>' +
+              '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'referenciaNoTicket\', \'referenciaSiTicket\')">No tiene ticket abierto</button>' +
+            '</div>' +
+            '<div id="referenciaSiTicket" class="triage-resultado" style="display:none;">' +
+              '<p style="text-align:center; color:#64748B; font-style:italic;">Buscar el DUI o nombre del usuario en la sección de Referencias de TCA.</p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'referenciaHayCupo\', \'referenciaNoHayCupo\')">Sí existe la referencia y hay cupo</button>' +
+                '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'referenciaNoHayCupo\', \'referenciaHayCupo\')">Sí existe la referencia pero no hay cupo</button>' +
+              '</div>' +
+              '<div id="referenciaHayCupo" class="triage-resultado" style="display:none;">' +
+                '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'referenciaCupoSi\', \'referenciaCupoNo\')">Sí</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'referenciaCupoNo\', \'referenciaCupoSi\')">No</button>' +
+                '</div>' +
+                '<div id="referenciaCupoSi" class="triage-resultado" style="display:none;">' +
+                  '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                '</div>' +
+                '<div id="referenciaCupoNo" class="triage-resultado" style="display:none;">' +
+                  '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
+                  '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                '</div>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Instrucción: dejar nota en el ticket y cerrarlo.</p>' +
+              '</div>' +
+              '<div id="referenciaNoHayCupo" class="triage-resultado" style="display:none;"></div>' +
+            '</div>' +
+            '<div id="referenciaNoTicket" class="triage-resultado" style="display:none;">' +
+              '<p style="text-align:center; color:#64748B; font-style:italic;">Buscar el DUI o nombre del usuario en la sección de Referencias de TCA.</p>' +
+              '<p style="text-align:center;"><strong>¿Existe la referencia?</strong></p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'referenciaNtHayCupo\', [\'referenciaNtNoHayCupo\',\'referenciaNtSinReferencia\'])">Sí existe la referencia y hay cupo</button>' +
+                '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'referenciaNtNoHayCupo\', [\'referenciaNtHayCupo\',\'referenciaNtSinReferencia\'])">Sí existe la referencia pero no hay cupo</button>' +
+                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'referenciaNtSinReferencia\', [\'referenciaNtHayCupo\',\'referenciaNtNoHayCupo\'])">Pasó consulta y no se cuenta con referencia</button>' +
+              '</div>' +
+              '<div id="referenciaNtHayCupo" class="triage-resultado" style="display:none;">' +
+                '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'referenciaNtCupoSi\', \'referenciaNtCupoNo\')">Sí</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'referenciaNtCupoNo\', \'referenciaNtCupoSi\')">No</button>' +
+                '</div>' +
+                '<div id="referenciaNtCupoSi" class="triage-resultado" style="display:none;">' +
+                  '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                '</div>' +
+                '<div id="referenciaNtCupoNo" class="triage-resultado" style="display:none;">' +
+                  '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
+                  '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                '</div>' +
+              '</div>' +
+              '<div id="referenciaNtNoHayCupo" class="triage-resultado" style="display:none;">' +
+                '<p>Comentarle que actualmente hemos reportado su caso con el número de ticket XXX. En cuanto haya disponibilidad para programar su cita, nos contactaremos con usted lo más pronto posible.</p>' +
+                '<p>Agradecemos que se mantenga pendiente de celular, ya que uno de nuestros asesores se comunicará con usted próximamente.</p>' +
+              '</div>' +
+              '<div id="referenciaNtSinReferencia" class="triage-resultado" style="display:none;">' +
+                '<p>Comprendo Sr/Sra. XXXX. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+                '<p>¿Me podría indicar, por favor, el <strong>nombre y apellido del médico/a</strong> y la <strong>fecha y hora de la cita</strong>?</p>' +
+                '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">' +
+                  '* Nombre del paciente<br>' +
+                  '* Teléfono de contacto del paciente<br>' +
+                  '* Tipo de documento del paciente<br>' +
+                  '* Número de documento del paciente<br>' +
+                  '* ¿El paciente es familiar asociado a otra cuenta?<br>' +
+                  '* Nombre completo del médico<br>' +
+                  '* Fecha y hora de la cita<br>' +
+                  '* Especialidad' +
+                '</p>' +
+              '</div>' +
+            '</div>'
+        },
         'Cita de seguimiento'
       ] },
       'Gestión de perfiles', 'Gestión de recetas / órdenes', 'Gestiones programa crónicos'
