@@ -139,6 +139,22 @@
   .modal-despedida-cuerpo .despedida-caja p:last-child { margin-bottom: 0; }
   .modal-despedida-cuerpo .despedida-caja strong { color: #0F2070; }
 
+  .triage-alerta { background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px; }
+  .triage-alerta p { font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
+  .triage-alerta p:last-child { margin-bottom: 0; }
+  .triage-criterios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .triage-criterio-caja { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .triage-criterio-titulo { font-size: 0.78rem; color: #64748B; margin: 0; }
+  .triage-criterio-caja .bib-btn { align-self: flex-start; }
+  .triage-criterio-texto p { font-size: 0.82rem; line-height: 1.55; color: #374151; margin: 0; }
+  .triage-acciones { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .triage-btn-si { background: #C2410C; }
+  .triage-btn-si:hover { background: #9A3412; }
+  .triage-resultado { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px 18px; }
+  .triage-resultado p { font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
+  .triage-resultado ul { padding-left: 20px; font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
+  .triage-resultado p:last-child, .triage-resultado ul:last-child { margin-bottom: 0; }
+
   .busqueda-global-input-wrap { display: flex; align-items: center; gap: 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
   .busqueda-global-input-wrap svg { width: 18px; height: 18px; color: #94A3B8; flex-shrink: 0; }
   .busqueda-global-input-wrap input { border: none; background: none; outline: none; width: 100%; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: #374151; }
@@ -713,7 +729,42 @@
             '<p>Con gusto le ayudamos en el proceso de hacer una nueva cita en la aplicación <strong>DoctorSV</strong>.</p>' +
             '<p>Me confirma, ¿la cita nueva sería para <strong>usted</strong> o <strong>para un familiar asociado a su perfil</strong>?</p>',
           subBotones: [
-            { label: 'Es para el propio usuario', texto: '' },
+            { label: 'Es para el propio usuario',
+              texto:
+                '<div class="triage-alerta">' +
+                  '<p>Por protocolo, nos gustaría hacerle unas preguntas de sondeo para <strong>descartar</strong> que usted / su familiar tenga una emergencia.</p>' +
+                  '<p>¿Podría confirmarme si presenta dificultad severa para respirar, dolor o presión intensa en el pecho, fractura, fiebre de más de 40 grados, pérdida repentina de conciencia o sangrado abundante?</p>' +
+                '</div>' +
+                '<div class="triage-criterios-grid">' +
+                  '<div class="triage-criterio-caja">' +
+                    '<p class="triage-criterio-titulo"><em>Si la cita es para un niño (0 a 12 años) ADEMÁS preguntar:</em></p>' +
+                    '<button class="bib-btn" onclick="toggleBloque(\'criteriosNinosCita\')">Criterios niños</button>' +
+                    '<div id="criteriosNinosCita" class="triage-criterio-texto" style="display:none;">' +
+                      '<p>¿Tiene dolor abdominal fuerte, convulsiones, traumas o golpes fuertes, diarrea o vómito severo con el niño inconsolable o con poca respuesta a estímulos (está muy apagado)?</p>' +
+                    '</div>' +
+                  '</div>' +
+                  '<div class="triage-criterio-caja">' +
+                    '<p class="triage-criterio-titulo"><em>Si la cita es para una mujer que pudiera estar en edad reproductiva (15 a 49 años), ADEMÁS preguntar:</em></p>' +
+                    '<button class="bib-btn" onclick="toggleBloque(\'criteriosEmbarazadasCita\')">Criterios embarazadas</button>' +
+                    '<div id="criteriosEmbarazadasCita" class="triage-criterio-texto" style="display:none;">' +
+                      '<p>¿Podría confirmarme si se encuentra embarazada?</p>' +
+                      '<p>Si responde que no, seguir flujo.</p>' +
+                      '<p>Si responde que sí: ¿Tiene dolor de cabeza intenso, visión borrosa, dolor en la boca del estómago, sangrado vaginal, hinchazón de miembros inferiores, salida de líquido vaginal?</p>' +
+                    '</div>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn triage-btn-si" onclick="toggleBloque(\'triageCitaSi\')">Responde que sí a algún criterio</button>' +
+                  '<button class="bib-btn" onclick="toggleBloque(\'triageCitaNo\')">No, continuar</button>' +
+                '</div>' +
+                '<div id="triageCitaSi" class="triage-resultado" style="display:none;">' +
+                  '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
+                  '<p>Me podría brindar por favor:</p>' +
+                  '<ul><li>Su edad</li><li>El distrito (municipio) donde se ubica</li><li>Dirección exacta</li><li>Punto de referencia</li><li>Teléfono de referencia</li></ul>' +
+                  '<p>Muchas gracias por la información. Voy a transferir la llamada, por favor no cuelgue.</p>' +
+                '</div>' +
+                '<div id="triageCitaNo" class="triage-resultado" style="display:none;"></div>'
+            },
             { label: 'Es para un familiar', texto: '' },
             { label: 'Cita nueva proveniente de triage', texto: '' },
             { label: 'Cita para lectura de exámenes', texto: '' }
@@ -1012,6 +1063,11 @@
     var contSubTexto = document.getElementById('modalSubTexto');
     contSubTexto.style.display = 'block';
     contSubTexto.innerHTML = b.texto;
+  }
+
+  function toggleBloque(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = el.style.display === 'block' ? 'none' : 'block';
   }
 
   function volverAtras() {
