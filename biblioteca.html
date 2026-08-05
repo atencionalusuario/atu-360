@@ -147,14 +147,19 @@
   .triage-video-caja em { display: block; margin-top: 10px; color: #64748B; font-size: 0.8rem; }
   .triage-btn-no-puede { background: #F87171; flex-shrink: 0; }
   .triage-btn-no-puede:hover { background: #EF4444; }
+
+  .tiene-tooltip { position: relative; }
+  .tiene-tooltip::after { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: white; color: #1E293B; padding: 10px 14px; border-radius: 8px; box-shadow: 0 6px 20px rgba(15,32,112,0.18); font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 500; line-height: 1.4; white-space: normal; width: 220px; text-align: left; opacity: 0; visibility: hidden; transition: opacity 0.15s, visibility 0.15s; z-index: 30; pointer-events: none; }
+  .tiene-tooltip::before { content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); border: 7px solid transparent; border-top-color: white; opacity: 0; visibility: hidden; transition: opacity 0.15s, visibility 0.15s; z-index: 30; pointer-events: none; }
+  .tiene-tooltip:hover::after, .tiene-tooltip:hover::before { opacity: 1; visibility: visible; }
   .triage-alerta p { font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
   .triage-alerta p:last-child { margin-bottom: 0; }
   .triage-criterios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
   .triage-criterio-caja { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
   .triage-criterio-titulo { font-size: 0.78rem; color: #64748B; margin: 0; }
-  .triage-criterio-caja .bib-btn { align-self: flex-start; }
+  .triage-criterio-caja .bib-btn { align-self: center; }
   .triage-criterio-texto p { font-size: 0.82rem; line-height: 1.55; color: #374151; margin: 0; }
-  .triage-acciones { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .triage-acciones { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
   .triage-btn-si { background: #C2410C; }
   .triage-btn-si:hover { background: #9A3412; }
   .triage-resultado { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px 18px; }
@@ -782,7 +787,7 @@
                   '</div>' +
                   '<div class="triage-acciones">' +
                     '<button class="bib-btn triage-btn-si" onclick="toggleBloque(\'triageAmarilloSi\')">Sí cumple</button>' +
-                    '<button class="bib-btn" onclick="toggleBloque(\'triageAmarilloNo\')">No cumple</button>' +
+                    '<button class="bib-btn tiene-tooltip" data-tooltip="Al pasar este punto debe quedarle claro que la persona sí puede esperar a ser atendido por una cita." onclick="toggleBloque(\'triageAmarilloNo\')">No cumple</button>' +
                   '</div>' +
                   '<div id="triageAmarilloSi" class="triage-resultado" style="display:none;">' +
                     '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
