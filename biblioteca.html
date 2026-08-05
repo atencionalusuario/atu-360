@@ -777,7 +777,33 @@
             { label: 'Cita para lectura de exámenes', texto: '' }
           ]
         },
-        'Modificar cita',
+        { label: 'Modificar cita',
+          tipificacion: 'Gestión > Gestión de citas > Modificar cita',
+          texto:
+            '<p>De acuerdo Sr./Sra. XXX, le ayudaremos en el proceso para <strong>modificar su cita</strong>.</p>' +
+            '<p>Veo en sistema que usted tiene una cita agendada para el día XXX a las XX:XX am/pm, ¿esta es la cita que desea modificar?</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" onclick="toggleBloque(\'modificarCitaContinuar\')">continuar</button>' +
+            '</div>' +
+            '<div id="modificarCitaContinuar" class="triage-resultado" style="display:none;">' +
+              '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn" onclick="mostrarUno(\'modificarCitaSi\', \'modificarCitaNo\')">Sí</button>' +
+                '<button class="bib-btn" onclick="mostrarUno(\'modificarCitaNo\', \'modificarCitaSi\')">No</button>' +
+              '</div>' +
+              '<div id="modificarCitaSi" class="triage-resultado" style="display:none;">' +
+                '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+              '</div>' +
+              '<div id="modificarCitaNo" class="triage-resultado" style="display:none;">' +
+                '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
+                '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+              '</div>' +
+              '<div class="triage-acciones" style="margin-bottom:0;">' +
+                '<button class="bib-btn" onclick="abrirRecomendacionesVideollamada()">Recomendaciones para conectarse a videollamada</button>' +
+                '<button class="bib-btn" onclick="abrirRecomendacionesTelefonicas()">Recomendaciones para cita vía telefónica</button>' +
+              '</div>' +
+            '</div>'
+        },
         'Cancelar cita',
         'Referencia con especialista',
         'Cita de seguimiento'
