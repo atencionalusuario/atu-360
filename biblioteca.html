@@ -140,6 +140,13 @@
   .modal-despedida-cuerpo .despedida-caja strong { color: #0F2070; }
 
   .triage-alerta { background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px; }
+  .triage-alerta-amarilla { background: #FEFCE8; border-color: #FDE047; }
+  .triage-video-caja { background: #F0FDF4; border: 1px solid #86EFAC; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px; }
+  .triage-video-fila { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+  .triage-video-fila p { margin: 0; flex: 1; }
+  .triage-video-caja em { display: block; margin-top: 10px; color: #64748B; font-size: 0.8rem; }
+  .triage-btn-no-puede { background: #F87171; flex-shrink: 0; }
+  .triage-btn-no-puede:hover { background: #EF4444; }
   .triage-alerta p { font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
   .triage-alerta p:last-child { margin-bottom: 0; }
   .triage-criterios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
@@ -763,7 +770,38 @@
                   '<ul><li>Su edad</li><li>El distrito (municipio) donde se ubica</li><li>Dirección exacta</li><li>Punto de referencia</li><li>Teléfono de referencia</li></ul>' +
                   '<p>Muchas gracias por la información. Voy a transferir la llamada, por favor no cuelgue.</p>' +
                 '</div>' +
-                '<div id="triageCitaNo" class="triage-resultado" style="display:none;"></div>'
+                '<div id="triageCitaNo" class="triage-resultado" style="display:none;">' +
+                  '<div class="triage-alerta triage-alerta-amarilla">' +
+                    '<p>Comprendo. Una última confirmación:</p>' +
+                    '<p>¿Ha sido operado <strong>en el último mes</strong> del abdomen, tórax, cabeza o zona pélvica?</p>' +
+                    '<p>¿Ha sido ingresado en un hospital en <strong>la última semana</strong>?</p>' +
+                  '</div>' +
+                  '<div class="triage-criterio-caja" style="margin-bottom:14px;">' +
+                    '<p class="triage-criterio-titulo"><em>Sólo cuando es menor de edad:</em></p>' +
+                    '<p style="font-weight:700; color:#0F2070; margin:0;">¿Su hijo o hija es menor a un año?</p>' +
+                  '</div>' +
+                  '<div class="triage-acciones">' +
+                    '<button class="bib-btn triage-btn-si" onclick="toggleBloque(\'triageAmarilloSi\')">Sí cumple</button>' +
+                    '<button class="bib-btn" onclick="toggleBloque(\'triageAmarilloNo\')">No cumple</button>' +
+                  '</div>' +
+                  '<div id="triageAmarilloSi" class="triage-resultado" style="display:none;">' +
+                    '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
+                    '<p>Me podría brindar por favor:</p>' +
+                    '<ul><li>Su edad</li><li>El distrito (municipio) donde se ubica</li><li>Dirección exacta</li><li>Punto de referencia</li><li>Teléfono de referencia</li></ul>' +
+                    '<p>Muchas gracias por la información. Voy a transferir la llamada, por favor no cuelgue.</p>' +
+                  '</div>' +
+                  '<div id="triageAmarilloNo" class="triage-resultado" style="display:none;">' +
+                    '<div class="triage-video-caja">' +
+                      '<div class="triage-video-fila">' +
+                        '<p>De acuerdo, ¿puede conectarse a una <strong>videollamada</strong>?</p>' +
+                        '<button class="bib-btn triage-btn-no-puede" onclick="toggleBloque(\'triageNoPuedeNota\')">No puede</button>' +
+                      '</div>' +
+                      '<p id="triageNoPuedeNota" style="display:none;"><em>Si no puede conectarse escribir en el campo del comentario de la nueva cita en TCA: PACIENTE REQUIERE LLAMADA TELEFÓNICA y añadir el número de teléfono.</em></p>' +
+                    '</div>' +
+                    '<p>Muchas gracias. Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
+                    '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                  '</div>' +
+                '</div>'
             },
             { label: 'Es para un familiar', texto: '' },
             { label: 'Cita nueva proveniente de triage', texto: '' },
