@@ -1092,6 +1092,7 @@
     var idAmarilloSi = 'triageAmarilloSi' + prefix;
     var idAmarilloNo = 'triageAmarilloNo' + prefix;
     var idNoPuedeNota = 'triageNoPuedeNota' + prefix;
+    var idVideoSi = 'triageVideoSi' + prefix;
     var esFamiliar = tipo === 'familiar';
     var transferencia =
       '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
@@ -1146,29 +1147,26 @@
         '<div id="' + idAmarilloSi + '" class="triage-resultado triage-resultado-rojo" style="display:none;">' + transferencia + '</div>' +
         '<div id="' + idAmarilloNo + '" class="triage-resultado" style="display:none;">' +
           '<div class="triage-video-caja">' +
-            '<div class="triage-video-fila">' +
-              '<p>De acuerdo, ¿puede conectarse a una <strong>videollamada</strong>?</p>' +
-              '<button class="bib-btn triage-btn-no-puede" onclick="toggleBloque(\'' + idNoPuedeNota + '\')">No puede</button>' +
-            '</div>' +
+            '<p>De acuerdo, ¿puede conectarse a una <strong>videollamada</strong>?</p>' +
           '</div>' +
-          '<div id="' + idNoPuedeNota + '" style="display:none;">' +
-            '<div class="triage-resultado">' +
-              '<p>Entiendo lo que nos comenta, con gusto le puedo ayudar a tener una cita por llamada telefónica.</p>' +
-              '<p><strong>En esta cita el médico se pondrá en contacto con usted llamándole a su número de teléfono. Sólo tenga en cuenta que las citas por esta vía pueden tener limitaciones en cuanto al diagnóstico que realice su médico.</strong></p>' +
-            '</div>' +
-            '<div class="triage-resultado">' +
-              '<p>La cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
-            '</div>' +
-            '<div class="triage-resultado">' +
-              '<p>Excelente, queda programada su cita el día XXXXXX XX a las XX de la tarde / de la mañana.</p>' +
-            '</div>' +
-            '<p style="color:#64748B; font-size:0.82rem; margin-bottom:14px;"><em>Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</em></p>' +
-            '<div class="triage-acciones">' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn" onclick="mostrarUno(\'' + idVideoSi + '\', \'' + idNoPuedeNota + '\')">Sí puede</button>' +
+            '<button class="bib-btn" onclick="mostrarUno(\'' + idNoPuedeNota + '\', \'' + idVideoSi + '\')">No puede</button>' +
+          '</div>' +
+          '<div id="' + idVideoSi + '" class="triage-resultado" style="display:none;">' +
+            '<p>Muchas gracias. Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
+            '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+          '</div>' +
+          '<div id="' + idNoPuedeNota + '" class="triage-resultado" style="display:none;">' +
+            '<p>Entiendo lo que nos comenta, con gusto le puedo ayudar a tener una cita por llamada telefónica.</p>' +
+            '<p><strong>En esta cita el médico se pondrá en contacto con usted llamándole a su número de teléfono. Sólo tenga en cuenta que las citas por esta vía pueden tener limitaciones en cuanto al diagnóstico que realice su médico.</strong></p>' +
+            '<p>La cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
+            '<p>Excelente, queda programada su cita el día XXXXXX XX a las XX de la tarde / de la mañana.</p>' +
+            '<p style="color:#64748B; font-size:0.82rem;"><em>Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</em></p>' +
+            '<div class="triage-acciones" style="margin-bottom:0;">' +
               '<button class="bib-btn" onclick="abrirRecomendacionesTelefonicas()">Recomendaciones</button>' +
             '</div>' +
           '</div>' +
-          '<p>Muchas gracias. Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
-          '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
         '</div>' +
       '</div>'
     );
