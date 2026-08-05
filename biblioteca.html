@@ -745,73 +745,21 @@
             '<p>Me confirma, ¿la cita nueva sería para <strong>usted</strong> o <strong>para un familiar asociado a su perfil</strong>?</p>',
           subBotones: [
             { label: 'Es para el propio usuario',
-              texto:
-                '<div class="triage-alerta">' +
-                  '<p>Por protocolo, nos gustaría hacerle unas preguntas de sondeo para <strong>descartar</strong> que usted / su familiar tenga una emergencia.</p>' +
-                  '<p>¿Podría confirmarme si presenta dificultad severa para respirar, dolor o presión intensa en el pecho, fractura, fiebre de más de 40 grados, pérdida repentina de conciencia o sangrado abundante?</p>' +
-                '</div>' +
-                '<div class="triage-criterios-grid">' +
-                  '<div class="triage-criterio-caja">' +
-                    '<p class="triage-criterio-titulo"><em>Si la cita es para un niño (0 a 12 años) ADEMÁS preguntar:</em></p>' +
-                    '<button class="bib-btn" onclick="toggleBloque(\'criteriosNinosCita\')">Criterios niños</button>' +
-                    '<div id="criteriosNinosCita" class="triage-criterio-texto" style="display:none;">' +
-                      '<p>¿Tiene dolor abdominal fuerte, convulsiones, traumas o golpes fuertes, diarrea o vómito severo con el niño inconsolable o con poca respuesta a estímulos (está muy apagado)?</p>' +
-                    '</div>' +
-                  '</div>' +
-                  '<div class="triage-criterio-caja">' +
-                    '<p class="triage-criterio-titulo"><em>Si la cita es para una mujer que pudiera estar en edad reproductiva (15 a 49 años), ADEMÁS preguntar:</em></p>' +
-                    '<button class="bib-btn" onclick="toggleBloque(\'criteriosEmbarazadasCita\')">Criterios embarazadas</button>' +
-                    '<div id="criteriosEmbarazadasCita" class="triage-criterio-texto" style="display:none;">' +
-                      '<p>¿Podría confirmarme si se encuentra embarazada?</p>' +
-                      '<p>Si responde que no, seguir flujo.</p>' +
-                      '<p>Si responde que sí: ¿Tiene dolor de cabeza intenso, visión borrosa, dolor en la boca del estómago, sangrado vaginal, hinchazón de miembros inferiores, salida de líquido vaginal?</p>' +
-                    '</div>' +
-                  '</div>' +
-                '</div>' +
-                '<div class="triage-acciones">' +
-                  '<button class="bib-btn triage-btn-si" onclick="mostrarUno(\'triageCitaSi\', \'triageCitaNo\')">Responde que sí a algún criterio</button>' +
-                  '<button class="bib-btn" onclick="mostrarUno(\'triageCitaNo\', \'triageCitaSi\')">No, continuar</button>' +
-                '</div>' +
-                '<div id="triageCitaSi" class="triage-resultado triage-resultado-rojo" style="display:none;">' +
-                  '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
-                  '<p>Me podría brindar por favor:</p>' +
-                  '<ul><li>Su edad</li><li>El distrito (municipio) donde se ubica</li><li>Dirección exacta</li><li>Punto de referencia</li><li>Teléfono de referencia</li></ul>' +
-                  '<p>Muchas gracias por la información. Voy a transferir la llamada, por favor no cuelgue.</p>' +
-                '</div>' +
-                '<div id="triageCitaNo" class="triage-resultado" style="display:none;">' +
-                  '<div class="triage-alerta triage-alerta-amarilla">' +
-                    '<p>Comprendo. Una última confirmación:</p>' +
-                    '<p>¿Ha sido operado <strong>en el último mes</strong> del abdomen, tórax, cabeza o zona pélvica?</p>' +
-                    '<p>¿Ha sido ingresado en un hospital en <strong>la última semana</strong>?</p>' +
-                  '</div>' +
-                  '<div class="triage-criterio-caja" style="margin-bottom:14px;">' +
-                    '<p class="triage-criterio-titulo"><em>Sólo cuando es menor de edad:</em></p>' +
-                    '<p style="font-weight:700; color:#0F2070; margin:0;">¿Su hijo o hija es menor a un año?</p>' +
-                  '</div>' +
-                  '<div class="triage-acciones">' +
-                    '<button class="bib-btn triage-btn-si" onclick="mostrarUno(\'triageAmarilloSi\', \'triageAmarilloNo\')">Responde que sí a algún criterio</button>' +
-                    '<button class="bib-btn tiene-tooltip" data-tooltip="Al pasar este punto debe quedarle claro que la persona sí puede esperar a ser atendido por una cita." onclick="mostrarUno(\'triageAmarilloNo\', \'triageAmarilloSi\')">No, continuar</button>' +
-                  '</div>' +
-                  '<div id="triageAmarilloSi" class="triage-resultado triage-resultado-rojo" style="display:none;">' +
-                    '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
-                    '<p>Me podría brindar por favor:</p>' +
-                    '<ul><li>Su edad</li><li>El distrito (municipio) donde se ubica</li><li>Dirección exacta</li><li>Punto de referencia</li><li>Teléfono de referencia</li></ul>' +
-                    '<p>Muchas gracias por la información. Voy a transferir la llamada, por favor no cuelgue.</p>' +
-                  '</div>' +
-                  '<div id="triageAmarilloNo" class="triage-resultado" style="display:none;">' +
-                    '<div class="triage-video-caja">' +
-                      '<div class="triage-video-fila">' +
-                        '<p>De acuerdo, ¿puede conectarse a una <strong>videollamada</strong>?</p>' +
-                        '<button class="bib-btn triage-btn-no-puede" onclick="toggleBloque(\'triageNoPuedeNota\')">No puede</button>' +
-                      '</div>' +
-                      '<p id="triageNoPuedeNota" style="display:none;"><em>Si no puede conectarse escribir en el campo del comentario de la nueva cita en TCA: PACIENTE REQUIERE LLAMADA TELEFÓNICA y añadir el número de teléfono.</em></p>' +
-                    '</div>' +
-                    '<p>Muchas gracias. Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
-                    '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
-                  '</div>' +
-                '</div>'
+              texto: bloqueTriageCita('Propio')
             },
-            { label: 'Es para un familiar', texto: '' },
+            { label: 'Es para un familiar',
+              texto:
+                '<p>Le comprendo, ¿me podría indicar el <strong>número de documento del familiar o su nombre completo</strong>?</p>' +
+                '<p>Muchas gracias, permítame un momento en línea para validar la información por favor.</p>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'triageFamiliarSi\', \'triageFamiliarNo\')">Está agregado como familiar</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'triageFamiliarNo\', \'triageFamiliarSi\')">No está agregado como familiar</button>' +
+                '</div>' +
+                '<div id="triageFamiliarSi" class="triage-resultado" style="display:none;">' +
+                  bloqueTriageCita('Familiar') +
+                '</div>' +
+                '<div id="triageFamiliarNo" class="triage-resultado" style="display:none;"></div>'
+            },
             { label: 'Cita nueva proveniente de triage', texto: '' },
             { label: 'Cita para lectura de exámenes', texto: '' }
           ]
@@ -1120,6 +1068,78 @@
     var ocultar = document.getElementById(idOcultar);
     if (ocultar) ocultar.style.display = 'none';
     toggleBloque(idMostrar);
+  }
+
+  function bloqueTriageCita(prefix) {
+    var idNinos = 'criteriosNinos' + prefix;
+    var idEmbarazadas = 'criteriosEmbarazadas' + prefix;
+    var idRojoSi = 'triageRojoSi' + prefix;
+    var idRojoNo = 'triageRojoNo' + prefix;
+    var idAmarilloSi = 'triageAmarilloSi' + prefix;
+    var idAmarilloNo = 'triageAmarilloNo' + prefix;
+    var idNoPuedeNota = 'triageNoPuedeNota' + prefix;
+    var transferencia =
+      '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
+      '<p>Me podría brindar por favor:</p>' +
+      '<ul><li>Su edad</li><li>El distrito (municipio) donde se ubica</li><li>Dirección exacta</li><li>Punto de referencia</li><li>Teléfono de referencia</li></ul>' +
+      '<p>Muchas gracias por la información. Voy a transferir la llamada, por favor no cuelgue.</p>';
+
+    return (
+      '<div class="triage-alerta">' +
+        '<p>Por protocolo, nos gustaría hacerle unas preguntas de sondeo para <strong>descartar</strong> que usted / su familiar tenga una emergencia.</p>' +
+        '<p>¿Podría confirmarme si presenta dificultad severa para respirar, dolor o presión intensa en el pecho, fractura, fiebre de más de 40 grados, pérdida repentina de conciencia o sangrado abundante?</p>' +
+      '</div>' +
+      '<div class="triage-criterios-grid">' +
+        '<div class="triage-criterio-caja">' +
+          '<p class="triage-criterio-titulo"><em>Si la cita es para un niño (0 a 12 años) ADEMÁS preguntar:</em></p>' +
+          '<button class="bib-btn" onclick="toggleBloque(\'' + idNinos + '\')">Criterios niños</button>' +
+          '<div id="' + idNinos + '" class="triage-criterio-texto" style="display:none;">' +
+            '<p>¿Tiene dolor abdominal fuerte, convulsiones, traumas o golpes fuertes, diarrea o vómito severo con el niño inconsolable o con poca respuesta a estímulos (está muy apagado)?</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="triage-criterio-caja">' +
+          '<p class="triage-criterio-titulo"><em>Si la cita es para una mujer que pudiera estar en edad reproductiva (15 a 49 años), ADEMÁS preguntar:</em></p>' +
+          '<button class="bib-btn" onclick="toggleBloque(\'' + idEmbarazadas + '\')">Criterios embarazadas</button>' +
+          '<div id="' + idEmbarazadas + '" class="triage-criterio-texto" style="display:none;">' +
+            '<p>¿Podría confirmarme si se encuentra embarazada?</p>' +
+            '<p>Si responde que no, seguir flujo.</p>' +
+            '<p>Si responde que sí: ¿Tiene dolor de cabeza intenso, visión borrosa, dolor en la boca del estómago, sangrado vaginal, hinchazón de miembros inferiores, salida de líquido vaginal?</p>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="triage-acciones">' +
+        '<button class="bib-btn triage-btn-si" onclick="mostrarUno(\'' + idRojoSi + '\', \'' + idRojoNo + '\')">Responde que sí a algún criterio</button>' +
+        '<button class="bib-btn" onclick="mostrarUno(\'' + idRojoNo + '\', \'' + idRojoSi + '\')">No, continuar</button>' +
+      '</div>' +
+      '<div id="' + idRojoSi + '" class="triage-resultado triage-resultado-rojo" style="display:none;">' + transferencia + '</div>' +
+      '<div id="' + idRojoNo + '" class="triage-resultado" style="display:none;">' +
+        '<div class="triage-alerta triage-alerta-amarilla">' +
+          '<p>Comprendo. Una última confirmación:</p>' +
+          '<p>¿Ha sido operado <strong>en el último mes</strong> del abdomen, tórax, cabeza o zona pélvica?</p>' +
+          '<p>¿Ha sido ingresado en un hospital en <strong>la última semana</strong>?</p>' +
+        '</div>' +
+        '<div class="triage-criterio-caja" style="margin-bottom:14px;">' +
+          '<p class="triage-criterio-titulo"><em>Sólo cuando es menor de edad:</em></p>' +
+          '<p style="font-weight:700; color:#0F2070; margin:0;">¿Su hijo o hija es menor a un año?</p>' +
+        '</div>' +
+        '<div class="triage-acciones">' +
+          '<button class="bib-btn triage-btn-si" onclick="mostrarUno(\'' + idAmarilloSi + '\', \'' + idAmarilloNo + '\')">Responde que sí a algún criterio</button>' +
+          '<button class="bib-btn tiene-tooltip" data-tooltip="Al pasar este punto debe quedarle claro que la persona sí puede esperar a ser atendido por una cita." onclick="mostrarUno(\'' + idAmarilloNo + '\', \'' + idAmarilloSi + '\')">No, continuar</button>' +
+        '</div>' +
+        '<div id="' + idAmarilloSi + '" class="triage-resultado triage-resultado-rojo" style="display:none;">' + transferencia + '</div>' +
+        '<div id="' + idAmarilloNo + '" class="triage-resultado" style="display:none;">' +
+          '<div class="triage-video-caja">' +
+            '<div class="triage-video-fila">' +
+              '<p>De acuerdo, ¿puede conectarse a una <strong>videollamada</strong>?</p>' +
+              '<button class="bib-btn triage-btn-no-puede" onclick="toggleBloque(\'' + idNoPuedeNota + '\')">No puede</button>' +
+            '</div>' +
+            '<p id="' + idNoPuedeNota + '" style="display:none;"><em>Si no puede conectarse escribir en el campo del comentario de la nueva cita en TCA: PACIENTE REQUIERE LLAMADA TELEFÓNICA y añadir el número de teléfono.</em></p>' +
+          '</div>' +
+          '<p>Muchas gracias. Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
+          '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+        '</div>' +
+      '</div>'
+    );
   }
 
   function volverAtras() {
