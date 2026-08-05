@@ -704,7 +704,28 @@
 
   var OPCIONES_CATEGORIA = {
     consulta: ARBOL_CONSULTA,
-    gestion: ['Gestión de citas', 'Gestión de perfiles', 'Gestión de recetas / órdenes', 'Gestiones programa crónicos'],
+    gestion: [
+      { label: 'Gestión de citas', hijos: [
+        { label: 'Agendar cita nueva',
+          tipificacion: 'Gestión > Gestión de citas > Agendar cita nueva',
+          ocultarFooter: true,
+          texto:
+            '<p>Con gusto le ayudamos en el proceso de hacer una nueva cita en la aplicación <strong>DoctorSV</strong>.</p>' +
+            '<p>Me confirma, ¿la cita nueva sería para <strong>usted</strong> o <strong>para un familiar asociado a su perfil</strong>?</p>',
+          subBotones: [
+            { label: 'Es para el propio usuario', texto: '' },
+            { label: 'Es para un familiar', texto: '' },
+            { label: 'Cita nueva proveniente de triage', texto: '' },
+            { label: 'Cita para lectura de exámenes', texto: '' }
+          ]
+        },
+        'Modificar cita',
+        'Cancelar cita',
+        'Referencia con especialista',
+        'Cita de seguimiento'
+      ] },
+      'Gestión de perfiles', 'Gestión de recetas / órdenes', 'Gestiones programa crónicos'
+    ],
     incidencia: ['Opción de incidencia de prueba 1', 'Opción de incidencia de prueba 2']
   };
 
@@ -757,7 +778,7 @@
       if (vistaActual && vistaActual.tarjetas) {
         irATarjeta(nodo.index);
       } else {
-        abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones);
+        abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter);
       }
     }
   }
@@ -878,13 +899,13 @@
     if (op && op.hijos) {
       pushVistaOpciones(op.label, op.hijos, op.vistaTarjetas);
     } else if (op && op.texto) {
-      abrirModalTexto(op.tituloModal || op.label, op.texto, op.tipificacion, op.subBotones);
+      abrirModalTexto(op.tituloModal || op.label, op.texto, op.tipificacion, op.subBotones, op.ocultarFooter);
     }
   }
 
   var subBotonesActuales = [];
 
-  function abrirModalTexto(titulo, texto, tipificacion, subBotones) {
+  function abrirModalTexto(titulo, texto, tipificacion, subBotones, ocultarFooter) {
     document.getElementById('modalTituloTexto').textContent = titulo;
     document.getElementById('modalCuerpoTexto').innerHTML = texto;
 
@@ -902,6 +923,9 @@
       contBotones.style.display = 'none';
       contBotones.innerHTML = '';
     }
+
+    document.querySelector('#modalTexto .modal-tipificacion').style.display = ocultarFooter ? 'none' : 'block';
+    document.querySelector('#modalTexto .modal-footer').style.display = ocultarFooter ? 'none' : 'flex';
     document.getElementById('modalTipificacion').textContent = tipificacion || '';
     document.getElementById('modalTexto').classList.add('open');
   }
