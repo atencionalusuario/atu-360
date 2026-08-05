@@ -162,7 +162,8 @@
   .triage-acciones { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
   .triage-btn-si { background: #C2410C; }
   .triage-btn-si:hover { background: #9A3412; }
-  .triage-resultado { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px 18px; }
+  .triage-resultado { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px; }
+  .triage-resultado:last-child { margin-bottom: 0; }
   .triage-resultado p { font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
   .triage-resultado ul { padding-left: 20px; font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
   .triage-resultado p:last-child, .triage-resultado ul:last-child { margin-bottom: 0; }
@@ -443,6 +444,17 @@
     renderRuta();
   }
 
+  var TEXTO_RECOMENDACIONES_TEL =
+    '<p>1) Busque un lugar con buena señal móvil y que esté apartado del ruido, donde usted se pueda sentir <strong>cómodo y en confianza</strong> con el médico.</p>' +
+    '<p>2) El médico <strong>le llamará puntualmente al número de teléfono registrado</strong>. Si no recibe la llamada, por favor póngase en contacto con nosotros al <strong>136</strong>.</p>' +
+    '<p>3) Asegúrese que el dispositivo cuente con suficiente <strong>carga en la batería</strong>.</p>' +
+    '<p>4) Tenga a la mano <strong>papel y lápiz</strong> para anotar todas las indicaciones e información que le brinde el médico.</p>' +
+    '<p>5) Tenga en cuenta que la cita será con un <strong>médico general</strong> y tendrá una duración estimada de <strong>30 minutos</strong>. El médico le podrá brindar un diagnóstico, y <strong>de ser necesario</strong>, emitirá la receta y los estudios médicos pertinentes.</p>';
+
+  function abrirRecomendacionesTelefonicas() {
+    abrirModalTexto('Recomendaciones para cita vía telefónica', TEXTO_RECOMENDACIONES_TEL, 'Consultas > Otras orientaciones > Recomendaciones para cita vía telefónica');
+  }
+
   var TEXTOS_SDP = {
     si: '<p>Muchas gracias, ¿me podría confirmar si los últimos 4 dígitos de su teléfono siguen siendo XXXX?</p>',
     no: '<p>Muchas gracias, ¿me podría indicar su fecha de nacimiento y su número de teléfono?</p>' +
@@ -715,12 +727,7 @@
       },
       { label: 'Recomendaciones para cita vía telefónica',
         tipificacion: 'Consultas > Otras orientaciones > Recomendaciones para cita vía telefónica',
-        texto:
-          '<p>1) Busque un lugar con buena señal móvil y que esté apartado del ruido, donde usted se pueda sentir <strong>cómodo y en confianza</strong> con el médico.</p>' +
-          '<p>2) El médico <strong>le llamará puntualmente al número de teléfono registrado</strong>. Si no recibe la llamada, por favor póngase en contacto con nosotros al <strong>136</strong>.</p>' +
-          '<p>3) Asegúrese que el dispositivo cuente con suficiente <strong>carga en la batería</strong>.</p>' +
-          '<p>4) Tenga a la mano <strong>papel y lápiz</strong> para anotar todas las indicaciones e información que le brinde el médico.</p>' +
-          '<p>5) Tenga en cuenta que la cita será con un <strong>médico general</strong> y tendrá una duración estimada de <strong>30 minutos</strong>. El médico le podrá brindar un diagnóstico, y <strong>de ser necesario</strong>, emitirá la receta y los estudios médicos pertinentes.</p>'
+        texto: TEXTO_RECOMENDACIONES_TEL
       },
       { label: 'Orientación de salud',
         tipificacion: 'Consultas > Otras orientaciones > Orientación de salud',
@@ -1136,7 +1143,22 @@
               '<p>De acuerdo, ¿puede conectarse a una <strong>videollamada</strong>?</p>' +
               '<button class="bib-btn triage-btn-no-puede" onclick="toggleBloque(\'' + idNoPuedeNota + '\')">No puede</button>' +
             '</div>' +
-            '<p id="' + idNoPuedeNota + '" style="display:none;"><em>Si no puede conectarse escribir en el campo del comentario de la nueva cita en TCA: PACIENTE REQUIERE LLAMADA TELEFÓNICA y añadir el número de teléfono.</em></p>' +
+          '</div>' +
+          '<div id="' + idNoPuedeNota + '" style="display:none;">' +
+            '<div class="triage-resultado">' +
+              '<p>Entiendo lo que nos comenta, con gusto le puedo ayudar a tener una cita por llamada telefónica.</p>' +
+              '<p><strong>En esta cita el médico se pondrá en contacto con usted llamándole a su número de teléfono. Sólo tenga en cuenta que las citas por esta vía pueden tener limitaciones en cuanto al diagnóstico que realice su médico.</strong></p>' +
+            '</div>' +
+            '<div class="triage-resultado">' +
+              '<p>La cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
+            '</div>' +
+            '<div class="triage-resultado">' +
+              '<p>Excelente, queda programada su cita el día XXXXXX XX a las XX de la tarde / de la mañana.</p>' +
+            '</div>' +
+            '<p style="color:#64748B; font-size:0.82rem; margin-bottom:14px;"><em>Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</em></p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" onclick="abrirRecomendacionesTelefonicas()">Recomendaciones</button>' +
+            '</div>' +
           '</div>' +
           '<p>Muchas gracias. Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
           '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
