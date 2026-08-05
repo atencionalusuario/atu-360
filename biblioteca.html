@@ -452,7 +452,7 @@
     '<p>5) Tenga en cuenta que la cita será con un <strong>médico general</strong> y tendrá una duración estimada de <strong>30 minutos</strong>. El médico le podrá brindar un diagnóstico, y <strong>de ser necesario</strong>, emitirá la receta y los estudios médicos pertinentes.</p>';
 
   function abrirRecomendacionesTelefonicas() {
-    abrirModalTexto('Recomendaciones para cita vía telefónica', TEXTO_RECOMENDACIONES_TEL, 'Consultas > Otras orientaciones > Recomendaciones para cita vía telefónica');
+    abrirModalTexto('Recomendaciones para cita vía telefónica', TEXTO_RECOMENDACIONES_TEL);
   }
 
   var TEXTOS_SDP = {
@@ -976,7 +976,7 @@
       contBotones.innerHTML = '';
     }
 
-    document.querySelector('#modalTexto .modal-tipificacion').style.display = ocultarFooter ? 'none' : 'block';
+    document.querySelector('#modalTexto .modal-tipificacion').style.display = (ocultarFooter || !tipificacion) ? 'none' : 'block';
     document.querySelector('#modalTexto .modal-footer').style.display = ocultarFooter ? 'none' : 'flex';
     document.getElementById('modalTipificacion').textContent = tipificacion || '';
     document.getElementById('modalTexto').classList.add('open');
