@@ -1020,6 +1020,13 @@
     document.getElementById('modalDespedida').classList.remove('open');
   }
 
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Escape') return;
+    document.querySelectorAll('.modal-overlay.open').forEach(function(modal) {
+      modal.classList.remove('open');
+    });
+  });
+
   function buscarGlobal(q) {
     q = q.trim().toLowerCase();
     var contenedor = document.getElementById('resultadosBusquedaGlobal');
