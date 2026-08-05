@@ -745,7 +745,7 @@
             '<p>Me confirma, ¿la cita nueva sería para <strong>usted</strong> o <strong>para un familiar asociado a su perfil</strong>?</p>',
           subBotones: [
             { label: 'Es para el propio usuario',
-              texto: bloqueTriageCita('Propio')
+              texto: bloqueTriageCita('Propio', 'propio')
             },
             { label: 'Es para un familiar',
               texto:
@@ -756,7 +756,7 @@
                   '<button class="bib-btn" onclick="mostrarUno(\'triageFamiliarNo\', \'triageFamiliarSi\')">No está agregado como familiar</button>' +
                 '</div>' +
                 '<div id="triageFamiliarSi" class="triage-resultado" style="display:none;">' +
-                  bloqueTriageCita('Familiar') +
+                  bloqueTriageCita('Familiar', 'familiar') +
                 '</div>' +
                 '<div id="triageFamiliarNo" class="triage-resultado" style="display:none;"></div>'
             },
@@ -1070,7 +1070,7 @@
     toggleBloque(idMostrar);
   }
 
-  function bloqueTriageCita(prefix) {
+  function bloqueTriageCita(prefix, tipo) {
     var idNinos = 'criteriosNinos' + prefix;
     var idEmbarazadas = 'criteriosEmbarazadas' + prefix;
     var idRojoSi = 'triageRojoSi' + prefix;
@@ -1078,25 +1078,28 @@
     var idAmarilloSi = 'triageAmarilloSi' + prefix;
     var idAmarilloNo = 'triageAmarilloNo' + prefix;
     var idNoPuedeNota = 'triageNoPuedeNota' + prefix;
+    var esFamiliar = tipo === 'familiar';
     var transferencia =
       '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
       '<p>Me podría brindar por favor:</p>' +
       '<ul><li>Su edad</li><li>El distrito (municipio) donde se ubica</li><li>Dirección exacta</li><li>Punto de referencia</li><li>Teléfono de referencia</li></ul>' +
       '<p>Muchas gracias por la información. Voy a transferir la llamada, por favor no cuelgue.</p>';
-
-    return (
-      '<div class="triage-alerta">' +
-        '<p>Por protocolo, nos gustaría hacerle unas preguntas de sondeo para <strong>descartar</strong> que usted / su familiar tenga una emergencia.</p>' +
-        '<p>¿Podría confirmarme si presenta dificultad severa para respirar, dolor o presión intensa en el pecho, fractura, fiebre de más de 40 grados, pérdida repentina de conciencia o sangrado abundante?</p>' +
-      '</div>' +
-      '<div class="triage-criterios-grid">' +
-        '<div class="triage-criterio-caja">' +
+    var criterioNinos = esFamiliar ?
+      '<div class="triage-criterio-caja">' +
           '<p class="triage-criterio-titulo"><em>Si la cita es para un niño (0 a 12 años) ADEMÁS preguntar:</em></p>' +
           '<button class="bib-btn" onclick="toggleBloque(\'' + idNinos + '\')">Criterios niños</button>' +
           '<div id="' + idNinos + '" class="triage-criterio-texto" style="display:none;">' +
             '<p>¿Tiene dolor abdominal fuerte, convulsiones, traumas o golpes fuertes, diarrea o vómito severo con el niño inconsolable o con poca respuesta a estímulos (está muy apagado)?</p>' +
           '</div>' +
-        '</div>' +
+        '</div>' : '';
+
+    return (
+      '<div class="triage-alerta">' +
+        '<p>Por protocolo, nos gustaría hacerle unas preguntas de sondeo para <strong>descartar</strong> que ' + (esFamiliar ? 'su familiar tenga' : 'usted tenga') + ' una emergencia.</p>' +
+        '<p>¿Podría confirmarme si presenta dificultad severa para respirar, dolor o presión intensa en el pecho, fractura, fiebre de más de 40 grados, pérdida repentina de conciencia o sangrado abundante?</p>' +
+      '</div>' +
+      '<div class="triage-criterios-grid"' + (esFamiliar ? '' : ' style="grid-template-columns:1fr;"') + '>' +
+        criterioNinos +
         '<div class="triage-criterio-caja">' +
           '<p class="triage-criterio-titulo"><em>Si la cita es para una mujer que pudiera estar en edad reproductiva (15 a 49 años), ADEMÁS preguntar:</em></p>' +
           '<button class="bib-btn" onclick="toggleBloque(\'' + idEmbarazadas + '\')">Criterios embarazadas</button>' +
