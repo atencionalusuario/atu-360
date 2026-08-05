@@ -455,6 +455,16 @@
     abrirModalTexto('Recomendaciones para cita vía telefónica', TEXTO_RECOMENDACIONES_TEL);
   }
 
+  var TEXTO_RECOMENDACIONES_VIDEO =
+    '<p>1) Busque un lugar con buena iluminación, buena conexión a internet o señal móvil y que esté apartado del ruido.</p>' +
+    '<p>2) Procure conectarse <strong>puntualmente</strong> a la videollamada. Estará en la sala de espera desde <strong>la aplicación o en Google Meet</strong> hasta que el médico le brinde acceso.</p>' +
+    '<p>3) Asegúrese que el dispositivo que usará tenga habilitado el <strong>micrófono</strong>, la <strong>cámara</strong> y cuente con suficiente <strong>carga en la batería</strong>.</p>' +
+    '<p>4) Si tiene algún inconveniente o duda, <strong>se puede comunicar con nosotros y con todo gusto le atenderemos</strong>.</p>';
+
+  function abrirRecomendacionesVideollamada() {
+    abrirModalTexto('Recomendaciones para conectarse a videollamada', TEXTO_RECOMENDACIONES_VIDEO);
+  }
+
   var TEXTOS_SDP = {
     si: '<p>Muchas gracias, ¿me podría confirmar si los últimos 4 dígitos de su teléfono siguen siendo XXXX?</p>',
     no: '<p>Muchas gracias, ¿me podría indicar su fecha de nacimiento y su número de teléfono?</p>' +
@@ -719,11 +729,7 @@
       },
       { label: 'Recomendaciones para conectarse a videollamada',
         tipificacion: 'Consultas > Otras orientaciones > Recomendaciones para conectarse a videollamada',
-        texto:
-          '<p>1) Busque un lugar con buena iluminación, buena conexión a internet o señal móvil y que esté apartado del ruido.</p>' +
-          '<p>2) Procure conectarse <strong>puntualmente</strong> a la videollamada. Estará en la sala de espera desde <strong>la aplicación o en Google Meet</strong> hasta que el médico le brinde acceso.</p>' +
-          '<p>3) Asegúrese que el dispositivo que usará tenga habilitado el <strong>micrófono</strong>, la <strong>cámara</strong> y cuente con suficiente <strong>carga en la batería</strong>.</p>' +
-          '<p>4) Si tiene algún inconveniente o duda, <strong>se puede comunicar con nosotros y con todo gusto le atenderemos</strong>.</p>'
+        texto: TEXTO_RECOMENDACIONES_VIDEO
       },
       { label: 'Recomendaciones para cita vía telefónica',
         tipificacion: 'Consultas > Otras orientaciones > Recomendaciones para cita vía telefónica',
@@ -1156,6 +1162,9 @@
           '<div id="' + idVideoSi + '" class="triage-resultado" style="display:none;">' +
             '<p>Muchas gracias. Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
             '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+            '<div class="triage-acciones" style="margin-bottom:0;">' +
+              '<button class="bib-btn" onclick="abrirRecomendacionesVideollamada()">Recomendaciones para conectarse a videollamada</button>' +
+            '</div>' +
           '</div>' +
           '<div id="' + idNoPuedeNota + '" class="triage-resultado" style="display:none;">' +
             '<p>Entiendo lo que nos comenta, con gusto le puedo ayudar a tener una cita por llamada telefónica.</p>' +
@@ -1164,7 +1173,7 @@
             '<p>Excelente, queda programada su cita el día XXXXXX XX a las XX de la tarde / de la mañana.</p>' +
             '<p style="color:#64748B; font-size:0.82rem;"><em>Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</em></p>' +
             '<div class="triage-acciones" style="margin-bottom:0;">' +
-              '<button class="bib-btn" onclick="abrirRecomendacionesTelefonicas()">Recomendaciones</button>' +
+              '<button class="bib-btn" onclick="abrirRecomendacionesTelefonicas()">Recomendaciones para cita vía telefónica</button>' +
             '</div>' +
           '</div>' +
         '</div>' +
