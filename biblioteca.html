@@ -166,6 +166,9 @@
   .triage-resultado p { font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
   .triage-resultado ul { padding-left: 20px; font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
   .triage-resultado p:last-child, .triage-resultado ul:last-child { margin-bottom: 0; }
+  .triage-resultado-rojo { background: #FEF2F2; border-color: #FCA5A5; }
+  .triage-resultado-rojo p, .triage-resultado-rojo ul, .triage-resultado-rojo li { color: #B91C1C; }
+  .triage-resultado-rojo strong { color: #991B1B; }
 
   .busqueda-global-input-wrap { display: flex; align-items: center; gap: 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
   .busqueda-global-input-wrap svg { width: 18px; height: 18px; color: #94A3B8; flex-shrink: 0; }
@@ -769,7 +772,7 @@
                   '<button class="bib-btn triage-btn-si" onclick="toggleBloque(\'triageCitaSi\')">Responde que sí a algún criterio</button>' +
                   '<button class="bib-btn" onclick="toggleBloque(\'triageCitaNo\')">No, continuar</button>' +
                 '</div>' +
-                '<div id="triageCitaSi" class="triage-resultado" style="display:none;">' +
+                '<div id="triageCitaSi" class="triage-resultado triage-resultado-rojo" style="display:none;">' +
                   '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
                   '<p>Me podría brindar por favor:</p>' +
                   '<ul><li>Su edad</li><li>El distrito (municipio) donde se ubica</li><li>Dirección exacta</li><li>Punto de referencia</li><li>Teléfono de referencia</li></ul>' +
@@ -789,7 +792,7 @@
                     '<button class="bib-btn triage-btn-si" onclick="toggleBloque(\'triageAmarilloSi\')">Sí cumple</button>' +
                     '<button class="bib-btn tiene-tooltip" data-tooltip="Al pasar este punto debe quedarle claro que la persona sí puede esperar a ser atendido por una cita." onclick="toggleBloque(\'triageAmarilloNo\')">No cumple</button>' +
                   '</div>' +
-                  '<div id="triageAmarilloSi" class="triage-resultado" style="display:none;">' +
+                  '<div id="triageAmarilloSi" class="triage-resultado triage-resultado-rojo" style="display:none;">' +
                     '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
                     '<p>Me podría brindar por favor:</p>' +
                     '<ul><li>Su edad</li><li>El distrito (municipio) donde se ubica</li><li>Dirección exacta</li><li>Punto de referencia</li><li>Teléfono de referencia</li></ul>' +
