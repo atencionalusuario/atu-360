@@ -801,7 +801,38 @@
               '</div>' +
             '</div>'
         },
-        'Cancelar cita',
+        { label: 'Cancelar cita',
+          tipificacion: 'Gestión > Gestión de citas > Cancelar cita',
+          texto:
+            '<p>De acuerdo, le ayudaremos en el proceso para <strong>cancelar su cita</strong>. ¿Me podría confirmar si su cita agendada es con un médico general o con un médico especialista?</p>',
+          subBotones: [
+            { label: 'Médico general',
+              texto:
+                '<p>Muy bien, en este momento puedo confirmar en sistema que usted tiene una cita agendada para el día XXX a las XX:XX am/pm, ¿esta es la cita que desea cancelar?</p>' +
+                '<p>De acuerdo, en este momento procederé a cancelar la cita que nos menciona.</p>'
+            },
+            { label: 'Médico especialista',
+              texto:
+                '<p>Antes de proceder, nos gustaría comentarle que al cancelar esta cita podría perderse la continuidad de su proceso médico. Si en un futuro desea consultar nuevamente con un especialista, tendría que comenzar el proceso desde el inicio, agendando primero una cita con un médico general.</p>' +
+                '<p>¿Desea que cancelemos su cita con el especialista? o ¿prefiere modificar el horario?</p>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'cancelarEspModificar\', [\'cancelarEspMantener\',\'cancelarEspCancelar\'])">Modificar cita</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'cancelarEspMantener\', [\'cancelarEspModificar\',\'cancelarEspCancelar\'])">Prefiere mantener cita</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'cancelarEspCancelar\', [\'cancelarEspModificar\',\'cancelarEspMantener\'])">Cancelar la cita</button>' +
+                '</div>' +
+                '<div id="cancelarEspModificar" class="triage-resultado" style="display:none;"></div>' +
+                '<div id="cancelarEspMantener" class="triage-resultado" style="display:none;">' +
+                  '<p>Perfecto, nos alegra saber que desea mantener su cita.</p>' +
+                  '<p>Su cita sigue programada para el xxx a las xxx am/pm . Si necesita hacer algún cambio más adelante, no dude en contactarnos nuevamente.</p>' +
+                '</div>' +
+                '<div id="cancelarEspCancelar" class="triage-resultado" style="display:none;">' +
+                  '<p>De acuerdo, Sr./Sra. XXX. Al validar en nuestro sistema, identifico que cuenta con una cita programada para el día <strong>XX/XX/XXXX</strong>, a las <strong>XX:XX a. m./p. m.</strong></p>' +
+                  '<p>¿Me confirma, por favor, que esta es la cita que desea cancelar? Muchas gracias por su confirmación.</p>' +
+                  '<p>Le informo que su cita ha sido cancelada exitosamente.</p>' +
+                '</div>'
+            }
+          ]
+        },
         'Referencia con especialista',
         'Cita de seguimiento'
       ] },
@@ -1107,9 +1138,12 @@
     if (el) el.style.display = el.style.display === 'block' ? 'none' : 'block';
   }
 
-  function mostrarUno(idMostrar, idOcultar) {
-    var ocultar = document.getElementById(idOcultar);
-    if (ocultar) ocultar.style.display = 'none';
+  function mostrarUno(idMostrar, idsOcultar) {
+    var lista = Array.isArray(idsOcultar) ? idsOcultar : [idsOcultar];
+    lista.forEach(function(id) {
+      var ocultar = document.getElementById(id);
+      if (ocultar) ocultar.style.display = 'none';
+    });
     toggleBloque(idMostrar);
   }
 
