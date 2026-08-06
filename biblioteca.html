@@ -892,10 +892,32 @@
                   '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
                   '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
                 '</div>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">' +
+                  '* Nombre del paciente<br>' +
+                  '* Teléfono de contacto del paciente<br>' +
+                  '* Tipo de documento del paciente<br>' +
+                  '* Número de documento del paciente<br>' +
+                  '* ¿El paciente es familiar asociado a otra cuenta?<br>' +
+                  '* Nombre completo del médico<br>' +
+                  '* Fecha y hora de la cita<br>' +
+                  '* Especialidad' +
+                '</p>' +
               '</div>' +
               '<div id="referenciaNtNoHayCupo" class="triage-resultado" style="display:none;">' +
                 '<p>Comentarle que actualmente hemos reportado su caso con el número de ticket XXX. En cuanto haya disponibilidad para programar su cita, nos contactaremos con usted lo más pronto posible.</p>' +
                 '<p>Agradecemos que se mantenga pendiente de celular, ya que uno de nuestros asesores se comunicará con usted próximamente.</p>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">' +
+                  '* Nombre del paciente<br>' +
+                  '* Teléfono de contacto del paciente<br>' +
+                  '* Tipo de documento del paciente<br>' +
+                  '* Número de documento del paciente<br>' +
+                  '* ¿El paciente es familiar asociado a otra cuenta?<br>' +
+                  '* Nombre completo del médico<br>' +
+                  '* Fecha y hora de la cita<br>' +
+                  '* Especialidad' +
+                '</p>' +
               '</div>' +
               '<div id="referenciaNtSinReferencia" class="triage-resultado" style="display:none;">' +
                 '<p>Comprendo Sr/Sra. XXXX. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
@@ -915,7 +937,71 @@
               '</div>' +
             '</div>'
         },
-        'Cita de seguimiento'
+        { label: 'Cita de seguimiento',
+          tipificacion: 'Gestión > Gestión de citas > Cita de seguimiento',
+          texto:
+            '<p>Con mucho gusto le ayudo a agendar su cita de seguimiento.</p>' +
+            '<p style="text-align:center; color:#64748B; font-style:italic; margin-bottom:14px;">Instrucción:<br>Buscar en SDP si tiene ticket de seguimiento abierto. ¿Tiene ticket abierto?</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'seguimientoSiTicket\', \'seguimientoNoTicket\')">Sí tiene ticket abierto</button>' +
+              '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'seguimientoNoTicket\', \'seguimientoSiTicket\')">No tiene ticket abierto</button>' +
+            '</div>' +
+            '<div id="seguimientoSiTicket" class="triage-resultado" style="display:none;">' +
+              '<p style="text-align:center; color:#64748B; font-style:italic;">Buscar el DUI o nombre del usuario en la sección de Solicitudes de seguimiento de TCA.</p>' +
+              '<p style="text-align:center;"><strong>¿Existe el seguimiento?</strong></p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'seguimientoStHayCupo\', \'seguimientoStNoHayCupo\')">Sí existe y hay cupo</button>' +
+                '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'seguimientoStNoHayCupo\', \'seguimientoStHayCupo\')">Sí existe pero no hay cupo</button>' +
+              '</div>' +
+              '<div id="seguimientoStHayCupo" class="triage-resultado" style="display:none;">' +
+                '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'seguimientoCupoSi\', \'seguimientoCupoNo\')">Sí</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'seguimientoCupoNo\', \'seguimientoCupoSi\')">No</button>' +
+                '</div>' +
+                '<div id="seguimientoCupoSi" class="triage-resultado" style="display:none;">' +
+                  '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                '</div>' +
+                '<div id="seguimientoCupoNo" class="triage-resultado" style="display:none;">' +
+                  '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
+                  '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                '</div>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Instrucción: Dejar nota que el usuario fue agendado y cerrar ticket.</p>' +
+              '</div>' +
+              '<div id="seguimientoStNoHayCupo" class="triage-resultado" style="display:none;">' +
+                '<p style="margin-bottom:6px;"><strong>Cuando la especialidad no sea Psicología ni Nutrición:</strong></p>' +
+                '<div class="triage-resultado">' +
+                  '<p>En este momento podemos ofrecerle una cita lo más pronto posible pero con un especialista distinto.</p>' +
+                  '<p>¿Le gustaría agendar una cita de seguimiento con otro especialista?</p>' +
+                '</div>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn btn-si-verde" onclick="toggleBloque(\'seguimientoCambioEspecialista\')">Sí quiere cambio de especialista</button>' +
+                '</div>' +
+                '<div id="seguimientoCambioEspecialista" class="triage-resultado" style="display:none;">' +
+                  '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
+                  '<div class="triage-acciones">' +
+                    '<button class="bib-btn" onclick="mostrarUno(\'seguimientoCambioSi\', \'seguimientoCambioNo\')">Sí</button>' +
+                    '<button class="bib-btn" onclick="mostrarUno(\'seguimientoCambioNo\', \'seguimientoCambioSi\')">No</button>' +
+                  '</div>' +
+                  '<div id="seguimientoCambioSi" class="triage-resultado" style="display:none;">' +
+                    '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                  '</div>' +
+                  '<div id="seguimientoCambioNo" class="triage-resultado" style="display:none;">' +
+                    '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
+                    '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                  '</div>' +
+                  '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Instrucción: Dejar nota que el usuario fue agendado y cerrar ticket.</p>' +
+                '</div>' +
+                '<p style="margin-bottom:6px;"><strong>No quiere o es especialidad Psicología o Nutrición:</strong></p>' +
+                '<div class="triage-resultado">' +
+                  '<p>Comentarle que actualmente hemos reportado su caso con el número de ticket XXX. En cuanto haya disponibilidad para programar su cita, nos contactaremos con usted lo más pronto posible.</p>' +
+                  '<p>Agradecemos que se mantenga pendiente de celular, ya que uno de nuestros asesores se comunicará con usted próximamente.</p>' +
+                '</div>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Instrucción: Dejar nota y, de ser necesario, enviar ticket a estado ATU Sin cupo seguimiento.</p>' +
+              '</div>' +
+            '</div>' +
+            '<div id="seguimientoNoTicket" class="triage-resultado" style="display:none;"></div>'
+        }
       ] },
       'Gestión de perfiles', 'Gestión de recetas / órdenes', 'Gestiones programa crónicos'
     ],
