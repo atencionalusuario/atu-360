@@ -782,67 +782,9 @@
                 '<div id="triageFamiliarNo" class="triage-resultado" style="display:none;"></div>'
             },
             { label: 'Cita nueva proveniente de triage', texto: '' },
-            { label: 'Cita para lectura de exámenes', texto: '' }
-          ]
-        },
-        { label: 'Modificar cita',
-          tipificacion: 'Gestión > Gestión de citas > Modificar cita',
-          texto:
-            '<p>De acuerdo Sr./Sra. XXX, le ayudaremos en el proceso para <strong>modificar su cita</strong>.</p>' +
-            '<p>Veo en sistema que usted tiene una cita agendada para el día XXX a las XX:XX am/pm, ¿esta es la cita que desea modificar?</p>' +
-            '<div class="triage-resultado">' +
-              '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
-              '<div class="triage-acciones">' +
-                '<button class="bib-btn" onclick="mostrarUno(\'modificarCitaSi\', \'modificarCitaNo\')">Sí</button>' +
-                '<button class="bib-btn" onclick="mostrarUno(\'modificarCitaNo\', \'modificarCitaSi\')">No</button>' +
-              '</div>' +
-              '<div id="modificarCitaSi" class="triage-resultado" style="display:none;">' +
-                '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
-              '</div>' +
-              '<div id="modificarCitaNo" class="triage-resultado" style="display:none;">' +
-                '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
-                '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
-              '</div>' +
-              '<div class="triage-acciones" style="margin-bottom:0;">' +
-                '<button class="bib-btn" onclick="abrirRecomendacionesVideollamada()">Recomendaciones para conectarse a videollamada</button>' +
-                '<button class="bib-btn" onclick="abrirRecomendacionesTelefonicas()">Recomendaciones para cita vía telefónica</button>' +
-              '</div>' +
-            '</div>'
-        },
-        { label: 'Cancelar cita',
-          tipificacion: 'Gestión > Gestión de citas > Cancelar cita',
-          texto:
-            '<p>De acuerdo, le ayudaremos en el proceso para <strong>cancelar su cita</strong>. ¿Me podría confirmar si su cita agendada es con un médico general o con un médico especialista?</p>',
-          subBotones: [
-            { label: 'Médico general',
-              texto:
-                '<p>Muy bien, en este momento puedo confirmar en sistema que usted tiene una cita agendada para el día XXX a las XX:XX am/pm, ¿esta es la cita que desea cancelar?</p>' +
-                '<p>De acuerdo, en este momento procederé a cancelar la cita que nos menciona.</p>'
-            },
-            { label: 'Médico especialista',
-              texto:
-                '<p>Antes de proceder, nos gustaría comentarle que al cancelar esta cita podría perderse la continuidad de su proceso médico. Si en un futuro desea consultar nuevamente con un especialista, tendría que comenzar el proceso desde el inicio, agendando primero una cita con un médico general.</p>' +
-                '<p>¿Desea que cancelemos su cita con el especialista? o ¿prefiere modificar el horario?</p>' +
-                '<div class="triage-acciones">' +
-                  '<button class="bib-btn" onclick="mostrarUno(\'cancelarEspModificar\', [\'cancelarEspMantener\',\'cancelarEspCancelar\'])">Modificar cita</button>' +
-                  '<button class="bib-btn" onclick="mostrarUno(\'cancelarEspMantener\', [\'cancelarEspModificar\',\'cancelarEspCancelar\'])">Prefiere mantener cita</button>' +
-                  '<button class="bib-btn" onclick="mostrarUno(\'cancelarEspCancelar\', [\'cancelarEspModificar\',\'cancelarEspMantener\'])">Cancelar la cita</button>' +
-                '</div>' +
-                '<div id="cancelarEspModificar" class="triage-resultado" style="display:none;"></div>' +
-                '<div id="cancelarEspMantener" class="triage-resultado" style="display:none;">' +
-                  '<p>Perfecto, nos alegra saber que desea mantener su cita.</p>' +
-                  '<p>Su cita sigue programada para el xxx a las xxx am/pm . Si necesita hacer algún cambio más adelante, no dude en contactarnos nuevamente.</p>' +
-                '</div>' +
-                '<div id="cancelarEspCancelar" class="triage-resultado" style="display:none;">' +
-                  '<p>De acuerdo, Sr./Sra. XXX. Al validar en nuestro sistema, identifico que cuenta con una cita programada para el día <strong>XX/XX/XXXX</strong>, a las <strong>XX:XX a. m./p. m.</strong></p>' +
-                  '<p>¿Me confirma, por favor, que esta es la cita que desea cancelar? Muchas gracias por su confirmación.</p>' +
-                  '<p>Le informo que su cita ha sido cancelada exitosamente.</p>' +
-                '</div>'
-            }
-          ]
-        },
+            { label: 'Cita para lectura de exámenes', texto: '' },
         { label: 'Referencia con especialista',
-          tipificacion: 'Gestión > Gestión de citas > Referencia con especialista',
+          tipificacion: 'Gestión > Gestión de citas > Agendar cita nueva > Referencia con especialista',
           texto:
             '<p>Con mucho gusto le ayudo a agendar su cita con el médico especialista.</p>' +
             '<p style="text-align:center; color:#64748B; font-style:italic; margin-bottom:14px;">Instrucción:<br>Buscar en SDP si tiene ticket de referencia abierto. ¿Tiene ticket abierto?</p>' +
@@ -940,7 +882,7 @@
             '</div>'
         },
         { label: 'Cita de seguimiento',
-          tipificacion: 'Gestión > Gestión de citas > Cita de seguimiento',
+          tipificacion: 'Gestión > Gestión de citas > Agendar cita nueva > Cita de seguimiento',
           texto:
             '<p>Con mucho gusto le ayudo a agendar su cita de seguimiento.</p>' +
             '<p style="text-align:center; color:#64748B; font-style:italic; margin-bottom:14px;">Instrucción:<br>Buscar en SDP si tiene ticket de seguimiento abierto. ¿Tiene ticket abierto?</p>' +
@@ -1044,6 +986,64 @@
               '</div>' +
             '</div>'
         }
+          ]
+        },
+        { label: 'Modificar cita',
+          tipificacion: 'Gestión > Gestión de citas > Modificar cita',
+          texto:
+            '<p>De acuerdo Sr./Sra. XXX, le ayudaremos en el proceso para <strong>modificar su cita</strong>.</p>' +
+            '<p>Veo en sistema que usted tiene una cita agendada para el día XXX a las XX:XX am/pm, ¿esta es la cita que desea modificar?</p>' +
+            '<div class="triage-resultado">' +
+              '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn" onclick="mostrarUno(\'modificarCitaSi\', \'modificarCitaNo\')">Sí</button>' +
+                '<button class="bib-btn" onclick="mostrarUno(\'modificarCitaNo\', \'modificarCitaSi\')">No</button>' +
+              '</div>' +
+              '<div id="modificarCitaSi" class="triage-resultado" style="display:none;">' +
+                '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+              '</div>' +
+              '<div id="modificarCitaNo" class="triage-resultado" style="display:none;">' +
+                '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
+                '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+              '</div>' +
+              '<div class="triage-acciones" style="margin-bottom:0;">' +
+                '<button class="bib-btn" onclick="abrirRecomendacionesVideollamada()">Recomendaciones para conectarse a videollamada</button>' +
+                '<button class="bib-btn" onclick="abrirRecomendacionesTelefonicas()">Recomendaciones para cita vía telefónica</button>' +
+              '</div>' +
+            '</div>'
+        },
+        { label: 'Cancelar cita',
+          tipificacion: 'Gestión > Gestión de citas > Cancelar cita',
+          texto:
+            '<p>De acuerdo, le ayudaremos en el proceso para <strong>cancelar su cita</strong>. ¿Me podría confirmar si su cita agendada es con un médico general o con un médico especialista?</p>',
+          subBotones: [
+            { label: 'Médico general',
+              texto:
+                '<p>Muy bien, en este momento puedo confirmar en sistema que usted tiene una cita agendada para el día XXX a las XX:XX am/pm, ¿esta es la cita que desea cancelar?</p>' +
+                '<p>De acuerdo, en este momento procederé a cancelar la cita que nos menciona.</p>'
+            },
+            { label: 'Médico especialista',
+              texto:
+                '<p>Antes de proceder, nos gustaría comentarle que al cancelar esta cita podría perderse la continuidad de su proceso médico. Si en un futuro desea consultar nuevamente con un especialista, tendría que comenzar el proceso desde el inicio, agendando primero una cita con un médico general.</p>' +
+                '<p>¿Desea que cancelemos su cita con el especialista? o ¿prefiere modificar el horario?</p>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'cancelarEspModificar\', [\'cancelarEspMantener\',\'cancelarEspCancelar\'])">Modificar cita</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'cancelarEspMantener\', [\'cancelarEspModificar\',\'cancelarEspCancelar\'])">Prefiere mantener cita</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'cancelarEspCancelar\', [\'cancelarEspModificar\',\'cancelarEspMantener\'])">Cancelar la cita</button>' +
+                '</div>' +
+                '<div id="cancelarEspModificar" class="triage-resultado" style="display:none;"></div>' +
+                '<div id="cancelarEspMantener" class="triage-resultado" style="display:none;">' +
+                  '<p>Perfecto, nos alegra saber que desea mantener su cita.</p>' +
+                  '<p>Su cita sigue programada para el xxx a las xxx am/pm . Si necesita hacer algún cambio más adelante, no dude en contactarnos nuevamente.</p>' +
+                '</div>' +
+                '<div id="cancelarEspCancelar" class="triage-resultado" style="display:none;">' +
+                  '<p>De acuerdo, Sr./Sra. XXX. Al validar en nuestro sistema, identifico que cuenta con una cita programada para el día <strong>XX/XX/XXXX</strong>, a las <strong>XX:XX a. m./p. m.</strong></p>' +
+                  '<p>¿Me confirma, por favor, que esta es la cita que desea cancelar? Muchas gracias por su confirmación.</p>' +
+                  '<p>Le informo que su cita ha sido cancelada exitosamente.</p>' +
+                '</div>'
+            }
+          ]
+        },
       ] },
       { label: 'Gestión de perfiles', hijos: [
         { label: 'Registrar a usuario nuevo',
@@ -1060,7 +1060,38 @@
               '<p>Si gusta tome nota de la contraseña: XXXXXXXX. Puede cambiarla inmediatamente al ingresar a la aplicación.</p>' +
             '</div>'
         },
-        'Registrar familiar nuevo',
+        { label: 'Registrar familiar nuevo',
+          tipificacion: 'Gestión > Gestión de perfiles > Registrar familiar nuevo',
+          texto:
+            '<p>Con mucho gusto le puedo ayudar a registrar a su familiar en <strong>DoctorSV</strong>.</p>' +
+            '<p>¿Su familiar es menor de edad?</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" onclick="mostrarUno(\'familiarMenorEdad\', \'familiarAdulto\')">Es menor de edad</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'familiarAdulto\', \'familiarMenorEdad\')">Es adulto</button>' +
+            '</div>' +
+            '<div id="familiarMenorEdad" class="triage-resultado" style="display:none;">' +
+              '<p>De acuerdo, me indica la siguiente información:</p>' +
+              '<ul>' +
+                '<li>fecha de nacimiento</li>' +
+                '<li>primer nombre</li>' +
+                '<li>segundo nombre</li>' +
+                '<li>apellido paterno</li>' +
+                '<li>apellido materno</li>' +
+                '<li>sexo</li>' +
+              '</ul>' +
+            '</div>' +
+            '<div id="familiarAdulto" class="triage-resultado" style="display:none;">' +
+              '<p>De acuerdo, me indica la siguiente información:</p>' +
+              '<ul>' +
+                '<li>El tipo y número de documento de su familiar</li>' +
+                '<li>Motivo de su registro</li>' +
+                '<li>Tipo de parentesco</li>' +
+              '</ul>' +
+            '</div>' +
+            '<div class="triage-resultado">' +
+              '<p>Le confirmo que ya su familiar ha sido registrado. Podrá hacer uso de <strong>DoctorSV</strong> a través de su aplicación.</p>' +
+            '</div>'
+        },
         'Actualizar dato del usuario',
         'Desbloquear al usuario',
         'Desvincular perfil de familiar',
