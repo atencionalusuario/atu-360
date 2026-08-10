@@ -121,6 +121,20 @@
   .cintillo-btn.cintillo-ayuda { background: #29ABE2; }
   .cintillo-btn.cintillo-ayuda:hover { background: #1E93CC; }
   .cintillo-btn.cintillo-gem { background: linear-gradient(135deg, #4285F4, #9B72CB, #D96570); }
+  .cintillo-btn.cintillo-seguridad { background: #EA580C; }
+  .cintillo-btn.cintillo-seguridad:hover { background: #C2410C; }
+  .pregunta-seguridad-caja { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px 18px; margin-bottom: 12px; }
+  .pregunta-seguridad-caja p { font-size: 0.88rem; color: #1E293B; margin-bottom: 10px; }
+  .pregunta-seguridad-caja .triage-acciones { margin-bottom: 0; }
+  .pregunta-seguridad-btn { min-width: 100px; }
+  .pregunta-seguridad-btn.correcta { background: #16A34A; }
+  .pregunta-seguridad-btn.correcta:hover { background: #15803D; }
+  .pregunta-seguridad-btn.incorrecta { background: #DC2626; }
+  .pregunta-seguridad-btn.incorrecta:hover { background: #B91C1C; }
+  .pregunta-seguridad-btn.active { box-shadow: 0 0 0 3px rgba(15,32,112,0.3); }
+  .resultado-seguridad { border-radius: 8px; padding: 14px 18px; font-weight: 700; text-align: center; margin-top: 4px; }
+  .resultado-seguridad.pasa { background: #DCFCE7; color: #166534; border: 1px solid #86EFAC; }
+  .resultado-seguridad.no-pasa { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
   .cintillo-btn.cintillo-gem:hover { filter: brightness(1.08); }
   .cintillo-btn.cintillo-busqueda { background: #0F2070; }
   .cintillo-btn.cintillo-busqueda:hover { background: #1A3DAA; }
@@ -330,6 +344,9 @@
   <button class="cintillo-btn cintillo-gem" title="Asistente Gemini" onclick="window.open('https://gemini.google.com/u/1/gem/54309f25a04c', '_blank')">
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.6 4.6 3.4 7.4 8 8-4.6.6-7.4 3.4-8 8-.6-4.6-3.4-7.4-8-8 4.6-.6 7.4-3.4 8-8Z"/></svg>
   </button>
+  <button class="cintillo-btn cintillo-seguridad" title="Preguntas de seguridad" onclick="abrirModalPreguntasSeguridad()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6l-9-4Z"/><path d="M9 12l2 2 4-4"/></svg>
+  </button>
   <button class="cintillo-btn cintillo-arriba" title="Ir arriba" onclick="irArriba()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
   </button>
@@ -392,6 +409,19 @@
         <p>De acuerdo Sr./Sra.xxx, un placer atenderle, estamos a la orden para apoyarle.</p>
         <p>¡Feliz día! / ¡Feliz tarde! / ¡Feliz noche!</p>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalPreguntasSeguridad" onclick="if(event.target===this) cerrarModalPreguntasSeguridad()">
+  <div class="modal-box" style="max-width:640px;">
+    <button class="modal-close" onclick="cerrarModalPreguntasSeguridad()">&times;</button>
+    <h3 class="modal-titulo">Preguntas de seguridad</h3>
+    <p class="instruccion" style="margin-bottom:14px;">El agente debe hacer las 3 preguntas seleccionadas y marcar si el usuario respondió correcta o incorrectamente. Necesita <strong>2 de 3</strong> correctas para pasar la validación.</p>
+    <div id="preguntasSeguridadLista"></div>
+    <div id="resultadoSeguridad"></div>
+    <div class="triage-acciones">
+      <button class="bib-btn" onclick="generarPreguntasSeguridad()">Generar otras 3 preguntas</button>
     </div>
   </div>
 </div>
@@ -1092,8 +1122,32 @@
               '<p>Le confirmo que ya su familiar ha sido registrado. Podrá hacer uso de <strong>DoctorSV</strong> a través de su aplicación.</p>' +
             '</div>'
         },
-        'Actualizar dato del usuario',
-        'Desbloquear al usuario',
+        { label: 'Actualizar dato del usuario', hijos: [
+          'Cambio de teléfono',
+          'Cambio de correo',
+          'Cambio de correo y teléfono',
+          'Cambio de género',
+          'Cambio de otro dato'
+        ] },
+        { label: 'Desbloquear al usuario',
+          tipificacion: 'Gestión > Gestión de perfiles > Desbloquear al usuario',
+          texto:
+            '<p>Comprendo lo que nos comenta. Enseguida le ayudamos a desbloquear el acceso a su aplicación <strong>DoctorSV</strong>.</p>' +
+            '<p>Antes de proceder, le haré unas preguntas de validación con el objetivo de proteger su información.</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" style="background:#EA580C" onclick="generarPreguntasSeguridadInline(\'desbloqueo\')">Preguntas de seguridad</button>' +
+            '</div>' +
+            '<div id="psPreguntas_desbloqueo"></div>' +
+            '<div id="psPasa_desbloqueo" class="triage-resultado" style="display:none;">' +
+              '<p>Muchas gracias por la confirmación, Sr / Sra XXXXXXX.</p>' +
+              '<p>Le confirmo que en este instante hemos desbloqueado el acceso a su aplicación.</p>' +
+              '<p>Por favor intente iniciar sesión nuevamente. Con gusto le puedo ayudar con el paso a paso.</p>' +
+            '</div>' +
+            '<div id="psNoPasa_desbloqueo" class="triage-resultado" style="display:none;">' +
+              '<p>Sr / Sra XXXXXX, con el fin de resguardar su información personal lamento comunicarle que no estamos autorizados a ejecutar la acción que nos solicita.</p>' +
+              '<p>Le invito a que pueda validar la información solicitada y contactarnos nuevamente o buscar un medio para ingresar a la aplicación.</p>' +
+            '</div>'
+        },
         'Desvincular perfil de familiar',
         'Deshabilitar al paciente',
         'Habilitar al usuario',
@@ -1342,6 +1396,119 @@
 
   function cerrarModalDespedida() {
     document.getElementById('modalDespedida').classList.remove('open');
+  }
+
+  var PREGUNTAS_SEGURIDAD = [
+    '¿Me podría indicar su nombre completo?',
+    '¿Me podría confirmar cuál es el correo electrónico que tiene registrado en la aplicación?',
+    '¿Me podría indicar cuál fue la fecha u hora de su última cita? (uno de los dos datos)',
+    '¿Me podría indicar cuántos pacientes tiene asociados a su cuenta?',
+    '¿Recuerda el nombre o apellido del médico que le atendió por última vez?'
+  ];
+
+  var preguntasSeguridadActuales = [];
+  var respuestasSeguridad = {};
+
+  function abrirModalPreguntasSeguridad() {
+    generarPreguntasSeguridad();
+    document.getElementById('modalPreguntasSeguridad').classList.add('open');
+  }
+
+  function cerrarModalPreguntasSeguridad() {
+    document.getElementById('modalPreguntasSeguridad').classList.remove('open');
+  }
+
+  function generarPreguntasSeguridad() {
+    var indices = [0, 1, 2, 3, 4];
+    for (var i = indices.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = indices[i]; indices[i] = indices[j]; indices[j] = tmp;
+    }
+    preguntasSeguridadActuales = indices.slice(0, 3);
+    respuestasSeguridad = {};
+
+    document.getElementById('preguntasSeguridadLista').innerHTML = preguntasSeguridadActuales.map(function(idx, i) {
+      return '<div class="pregunta-seguridad-caja">' +
+        '<p>' + (i + 1) + ') ' + PREGUNTAS_SEGURIDAD[idx] + '</p>' +
+        '<div class="triage-acciones">' +
+          '<button class="bib-btn pregunta-seguridad-btn correcta" onclick="marcarRespuestaSeguridad(' + idx + ', true, this)">Correcta</button>' +
+          '<button class="bib-btn pregunta-seguridad-btn incorrecta" onclick="marcarRespuestaSeguridad(' + idx + ', false, this)">Incorrecta</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    document.getElementById('resultadoSeguridad').innerHTML = '';
+  }
+
+  function marcarRespuestaSeguridad(idx, correcta, boton) {
+    respuestasSeguridad[idx] = correcta;
+
+    var fila = boton.closest('.triage-acciones');
+    fila.querySelectorAll('.bib-btn').forEach(function(b) { b.classList.remove('active'); });
+    boton.classList.add('active');
+
+    evaluarPreguntasSeguridad();
+  }
+
+  function evaluarPreguntasSeguridad() {
+    var respondidas = Object.keys(respuestasSeguridad).length;
+    var contenedor = document.getElementById('resultadoSeguridad');
+
+    if (respondidas < preguntasSeguridadActuales.length) {
+      contenedor.innerHTML = '';
+      return;
+    }
+
+    var correctas = Object.values(respuestasSeguridad).filter(Boolean).length;
+    var pasa = correctas >= 2;
+    contenedor.innerHTML = '<div class="resultado-seguridad ' + (pasa ? 'pasa' : 'no-pasa') + '">' +
+      (pasa ? '✔ Validación superada (' + correctas + ' de 3 correctas). Puede continuar con la gestión.' : '✘ Validación no superada (' + correctas + ' de 3 correctas). No se debe continuar con la gestión.') +
+    '</div>';
+  }
+
+  var respuestasSeguridadInline = {};
+
+  function generarPreguntasSeguridadInline(prefix) {
+    var indices = [0, 1, 2, 3, 4];
+    for (var i = indices.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = indices[i]; indices[i] = indices[j]; indices[j] = tmp;
+    }
+    var elegidas = indices.slice(0, 3);
+    respuestasSeguridadInline[prefix] = { preguntas: elegidas, respuestas: {} };
+
+    var pasaDiv = document.getElementById('psPasa_' + prefix);
+    var noPasaDiv = document.getElementById('psNoPasa_' + prefix);
+    if (pasaDiv) pasaDiv.style.display = 'none';
+    if (noPasaDiv) noPasaDiv.style.display = 'none';
+
+    document.getElementById('psPreguntas_' + prefix).innerHTML = elegidas.map(function(idx, i) {
+      return '<div class="pregunta-seguridad-caja">' +
+        '<p>' + (i + 1) + ') ' + PREGUNTAS_SEGURIDAD[idx] + '</p>' +
+        '<div class="triage-acciones">' +
+          '<button class="bib-btn pregunta-seguridad-btn correcta" onclick="marcarRespuestaSeguridadInline(\'' + prefix + '\', ' + idx + ', true, this)">Correcta</button>' +
+          '<button class="bib-btn pregunta-seguridad-btn incorrecta" onclick="marcarRespuestaSeguridadInline(\'' + prefix + '\', ' + idx + ', false, this)">Incorrecta</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function marcarRespuestaSeguridadInline(prefix, idx, correcta, boton) {
+    var estado = respuestasSeguridadInline[prefix];
+    estado.respuestas[idx] = correcta;
+
+    var fila = boton.closest('.triage-acciones');
+    fila.querySelectorAll('.bib-btn').forEach(function(b) { b.classList.remove('active'); });
+    boton.classList.add('active');
+
+    if (Object.keys(estado.respuestas).length < estado.preguntas.length) return;
+
+    var correctas = Object.values(estado.respuestas).filter(Boolean).length;
+    var pasa = correctas >= 2;
+    var pasaDiv = document.getElementById('psPasa_' + prefix);
+    var noPasaDiv = document.getElementById('psNoPasa_' + prefix);
+    if (pasaDiv) pasaDiv.style.display = pasa ? 'block' : 'none';
+    if (noPasaDiv) noPasaDiv.style.display = pasa ? 'none' : 'block';
   }
 
   document.addEventListener('keydown', function(e) {
