@@ -167,6 +167,8 @@
   .btn-no-rojo:hover { background: #B91C1C; }
   .btn-amarillo-cupo { background: #D97706; }
   .btn-amarillo-cupo:hover { background: #B45309; }
+  .btn-naranja { background: #EA580C; }
+  .btn-naranja:hover { background: #C2410C; }
   .triage-btn-si:hover { background: #9A3412; }
   .triage-resultado { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px; }
   .triage-resultado:last-child { margin-bottom: 0; }
@@ -1006,7 +1008,41 @@
                 '</div>' +
               '</div>' +
             '</div>' +
-            '<div id="seguimientoNoTicket" class="triage-resultado" style="display:none;"></div>'
+            '<div id="seguimientoNoTicket" class="triage-resultado" style="display:none;">' +
+              '<p style="text-align:center; color:#64748B; font-style:italic;">Buscar el DUI o nombre del usuario en la sección de Solicitud de Seguimiento de TCA. ¿Existe? ¿La fecha del seguimiento está dentro del periodo de publicación de agenda?</p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'seguimientoNtHayCupo\', [\'seguimientoNtNoHayCupo\',\'seguimientoNtFueraAgenda\',\'seguimientoNtNoExiste\'])">Sí existe y hay cupo</button>' +
+                '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'seguimientoNtNoHayCupo\', [\'seguimientoNtHayCupo\',\'seguimientoNtFueraAgenda\',\'seguimientoNtNoExiste\'])">Sí existe pero no hay cupo</button>' +
+                '<button class="bib-btn btn-naranja" onclick="mostrarUno(\'seguimientoNtFueraAgenda\', [\'seguimientoNtHayCupo\',\'seguimientoNtNoHayCupo\',\'seguimientoNtNoExiste\'])">Sí existe, fuera de la agenda publicada</button>' +
+                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'seguimientoNtNoExiste\', [\'seguimientoNtHayCupo\',\'seguimientoNtNoHayCupo\',\'seguimientoNtFueraAgenda\'])">No existe</button>' +
+              '</div>' +
+              '<div id="seguimientoNtHayCupo" class="triage-resultado" style="display:none;">' +
+                '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'seguimientoNtCupoSi\', \'seguimientoNtCupoNo\')">Sí</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'seguimientoNtCupoNo\', \'seguimientoNtCupoSi\')">No</button>' +
+                '</div>' +
+                '<div id="seguimientoNtCupoSi" class="triage-resultado" style="display:none;">' +
+                  '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                '</div>' +
+                '<div id="seguimientoNtCupoNo" class="triage-resultado" style="display:none;">' +
+                  '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
+                  '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                '</div>' +
+              '</div>' +
+              '<div id="seguimientoNtNoHayCupo" class="triage-resultado" style="display:none;">' +
+                '<p>Comentarle que actualmente hemos reportado su caso con el número de ticket XXX. En cuanto haya disponibilidad para programar su cita, nos contactaremos con usted lo más pronto posible.</p>' +
+                '<p>Agradecemos que se mantenga pendiente de celular, ya que uno de nuestros asesores se comunicará con usted próximamente.</p>' +
+              '</div>' +
+              '<div id="seguimientoNtFueraAgenda" class="triage-resultado" style="display:none;">' +
+                '<p>Comprendo lo que me comenta Sr/Sra XXXXX. Sin embargo, debo comentarle que nos estaremos comunicando con usted unos días antes de su cita de seguimiento, para ayudarle con el agendamiento.</p>' +
+                '<p>Le pedimos que se mantenga pendiente de su teléfono, que uno de nuestros agentes se pondrá en contacto para concretar el agendamiento de su cita.</p>' +
+              '</div>' +
+              '<div id="seguimientoNtNoExiste" class="triage-resultado" style="display:none;">' +
+                '<p>Comprendo lo que me comenta Sr/Sra XXXXX. Sin embargo, debo comentarle que nos estaremos comunicando con usted unos días antes de su cita de seguimiento, para ayudarle con el agendamiento.</p>' +
+                '<p>Le pedimos que se mantenga pendiente de su teléfono, que uno de nuestros agentes se pondrá en contacto para concretar el agendamiento de su cita.</p>' +
+              '</div>' +
+            '</div>'
         }
       ] },
       'Gestión de perfiles', 'Gestión de recetas / órdenes', 'Gestiones programa crónicos'
