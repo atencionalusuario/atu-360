@@ -1138,6 +1138,7 @@
               '<button class="bib-btn" style="background:#EA580C" onclick="generarPreguntasSeguridadInline(\'desbloqueo\')">Preguntas de seguridad</button>' +
             '</div>' +
             '<div id="psPreguntas_desbloqueo"></div>' +
+            '<div id="psResultado_desbloqueo"></div>' +
             '<div id="psPasa_desbloqueo" class="triage-resultado" style="display:none;">' +
               '<p>Muchas gracias por la confirmación, Sr / Sra XXXXXXX.</p>' +
               '<p>Le confirmo que en este instante hemos desbloqueado el acceso a su aplicación.</p>' +
@@ -1149,7 +1150,16 @@
             '</div>'
         },
         'Desvincular perfil de familiar',
-        'Deshabilitar al paciente',
+        { label: 'Deshabilitar al paciente',
+          tipificacion: 'Gestión > Gestión de perfiles > Deshabilitar al paciente',
+          texto:
+            '<p>Comprendo lo que nos comenta y <strong>lamentamos los inconvenientes</strong> que haya podido tener utilizando el servicio.</p>' +
+            '<p>Antes de iniciar con su proceso de baja de usuario, nos gustaría conocer el motivo por el cual, ya no utilizará el servicio.</p>' +
+            '<p>Muchas gracias por sus comentarios. Estamos trabajando por mejorar nuestros servicios.</p>' +
+            '<p>En este caso, para continuar con el proceso, es necesario realizar una validación de su identidad.</p>' +
+            '<p>Para ello, le solicitamos, que nos envíe una fotografía de su rostro junto a su documento de identidad, de manera que en la imagen se logren ver ambos (tanto su rostro como el documento), puede enviarla al correo electrónico <strong>soporte@doctorsv.gob.sv</strong> o a nuestro WhatsApp <strong>2397-2600</strong>, donde se dará el seguimiento correspondiente a su solicitud.</p>' +
+            '<p>Asimismo, se ha generado el <strong>ticket N.° XXX</strong> para el seguimiento de su caso. Si lo desea, puede anotarlo para futuras consultas.</p>'
+        },
         'Habilitar al usuario',
         'Usuario ya aparece como registrado',
         'Cambiar contraseña del usuario'
@@ -1481,6 +1491,8 @@
     var noPasaDiv = document.getElementById('psNoPasa_' + prefix);
     if (pasaDiv) pasaDiv.style.display = 'none';
     if (noPasaDiv) noPasaDiv.style.display = 'none';
+    var resultadoDiv = document.getElementById('psResultado_' + prefix);
+    if (resultadoDiv) resultadoDiv.innerHTML = '';
 
     document.getElementById('psPreguntas_' + prefix).innerHTML = elegidas.map(function(idx, i) {
       return '<div class="pregunta-seguridad-caja">' +
@@ -1509,6 +1521,13 @@
     var noPasaDiv = document.getElementById('psNoPasa_' + prefix);
     if (pasaDiv) pasaDiv.style.display = pasa ? 'block' : 'none';
     if (noPasaDiv) noPasaDiv.style.display = pasa ? 'none' : 'block';
+
+    var resultadoDiv = document.getElementById('psResultado_' + prefix);
+    if (resultadoDiv) {
+      resultadoDiv.innerHTML = '<div class="resultado-seguridad ' + (pasa ? 'pasa' : 'no-pasa') + '">' +
+        (pasa ? '✔ Validación superada (' + correctas + ' de 3 correctas). Puede continuar con la gestión.' : '✘ Validación no superada (' + correctas + ' de 3 correctas). No se debe continuar con la gestión.') +
+      '</div>';
+    }
   }
 
   document.addEventListener('keydown', function(e) {
