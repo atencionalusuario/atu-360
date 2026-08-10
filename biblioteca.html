@@ -969,7 +969,11 @@
                 '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Instrucción: Dejar nota que el usuario fue agendado y cerrar ticket.</p>' +
               '</div>' +
               '<div id="seguimientoStNoHayCupo" class="triage-resultado" style="display:none;">' +
-                '<p style="margin-bottom:6px;"><strong>Cuando la especialidad no sea Psicología ni Nutrición:</strong></p>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'seguimientoNoEsPsicoNutri\', \'seguimientoEsPsicoNutri\')">Especialidad distinta a Psicología o Nutrición</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'seguimientoEsPsicoNutri\', \'seguimientoNoEsPsicoNutri\')">No quiere o es Psicología / Nutrición</button>' +
+                '</div>' +
+                '<div id="seguimientoNoEsPsicoNutri" class="triage-resultado" style="display:none;">' +
                 '<div class="triage-resultado">' +
                   '<p>En este momento podemos ofrecerle una cita lo más pronto posible pero con un especialista distinto.</p>' +
                   '<p>¿Le gustaría agendar una cita de seguimiento con otro especialista?</p>' +
@@ -992,12 +996,14 @@
                   '</div>' +
                   '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Instrucción: Dejar nota que el usuario fue agendado y cerrar ticket.</p>' +
                 '</div>' +
-                '<p style="margin-bottom:6px;"><strong>No quiere o es especialidad Psicología o Nutrición:</strong></p>' +
+                '</div>' +
+                '<div id="seguimientoEsPsicoNutri" class="triage-resultado" style="display:none;">' +
                 '<div class="triage-resultado">' +
                   '<p>Comentarle que actualmente hemos reportado su caso con el número de ticket XXX. En cuanto haya disponibilidad para programar su cita, nos contactaremos con usted lo más pronto posible.</p>' +
                   '<p>Agradecemos que se mantenga pendiente de celular, ya que uno de nuestros asesores se comunicará con usted próximamente.</p>' +
                 '</div>' +
                 '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Instrucción: Dejar nota y, de ser necesario, enviar ticket a estado ATU Sin cupo seguimiento.</p>' +
+                '</div>' +
               '</div>' +
             '</div>' +
             '<div id="seguimientoNoTicket" class="triage-resultado" style="display:none;"></div>'
