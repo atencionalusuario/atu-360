@@ -66,7 +66,7 @@
   .instruccion-btn { max-width: 210px; text-align: center; margin: 0; }
   .bib-btn { background: #0F2070; color: white; padding: 8px 13px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; font-size: 0.73rem; font-family: 'Inter', sans-serif; transition: all 0.15s; min-width: 210px; text-align: center; }
   .bib-btn:hover { background: #1A3DAA; transform: translateY(-1px); }
-  .bib-btn.active { background: #1A3DAA; }
+  .bib-btn.active { background: #29ABE2; box-shadow: 0 0 0 3px rgba(41,171,226,0.35); }
   .placeholder { color: #94A3B8; font-style: italic; }
 
   #vistaCategoria { width: 100%; max-width: 640px; margin: 0 auto; padding: 0 22px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: max-width 0.2s; }
@@ -1055,7 +1055,7 @@
             '<p>De acuerdo, en este momento le estaré enviando un <strong>código de verificación de 6 dígitos vía SMS.</strong> Este código únicamente lo solicitaremos por esta vía cuando usted contacte al centro de soporte oficial.</p>' +
             '<p>Esperemos un momento hasta que lo pueda recibir.</p>' +
             '<div class="triage-resultado">' +
-              '<p>Me indica el código</p>' +
+              '<p>¿Me indica el código?</p>' +
               '<p>Listo, hemos registrado exitosamente su perfil en <strong>DoctorSV</strong>. Usted podrá ingresar a su aplicación utilizando una clave temporal, la cual es su fecha de nacimiento en formato "año, mes, día" (todo pegado, en números).</p>' +
               '<p>Si gusta tome nota de la contraseña: XXXXXXXX. Puede cambiarla inmediatamente al ingresar a la aplicación.</p>' +
             '</div>'
@@ -1066,29 +1066,29 @@
             '<p>Con mucho gusto le puedo ayudar a registrar a su familiar en <strong>DoctorSV</strong>.</p>' +
             '<p>¿Su familiar es menor de edad?</p>' +
             '<div class="triage-acciones">' +
-              '<button class="bib-btn" onclick="mostrarUno(\'familiarMenorEdad\', \'familiarAdulto\')">Es menor de edad</button>' +
-              '<button class="bib-btn" onclick="mostrarUno(\'familiarAdulto\', \'familiarMenorEdad\')">Es adulto</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'familiarMenorEdad\', \'familiarAdulto\'); document.getElementById(\'familiarConfirmacion\').style.display=\'block\';">Es menor de edad</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'familiarAdulto\', \'familiarMenorEdad\'); document.getElementById(\'familiarConfirmacion\').style.display=\'block\';">Es adulto</button>' +
             '</div>' +
             '<div id="familiarMenorEdad" class="triage-resultado" style="display:none;">' +
-              '<p>De acuerdo, me indica la siguiente información:</p>' +
+              '<p>De acuerdo, ¿me indica, por favor, la siguiente información?</p>' +
               '<ul>' +
-                '<li>fecha de nacimiento</li>' +
-                '<li>primer nombre</li>' +
-                '<li>segundo nombre</li>' +
-                '<li>apellido paterno</li>' +
-                '<li>apellido materno</li>' +
-                '<li>sexo</li>' +
+                '<li>Fecha de nacimiento</li>' +
+                '<li>Primer nombre</li>' +
+                '<li>Segundo nombre</li>' +
+                '<li>Apellido paterno</li>' +
+                '<li>Apellido materno</li>' +
+                '<li>Sexo</li>' +
               '</ul>' +
             '</div>' +
             '<div id="familiarAdulto" class="triage-resultado" style="display:none;">' +
-              '<p>De acuerdo, me indica la siguiente información:</p>' +
+              '<p>De acuerdo, ¿me indica, por favor, la siguiente información?</p>' +
               '<ul>' +
                 '<li>El tipo y número de documento de su familiar</li>' +
                 '<li>Motivo de su registro</li>' +
                 '<li>Tipo de parentesco</li>' +
               '</ul>' +
             '</div>' +
-            '<div class="triage-resultado">' +
+            '<div id="familiarConfirmacion" class="triage-resultado" style="display:none;">' +
               '<p>Le confirmo que ya su familiar ha sido registrado. Podrá hacer uso de <strong>DoctorSV</strong> a través de su aplicación.</p>' +
             '</div>'
         },
@@ -1409,6 +1409,11 @@
       if (ocultar) ocultar.style.display = 'none';
     });
     toggleBloque(idMostrar);
+
+    [idMostrar].concat(lista).forEach(function(id) {
+      var boton = document.querySelector('[onclick*="mostrarUno(\'' + id + '\'"]');
+      if (boton) boton.classList.toggle('active', id === idMostrar);
+    });
   }
 
   function bloqueTriageCita(prefix, tipo) {
