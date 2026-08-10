@@ -257,15 +257,15 @@
     <div class="sdp-botones" id="botonesMenu" style="display:none;">
       <div class="btn-col">
         <p class="instruccion instruccion-btn">¿Me pide que le explique algo?</p>
-        <button class="bib-btn" id="btnCatConsulta" onclick="mostrarCategoria('consulta')">Consulta</button>
+        <button class="bib-btn" id="btnCatConsulta" onclick="mostrarCategoria('consulta')">Consultas</button>
       </div>
       <div class="btn-col">
         <p class="instruccion instruccion-btn">¿Me pide hacer o cambiar algo?</p>
-        <button class="bib-btn" id="btnCatGestion" onclick="mostrarCategoria('gestion')">Gestión</button>
+        <button class="bib-btn" id="btnCatGestion" onclick="mostrarCategoria('gestion')">Gestiones</button>
       </div>
       <div class="btn-col">
         <p class="instruccion instruccion-btn">¿Me reporta que algo falla?</p>
-        <button class="bib-btn" id="btnCatIncidencia" onclick="mostrarCategoria('incidencia')">Incidencia</button>
+        <button class="bib-btn" id="btnCatIncidencia" onclick="mostrarCategoria('incidencia')">Incidencias</button>
       </div>
     </div>
   </div>
@@ -1045,7 +1045,31 @@
             '</div>'
         }
       ] },
-      'Gestión de perfiles', 'Gestión de recetas / órdenes', 'Gestiones programa crónicos'
+      { label: 'Gestión de perfiles', hijos: [
+        { label: 'Registro a usuario',
+          tipificacion: 'Gestión > Gestión de perfiles > Registro a usuario',
+          texto:
+            '<p>Con mucho gusto, le puedo ayudar para registrarse en <strong>DoctorSV</strong>. ¿Me podría indicar, por favor, su <strong>fecha de nacimiento</strong>?</p>' +
+            '<p>Le confirmo, su fecha de nacimiento es XX/XX/XXXX.</p>' +
+            '<p>¿Desea que su número de registro sea este mismo desde el cual nos está contactando?</p>' +
+            '<p>De acuerdo, en este momento le estaré enviando un <strong>código de verificación de 6 dígitos vía SMS.</strong> Este código únicamente lo solicitaremos por esta vía cuando usted contacte al centro de soporte oficial.</p>' +
+            '<p>Esperemos un momento hasta que lo pueda recibir.</p>' +
+            '<div class="triage-resultado">' +
+              '<p>Me indica el código</p>' +
+              '<p>Listo, hemos registrado exitosamente su perfil en <strong>DoctorSV</strong>. Usted podrá ingresar a su aplicación utilizando una clave temporal, la cual es su fecha de nacimiento en formato "año, mes, día" (todo pegado, en números).</p>' +
+              '<p>Si gusta tome nota de la contraseña: XXXXXXXX. Puede cambiarla inmediatamente al ingresar a la aplicación.</p>' +
+            '</div>'
+        },
+        'Registro de familiar',
+        'Actualización de datos',
+        'Desbloqueo de usuario',
+        'Desvincular perfil de familiar',
+        'Darse de baja (deshabilitar paciente)',
+        'Habilitación de usuario',
+        'Usuario ya aparece como registrado',
+        'Cambio de contraseña'
+      ] },
+      'Gestión de recetas / órdenes', 'Gestiones programa crónicos'
     ],
     incidencia: ['Opción de incidencia de prueba 1', 'Opción de incidencia de prueba 2']
   };
