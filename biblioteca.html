@@ -1185,14 +1185,13 @@
                 '<p>Le confirmo que su <strong>número de teléfono ha sido actualizado exitosamente</strong> en su cuenta de <strong>DoctorSV</strong>.</p>' +
               '</div>' +
               '<div id="ambosSiNoAcceso" class="triage-resultado" style="display:none;">' +
-                '<p>Gracias por su confirmación. En este momento le ayudaré a actualizar su correo electrónico. ¿Me podría indicar su correo nuevo?</p>' +
-                '<p>Le repito, su correo es XXXXX.</p>' +
-                '<p>Le confirmo que hemos actualizado este dato en <strong>DoctorSV</strong>.</p>' +
-                '<p>Procederemos ahora a la actualización del teléfono. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al correo electrónico confirmado.</p>' +
+                '<p>Gracias por su confirmación. En este momento le ayudaré a actualizar su nuevo número de teléfono. ¿Me brinda su nuevo número?</p>' +
+                '<p style="color:#64748B; font-style:italic;">Instrucción: Marcar check en "Verificado".</p>' +
+                '<p>Le confirmo que hemos actualizado su teléfono en <strong>DoctorSV</strong>.</p>' +
+                '<p>Procederemos ahora a la actualización de su correo. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al nuevo número de teléfono.</p>' +
                 '<p>Por favor, compártame el código una vez lo reciba.</p>' +
-                '<p>Muchas gracias. Ahora, ¿me podría indicar, por favor, el nuevo número de teléfono a registrar?</p>' +
-                '<p>Le enviaremos un código de verificación de <strong>6 dígitos</strong> al nuevo número de teléfono.</p>' +
-                '<p>Le confirmo que su <strong>número de teléfono ha sido actualizado exitosamente</strong> en su cuenta de <strong>DoctorSV</strong>.</p>' +
+                '<p>Muchas gracias. ¿Me podría indicar, por favor, el nuevo correo a registrar?</p>' +
+                '<p>Le confirmo que su <strong>correo ha sido actualizado exitosamente</strong> en su cuenta de <strong>DoctorSV</strong>.</p>' +
               '</div>' +
               '<div id="ambosNoRecuerda" class="triage-resultado" style="display:none;">' +
                 '<p>Comprendo lo que nos comenta. Para proceder, le haré unas preguntas de validación con el objetivo de proteger su información.</p>' +
@@ -1214,8 +1213,31 @@
                 '</div>' +
               '</div>'
           },
-          'Cambio de género',
-          'Cambio de otro dato'
+          { label: 'Cambio de género',
+            texto:
+              '<p>Con gusto le ayudo con el cambio. ¿Me confirma el género?</p>' +
+              '<p>Muchas gracias.</p>' +
+              '<p>Le confirmo, el dato ha sido actualizado en este momento.</p>'
+          },
+          { label: 'Cambio de otro dato',
+            texto:
+              '<p>De acuerdo, con gusto le ayudamos.</p>' +
+              '<p>¿Qué dato le gustaría cambiar?</p>',
+            subBotones: [
+              { label: 'Nombres o Apellidos',
+                texto:
+                  '<p>En este caso, para hacer el proceso, debemos hacer una <strong>validación de su identidad.</strong> Le pedimos que por favor nos envíe una fotografía de su rostro junto a su documento de identidad, de manera que en la imagen se logren ver ambos (tanto su rostro como el documento).</p>' +
+                  '<p>Por favor, envíe esta imagen al correo electrónico <strong>soporte@doctorsv.gob.sv</strong> o a nuestro WhatsApp <strong>2397-2600</strong> para brindarle el seguimiento correspondiente.</p>' +
+                  '<p>Le haremos seguimiento a su reporte a través del número ticket XXX. Si gusta puede anotarlo.</p>'
+              },
+              { label: 'Otro dato',
+                texto:
+                  '<p>Con mucho gusto le ayudamos a cambiar el dato que nos comenta.</p>' +
+                  '<p style="color:#64748B; font-style:italic;">Instrucción: actualizar dato en TCA.</p>' +
+                  '<p>Le confirmo Sr/Sra XXXXXXX, el dato ha sido actualizado en este momento.</p>'
+              }
+            ]
+          }
         ] },
         { label: 'Desbloquear al usuario',
           texto:
