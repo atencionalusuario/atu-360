@@ -1130,8 +1130,20 @@
                 '<button class="bib-btn" onclick="mostrarUno(\'telefonoSiRecuerdaNoAcceso\', [\'telefonoSiCorreo\',\'telefonoNoCorreo\'])">Sí lo recuerda, pero no tiene acceso</button>' +
                 '<button class="bib-btn" onclick="mostrarUno(\'telefonoNoCorreo\', [\'telefonoSiCorreo\',\'telefonoSiRecuerdaNoAcceso\'])">No lo recuerda</button>' +
               '</div>' +
-              '<div id="telefonoSiCorreo" class="triage-resultado" style="display:none;"></div>' +
-              '<div id="telefonoSiRecuerdaNoAcceso" class="triage-resultado" style="display:none;"></div>' +
+              '<div id="telefonoSiCorreo" class="triage-resultado" style="display:none;">' +
+                '<p>Muchas gracias. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al correo electrónico confirmado</p>' +
+                '<p>Por favor, compártame el código una vez lo reciba.</p>' +
+                '<p>Perfecto, muchas gracias. Ahora, ¿me podría indicar, por favor, el nuevo número de teléfono a registrar?</p>' +
+                '<p>Muchas gracias. Le confirmo que su <strong>número de teléfono ha sido actualizado exitosamente</strong> en su cuenta de DoctorSV.</p>' +
+              '</div>' +
+              '<div id="telefonoSiRecuerdaNoAcceso" class="triage-resultado" style="display:none;">' +
+                '<p>Gracias por su confirmación. En este momento le ayudaré a actualizar también su correo electrónico. ¿Me podría indicar su correo electrónico nuevo?</p>' +
+                '<p>Le confirmo: XXXX. Le confirmo que hemos actualizado su correo registrado en DoctorSV.</p>' +
+                '<p>Procederemos ahora a la actualización del teléfono. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al correo electrónico confirmado.</p>' +
+                '<p>Por favor, compártame el código una vez lo reciba.</p>' +
+                '<p>Perfecto, muchas gracias. Ahora, ¿me podría indicar, por favor, el nuevo número de teléfono a registrar?</p>' +
+                '<p>Muchas gracias. Le confirmo que su <strong>número de teléfono ha sido actualizado exitosamente</strong> en su cuenta de DoctorSV.</p>' +
+              '</div>' +
               '<div id="telefonoNoCorreo" class="triage-resultado" style="display:none;"></div>'
           },
           'Cambio de correo',
