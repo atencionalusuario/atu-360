@@ -1120,7 +1120,20 @@
             '</div>'
         },
         { label: 'Actualizar dato del usuario', hijos: [
-          'Cambio de teléfono',
+          { label: 'Cambio de teléfono',
+            tipificacion: 'Gestión > Gestión de perfiles > Actualizar dato del usuario > Cambio de teléfono',
+            texto:
+              '<p>De acuerdo, Sr./Sra. XXX. Con mucho gusto le apoyaré con la actualización de su número de teléfono.</p>' +
+              '<p>Antes de continuar, ¿me confirma: usted tiene acceso a su correo electrónico registrado en DoctorSV?</p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn" onclick="mostrarUno(\'telefonoSiCorreo\', [\'telefonoSiRecuerdaNoAcceso\',\'telefonoNoCorreo\'])">Sí lo recuerda y tiene acceso</button>' +
+                '<button class="bib-btn" onclick="mostrarUno(\'telefonoSiRecuerdaNoAcceso\', [\'telefonoSiCorreo\',\'telefonoNoCorreo\'])">Sí lo recuerda, pero no tiene acceso</button>' +
+                '<button class="bib-btn" onclick="mostrarUno(\'telefonoNoCorreo\', [\'telefonoSiCorreo\',\'telefonoSiRecuerdaNoAcceso\'])">No lo recuerda</button>' +
+              '</div>' +
+              '<div id="telefonoSiCorreo" class="triage-resultado" style="display:none;"></div>' +
+              '<div id="telefonoSiRecuerdaNoAcceso" class="triage-resultado" style="display:none;"></div>' +
+              '<div id="telefonoNoCorreo" class="triage-resultado" style="display:none;"></div>'
+          },
           'Cambio de correo',
           'Cambio de correo y teléfono',
           'Cambio de género',
