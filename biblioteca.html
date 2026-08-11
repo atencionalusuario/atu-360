@@ -1299,7 +1299,60 @@
               '<p><strong>Nuevamente lamentamos los inconvenientes</strong> que esto haya podido causar. Le estaremos contactando a la brevedad.</p>' +
             '</div>'
         },
-        'Cambiar contraseña del usuario'
+        { label: 'Cambiar contraseña del usuario',
+          texto:
+            '<p>Comprendo lo que nos comenta. Enseguida le ayudamos a recuperar el acceso a su aplicación <strong>DoctorSV</strong>. Antes de proceder, le haré unas preguntas de sondeo para entender su caso completamente.</p>' +
+            '<p><strong>¿Usted tiene acceso al número de teléfono que está registrado en la aplicación?</strong></p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'passwordSiAcceso\', \'passwordNoAcceso\')">Sí tiene acceso</button>' +
+              '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'passwordNoAcceso\', \'passwordSiAcceso\')">No tiene acceso</button>' +
+            '</div>' +
+            '<div id="passwordSiAcceso" class="triage-resultado" style="display:none;">' +
+              '<p>Muchas gracias por la confirmación, Sr / Sra XXXXXXX.</p>' +
+              '<p>En este momento procederé a establecer una contraseña temporal para que pueda recuperar el acceso.</p>' +
+              '<p>Al ingresarla en la aplicación <strong>DoctorSV</strong>, usted deberá cambiarla. Le llegará un código de verificación.</p>' +
+              '<p>Le confirmo, su contraseña temporal es: XXXXXXXXXXX.</p>' +
+            '</div>' +
+            '<div id="passwordNoAcceso" class="triage-resultado" style="display:none;">' +
+              '<p><strong>¿Usted tiene acceso al correo electrónico que está registrado en DoctorSV?</strong></p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'passwordCorreoSiAcceso\', \'passwordCorreoNoAcceso\')">Sí tiene acceso</button>' +
+                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'passwordCorreoNoAcceso\', \'passwordCorreoSiAcceso\')">No tiene acceso</button>' +
+              '</div>' +
+              '<div id="passwordCorreoSiAcceso" class="triage-resultado" style="display:none;">' +
+                '<p>Muchas gracias por la confirmación, Sr / Sra XXXXXXX.</p>' +
+                '<p>En este momento procederé a hacerle el cambio de teléfono registrado en la aplicación <strong>DoctorSV</strong>.</p>' +
+                '<p>Le enviaré un código de verificación a su correo. ¿Por favor, me lo podría indicar?</p>' +
+                '<p>Muchas gracias. Le confirmo que hemos hecho la actualización de su teléfono.</p>' +
+                '<p>Ahora procederemos a establecer una contraseña temporal para que pueda recuperar el acceso.</p>' +
+                '<p>Al ingresarla en la aplicación <strong>DoctorSV</strong>, usted deberá cambiarla. Le llegará un código de verificación.</p>' +
+                '<p>Le confirmo, su contraseña temporal es: XXXXXXXXXXX.</p>' +
+              '</div>' +
+              '<div id="passwordCorreoNoAcceso" class="triage-resultado" style="display:none;">' +
+                '<p>¿Usted recuerda su <strong>número</strong> y <strong>correo electrónico</strong> anterior registrado en <strong>DoctorSV</strong>? ¿Podría indicarme ambos datos?</p>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'passwordDatosSiRecuerda\', \'passwordDatosNoRecuerda\')">Sí los recuerda y expresa ambos datos en llamada</button>' +
+                  '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'passwordDatosNoRecuerda\', \'passwordDatosSiRecuerda\')">No los recuerda</button>' +
+                '</div>' +
+                '<div id="passwordDatosSiRecuerda" class="triage-resultado" style="display:none;">' +
+                  '<p>Muchas gracias por la confirmación, Sr / Sra XXXXXXX.</p>' +
+                  '<p>En este momento procederé a hacerle el cambio de correo registrado en la aplicación <strong>DoctorSV</strong>.</p>' +
+                  '<p>¿Me podría indicar su nuevo correo?</p>' +
+                  '<p>Muchas gracias. Le confirmo que hemos hecho la actualización de su correo registrado.</p>' +
+                  '<p>Ahora procederemos a cambiar su teléfono. Le enviaré un código de verificación por SMS. ¿Por favor, me lo podría indicar?</p>' +
+                  '<p>Muchas gracias. Le confirmo que hemos hecho la actualización de su teléfono.</p>' +
+                  '<p>Ahora procederemos a establecer una contraseña temporal para que pueda recuperar el acceso.</p>' +
+                  '<p>Al ingresarla en la aplicación <strong>DoctorSV</strong>, usted deberá cambiarla. En ese momento, le llegará un código de verificación por SMS a su teléfono nuevo.</p>' +
+                  '<p>Le confirmo, su contraseña temporal es: XXXXXXXXXXX.</p>' +
+                '</div>' +
+                '<div id="passwordDatosNoRecuerda" class="triage-resultado" style="display:none;">' +
+                  '<p>En este caso, debemos hacer una <strong>validación de su identidad.</strong> Le pedimos que por favor nos envíe una fotografía de su rostro junto a su documento de identidad, de manera que en la imagen se logren ver ambos (tanto su rostro como el documento).</p>' +
+                  '<p>Por favor, envíe esta imagen al correo electrónico <strong>soporte@doctorsv.gob.sv</strong> o a nuestro WhatsApp <strong>2397-2600</strong> para brindarle el seguimiento correspondiente.</p>' +
+                  '<p>Le haremos seguimiento a su reporte a través del número ticket XXX. Si gusta puede anotarlo.</p>' +
+                '</div>' +
+              '</div>' +
+            '</div>'
+        }
       ] },
       'Gestión de recetas / órdenes', 'Gestiones programa crónicos'
     ],
