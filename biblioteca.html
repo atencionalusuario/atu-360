@@ -1475,6 +1475,7 @@
     opcionesActuales = vista.opciones;
 
     cerrarModalTexto();
+    panelEpoch++;
     document.getElementById('flujoSDP').style.display = 'none';
     document.getElementById('vistaCategoria').style.display = 'flex';
 
@@ -1567,8 +1568,11 @@
     panel.style.scrollMarginTop = '90px';
     panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
+    if (historialBasePanelEpoch !== panelEpoch) {
+      historialBasePanel = historial.length;
+      historialBasePanelEpoch = panelEpoch;
+    }
     panelHistorialStack = [];
-    historialBasePanel = historial.length;
 
     document.querySelectorAll('#opcionesCategoria .bib-btn').forEach(function(btn) {
       btn.classList.toggle('active', btn.textContent === titulo);
@@ -1590,6 +1594,8 @@
 
   var panelHistorialStack = [];
   var historialBasePanel = 0;
+  var panelEpoch = 0;
+  var historialBasePanelEpoch = -1;
 
   function aplicarMostrarUno(idMostrar, lista) {
     lista.forEach(function(id) {
