@@ -69,8 +69,7 @@
   .bib-btn.active { background: #29ABE2; box-shadow: 0 0 0 3px rgba(41,171,226,0.35); }
   .placeholder { color: #94A3B8; font-style: italic; }
 
-  #vistaCategoria { width: 100%; max-width: 640px; margin: 0 auto; padding: 0 22px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: max-width 0.2s; }
-  #vistaCategoria.vista-categoria-ancha { max-width: 1040px; padding: 0 90px 0 22px; }
+  #vistaCategoria { width: 100%; max-width: 1040px; margin: 0 auto; padding: 0 90px 0 22px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .bib-btn-volver { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; background: #EEF2FF; color: #1A3DAA; border: none; border-radius: 999px; font-weight: 600; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; padding: 8px 16px 8px 12px; transition: all 0.15s; }
   .bib-btn-volver:hover { background: #DDE5FF; transform: translateX(-2px); }
   .titulo-categoria { font-size: 0.95rem; font-weight: 700; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 10px; }
@@ -85,7 +84,7 @@
   .modal-overlay { display: none; position: fixed; top: 0; left: 220px; right: 0; bottom: 0; background: rgba(15,32,112,0.45); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.open { display: flex; }
   .modal-box { background: white; border-radius: 10px; max-width: 920px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 30px 36px; position: relative; }
-  .panel-inline { display: none; background: white; border: 1px solid #E2E8F0; border-radius: 10px; max-width: 920px; width: 100%; margin: 24px auto 0; padding: 30px 36px; position: relative; box-shadow: 0 4px 16px rgba(15,32,112,0.08); }
+  .panel-inline { display: none; background: white; border: 1px solid #E2E8F0; border-radius: 10px; max-width: 920px; width: 100%; margin-top: 24px; padding: 30px 36px; box-sizing: border-box; position: relative; box-shadow: 0 4px 16px rgba(15,32,112,0.08); }
   .panel-inline.open { display: block; }
   .modal-close { position: absolute; top: 14px; right: 16px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #F1F5F9; border: none; border-radius: 50%; font-size: 1.4rem; color: #64748B; cursor: pointer; line-height: 1; transition: all 0.15s; }
   .modal-close:hover { background: #E2E8F0; color: #1E293B; }
@@ -1494,10 +1493,54 @@
     panel.classList.add('open');
     panel.style.scrollMarginTop = '90px';
     panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    panelHistorialStack = [];
+    historialBasePanel = historial.length;
   }
 
   function cerrarModalTexto() {
     document.getElementById('modalTexto').classList.remove('open');
+    if (panelHistorialStack.length) {
+      panelHistorialStack = [];
+      historial = historial.slice(0, historialBasePanel);
+      renderRuta();
+    }
+  }
+
+  var panelHistorialStack = [];
+  var historialBasePanel = 0;
+
+  function aplicarMostrarUno(idMostrar, lista) {
+    lista.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    var elMostrar = document.getElementById(idMostrar);
+    if (elMostrar) elMostrar.style.display = 'block';
+    [idMostrar].concat(lista).forEach(function(id) {
+      var boton = document.querySelector('[onclick*="mostrarUno(\'' + id + '\'"]');
+      if (boton) boton.classList.toggle('active', id === idMostrar);
+    });
+  }
+
+  function sincronizarRutaPanel() {
+    historial = historial.slice(0, historialBasePanel).concat(panelHistorialStack.map(function(item, i) {
+      return {
+        label: item.label,
+        restaurar: function() {
+          var eliminados = panelHistorialStack.slice(i + 1);
+          panelHistorialStack = panelHistorialStack.slice(0, i + 1);
+          eliminados.forEach(function(it) {
+            var el = document.getElementById(it.idMostrar);
+            if (el) el.style.display = 'none';
+            var boton = document.querySelector('[onclick*="mostrarUno(\'' + it.idMostrar + '\'"]');
+            if (boton) boton.classList.remove('active');
+          });
+          panelHistorialStack.forEach(function(it) { aplicarMostrarUno(it.idMostrar, it.lista); });
+        }
+      };
+    }));
+    renderRuta();
   }
 
   function abrirModalAyuda() {
@@ -1716,16 +1759,28 @@
 
   function mostrarUno(idMostrar, idsOcultar) {
     var lista = Array.isArray(idsOcultar) ? idsOcultar : [idsOcultar];
-    lista.forEach(function(id) {
-      var ocultar = document.getElementById(id);
-      if (ocultar) ocultar.style.display = 'none';
-    });
-    toggleBloque(idMostrar);
+    var elMostrar = document.getElementById(idMostrar);
+    var yaVisible = elMostrar && elMostrar.style.display === 'block';
+    var groupKey = [idMostrar].concat(lista).slice().sort().join('|');
+    var idxExistente = panelHistorialStack.findIndex(function(it) { return it.groupKey === groupKey; });
 
-    [idMostrar].concat(lista).forEach(function(id) {
-      var boton = document.querySelector('[onclick*="mostrarUno(\'' + id + '\'"]');
-      if (boton) boton.classList.toggle('active', id === idMostrar);
-    });
+    if (yaVisible) {
+      elMostrar.style.display = 'none';
+      var botonActual = document.querySelector('[onclick*="mostrarUno(\'' + idMostrar + '\'"]');
+      if (botonActual) botonActual.classList.remove('active');
+      if (idxExistente !== -1) panelHistorialStack = panelHistorialStack.slice(0, idxExistente);
+      sincronizarRutaPanel();
+      return;
+    }
+
+    aplicarMostrarUno(idMostrar, lista);
+
+    var botonMostrar = document.querySelector('[onclick*="mostrarUno(\'' + idMostrar + '\'"]');
+    var label = botonMostrar ? botonMostrar.textContent : idMostrar;
+
+    if (idxExistente !== -1) panelHistorialStack = panelHistorialStack.slice(0, idxExistente);
+    panelHistorialStack.push({ idMostrar: idMostrar, lista: lista, label: label, groupKey: groupKey });
+    sincronizarRutaPanel();
   }
 
   function bloqueTriageCita(prefix, tipo) {
