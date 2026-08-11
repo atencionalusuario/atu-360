@@ -500,6 +500,32 @@
     abrirModalTexto('Recomendaciones para conectarse a videollamada', TEXTO_RECOMENDACIONES_VIDEO);
   }
 
+  var TEXTO_MODIFICAR_CITA =
+    '<p>De acuerdo Sr./Sra. XXX, le ayudaremos en el proceso para <strong>modificar su cita</strong>.</p>' +
+    '<p>Veo en sistema que usted tiene una cita agendada para el día XXX a las XX:XX am/pm, ¿esta es la cita que desea modificar?</p>' +
+    '<div class="triage-resultado">' +
+      '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
+      '<div class="triage-acciones">' +
+        '<button class="bib-btn" onclick="mostrarUno(\'modificarCitaSi\', \'modificarCitaNo\')">Sí</button>' +
+        '<button class="bib-btn" onclick="mostrarUno(\'modificarCitaNo\', \'modificarCitaSi\')">No</button>' +
+      '</div>' +
+      '<div id="modificarCitaSi" class="triage-resultado" style="display:none;">' +
+        '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+      '</div>' +
+      '<div id="modificarCitaNo" class="triage-resultado" style="display:none;">' +
+        '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
+        '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+      '</div>' +
+      '<div class="triage-acciones" style="margin-bottom:0;">' +
+        '<button class="bib-btn" onclick="abrirRecomendacionesVideollamada()">Recomendaciones para conectarse a videollamada</button>' +
+        '<button class="bib-btn" onclick="abrirRecomendacionesTelefonicas()">Recomendaciones para cita vía telefónica</button>' +
+      '</div>' +
+    '</div>';
+
+  function abrirModificarCita() {
+    abrirModalTexto('Modificar cita', TEXTO_MODIFICAR_CITA);
+  }
+
   var TEXTOS_SDP = {
     si: '<p>Muchas gracias, ¿me podría confirmar si los últimos 4 dígitos de su teléfono siguen siendo XXXX?</p>',
     no: '<p>Muchas gracias, ¿me podría indicar su fecha de nacimiento y su número de teléfono?</p>' +
@@ -993,27 +1019,7 @@
           ]
         },
         { label: 'Modificar cita',
-          texto:
-            '<p>De acuerdo Sr./Sra. XXX, le ayudaremos en el proceso para <strong>modificar su cita</strong>.</p>' +
-            '<p>Veo en sistema que usted tiene una cita agendada para el día XXX a las XX:XX am/pm, ¿esta es la cita que desea modificar?</p>' +
-            '<div class="triage-resultado">' +
-              '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
-              '<div class="triage-acciones">' +
-                '<button class="bib-btn" onclick="mostrarUno(\'modificarCitaSi\', \'modificarCitaNo\')">Sí</button>' +
-                '<button class="bib-btn" onclick="mostrarUno(\'modificarCitaNo\', \'modificarCitaSi\')">No</button>' +
-              '</div>' +
-              '<div id="modificarCitaSi" class="triage-resultado" style="display:none;">' +
-                '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
-              '</div>' +
-              '<div id="modificarCitaNo" class="triage-resultado" style="display:none;">' +
-                '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
-                '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
-              '</div>' +
-              '<div class="triage-acciones" style="margin-bottom:0;">' +
-                '<button class="bib-btn" onclick="abrirRecomendacionesVideollamada()">Recomendaciones para conectarse a videollamada</button>' +
-                '<button class="bib-btn" onclick="abrirRecomendacionesTelefonicas()">Recomendaciones para cita vía telefónica</button>' +
-              '</div>' +
-            '</div>'
+          texto: TEXTO_MODIFICAR_CITA
         },
         { label: 'Cancelar cita',
           texto:
@@ -1029,11 +1035,10 @@
                 '<p>Antes de proceder, nos gustaría comentarle que al cancelar esta cita podría perderse la continuidad de su proceso médico. Si en un futuro desea consultar nuevamente con un especialista, tendría que comenzar el proceso desde el inicio, agendando primero una cita con un médico general.</p>' +
                 '<p>¿Desea que cancelemos su cita con el especialista? o ¿prefiere modificar el horario?</p>' +
                 '<div class="triage-acciones">' +
-                  '<button class="bib-btn" onclick="mostrarUno(\'cancelarEspModificar\', [\'cancelarEspMantener\',\'cancelarEspCancelar\'])">Modificar cita</button>' +
-                  '<button class="bib-btn" onclick="mostrarUno(\'cancelarEspMantener\', [\'cancelarEspModificar\',\'cancelarEspCancelar\'])">Prefiere mantener cita</button>' +
-                  '<button class="bib-btn" onclick="mostrarUno(\'cancelarEspCancelar\', [\'cancelarEspModificar\',\'cancelarEspMantener\'])">Cancelar la cita</button>' +
+                  '<button class="bib-btn" onclick="abrirModificarCita()">Modificar cita</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'cancelarEspMantener\', [\'cancelarEspCancelar\'])">Prefiere mantener cita</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'cancelarEspCancelar\', [\'cancelarEspMantener\'])">Cancelar la cita</button>' +
                 '</div>' +
-                '<div id="cancelarEspModificar" class="triage-resultado" style="display:none;"></div>' +
                 '<div id="cancelarEspMantener" class="triage-resultado" style="display:none;">' +
                   '<p>Perfecto, nos alegra saber que desea mantener su cita.</p>' +
                   '<p>Su cita sigue programada para el xxx a las xxx am/pm . Si necesita hacer algún cambio más adelante, no dude en contactarnos nuevamente.</p>' +
