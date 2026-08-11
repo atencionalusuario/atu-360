@@ -1124,7 +1124,8 @@
             tipificacion: 'Gestión > Gestión de perfiles > Actualizar dato del usuario > Cambio de teléfono',
             texto:
               '<p>De acuerdo, Sr./Sra. XXX. Con mucho gusto le apoyaré con la actualización de su número de teléfono.</p>' +
-              '<p>Antes de continuar, ¿me confirma: usted tiene acceso a su correo electrónico registrado en DoctorSV?</p>' +
+              '<p>Antes de continuar, ¿me confirma: usted tiene acceso a su correo electrónico registrado en DoctorSV? ¿Me podría indicar el correo registrado?</p>' +
+              '<p style="color:#64748B; font-style:italic;">Instrucción: El usuario debe mencionar el correo electrónico registrado. Depende de lo que diga el usuario selecciona la opción. Le puedes dar pistas al usuario del correo registrado. Nunca el correo completo.</p>' +
               '<div class="triage-acciones">' +
                 '<button class="bib-btn" onclick="mostrarUno(\'telefonoSiCorreo\', [\'telefonoSiRecuerdaNoAcceso\',\'telefonoNoCorreo\'])">Sí lo recuerda y tiene acceso</button>' +
                 '<button class="bib-btn" onclick="mostrarUno(\'telefonoSiRecuerdaNoAcceso\', [\'telefonoSiCorreo\',\'telefonoNoCorreo\'])">Sí lo recuerda, pero no tiene acceso</button>' +
@@ -1138,13 +1139,29 @@
               '</div>' +
               '<div id="telefonoSiRecuerdaNoAcceso" class="triage-resultado" style="display:none;">' +
                 '<p>Gracias por su confirmación. En este momento le ayudaré a actualizar también su correo electrónico. ¿Me podría indicar su correo electrónico nuevo?</p>' +
-                '<p>Le confirmo: XXXX. Le confirmo que hemos actualizado su correo registrado en DoctorSV.</p>' +
+                '<p>Le repito, su correo es XXXXX.</p>' +
+                '<p>Le confirmo que hemos actualizado su correo registrado en DoctorSV.</p>' +
                 '<p>Procederemos ahora a la actualización del teléfono. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al correo electrónico confirmado.</p>' +
                 '<p>Por favor, compártame el código una vez lo reciba.</p>' +
                 '<p>Perfecto, muchas gracias. Ahora, ¿me podría indicar, por favor, el nuevo número de teléfono a registrar?</p>' +
                 '<p>Muchas gracias. Le confirmo que su <strong>número de teléfono ha sido actualizado exitosamente</strong> en su cuenta de DoctorSV.</p>' +
               '</div>' +
-              '<div id="telefonoNoCorreo" class="triage-resultado" style="display:none;"></div>'
+              '<div id="telefonoNoCorreo" class="triage-resultado" style="display:none;">' +
+                '<p>Comprendo lo que nos comenta. Para proceder, le haré unas preguntas de validación con el objetivo de proteger su información.</p>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" style="background:#EA580C" onclick="generarPreguntasSeguridadInline(\'telefonoNoRecuerda\')">Preguntas de seguridad</button>' +
+                '</div>' +
+                '<div id="psPreguntas_telefonoNoRecuerda"></div>' +
+                '<div id="psResultado_telefonoNoRecuerda"></div>' +
+                '<div id="psPasa_telefonoNoRecuerda" class="triage-resultado" style="display:none;">' +
+                  '<p>Muchas gracias. Le confirmo que su nuevo número de teléfono ha sido actualizado exitosamente en su cuenta de DoctorSV.</p>' +
+                '</div>' +
+                '<div id="psNoPasa_telefonoNoRecuerda" class="triage-resultado" style="display:none;">' +
+                  '<p>En este caso, para hacer el proceso, debemos hacer una <strong>validación de su identidad.</strong> Le pedimos que por favor nos envíe una fotografía de su rostro junto a su documento de identidad, de manera que en la imagen se logren ver ambos (tanto su rostro como el documento).</p>' +
+                  '<p>Por favor, envíe esta imagen al correo electrónico <strong>soporte@doctorsv.gob.sv</strong> o a nuestro WhatsApp <strong>2397-2600</strong> para brindarle el seguimiento correspondiente.</p>' +
+                  '<p>Le haremos seguimiento a su reporte a través del número ticket XXX. Si gusta puede anotarlo.</p>' +
+                '</div>' +
+              '</div>'
           },
           'Cambio de correo',
           'Cambio de correo y teléfono',
