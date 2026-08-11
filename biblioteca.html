@@ -485,19 +485,11 @@
     '<p>4) Tenga a la mano <strong>papel y lápiz</strong> para anotar todas las indicaciones e información que le brinde el médico.</p>' +
     '<p>5) Tenga en cuenta que la cita será con un <strong>médico general</strong> y tendrá una duración estimada de <strong>30 minutos</strong>. El médico le podrá brindar un diagnóstico, y <strong>de ser necesario</strong>, emitirá la receta y los estudios médicos pertinentes.</p>';
 
-  function abrirRecomendacionesTelefonicas() {
-    abrirModalTexto('Recomendaciones para cita vía telefónica', TEXTO_RECOMENDACIONES_TEL);
-  }
-
   var TEXTO_RECOMENDACIONES_VIDEO =
     '<p>1) Busque un lugar con buena iluminación, buena conexión a internet o señal móvil y que esté apartado del ruido.</p>' +
     '<p>2) Procure conectarse <strong>puntualmente</strong> a la videollamada. Estará en la sala de espera desde <strong>la aplicación o en Google Meet</strong> hasta que el médico le brinde acceso.</p>' +
     '<p>3) Asegúrese que el dispositivo que usará tenga habilitado el <strong>micrófono</strong>, la <strong>cámara</strong> y cuente con suficiente <strong>carga en la batería</strong>.</p>' +
     '<p>4) Si tiene algún inconveniente o duda, <strong>se puede comunicar con nosotros y con todo gusto le atenderemos</strong>.</p>';
-
-  function abrirRecomendacionesVideollamada() {
-    abrirModalTexto('Recomendaciones para conectarse a videollamada', TEXTO_RECOMENDACIONES_VIDEO);
-  }
 
   var TEXTO_MODIFICAR_CITA =
     '<p>De acuerdo Sr./Sra. XXX, le ayudaremos en el proceso para <strong>modificar su cita</strong>.</p>' +
@@ -516,9 +508,11 @@
         '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
       '</div>' +
       '<div class="triage-acciones" style="margin-bottom:0;">' +
-        '<button class="bib-btn" onclick="abrirRecomendacionesVideollamada()">Recomendaciones para conectarse a videollamada</button>' +
-        '<button class="bib-btn" onclick="abrirRecomendacionesTelefonicas()">Recomendaciones para cita vía telefónica</button>' +
+        '<button class="bib-btn" onclick="toggleBloque(\'recVideoModificar\')">Recomendaciones para conectarse a videollamada</button>' +
+        '<button class="bib-btn" onclick="toggleBloque(\'recTelModificar\')">Recomendaciones para cita vía telefónica</button>' +
       '</div>' +
+      '<div id="recVideoModificar" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_VIDEO + '</div>' +
+      '<div id="recTelModificar" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_TEL + '</div>' +
     '</div>';
 
   function abrirModificarCita() {
@@ -1889,8 +1883,9 @@
             '<p>Muchas gracias. Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
             '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
             '<div class="triage-acciones" style="margin-bottom:0;">' +
-              '<button class="bib-btn" onclick="abrirRecomendacionesVideollamada()">Recomendaciones para conectarse a videollamada</button>' +
+              '<button class="bib-btn" onclick="toggleBloque(\'rec' + idVideoSi + '\')">Recomendaciones para conectarse a videollamada</button>' +
             '</div>' +
+            '<div id="rec' + idVideoSi + '" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_VIDEO + '</div>' +
           '</div>' +
           '<div id="' + idNoPuedeNota + '" class="triage-resultado" style="display:none;">' +
             '<p>Entiendo lo que nos comenta, con gusto le puedo ayudar a tener una cita por llamada telefónica.</p>' +
@@ -1899,8 +1894,9 @@
             '<p>Excelente, queda programada su cita el día XXXXXX XX a las XX de la tarde / de la mañana.</p>' +
             '<p style="color:#64748B; font-size:0.82rem;"><em>Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</em></p>' +
             '<div class="triage-acciones" style="margin-bottom:0;">' +
-              '<button class="bib-btn" onclick="abrirRecomendacionesTelefonicas()">Recomendaciones para cita vía telefónica</button>' +
+              '<button class="bib-btn" onclick="toggleBloque(\'rec' + idNoPuedeNota + '\')">Recomendaciones para cita vía telefónica</button>' +
             '</div>' +
+            '<div id="rec' + idNoPuedeNota + '" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_TEL + '</div>' +
           '</div>' +
         '</div>' +
       '</div>'
