@@ -519,6 +519,13 @@
     abrirModalTexto('Modificar cita', TEXTO_MODIFICAR_CITA);
   }
 
+  function abrirActualizarDato(label) {
+    var perfiles = OPCIONES_CATEGORIA.gestion.find(function(x) { return x.label === 'Gestión de perfiles'; });
+    var actualizar = perfiles.hijos.find(function(x) { return x.label === 'Actualizar datos del usuario'; });
+    var item = actualizar.hijos.find(function(x) { return x && x.label === label; });
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter);
+  }
+
   var TEXTOS_SDP = {
     si: '<p>Muchas gracias, ¿me podría confirmar si los últimos 4 dígitos de su teléfono siguen siendo XXXX?</p>',
     no: '<p>Muchas gracias, ¿me podría indicar su fecha de nacimiento y su número de teléfono?</p>' +
@@ -1283,13 +1290,10 @@
             '<div id="usuarioRegistradoSi" class="triage-resultado" style="display:none;">' +
               '<p>Comprendo. Gracias por su confirmación. En este caso debemos hacer una actualización de sus datos, ¿cuál le gustaría actualizar primero?</p>' +
               '<div class="triage-acciones">' +
-                '<button class="bib-btn" onclick="toggleBloque(\'usuarioRegistradoSiTelefono\')">Cambio de teléfono</button>' +
-                '<button class="bib-btn" onclick="toggleBloque(\'usuarioRegistradoSiCorreo\')">Cambio de correo</button>' +
-                '<button class="bib-btn" onclick="toggleBloque(\'usuarioRegistradoSiAmbos\')">Cambio de correo y teléfono</button>' +
+                '<button class="bib-btn" onclick="abrirActualizarDato(\'Cambio de teléfono\')">Cambio de teléfono</button>' +
+                '<button class="bib-btn" onclick="abrirActualizarDato(\'Cambio de correo\')">Cambio de correo</button>' +
+                '<button class="bib-btn" onclick="abrirActualizarDato(\'Cambio de correo y teléfono\')">Cambio de correo y teléfono</button>' +
               '</div>' +
-              '<div id="usuarioRegistradoSiTelefono" class="triage-resultado" style="display:none;"></div>' +
-              '<div id="usuarioRegistradoSiCorreo" class="triage-resultado" style="display:none;"></div>' +
-              '<div id="usuarioRegistradoSiAmbos" class="triage-resultado" style="display:none;"></div>' +
             '</div>' +
             '<div id="usuarioRegistradoNo" class="triage-resultado" style="display:none;">' +
               '<p>De acuerdo. En este caso, para ayudarle, <strong>debemos hacer una validación de su identidad.</strong> Para ello, le solicitamos, que nos envíe una fotografía de su rostro junto a su documento de identidad, de manera que en la imagen se logren ver ambos (tanto su rostro como el documento), puede enviarla al correo electrónico <strong>soporte@doctorsv.gob.sv</strong> o a nuestro WhatsApp <strong>2397-2600</strong>, donde se dará el seguimiento correspondiente a su solicitud.</p>' +
