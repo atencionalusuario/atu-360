@@ -1163,7 +1163,40 @@
                 '</div>' +
               '</div>'
           },
-          'Cambio de correo',
+          { label: 'Cambio de correo',
+            tipificacion: 'Gestión > Gestión de perfiles > Actualizar dato del usuario > Cambio de correo',
+            texto:
+              '<p>De acuerdo, Sr./Sra. XXX. Con mucho gusto le apoyaré con la actualización de su correo electrónico.</p>' +
+              '<p>Antes de continuar, ¿me confirma, por favor, si el número de teléfono registrado finaliza en XXXX?</p>' +
+              '<p style="color:#64748B; font-style:italic;">Instrucción: El usuario debe mencionar el teléfono registrado. Depende de lo que diga el usuario selecciona la opción.</p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn" onclick="mostrarUno(\'correoSiTelefono\', \'correoNoTelefono\')">Sí</button>' +
+                '<button class="bib-btn" onclick="mostrarUno(\'correoNoTelefono\', \'correoSiTelefono\')">No</button>' +
+              '</div>' +
+              '<div id="correoSiTelefono" class="triage-resultado" style="display:none;">' +
+                '<p>Muchas gracias. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al número de teléfono confirmado</p>' +
+                '<p>Por favor, compártame el código una vez lo reciba.</p>' +
+                '<p>Perfecto, muchas gracias. Ahora, ¿me podría indicar, por favor, el nuevo correo electrónico a registrar?</p>' +
+                '<p>Muchas gracias. Le confirmo que su <strong>correo electrónico ha sido actualizado exitosamente</strong> en su cuenta de DoctorSV.</p>' +
+              '</div>' +
+              '<div id="correoNoTelefono" class="triage-resultado" style="display:none;">' +
+                '<p>Comprendo lo que nos comenta. Para proceder, le haré unas preguntas de validación con el objetivo de proteger su información.</p>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" style="background:#EA580C" onclick="generarPreguntasSeguridadInline(\'correoNoRecuerda\')">Preguntas de seguridad</button>' +
+                '</div>' +
+                '<div id="psPreguntas_correoNoRecuerda"></div>' +
+                '<div id="psResultado_correoNoRecuerda"></div>' +
+                '<div id="psPasa_correoNoRecuerda" class="triage-resultado" style="display:none;">' +
+                  '<p>Muchas gracias. Ahora, ¿me podría indicar, por favor, el nuevo correo electrónico a registrar?</p>' +
+                  '<p>Le confirmo que su nuevo correo electrónico ha sido actualizado exitosamente en su cuenta de DoctorSV.</p>' +
+                '</div>' +
+                '<div id="psNoPasa_correoNoRecuerda" class="triage-resultado" style="display:none;">' +
+                  '<p>En este caso, para hacer el proceso, debemos hacer una <strong>validación de su identidad.</strong> Le pedimos que por favor nos envíe una fotografía de su rostro junto a su documento de identidad, de manera que en la imagen se logren ver ambos (tanto su rostro como el documento).</p>' +
+                  '<p>Por favor, envíe esta imagen al correo electrónico <strong>soporte@doctorsv.gob.sv</strong> o a nuestro WhatsApp <strong>2397-2600</strong> para brindarle el seguimiento correspondiente.</p>' +
+                  '<p>Le haremos seguimiento a su reporte a través del número ticket XXX. Si gusta puede anotarlo.</p>' +
+                '</div>' +
+              '</div>'
+          },
           'Cambio de correo y teléfono',
           'Cambio de género',
           'Cambio de otro dato'
