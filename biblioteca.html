@@ -1487,7 +1487,15 @@
               '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           }
         ] },
-        'Ausencia de productos de la consulta',
+        { label: 'Ausencia de productos de la consulta',
+          texto:
+            '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+            '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
+            '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+            '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+        },
         'Temas con la calidez de la atención'
       ] },
       { label: 'Tercerías', tooltip: 'El inconveniente está relacionado a una empresa que presta servicio a DoctorSV' },
