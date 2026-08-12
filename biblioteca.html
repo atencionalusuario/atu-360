@@ -60,7 +60,7 @@
   .bib-saludo p:last-child { margin-bottom: 0; }
   .bib-saludo strong { color: #0F2070; }
   .instruccion { font-style: italic; color: #64748B; font-size: 0.86rem; font-family: 'Inter', sans-serif; }
-  .sdp-botones { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sdp-botones { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
   #modalSubBotones { justify-content: center; margin-top: 18px; margin-bottom: 20px; }
   .btn-col { display: flex; flex-direction: column; align-items: center; gap: 5px; }
   .instruccion-btn { max-width: 210px; text-align: center; margin: 0; }
@@ -372,6 +372,15 @@
       <p>Al finalizar la atención, registra esa misma ruta en el campo de tipificación del sistema de gestión, seleccionando cada nivel en el orden en que aparece aquí.</p>
       <p>Esto asegura que la llamada quede clasificada correctamente para las métricas del equipo.</p>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalTip" onclick="if(event.target===this) cerrarModalTip()">
+  <div class="modal-box" style="max-width:480px; text-align:center;">
+    <button class="modal-close" onclick="cerrarModalTip()">&times;</button>
+    <div style="font-size:2.6rem; margin-bottom:8px;">💡</div>
+    <h3 class="modal-titulo" style="text-align:center;">¡Recuerda!</h3>
+    <div id="modalTipCuerpo" class="modal-ayuda-cuerpo" style="text-align:left;"></div>
   </div>
 </div>
 
@@ -1409,8 +1418,8 @@
     incidencia: [
       { label: 'Médicos', tooltip: 'El inconveniente está relacionado al área médica', pregunta: '¿Qué fallo ocurrió con el área médica?', hijos: [
         { label: 'Temas con la calidad de la atención',
-          texto: '<p>¿Con cuál de estos temas se relaciona lo que nos comenta?</p>',
-          subBotones: [
+          pregunta: '¿Con cuál de estos temas tiene inconveniente el usuario?',
+          hijos: [
             { label: 'No se conectó el médico',
               texto:
                 '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para escalar su caso y, además, le asistiré en el agendamiento de una nueva cita.</p>' +
@@ -1439,7 +1448,43 @@
             }
           ]
         },
-        'Errores en los productos de la consulta',
+        { label: 'Errores en los productos de la consulta', hijos: [
+          { label: 'Error en receta',
+            alerta:
+              '<p><strong>Error en receta:</strong> cuando efectivamente hay un dato incorrecto con la receta en cuanto al nombre del medicamento o en cuanto a la dosis recetada.</p>' +
+              '<p><strong>Medicamento no disponible:</strong> cuando el usuario nos dice que en la farmacia le dijeron que no había existencia del medicamento o que no había existencia de la presentación recetada.</p>',
+            texto:
+              '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+              '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>? O si gusta, también me puede brindar el número de la receta.</p>' +
+              '<p>¿Me podría confirmar si su cita fue con <strong>médico general</strong> o con un <strong>especialista</strong>? ¿Me podría indicar el nombre del medicamento que desea corregir?</p>' +
+              '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+              '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+          },
+          { label: 'Error en estudios de laboratorio',
+            alerta:
+              '<p><strong>Error en estudios de laboratorio:</strong> Usuario reporta que su órden de estudios de laboratorio tiene errores y se desea asistencia de un médico para corregirla.</p>',
+            texto:
+              '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+              '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>? O si gusta, también me puede brindar el número del estudio de laboratorio.</p>' +
+              '<p>¿Me podría confirmar si su estudio fue emitido por un <strong>médico general</strong> o por un <strong>especialista</strong>?</p>' +
+              '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+              '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
+          },
+          { label: 'Error en estudios de imágenes',
+            texto:
+              '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+              '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>? O si gusta, también me puede brindar el número del estudio de imágenes.</p>' +
+              '<p>¿Me podría confirmar si su cita fue con <strong>médico general</strong> o con un <strong>especialista</strong>?</p>' +
+              '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+              '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
+          }
+        ] },
         'Ausencia de productos de la consulta',
         'Temas con la calidez de la atención'
       ] },
@@ -1623,6 +1668,7 @@
       pushVistaOpciones(op.label, op.hijos, op.vistaTarjetas, op.pregunta);
     } else if (op && op.texto) {
       abrirModalTexto(op.tituloModal || op.label, op.texto, op.tipificacion, op.subBotones, op.ocultarFooter);
+      if (op.alerta) abrirModalTip(op.alerta);
     }
   }
 
@@ -1728,6 +1774,15 @@
 
   function cerrarModalAyuda() {
     document.getElementById('modalAyudaTipificacion').classList.remove('open');
+  }
+
+  function abrirModalTip(html) {
+    document.getElementById('modalTipCuerpo').innerHTML = html;
+    document.getElementById('modalTip').classList.add('open');
+  }
+
+  function cerrarModalTip() {
+    document.getElementById('modalTip').classList.remove('open');
   }
 
   function irArriba() {
