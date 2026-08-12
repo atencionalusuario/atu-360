@@ -1408,7 +1408,37 @@
     ],
     incidencia: [
       { label: 'Médicos', tooltip: 'El inconveniente está relacionado al área médica', pregunta: '¿Qué fallo ocurrió con el área médica?', hijos: [
-        'Temas con la calidad de la atención',
+        { label: 'Temas con la calidad de la atención',
+          texto: '<p>¿Con cuál de estos temas se relaciona lo que nos comenta?</p>',
+          subBotones: [
+            { label: 'No se conectó el médico',
+              texto:
+                '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para escalar su caso y, además, le asistiré en el agendamiento de una nueva cita.</p>' +
+                '<p>¿Desea que le asista para agendar una nueva cita?</p>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" onclick="abrirModificarCita()">Reagendar cita</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'calidadNoConectoNo\', [])">No quiere reagendar</button>' +
+                '</div>' +
+                '<div id="calidadNoConectoNo" class="triage-resultado" style="display:none;">' +
+                  '<p>Le pedimos nuevamente disculpas por los inconvenientes.</p>' +
+                  '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser escalado a la gerencia y se puedan tomar las acciones internas correspondientes.</p>' +
+                  '<p>¿Me podría indicar, por favor, el nombre y apellido del médico/a y la fecha y hora de la cita?</p>' +
+                  '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
+                '</div>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* Especialidad</p>'
+            },
+            { label: 'Otros temas de calidad de atención',
+              tituloModal: 'Otras inconformidades/ errores en la consulta',
+              texto:
+                '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+                '<p>¿Me podría indicar, por favor, el <strong>nombre y apellido del médico/a</strong> y la <strong>fecha y hora de la cita</strong>?</p>' +
+                '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* Especialidad</p>'
+            }
+          ]
+        },
         'Errores en los productos de la consulta',
         'Ausencia de productos de la consulta',
         'Temas con la calidez de la atención'
