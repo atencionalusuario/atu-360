@@ -1406,7 +1406,16 @@
       ] },
       'Gestiones programa crónicos'
     ],
-    incidencia: ['Médicos', 'Tercerías', 'IT']
+    incidencia: [
+      { label: 'Médicos', tooltip: 'El inconveniente está relacionado al área médica', pregunta: '¿Qué fallo ocurrió con el área médica?', hijos: [
+        'Temas con la calidad de la atención',
+        'Errores en los productos',
+        'Ausencia de productos',
+        'Temas con la calidez de la atención'
+      ] },
+      { label: 'Tercerías', tooltip: 'El inconveniente está relacionado a una empresa que presta servicio a DoctorSV' },
+      { label: 'IT', tooltip: 'El inconveniente está relacionado a un problema técnico o con la tecnología' }
+    ]
   };
 
   var pilaVistas = [];
@@ -1499,8 +1508,8 @@
     irANodoBusqueda(nodo);
   }
 
-  function pushVistaOpciones(titulo, opciones, tarjetas) {
-    pilaVistas.push({ titulo: titulo, opciones: opciones, tarjetas: !!tarjetas });
+  function pushVistaOpciones(titulo, opciones, tarjetas, tituloVista) {
+    pilaVistas.push({ titulo: titulo, opciones: opciones, tarjetas: !!tarjetas, tituloVista: tituloVista || titulo });
     renderVistaActual();
 
     var snapshot = pilaVistas.slice();
@@ -1531,7 +1540,7 @@
 
     document.getElementById('vistaCategoria').classList.toggle('vista-categoria-ancha', !!vista.tarjetas);
 
-    document.getElementById('tituloCategoria').textContent = vista.titulo;
+    document.getElementById('tituloCategoria').textContent = vista.tituloVista || vista.titulo;
     var contenedor = document.getElementById('opcionesCategoria');
     var contenedorTarjetas = document.getElementById('tarjetasScripts');
 
@@ -1560,7 +1569,8 @@
     contenedor.classList.toggle('dos-columnas', opcionesActuales.length > 8);
     contenedor.innerHTML = opcionesActuales.map(function(op, i) {
       var label = typeof op === 'string' ? op : op.label;
-      return '<button class="bib-btn" onclick="clickOpcion(' + i + ')">' + label + '</button>';
+      var tooltip = (op && op.tooltip) ? ' tiene-tooltip" data-tooltip="' + op.tooltip + '"' : '"';
+      return '<button class="bib-btn' + tooltip + ' onclick="clickOpcion(' + i + ')">' + label + '</button>';
     }).join('');
   }
 
@@ -1579,7 +1589,7 @@
   function clickOpcion(i) {
     var op = opcionesActuales[i];
     if (op && op.hijos) {
-      pushVistaOpciones(op.label, op.hijos, op.vistaTarjetas);
+      pushVistaOpciones(op.label, op.hijos, op.vistaTarjetas, op.pregunta);
     } else if (op && op.texto) {
       abrirModalTexto(op.tituloModal || op.label, op.texto, op.tipificacion, op.subBotones, op.ocultarFooter);
     }
