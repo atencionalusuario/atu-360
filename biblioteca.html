@@ -1358,7 +1358,53 @@
             '</div>'
         }
       ] },
-      'Gestión de recetas / órdenes', 'Gestiones programa crónicos'
+      { label: 'Gestión de recetas / órdenes', hijos: [
+        { label: 'Receta vencida',
+          texto:
+            '<p>Entiendo lo que nos comenta. Por favor, Sr / Sra XXXXXXX. ¿Me indica el código de su receta para verificar en nuestro sistema?</p>' +
+            '<p>Muchas gracias, por favor, permítame unos momentos en línea para verificar la información.</p>' +
+            '<p style="color:#64748B; font-style:italic;">Instrucción: Validar en TCA el estado de la receta. ¿Qué estado tiene?</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" onclick="mostrarUno(\'recetaMenos72\', \'recetaMas72\')">Tiene menos de 72 horas vencida</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'recetaMas72\', \'recetaMenos72\')">Tiene más de 72 horas vencida</button>' +
+            '</div>' +
+            '<div id="recetaMenos72" class="triage-resultado" style="display:none;">' +
+              '<p style="color:#64748B; font-style:italic;">Instrucción: Solicita la reactivación de la receta al supervisor si tiene menos de 72hrs vencida.</p>' +
+              '<p>Gracias por su amable espera en línea.</p>' +
+              '<p>Le comento que hemos realizado el cambio de estado de la receta de "Expirada" a "Pendiente", para que pueda retirar sus medicamentos.</p>' +
+              '<p>Le pedimos, por favor, que verifique en la aplicación en la sección de Recetas.</p>' +
+            '</div>' +
+            '<div id="recetaMas72" class="triage-resultado" style="display:none;">' +
+              '<p>Gracias por su amable espera en línea.</p>' +
+              '<p>Hemos revisado el estado de su receta en nuestro sistema y aparece como "Expirada". En este caso, realizaremos un reporte al área correspondiente con el ticket XXXX.</p>' +
+              '<p>Le pedimos estar pendiente, ya que se pondrán en contacto con usted para darle seguimiento a su caso a la brevedad posible.</p>' +
+              '<p style="color:#64748B; font-style:italic;">Instrucción: Crear ticket y enviar a MED Critico (si fue emitida por un médico general) o MED ESP Critico (si fue emitida por un médico especialista)</p>' +
+            '</div>'
+        },
+        { label: 'Órdenes vencidas',
+          texto:
+            '<p>Entiendo lo que nos comenta. Por favor, Sr / Sra XXXXXXX. ¿Me indica el código de su orden de estudio para verificar en nuestro sistema?</p>' +
+            '<p>Muchas gracias, por favor, permítame unos momentos en línea para verificar la información.</p>' +
+            '<p style="color:#64748B; font-style:italic;">Instrucción: Validar en TCA el estado de la orden de estudio. ¿Qué estado tiene?</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" onclick="mostrarUno(\'ordenMenos72\', \'ordenMas72\')">Tiene menos de 72 horas vencida</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'ordenMas72\', \'ordenMenos72\')">Tiene más de 72 horas vencida</button>' +
+            '</div>' +
+            '<div id="ordenMenos72" class="triage-resultado" style="display:none;">' +
+              '<p style="color:#64748B; font-style:italic;">Instrucción: Solicita la reactivación de la orden de estudio al supervisor si tiene menos de 72hrs vencida.</p>' +
+              '<p>Gracias por su amable espera en línea.</p>' +
+              '<p>Le comento que hemos realizado el cambio de estado de la orden de estudio de "Expirada" a "Pendiente", para que pueda realizar su estudio.</p>' +
+              '<p>Le pedimos, por favor, que verifique en la aplicación en la sección de Estudios clínicos.</p>' +
+            '</div>' +
+            '<div id="ordenMas72" class="triage-resultado" style="display:none;">' +
+              '<p>Gracias por su amable espera en línea.</p>' +
+              '<p>Hemos revisado el estado de su orden de estudio en nuestro sistema y aparece como "Expirada". En este caso, realizaremos un reporte al área correspondiente con el ticket XXXX.</p>' +
+              '<p>Le pedimos estar pendiente, ya que se pondrán en contacto con usted para darle seguimiento a su caso a la brevedad posible.</p>' +
+              '<p style="color:#64748B; font-style:italic;">Instrucción: Crear ticket y enviar a MED Critico (si fue emitida por un médico general) o MED ESP Critico (si fue emitida por un médico especialista)</p>' +
+            '</div>'
+        }
+      ] },
+      'Gestiones programa crónicos'
     ],
     incidencia: ['Opción de incidencia de prueba 1', 'Opción de incidencia de prueba 2']
   };
