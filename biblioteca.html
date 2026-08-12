@@ -1409,8 +1409,8 @@
     incidencia: [
       { label: 'Médicos', tooltip: 'El inconveniente está relacionado al área médica', pregunta: '¿Qué fallo ocurrió con el área médica?', hijos: [
         'Temas con la calidad de la atención',
-        'Errores en los productos',
-        'Ausencia de productos',
+        'Errores en los productos de la consulta',
+        'Ausencia de productos de la consulta',
         'Temas con la calidez de la atención'
       ] },
       { label: 'Tercerías', tooltip: 'El inconveniente está relacionado a una empresa que presta servicio a DoctorSV' },
@@ -1534,13 +1534,14 @@
     document.getElementById('flujoSDP').style.display = 'none';
     document.getElementById('vistaCategoria').style.display = 'flex';
 
-    var preguntaBusqueda = CATEGORIAS_CON_BUSQUEDA[categoriaActualId];
+    var esPreguntaPropia = vista.tituloVista && vista.tituloVista !== vista.titulo;
+    var preguntaBusqueda = esPreguntaPropia ? vista.tituloVista : CATEGORIAS_CON_BUSQUEDA[categoriaActualId];
     document.getElementById('cajaBusquedaCategoria').style.display = preguntaBusqueda ? 'block' : 'none';
     if (preguntaBusqueda) document.getElementById('preguntaCategoria').textContent = preguntaBusqueda;
 
     document.getElementById('vistaCategoria').classList.toggle('vista-categoria-ancha', !!vista.tarjetas);
 
-    document.getElementById('tituloCategoria').textContent = vista.tituloVista || vista.titulo;
+    document.getElementById('tituloCategoria').textContent = vista.titulo;
     var contenedor = document.getElementById('opcionesCategoria');
     var contenedorTarjetas = document.getElementById('tarjetasScripts');
 
