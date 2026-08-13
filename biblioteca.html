@@ -528,6 +528,14 @@
     abrirModalTexto('Modificar cita', TEXTO_MODIFICAR_CITA);
   }
 
+  function abrirErrorEnReceta() {
+    cerrarModalTip();
+    var medicos = OPCIONES_CATEGORIA.incidencia.find(function(x) { return x.label === 'Médicos'; });
+    var errores = medicos.hijos.find(function(x) { return x.label === 'Errores en los productos de la consulta'; });
+    var item = errores.hijos.find(function(x) { return x && x.label === 'Error en receta'; });
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter);
+  }
+
   function abrirActualizarDato(label) {
     var perfiles = OPCIONES_CATEGORIA.gestion.find(function(x) { return x.label === 'Gestión de perfiles'; });
     var actualizar = perfiles.hijos.find(function(x) { return x.label === 'Actualizar datos del usuario'; });
@@ -1499,9 +1507,114 @@
             '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
             '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
         },
-        'Temas con la calidez de la atención'
+        { label: 'Temas con la calidez de la atención',
+          texto:
+            '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+            '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
+            '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
+            '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+            '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+        }
       ] },
-      { label: 'Tercerías', tooltip: 'El inconveniente está relacionado a una empresa que presta servicio a DoctorSV' },
+      { label: 'Tercerías', tooltip: 'El inconveniente está relacionado a una empresa que presta servicio a DoctorSV', pregunta: '¿Con quién tuvo el inconveniente el usuario?', hijos: [
+        { label: 'Con una farmacia', hijos: [
+          { label: 'Calidad del servicio farmacias',
+            texto:
+              '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>.</p>' +
+              '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que se puedan tomar las acciones internas correspondientes.</p>' +
+              '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>?</p>' +
+              '<p>Muchas gracias, ¿me podría confirmar el <strong>número de la receta</strong>?</p>' +
+              '<p>Gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* ID de la receta</p>'
+          },
+          { label: 'Error en dispensación',
+            texto:
+              '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+              '<p>Nos gustaría hacerle la siguiente consulta: ¿usted recibió un medicamento errado? ¿Ya empezó a tomar el medicamento?</p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'dispensacionSiConsumio\', [])">Sí lo consumió</button>' +
+              '</div>' +
+              '<div id="dispensacionSiConsumio" class="triage-resultado" style="display:none;">' +
+                '<p>En este caso, nos gustaría asegurarnos que no haya afectaciones a su salud.</p>' +
+                '<p>En este momento, si usted está de acuerdo, le transferiré la llamada con uno de nuestros médicos de apoyo para que evalúe su caso y le pueda brindar las recomendaciones necesarias.</p>' +
+                '<p>Voy a transferir la llamada, por favor no cuelgue.</p>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Tipificación 1: Consultas.<br>Tipificación 2: Orientación de salud<br>Tipificación 3: Sobre indicaciones medicas<br>Estado: MED Triage</p>' +
+              '</div>' +
+              '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070; margin:16px 0 8px;">No lo ha consumido:</h4>' +
+              '<div class="triage-resultado">' +
+                '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de la receta</strong>?</p>' +
+                '<p>Muchas gracias. Agregaré toda la información a un reporte. Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+              '</div>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* ID de la receta</p>'
+          },
+          { label: 'Medicamento no disponible',
+            alerta:
+              '<p>En esta tipificación es muy importante conocer si el medicamento no disponible forma parte del programa de crónicos o si fue recetado por un médico de agudos.</p>' +
+              '<p><strong>Error en receta:</strong> cuando efectivamente hay un dato incorrecto con la receta en cuanto al nombre del medicamento o en cuanto a la dosis recetada.</p>' +
+              '<p><strong>Medicamento no disponible:</strong> cuando el usuario nos dice que en la farmacia le dijeron que no había existencia del medicamento o que no había existencia de la presentación recetada.</p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn" onclick="abrirErrorEnReceta()">Ir a error en receta</button>' +
+              '</div>',
+            texto:
+              '<div class="triage-criterios-grid">' +
+                '<div class="triage-criterio-caja">' +
+                  '<p class="triage-criterio-titulo" style="margin-bottom:8px;"><strong>Medicamento del programa crónicos</strong></p>' +
+                  '<p>Su reporte nos ayuda a mejorar, por lo que le agradecemos haberse tomado el tiempo para contactarnos.</p>' +
+                  '<p>Para completar el retiro de sus medicamentos, le invitamos a visitar una de las <strong>farmacias cercanas a su ubicación</strong>.</p>' +
+                  '<p>Con gusto podemos apoyarle a encontrar la opción más conveniente a través de la aplicación.</p>' +
+                  '<p>En DoctorSV, su salud es nuestra prioridad.</p>' +
+                  '<p style="color:#64748B; font-style:italic;">(Orientar al usuario donde puede visualizar las farmacias dentro de la aplicación)</p>' +
+                '</div>' +
+                '<div class="triage-criterio-caja">' +
+                  '<p class="triage-criterio-titulo" style="margin-bottom:8px;"><strong>Medicamento de pacientes agudos</strong></p>' +
+                  '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX.</p>' +
+                  '<p>Le pedimos disculpas por las molestias que esto haya podido causar. En este mismo momento crearemos un reporte para que sea escalado.</p>' +
+                  '<p>¿Me podría confirmar el nombre de la cadena y la sucursal? ¿Me podría confirmar el número de la receta?</p>' +
+                  '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+                  '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+                '</div>' +
+              '</div>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* ID de la receta</p>'
+          }
+        ] },
+        { label: 'Con un laboratorio', hijos: [
+          { label: 'Calidad del servicio laboratorios',
+            texto:
+              '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+              '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
+              '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
+          },
+          { label: 'Error en procesamiento de estudios',
+            tituloModal: 'Laboratorios - Errores',
+            texto:
+              '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+              '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
+              '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+              '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
+          },
+          { label: 'Error en resultados',
+            tituloModal: 'Laboratorios - Errores',
+            texto:
+              '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+              '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
+              '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+              '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
+          }
+        ] },
+        'Con un centro de imágenes',
+        'Con un centro de procedimientos presenciales'
+      ] },
       { label: 'IT', tooltip: 'El inconveniente está relacionado a un problema técnico o con la tecnología' }
     ]
   };
