@@ -268,6 +268,7 @@
     </div>
 
     <p class="instruccion" id="instMenu" style="display:none;">¿Qué necesita el usuario?</p>
+    <p class="instruccion" id="instMenuDetalle" style="display:none; color:#64748B; font-style:italic;">Escucha atentamente al usuario e identifica el motivo de su contacto.</p>
 
     <div class="sdp-botones" id="botonesMenu" style="display:none;">
       <div class="btn-col">
@@ -461,7 +462,7 @@
     pilaVistas = [];
     document.getElementById('vistaCategoria').style.display = 'none';
     document.getElementById('flujoSDP').style.display = 'flex';
-    ['cajaSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'botonesMenu'].forEach(function(id) {
+    ['cajaSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'botonesMenu'].forEach(function(id) {
       document.getElementById(id).style.display = 'none';
     });
     ['btnSdpSi', 'btnSdpNo', 'btnConfSi', 'btnConfNo'].forEach(function(id) {
@@ -572,6 +573,7 @@
     document.getElementById('cajaRegistro').style.display = esNo ? 'block' : 'none';
 
     document.getElementById('instMenu').style.display = esNo ? 'block' : 'none';
+    document.getElementById('instMenuDetalle').style.display = esNo ? 'block' : 'none';
     document.getElementById('botonesMenu').style.display = esNo ? 'flex' : 'none';
 
     pilaVistas = [];
@@ -597,6 +599,7 @@
     document.getElementById('textoConfirmacion').innerHTML = TEXTOS_CONFIRMACION[tipo];
 
     document.getElementById('instMenu').style.display = 'block';
+    document.getElementById('instMenuDetalle').style.display = 'block';
     document.getElementById('botonesMenu').style.display = 'flex';
 
     historial = historial.slice(0, 2).concat([{
@@ -1519,7 +1522,7 @@
         }
       ] },
       { label: 'Tercerías', tooltip: 'El inconveniente está relacionado a una empresa que presta servicio a DoctorSV', pregunta: '¿Con quién tuvo el inconveniente el usuario?', hijos: [
-        { label: 'Con una farmacia', hijos: [
+        { label: 'Farmacias', hijos: [
           { label: 'Calidad del servicio farmacias',
             texto:
               '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>.</p>' +
@@ -1582,7 +1585,7 @@
               '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* ID de la receta</p>'
           }
         ] },
-        { label: 'Con un laboratorio', hijos: [
+        { label: 'Laboratorios', hijos: [
           { label: 'Calidad del servicio laboratorios',
             texto:
               '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
@@ -1612,8 +1615,8 @@
               '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
           }
         ] },
-        'Con un centro de imágenes',
-        'Con un centro de procedimientos presenciales'
+        'Centros de imágenes',
+        'Centros de procedimientos presenciales'
       ] },
       { label: 'IT', tooltip: 'El inconveniente está relacionado a un problema técnico o con la tecnología' },
       { label: 'Operativas de todo el servicio', pregunta: 'Incidencias operativas', hijos: [
