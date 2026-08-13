@@ -1618,13 +1618,52 @@
         'Centros de imágenes',
         'Centros de procedimientos presenciales'
       ] },
-      { label: 'IT', tooltip: 'El inconveniente está relacionado a un problema técnico o con la tecnología' },
+      { label: 'IT', tooltip: 'El inconveniente está relacionado a un problema técnico o con la tecnología', hijos: [
+        'Problemas con las funciones de la aplicación',
+        'Aplicación no disponible / en mantenimiento',
+        'No llega el código OTP'
+      ] },
       { label: 'Operativas de todo el servicio', pregunta: 'Incidencias operativas', hijos: [
-        'Inconformidad con disponibilidad de citas',
-        'Inconformidad con medicamentos / estudios disponibles',
-        'Inconformidad con ubicación de farmacias / laboratorios',
-        'Inconformidad con no homologación de constancia médica / no generar incapacidad',
-        'Inconformidad con referencia externa'
+        { label: 'Inconformidad con disponibilidad de citas',
+          tituloModal: 'Disponibilidad de citas',
+          texto:
+            '<p>Comprendo, Sr/Sra. XXXX. Lamentamos sinceramente lo que nos comenta.</p>' +
+            '<p>Su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>.</p>' +
+            '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>'
+        },
+        { label: 'Inconformidad con medicamentos / estudios disponibles',
+          tituloModal: 'Medicamentos / Estudios disponibles',
+          texto:
+            '<p>Comprendo, Sr/Sra. XXXX. Lamentamos sinceramente lo que nos comenta.</p>' +
+            '<p>Su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>.</p>' +
+            '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+            '<p>¿Me podría informar cuál es el medicamento / estudio en el que está interesado?</p>' +
+            '<p>Muchas gracias por la información, le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido, ya que nos permite mejorar cada día.</p>'
+        },
+        { label: 'Inconformidad con ubicación de farmacias / laboratorios',
+          tituloModal: 'Inconformidad con ubicación',
+          texto:
+            '<p>Comprendo, Sr/Sra. XXXX. Lamentamos sinceramente lo que nos comenta.</p>' +
+            '<p>Su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>.</p>' +
+            '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+            '<p>¿Me podría indicar cuál es su departamento y la zona donde le gustaría que se incrementara la cobertura?</p>' +
+            '<p>Muchas gracias por la información, le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido, ya que nos permite mejorar cada día.</p>'
+        },
+        { label: 'Inconformidad con no homologación de constancia médica / no generar incapacidad',
+          tituloModal: 'No homologación de constancia médica',
+          texto:
+            '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia.</strong></p>' +
+            '<p>Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>'
+        },
+        { label: 'Inconformidad con referencia externa',
+          texto:
+            '<p>Comprendo, Sr/Sra. XXXX. Lamentamos sinceramente lo que nos comenta.</p>' +
+            '<p>Su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>.</p>' +
+            '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+            '<p>¿Me podría informar a <strong>cuál establecimiento visitó</strong>? ¿Me podría confirmar a <strong>qué institución pertenece</strong>?</p>' +
+            '<p style="color:#64748B; font-style:italic;">Completar campos del SDP con la información descrita por el usuario</p>' +
+            '<p>Muchas gracias por la información, le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido, ya que nos permite mejorar cada día.</p>'
+        }
       ] }
     ]
   };
