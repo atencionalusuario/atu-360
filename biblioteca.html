@@ -1621,7 +1621,38 @@
       { label: 'IT', tooltip: 'El inconveniente está relacionado a un problema técnico o con la tecnología', hijos: [
         'Problemas con las funciones de la aplicación',
         'Aplicación no disponible / en mantenimiento',
-        'No llega el código OTP'
+        { label: 'No llega el código OTP',
+          tituloModal: 'Recomendaciones para recibir código OTP.',
+          texto:
+            '<p>Muchas gracias por su confirmación. En caso de que aún no reciba su código OTP, le recomiendo validar lo siguiente:</p>' +
+            '<ol>' +
+              '<li>Verifique que su número esté correcto.</li>' +
+              '<li>Active y desactive el modo avión por 30 segundos.</li>' +
+              '<li>Revise la carpeta de spam o mensajes bloqueados.</li>' +
+              '<li>Libere espacio en su bandeja de SMS.</li>' +
+              '<li>Reinicie su teléfono y solicite el código nuevamente.</li>' +
+            '</ol>' +
+            '<p>¿Podría confirmarme si luego de estos pasos logró recibir el código?</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'otpAhoraSi\', \'otpTodaviaNo\')">Ahora sí lo recibió</button>' +
+              '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'otpTodaviaNo\', \'otpAhoraSi\')">Todavía no</button>' +
+            '</div>' +
+            '<div id="otpAhoraSi" class="triage-resultado" style="display:none;">' +
+              '<p>Muchas gracias por su confirmación. Ya podrá hacer uso de su aplicación <strong>DoctorSV</strong>.</p>' +
+            '</div>' +
+            '<div id="otpTodaviaNo" class="triage-resultado" style="display:none;">' +
+              '<p>Muchas gracias por su reporte. Le realizaré una serie de preguntas para validar su caso:</p>' +
+              '<p>¿Tiene la última versión de la app?<br>' +
+              '¿Qué acción está realizando: ¿cambiando su contraseña, restableciendo contraseña, registrándose o desbloqueando su cuenta?<br>' +
+              '¿Ha intentado <strong>reenviarse el código nuevamente</strong>?<br>' +
+              '¿El número de celular registrado en la aplicación es correcto y está activo?<br>' +
+              '¿Su teléfono tiene señal en este momento?<br>' +
+              '¿Ha revisado su bandeja de mensajes de texto (SMS)?</p>' +
+              '<p>Adicional nos comparte: compañía movil, modelo de Telefono y tipo de sistema operativo (Android o iOS)</p>' +
+              '<p>Recuerde: El código será enviado por SMS al número de teléfono registrado en la aplicación. Si no ha recibido el código de verificación, por favor, espere 10 minutos y luego seleccione <strong>Reenviar código de verificación</strong> para recibirlo nuevamente</p>' +
+              '<p>Gracias por sus respuestas. Hemos generado el ticket xxxx, el cual se escalará al área correspondiente.</p>' +
+            '</div>'
+        }
       ] },
       { label: 'Operativas de todo el servicio', pregunta: 'Incidencias operativas', hijos: [
         { label: 'Inconformidad con disponibilidad de citas',
