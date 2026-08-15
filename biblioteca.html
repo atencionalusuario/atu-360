@@ -119,8 +119,8 @@
   .cintillo-btn { width: 42px; height: 42px; border-radius: 50%; background: #0F2070; color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
   .cintillo-btn:hover { background: #1A3DAA; transform: scale(1.07); }
   .cintillo-btn svg { width: 20px; height: 20px; }
-  .cintillo-btn.cintillo-ayuda { background: #29ABE2; }
-  .cintillo-btn.cintillo-ayuda:hover { background: #1E93CC; }
+  .cintillo-btn.cintillo-ayuda { background: #0F2070; }
+  .cintillo-btn.cintillo-ayuda:hover { background: #1A3DAA; }
   .cintillo-btn.cintillo-gem { background: linear-gradient(135deg, #4285F4, #9B72CB, #D96570); }
   .cintillo-btn.cintillo-seguridad { background: #EA580C; }
   .cintillo-btn.cintillo-seguridad:hover { background: #C2410C; }
@@ -139,13 +139,15 @@
   .cintillo-btn.cintillo-gem:hover { filter: brightness(1.08); }
   .cintillo-btn.cintillo-busqueda { background: #0F2070; }
   .cintillo-btn.cintillo-busqueda:hover { background: #1A3DAA; }
-  .cintillo-btn.cintillo-arriba { background: #64748B; }
-  .cintillo-btn.cintillo-arriba:hover { background: #475569; }
+  .btn-scroll-top { position: fixed; right: 26px; bottom: 26px; width: 42px; height: 42px; border-radius: 50%; background: #0F2070; color: white; border: none; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 14px rgba(15,32,112,0.3); z-index: 55; opacity: 0; transform: translateY(8px); transition: opacity 0.2s, transform 0.2s; }
+  .btn-scroll-top.visible { display: flex; opacity: 1; transform: translateY(0); }
+  .btn-scroll-top:hover { background: #1A3DAA; }
+  .btn-scroll-top svg { width: 20px; height: 20px; }
   .cintillo-separador { width: 26px; height: 1px; background: #E2E8F0; margin: 2px auto; }
-  .cintillo-btn.cintillo-cat { background: #1A3DAA; }
-  .cintillo-btn.cintillo-cat:hover { background: #0F2070; }
-  .cintillo-btn.cintillo-despedida { background: #0D9488; }
-  .cintillo-btn.cintillo-despedida:hover { background: #0B7A70; }
+  .cintillo-btn.cintillo-cat { background: #0F2070; }
+  .cintillo-btn.cintillo-cat:hover { background: #1A3DAA; }
+  .cintillo-btn.cintillo-despedida { background: #0F2070; }
+  .cintillo-btn.cintillo-despedida:hover { background: #1A3DAA; }
 
   .modal-despedida-cuerpo .despedida-etiqueta { font-family: 'Montserrat', sans-serif; font-size: 0.78rem; font-weight: 600; font-style: italic; color: #64748B; margin: 0 0 8px; }
   .modal-despedida-cuerpo .despedida-caja { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 18px 22px; margin-bottom: 20px; }
@@ -288,7 +290,9 @@
   </div>
 
   <div id="vistaCategoria" style="display:none;">
-    <button class="bib-btn-volver" onclick="volverAtras()">&larr; Volver a atrás</button>
+    <button class="cintillo-btn" style="align-self:flex-start;" title="Volver a atrás" onclick="volverAtras()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+    </button>
 
     <div class="caja-busqueda-cat" id="cajaBusquedaCategoria" style="display:none;">
       <h2 class="pregunta-categoria" id="preguntaCategoria">¿Qué tipo de información necesita el usuario?</h2>
@@ -358,10 +362,11 @@
   <button class="cintillo-btn cintillo-gem" title="Asistente Gemini" onclick="window.open('https://gemini.google.com/u/1/gem/54309f25a04c', '_blank')">
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.6 4.6 3.4 7.4 8 8-4.6.6-7.4 3.4-8 8-.6-4.6-3.4-7.4-8-8 4.6-.6 7.4-3.4 8-8Z"/></svg>
   </button>
-  <button class="cintillo-btn cintillo-arriba" title="Ir arriba" onclick="irArriba()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
-  </button>
 </div>
+
+<button class="btn-scroll-top" id="btnScrollTop" title="Ir arriba" onclick="irArriba()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+</button>
 
 <div class="modal-overlay" id="modalAyudaTipificacion" onclick="if(event.target===this) cerrarModalAyuda()">
   <div class="modal-box" style="max-width:520px;">
@@ -1994,6 +1999,16 @@
     var main = document.querySelector('.main');
     main.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var main = document.querySelector('.main');
+    var btnScrollTop = document.getElementById('btnScrollTop');
+    if (main && btnScrollTop) {
+      main.addEventListener('scroll', function() {
+        btnScrollTop.classList.toggle('visible', main.scrollTop > 300);
+      });
+    }
+  });
 
   var resultadosBusquedaGlobal = [];
 
