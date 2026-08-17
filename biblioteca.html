@@ -1035,7 +1035,35 @@
                 '</div>' +
                 '<div id="triageFamiliarNo" class="triage-resultado" style="display:none;"></div>'
             },
-            { label: 'Cita nueva proveniente de triage', texto: '' },
+            { label: 'Cita nueva proveniente de triage',
+              texto:
+                '<div class="triage-video-caja">' +
+                  '<p>De acuerdo, ¿puede conectarse a una <strong>videollamada</strong>?</p>' +
+                '</div>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'triageDirectoVideoSi\', \'triageDirectoNoPuede\')">Sí puede</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'triageDirectoNoPuede\', \'triageDirectoVideoSi\')">No puede</button>' +
+                '</div>' +
+                '<div id="triageDirectoVideoSi" class="triage-resultado" style="display:none;">' +
+                  '<p>Muchas gracias. Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
+                  '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                  '<div class="triage-acciones" style="margin-bottom:0;">' +
+                    '<button class="bib-btn" onclick="toggleBloque(\'recVideoTriageDirecto\')">Recomendaciones para conectarse a videollamada</button>' +
+                  '</div>' +
+                  '<div id="recVideoTriageDirecto" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_VIDEO + '</div>' +
+                '</div>' +
+                '<div id="triageDirectoNoPuede" class="triage-resultado" style="display:none;">' +
+                  '<p>Entiendo lo que nos comenta, con gusto le puedo ayudar a tener una cita por llamada telefónica.</p>' +
+                  '<p><strong>En esta cita el médico se pondrá en contacto con usted llamándole a su número de teléfono. Sólo tenga en cuenta que las citas por esta vía pueden tener limitaciones en cuanto al diagnóstico que realice su médico.</strong></p>' +
+                  '<p>La cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
+                  '<p>Excelente, queda programada su cita el día XXXXXX XX a las XX de la tarde / de la mañana.</p>' +
+                  '<p style="color:#64748B; font-size:0.82rem;"><em>Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</em></p>' +
+                  '<div class="triage-acciones" style="margin-bottom:0;">' +
+                    '<button class="bib-btn" onclick="toggleBloque(\'recTelTriageDirecto\')">Recomendaciones para cita vía telefónica</button>' +
+                  '</div>' +
+                  '<div id="recTelTriageDirecto" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_TEL + '</div>' +
+                '</div>'
+            },
             { label: 'Cita para lectura de exámenes', texto: '' },
         { label: 'Referencia con especialista',
           texto:
