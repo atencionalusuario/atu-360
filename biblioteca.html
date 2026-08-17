@@ -828,7 +828,65 @@
             '</div>'
         }
       ] },
-      'Usuario recibió un contacto previo',
+      { label: 'Usuario recibió un contacto previo',
+        tituloModal: 'Consulta sobre contacto previo',
+        texto:
+          '<p>Comprendo lo que nos comenta, Sr./Sra.XXX. Permítame un momento en línea mientras valido el motivo del contacto.</p>' +
+          '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070; text-align:center; margin:16px 0 8px;">SÍ SE CUENTA CON TICKET</h4>' +
+          '<div class="triage-resultado">' +
+            '<p>Muchas gracias por su amable espera. Al verificar la información, identifico que nos comunicamos con usted para dar seguimiento al ticket <strong>XXXX</strong>, con el fin de solicitarle/informarle <strong>[detalle correspondiente]</strong>.</p>' +
+          '</div>' +
+          '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción:<br>Validar en SDP con el número del que nos contacta el usuario y documento de identidad del usuario para validar el motivo del contacto. Según sea el caso proceder a dar respuesta al usuario.</p>' +
+          '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Adicional, según sea el caso cambiarlo al estado correspondiente.</p>' +
+          '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070; text-align:center; margin:16px 0 8px;">NO SE CUENTA CON TICKET</h4>' +
+          '<div class="triage-resultado">' +
+            '<p>Lamento informarle que no logramos identificar la razón por la cual nos estuvimos comunicando con usted. Sin embargo, estamos a la orden para cualquier consulta sobre <strong>DoctorSV</strong>.</p>' +
+          '</div>'
+      },
+      { label: 'Retirar medicamento',
+        tituloModal: 'Retiro de medicamento',
+        texto:
+          '<p>Comprendo su consulta. Para brindarle una mejor orientación, <strong>¿puede indicarme quién retirará los medicamentos: usted o un tercero?</strong></p>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn" onclick="mostrarUno(\'retiroPaciente\', [\'retiroTerceroAdulto\',\'retiroTerceroMenor\'])">Paciente</button>' +
+            '<button class="bib-btn" onclick="mostrarUno(\'retiroTerceroAdulto\', [\'retiroPaciente\',\'retiroTerceroMenor\'])">Tercero para un adulto</button>' +
+            '<button class="bib-btn" onclick="mostrarUno(\'retiroTerceroMenor\', [\'retiroPaciente\',\'retiroTerceroAdulto\'])">Tercero para un menor</button>' +
+          '</div>' +
+          '<div id="retiroPaciente" class="triage-resultado" style="display:none;">' +
+            '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">Retiro de medicamento por parte del paciente</h4>' +
+            '<p>Debe presentar la siguiente documentación:</p>' +
+            '<p>1. <strong>Uno</strong> de estos <strong>cuatro</strong> documentos oficiales: pasaporte salvadoreño, DUI, carnet de residente o licencia de conducir. Puede ser en físico, digital, copia o foto y no requere estar vigente.</p>' +
+            '<p>2. Código QR de la receta, captura de pantalla o número de receta.</p>' +
+          '</div>' +
+          '<div id="retiroTerceroAdulto" class="triage-resultado" style="display:none;">' +
+            '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">Retiro de medicamento por un tercero para paciente adulto</h4>' +
+            '<p>Se debe presentar la siguiente documentación:</p>' +
+            '<p>1. El tercero que retira debe presentar <strong>uno</strong> de estos <strong>cuatro</strong> documentos oficiales en físico y original: pasaporte salvadoreño, DUI, carnet de residente o licencia de conducir salvadoreña.</p>' +
+            '<p>2. Presentar fotografía, copia o captura de pantalla de <strong>uno</strong> de los <strong>cuatro</strong> documentos oficiales del paciente: pasaporte salvadoreño, DUI, carnet de residente o licencia de conducir salvadoreña.</p>' +
+            '<p>3. Presentar el código QR de la receta (en la propia aplicación o una captura de pantalla) o el número de la receta.</p>' +
+            '<p style="color:#64748B; font-style:italic;">Nota: bajo ningún motivo se permite la entrega de medicamentos a menores de edad, aunque presenten la documentación de sus padres.</p>' +
+          '</div>' +
+          '<div id="retiroTerceroMenor" class="triage-resultado" style="display:none;">' +
+            '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">Retiro de medicamento por un tercero para un menor</h4>' +
+            '<p>Se debe presentar la siguiente documentación:</p>' +
+            '<p>1. El tercero que retira debe presentar <strong>uno</strong> de estos <strong>cuatro</strong> documentos en físico y original: pasaporte salvadoreño, DUI, carnet de residente o licencia de conducir salvadoreña.</p>' +
+            '<p>2. Presentar fotografía, copia o captura de pantalla de <strong>uno</strong> de los <strong>cuatro</strong> documentos oficiales (pasaporte, DUI, carnet de residente o licencia de conducir) del responsable del menor que lo tenga registrado como familiar en la aplicación donde hayan pasado consulta.</p>' +
+            '<p>3. Presentar el código QR de la receta (en la propia aplicación o una captura de pantalla) o el número de la receta.</p>' +
+            '<p style="color:#64748B; font-style:italic;">Nota: bajo ningún motivo se permite la entrega de medicamentos a menores de edad, aunque presenten la documentación de sus padres.</p>' +
+          '</div>' +
+          '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070; text-align:center; margin:16px 0 8px;">RECORDATORIO</h4>' +
+          '<div class="triage-resultado">' +
+            '<p>Le recuerdo que su receta tiene una vigencia de <strong>5 días (120 horas)</strong> a partir de la hora de emisión. Le invitamos a visitar la farmacia más cercana dentro de ese plazo.</p>' +
+          '</div>'
+      },
+      { label: 'Proceso para ver a un especialista',
+        texto:
+          '<p>Con mucho gusto le comento el proceso para que pueda pasar consulta con uno de nuestros <strong>médicos especialistas</strong>:</p>' +
+          '<p>1) El <strong>PRIMER PASO</strong> es asistir a una cita para que pueda ser evaluado y, en caso de ser necesario, el médico general le emitirá órdenes de estudios médicos.</p>' +
+          '<p>2) Una vez realizados los estudios, en el <strong>SEGUNDO PASO</strong>, deberá agendar una nueva cita para que un médico general revise los resultados y determine la emisión de una orden de referencia, siempre con el especialista.</p>' +
+          '<p>3) En el <strong>TERCER PASO</strong>, recibirá un contacto de nuestra parte para agendar una cita con el especialista indicado según la disponibilidad.</p>' +
+          '<p>¿Desea que le ayude a agendar la cita del <strong>PRIMER PASO</strong> con el médico general?</p>'
+      },
       { label: 'Canales oficiales',
         texto:
           '<p>Canal telefónico: <strong>136</strong></p>' +
@@ -914,6 +972,7 @@
     { label: 'Otras orientaciones', hijos: [
       { label: 'Usuario en sala de espera',
         texto:
+          '<p style="color:#64748B; font-style:italic;">Instrucción: ¿Dónde se encuentra el usuario? ¿Ya inició la hora de la consulta?</p>' +
           '<svg viewBox="0 0 640 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:600px;display:block;margin:0 auto 18px;">' +
             '<rect x="20" y="20" width="213" height="46" fill="#93C5FD"/>' +
             '<rect x="233" y="20" width="170" height="46" fill="#86EFAC"/>' +
