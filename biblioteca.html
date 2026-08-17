@@ -2160,6 +2160,10 @@
     });
   });
 
+  function quitarHTML(html) {
+    return html.replace(/<[^>]*>/g, ' ');
+  }
+
   function buscarGlobal(q) {
     q = q.trim().toLowerCase();
     var contenedor = document.getElementById('resultadosBusquedaGlobal');
@@ -2169,10 +2173,23 @@
       return;
     }
 
+    var palabras = q.split(/\s+/).filter(Boolean);
+
     resultadosBusquedaGlobal = [];
     Object.keys(OPCIONES_CATEGORIA).forEach(function(cat) {
       aplanarArbol(OPCIONES_CATEGORIA[cat], []).forEach(function(n) {
-        if (n.label.toLowerCase().includes(q)) {
+        var item = n.item;
+        var haystack = n.label.toLowerCase();
+        if (item && typeof item === 'object') {
+          if (item.texto) haystack += ' ' + quitarHTML(item.texto).toLowerCase();
+          if (item.pregunta) haystack += ' ' + item.pregunta.toLowerCase();
+          if (item.subBotones) {
+            haystack += ' ' + item.subBotones.map(function(b) {
+              return b.label + ' ' + (b.texto ? quitarHTML(b.texto) : '');
+            }).join(' ').toLowerCase();
+          }
+        }
+        if (palabras.every(function(p) { return haystack.includes(p); })) {
           resultadosBusquedaGlobal.push({ label: n.label, cat: cat, ancestros: n.ancestros, item: n.item, index: n.index });
         }
       });
