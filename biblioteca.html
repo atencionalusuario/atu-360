@@ -371,7 +371,7 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 17v-5"/><circle cx="12" cy="8.2" r="0.1" fill="currentColor" stroke-width="1.5"/></svg>
   </button>
   <button class="cintillo-btn cintillo-matriz" title="Matriz de calidad" onclick="abrirModalMatrizCalidad()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="13" width="3" height="5" rx="0.5"/><rect x="12" y="9" width="3" height="9" rx="0.5"/><rect x="17" y="5" width="3" height="13" rx="0.5"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 3v2a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V3"/><path d="m9 13 2 2 4-4"/></svg>
   </button>
   <button class="cintillo-btn cintillo-despedida" title="Script de despedida" onclick="abrirModalDespedida()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -415,19 +415,19 @@
           <div class="matriz-calidad-label">Expresión y personalización de la llamada</div>
           <div class="matriz-calidad-valor" style="background:#0A3D62;">30%</div>
         </div>
-        <div class="matriz-calidad-fila" style="background:#1976A6;">
+        <div class="matriz-calidad-fila" style="background:#1976A6; cursor:pointer;" onclick="mostrarDetalleMatriz('registro')">
           <div class="matriz-calidad-label">Registro y complementación</div>
           <div class="matriz-calidad-valor" style="background:#1976A6;">30%</div>
         </div>
-        <div class="matriz-calidad-fila" style="background:#2196F3;">
+        <div class="matriz-calidad-fila" style="background:#2196F3; cursor:pointer;" onclick="mostrarDetalleMatriz('gestionLlamada')">
           <div class="matriz-calidad-label">Gestión de la llamada</div>
           <div class="matriz-calidad-valor" style="background:#2196F3;">30%</div>
         </div>
-        <div class="matriz-calidad-fila" style="background:#7EC8F0;">
+        <div class="matriz-calidad-fila" style="background:#7EC8F0; cursor:pointer;" onclick="mostrarDetalleMatriz('gestionTiempo')">
           <div class="matriz-calidad-label">Gestión del tiempo</div>
           <div class="matriz-calidad-valor" style="background:#7EC8F0;">10%</div>
         </div>
-        <div class="matriz-calidad-fila" style="background:#E53935;">
+        <div class="matriz-calidad-fila" style="background:#E53935; cursor:pointer;" onclick="mostrarDetalleMatriz('autofails')">
           <div class="matriz-calidad-label">Autofails totales</div>
           <div class="matriz-calidad-valor" style="background:#E53935;">100%</div>
         </div>
@@ -2117,6 +2117,111 @@
             '<p>Cuando el usuario expresa inconformidad, molestia o comentarios negativos sobre el servicio, la aplicación o la atención recibida, el agente no utiliza frases empáticas para validar la situación del usuario, limitándose a responder de forma neutral, evasiva o indiferente, sin incurrir en la aceptación del comentario negativo.</p>' +
             '<p>Ejemplos: "Siento que esta experiencia no haya sido como esperaba" / "Entiendo que esto puede ser molesto para usted, sin embargo estoy trabajando para apoyarle" / "Comprendo que esto pueda causarte molestia, sin embargo estoy trabajando para solventar su caso"</p>'
         }
+      ]
+    },
+    registro: {
+      label: 'Registro y complementación',
+      valor: '30%',
+      color: '#1976A6',
+      items: [
+        { label: 'Solicita y confirma datos personales del usuario', valor: '3%',
+          explicacion:
+            '<p>El agente solicita al usuario sus datos personales requeridos para la atención: nombre completo, número de DUI, teléfono de contacto u otros según corresponda, los confirma y valida su veracidad.</p>'
+        },
+        { label: 'Ingresa correctamente el ID de la llamada', valor: '3%',
+          explicacion:
+            '<p>El agente registra correctamente en el ticket el ID correspondiente a la llamada, garantizando la trazabilidad, seguimiento y correcta identificación de la interacción atendida.</p>'
+        },
+        { label: 'Descripción del caso completa y alineada a la solicitud', valor: '15%',
+          explicacion:
+            '<p>El agente documenta correctamente el motivo de contacto del usuario. Se penaliza cuando la descripción del ticket es incompleta, genérica, no refleja lo que el usuario solicitó, o presenta errores ortográficos que dificultan la comprensión del caso.</p>'
+        },
+        { label: 'Documentación de evidencia y respaldo del caso', valor: '9%',
+          explicacion:
+            '<p>El agente adjunta o referencia la documentación de respaldo requerida según la tipificación del caso (capturas, números de gestión, referencias médicas u otras según procedimiento), garantizando la trazabilidad y continuidad del proceso de atención.</p>'
+        },
+        { label: 'No crea perfil de solicitante en SDP cuando aplica', valor: '30%', rojo: true,
+          explicacion:
+            '<p>El agente omite crear el perfil del usuario en SDP en aquellos casos donde el procedimiento lo exige, impidiendo su correcta identificación, la trazabilidad del ticket y la continuidad del servicio.</p>'
+        }
+      ]
+    },
+    gestionLlamada: {
+      label: 'Gestión de la llamada',
+      valor: '30%',
+      color: '#2196F3',
+      items: [
+        { label: 'Realiza preguntas de sondeo adecuadas y verifica el entendimiento del caso', valor: '12%',
+          explicacion:
+            '<p>El agente formula preguntas específicas, pertinentes y alineadas a los scripts de biblioteca, de acuerdo con el tipo de solicitud o inconveniente presentado por el usuario.</p>' +
+            '<p>Antes de proceder con la gestión, confirma que ha comprendido correctamente el motivo de la llamada, reformulando o validando la solicitud cuando corresponde.</p>' +
+            '<p>Se penaliza cuando el agente omite preguntas clave, asume datos incompletos o imprecisos sin confirmarlos, o inicia la resolución sin haber verificado el entendimiento del caso.</p>'
+        },
+        { label: 'Mantiene orden, control y dominio del proceso durante la gestión del caso', valor: '13%',
+          explicacion:
+            '<p>El agente conduce la interacción de forma ordenada y coherente, manteniendo un hilo lógico sin saltar entre temas ni generar confusión en el usuario.</p>' +
+            '<p>Antes de proceder a la resolución, recopila la información necesaria de forma progresiva: motivo de contacto → datos relevantes → causa raíz → acción.</p>' +
+            '<p>Se penaliza cuando la gestión evidencia falta de enfoque, pasos omitidos, información asumida sin confirmar o inconsistencias que afecten la comprensión o resolución del caso.</p>'
+        },
+        { label: 'Brinda al usuario # de gestión', valor: '3%',
+          explicacion:
+            '<p>El agente informa al usuario el número de gestión generado para su caso, permitiéndole dar seguimiento posterior a su solicitud, exceptuando los contactos no relacionados al servicio, emergencias u otras atenciones excluidas por el procedimiento.</p>'
+        },
+        { label: 'Informa y envía llamada a encuesta de satisfacción', valor: '2%',
+          explicacion:
+            '<p>El agente comunica al usuario que recibirá una llamada de encuesta de satisfacción y promueve su participación, exceptuando los casos no relacionados al servicio, emergencias u orientaciones de salud, conforme a los lineamientos establecidos.</p>'
+        },
+        { label: 'No gestiona la resolución del caso conforme al alcance del canal y a los procedimientos establecidos', valor: '30%', rojo: true,
+          explicacion:
+            '<p>El agente evidencia desconocimiento o una aplicación incorrecta del proceso, brindando una solución confusa o imprecisa, lo que retrasa la resolución del caso.</p>'
+        }
+      ]
+    },
+    gestionTiempo: {
+      label: 'Gestión del tiempo',
+      valor: '10%',
+      color: '#7EC8F0',
+      items: [
+        { label: 'Cumple con el Tiempo Medio de Operación (TMO) según tipificación', valor: '5%',
+          explicacion:
+            '<p>De acuerdo con la tabla de Tiempos de duración de la llamada por Tipificación, el agente gestiona la llamada dentro del tiempo establecido para cada tipo de caso, evitando prolongaciones innecesarias y asegurando una atención eficiente sin afectar la resolución del caso.</p>' +
+            '<p><strong>Regla:</strong> se exceptuarán los casos donde la duración extendida de la llamada sea atribuible exclusivamente a causas del usuario debidamente evidenciadas durante la interacción <em>(por ejemplo: usuario con poco conocimiento tecnológico, fallas en su señal de internet, etc.)</em>, de igual manera, las causas atribuibles a problemas teconologicos o de la operación interna, bajo previo aviso de jefaturas correspondientes <em>(por ejemplo: incidencias técnicas internas, el agente deberá dejar plasmado en las notas del ticket el inconveniente técnico que se presentó en el momento de la gestión o llamada)</em>.</p>'
+        },
+        { label: 'Usa de manera adecuada la herramienta hold', valor: '5%',
+          explicacion:
+            '<p>Agente informa previamente al usuario el motivo de la espera para resolver su duda o gestión, si necesita más tiempo del permitido (2min), deberá retomar la llamada antes que se cumpla dicho tiempo para informar al usuario.</p>' +
+            '<p><em>Sugerencias: Gracias por su amable espera en línea Sr(a) XXX, disculpe mi demora; le comento que sigo trabajando en la resolución de su caso, ¿podría brindarme más tiempo en espera por favor?</em></p>'
+        },
+        { label: 'No cumple con el tiempo permitido de uso del hold (máximo 1min, 30seg por uso)', valor: '10%', rojo: true,
+          explicacion:
+            '<p>El agente utiliza la herramienta hold de manera inadecuada, excediendo el tiempo máximo permitido por uso, aún cuando haya informado previamente al usuario el motivo de la espera, afectando la fluidez y eficiencia de la atención.</p>' +
+            '<p><strong>Regla: máximo 1min 30 seg por uso.</strong></p>'
+        },
+        { label: 'No respeta el tiempo prudencial para finalizar la llamada tras el cierre', valor: '10%', rojo: true,
+          explicacion:
+            '<p>Luego de realizar el cierre de la interacción, el agente finaliza la llamada de forma inmediata sin respetar el periodo de inactividad correspondiente posterior al script de cierre según el escenario de atención, impidiendo una despedida adecuada y afectando la experiencia del usuario, exceptuando los casos no relacionados al servicio.</p>'
+        }
+      ]
+    },
+    autofails: {
+      label: 'Autofails totales',
+      valor: '100%',
+      color: '#E53935',
+      items: [
+        { label: 'Habla negativamente del servicio', valor: '', rojo: true },
+        { label: 'Discute con el usuario', valor: '', rojo: true },
+        { label: 'Registro incorrecto de Tipificación y Estado Inicial', valor: '', rojo: true },
+        { label: 'Registro incorrecto de ticket', valor: '', rojo: true },
+        { label: 'No crea ticket/Crea ticket sin respetar jerarquía', valor: '', rojo: true },
+        { label: 'Agente no resolvió al usuario', valor: '', rojo: true },
+        { label: 'Agente brinda información incorrecta o imprecisa', valor: '', rojo: true },
+        { label: 'Solicita o proporciona datos confidenciales', valor: '', rojo: true },
+        { label: 'Responde con sarcasmo', valor: '', rojo: true },
+        { label: 'Divulga condiciones o procedimientos internos', valor: '', rojo: true },
+        { label: 'Agente transfiere la llamada a la cola de espera nuevamente', valor: '', rojo: true },
+        { label: 'Agente corta la llamada', valor: '', rojo: true },
+        { label: 'No transfiere llamada al destino correcto', valor: '', rojo: true },
+        { label: 'Propicia a realizar fraude', valor: '', rojo: true }
       ]
     }
   };
