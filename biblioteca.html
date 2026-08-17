@@ -780,7 +780,51 @@
           }
         ]
       },
-      'Información sobre la cita médica',
+      { label: 'Información sobre la cita médica', hijos: [
+        { label: 'Código de la receta',
+          texto:
+            '<p>Con mucho gusto le puedo ayudar a ubicar el <strong>código de la receta</strong>.</p>' +
+            '<p>Sin embargo, <strong>por motivos de seguridad</strong>, vamos a confirmar con usted unas preguntas de validación.</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" style="background:#EA580C" onclick="generarPreguntasSeguridadInline(\'receta\')">Preguntas de seguridad</button>' +
+            '</div>' +
+            '<div id="psPreguntas_receta"></div>' +
+            '<div id="psResultado_receta"></div>' +
+            '<div id="psPasa_receta" class="triage-resultado" style="display:none;">' +
+              '<p>Muchas gracias por la confirmación, Sr / Sra XXXXXXX.</p>' +
+              '<p>¿Tiene dónde anotar?</p>' +
+              '<p>Le informo que el código de su receta es XXXXXXXXXX.</p>' +
+              '<p>Le repito: XXXXXXXXXX</p>' +
+              '<p>Le recuerdo que su receta tiene una vigencia de 120 horas a partir de la hora de la cita. Le invitamos a visitar la farmacia más cercana dentro de ese plazo.</p>' +
+            '</div>' +
+            '<div id="psNoPasa_receta" class="triage-resultado" style="display:none;">' +
+              '<p>Sr / Sra XXXXXX, con el fin de resguardar su información personal lamento comunicarle que no estamos autorizados a brindar los datos que nos solicita.</p>' +
+              '<p>Le invito a que pueda validar la información solicitada y contactarnos nuevamente o buscar un medio para ingresar a la aplicación <strong>DoctorSV</strong>.</p>' +
+            '</div>'
+        },
+        { label: 'Código del estudio clínico',
+          tituloModal: 'Código del estudio',
+          texto:
+            '<p>Con mucho gusto le puedo ayudar a ubicar el <strong>código del estudio</strong>.</p>' +
+            '<p>Sin embargo, <strong>por motivos de seguridad</strong>, vamos a confirmar con usted unas preguntas de validación.</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" style="background:#EA580C" onclick="generarPreguntasSeguridadInline(\'estudio\')">Preguntas de seguridad</button>' +
+            '</div>' +
+            '<div id="psPreguntas_estudio"></div>' +
+            '<div id="psResultado_estudio"></div>' +
+            '<div id="psPasa_estudio" class="triage-resultado" style="display:none;">' +
+              '<p>Muchas gracias por la confirmación, Sr / Sra XXXXXXX.</p>' +
+              '<p>¿Tiene dónde anotar?</p>' +
+              '<p>Le informo que el código de orden de estudio es XXXXXXXXXX.</p>' +
+              '<p>Le repito: X-X-X-X-X-X-X-X-X-X</p>' +
+              '<p>Le recuerdo que su orden tiene una vigencia de 15 días a partir de la fecha de la cita. Le invitamos a visitar el laboratorio más cercano dentro de ese plazo.</p>' +
+            '</div>' +
+            '<div id="psNoPasa_estudio" class="triage-resultado" style="display:none;">' +
+              '<p>Sr / Sra XXXXXX, con el fin de resguardar su información personal lamento comunicarle que no estamos autorizados a brindar los datos que nos solicita.</p>' +
+              '<p>Le invito a que pueda validar la información solicitada y contactarnos nuevamente o buscar un medio para ingresar a la aplicación <strong>DoctorSV</strong>.</p>' +
+            '</div>'
+        }
+      ] },
       'Usuario recibió un contacto previo'
     ] },
     { label: 'Dudas sobre las funciones de la aplicación', vistaTarjetas: true, hijos: [
