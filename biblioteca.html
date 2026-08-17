@@ -670,8 +670,11 @@
 
   var TEXTOS_CONFIRMACION = {
     si: '<p>Muchas gracias SR / SRA XXX, dígame, <strong>¿cómo puedo ayudarle?</strong></p>',
-    no: '<p>Con mucho gusto le ayudo a actualizarlo, ¿me indica su nuevo número de contacto?</p>' +
-        '<p>Gracias. Más adelante, antes de finalizar la atención, le ayudaré para actualizarlo en la plataforma.</p>' +
+    no: '<p>De acuerdo, antes de continuar con su atención, con mucho gusto le ayudo a actualizarlo, ¿me indica su nuevo número de contacto?</p>' +
+        '<div class="triage-acciones">' +
+          '<button class="bib-btn" onclick="mostrarCategoria(\'gestion\'); abrirActualizarDato(\'Cambio de teléfono\')">Ir a cambio de teléfono</button>' +
+        '</div>' +
+        '<p style="color:#64748B; font-style:italic;">Instrucción: una vez actualizado el teléfono en el SDP y en TCA:</p>' +
         '<p><strong>¿Cómo puedo ayudarle?</strong></p>'
   };
 
