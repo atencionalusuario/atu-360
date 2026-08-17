@@ -2224,22 +2224,55 @@
           explicacion:
             '<p>El agente clasifica incorrectamente el ticket al seleccionar una tipificación o estado inicial que no corresponde a la solicitud del usuario. Esta mala clasificación impide la correcta derivación, escalamiento o priorización del caso, afecta la gestión por parte de las áreas involucradas y retrasa la resolución del servicio.</p>'
         },
-        { label: 'Registro incorrecto de ticket', valor: '', rojo: true },
+        { label: 'Registro incorrecto de ticket', valor: '', rojo: true,
+          explicacion:
+            '<p>No ingresó correctamente la descripción y/o los datos personales solicitados del usuario y en los campos correspondientes, no documenta de forma alineada a la consulta o solicitud del usuario, afectando la trazabilidad, seguimiento y registro estadístico del caso.</p>'
+        },
         { label: 'No crea ticket/Crea ticket sin respetar jerarquía', valor: '', rojo: true,
           explicacion:
             '<p>El agente omite registrar una o más solicitudes del usuario en el sistema SDP o crea los tickets sin respetar la jerarquía de tipificaciones establecida, incumpliendo el procedimiento definido para la correcta gestión de los casos.</p>' +
             '<p>Asimismo, incurre en falta cuando no cumple con el tiempo de creación despues de finalizada la interacción (máximo 3 minutos). Excepción solo si genera más de un ticket por el tipo de gestión del usuario.</p>' +
             '<p>Este incumplimiento impide la correcta trazabilidad, el seguimiento oportuno y la verificación posterior de la gestión, afectando la continuidad del servicio, la derivación adecuada a las áreas correspondientes y la calidad de la atención brindada al usuario.</p>'
         },
-        { label: 'Agente no resolvió al usuario', valor: '', rojo: true },
-        { label: 'Agente brinda información incorrecta o imprecisa', valor: '', rojo: true },
-        { label: 'Solicita o proporciona datos confidenciales', valor: '', rojo: true },
-        { label: 'Responde con sarcasmo', valor: '', rojo: true },
-        { label: 'Divulga condiciones o procedimientos internos', valor: '', rojo: true },
-        { label: 'Agente transfiere la llamada a la cola de espera nuevamente', valor: '', rojo: true },
-        { label: 'Agente corta la llamada', valor: '', rojo: true },
-        { label: 'No transfiere llamada al destino correcto', valor: '', rojo: true },
-        { label: 'Propicia a realizar fraude', valor: '', rojo: true }
+        { label: 'Agente no resolvió al usuario', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente no logra brindar una solución efectiva a la solicitud del usuario, afectando la confianza del usuario y la percepción del servicio. En los casos donde haya más de una consulta o una solicitud, se le brindo una solución incompleta.</p>'
+        },
+        { label: 'Agente brinda información incorrecta o imprecisa', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente proporciona información o una solución incorrecta, incompleta, incoherente o engañosa, o comunica datos que no corresponden al proceso real. Genera falsas expectativas sobre la gestión o el seguimiento del caso</p>'
+        },
+        { label: 'Solicita o proporciona datos confidenciales', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente solicita, registra, repite o divulga información sensible del usuario sin estar autorizado o fuera del procedimiento establecido. Expone datos personales, médicos o administrativos de forma indebida, comprometiendo la privacidad, seguridad y confidencialidad del usuario y del servicio.</p>'
+        },
+        { label: 'Responde con sarcasmo', valor: '', rojo: true,
+          explicacion:
+            '<p>Agente utiliza un tono o palabras que denigra, minimiza, ridiculiza al usuario, o responde con sarcasmo, ironía o burla (risas) derivando en una conducta inadecuada y generando una experiencia negativa y dañando la integridad del usuario o maltrato hacia el mismo.</p>'
+        },
+        { label: 'Divulga condiciones o procedimientos internos', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente revela información interna, procesos operativos, limitaciones del sistema, políticas o decisiones institucionales que no deben ser comunicadas al usuario. Utiliza estas explicaciones como justificación en lugar de ofrecer una respuesta orientada al servicio y a la solución.</p>'
+        },
+        { label: 'Agente transfiere la llamada a la cola de espera nuevamente', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente responde la llamada y la devuelve a la cola sin justificación operativa válida.</p>'
+        },
+        { label: 'Agente corta la llamada', valor: '', rojo: true,
+          explicacion:
+            '<p>Agente corta deliberadamente en cualquier transcurso de la llamada.</p>' +
+            '<p>Queda excento de este criterio el flujo de corte de llamada por agresión del usuario (debió haber alertado al usuario con 3 previas notificaciones cordiales).</p>'
+        },
+        { label: 'No transfiere llamada al destino correcto', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente no deriva el contacto cuando corresponde, según flujograma de proceso en casos de emergencia, grupos de riesgo y amerite transferencia a medico de apoyo por TRIAGE.</p>' +
+            '<p>Omite realizar la transferencia adecuada o la realiza de forma incorrecta, retrasando la atención especializada y poniendo en riesgo la continuidad del servicio.</p>'
+        },
+        { label: 'Propicia a realizar fraude', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente realiza acciones, sugerencias u omisiones que facilitan el uso indebido de las plataformas, información o procesos para beneficio personal o de terceros.</p>' +
+            '<p>Compromete la integridad del proyecto, la seguridad de los datos y el cumplimiento de las normativas institucionales.</p>'
+        }
       ]
     }
   };
