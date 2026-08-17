@@ -154,6 +154,16 @@
   .matriz-calidad-fila { display: grid; grid-template-columns: 1fr 110px; align-items: stretch; border-radius: 6px; overflow: hidden; min-height: 72px; }
   .matriz-calidad-label { padding: 16px 18px; color: white; font-weight: 700; font-family: 'Montserrat', sans-serif; font-size: 0.92rem; display: flex; align-items: center; border-right: 1px solid rgba(255,255,255,0.25); }
   .matriz-calidad-valor { padding: 16px 18px; color: white; font-weight: 700; font-family: 'Montserrat', sans-serif; font-size: 0.92rem; display: flex; align-items: center; justify-content: center; }
+  .matriz-detalle-layout { display: flex; align-items: stretch; gap: 18px; }
+  .matriz-detalle-resumen { flex-shrink: 0; width: 170px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .matriz-detalle-resumen .matriz-calidad-fila { grid-template-columns: 1fr; width: 100%; }
+  .matriz-detalle-resumen .matriz-calidad-label { border-right: none; text-align: center; justify-content: center; }
+  .matriz-detalle-resumen .matriz-calidad-valor { border-top: 1px solid rgba(255,255,255,0.25); }
+  .matriz-detalle-trofeo { font-size: 2.4rem; margin-top: auto; }
+  .matriz-detalle-items { flex: 1; display: flex; flex-direction: column; gap: 8px; border-left: 3px solid #1E293B; padding-left: 18px; }
+  .matriz-detalle-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #0A3D62; border-radius: 8px; padding: 10px 16px; color: white; font-weight: 700; font-family: 'Montserrat', sans-serif; font-size: 0.86rem; }
+  .matriz-detalle-item.rojo { background: #E53935; }
+  .matriz-detalle-item span:last-child { flex-shrink: 0; }
 
   .modal-despedida-cuerpo .despedida-etiqueta { font-family: 'Montserrat', sans-serif; font-size: 0.78rem; font-weight: 600; font-style: italic; color: #64748B; margin: 0 0 8px; }
   .modal-despedida-cuerpo .despedida-caja { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 18px 22px; margin-bottom: 20px; }
@@ -396,30 +406,54 @@
 </div>
 
 <div class="modal-overlay" id="modalMatrizCalidad" onclick="if(event.target===this) cerrarModalMatrizCalidad()">
-  <div class="modal-box" style="max-width:560px;">
+  <div class="modal-box" style="max-width:640px;">
     <button class="modal-close" onclick="cerrarModalMatrizCalidad()">&times;</button>
-    <h3 class="modal-titulo">Matriz de calidad</h3>
-    <div class="matriz-calidad-grid">
-      <div class="matriz-calidad-fila" style="background:#0A3D62;">
-        <div class="matriz-calidad-label">Expresión y personalización de la llamada</div>
-        <div class="matriz-calidad-valor" style="background:#0A3D62;">30%</div>
+    <div id="matrizVistaPrincipal">
+      <h3 class="modal-titulo">Matriz de calidad</h3>
+      <div class="matriz-calidad-grid">
+        <div class="matriz-calidad-fila" style="background:#0A3D62; cursor:pointer;" onclick="mostrarDetalleMatriz('expresion')">
+          <div class="matriz-calidad-label">Expresión y personalización de la llamada</div>
+          <div class="matriz-calidad-valor" style="background:#0A3D62;">30%</div>
+        </div>
+        <div class="matriz-calidad-fila" style="background:#1976A6;">
+          <div class="matriz-calidad-label">Registro y complementación</div>
+          <div class="matriz-calidad-valor" style="background:#1976A6;">30%</div>
+        </div>
+        <div class="matriz-calidad-fila" style="background:#2196F3;">
+          <div class="matriz-calidad-label">Gestión de la llamada</div>
+          <div class="matriz-calidad-valor" style="background:#2196F3;">30%</div>
+        </div>
+        <div class="matriz-calidad-fila" style="background:#7EC8F0;">
+          <div class="matriz-calidad-label">Gestión del tiempo</div>
+          <div class="matriz-calidad-valor" style="background:#7EC8F0;">10%</div>
+        </div>
+        <div class="matriz-calidad-fila" style="background:#E53935;">
+          <div class="matriz-calidad-label">Autofails totales</div>
+          <div class="matriz-calidad-valor" style="background:#E53935;">100%</div>
+        </div>
       </div>
-      <div class="matriz-calidad-fila" style="background:#1976A6;">
-        <div class="matriz-calidad-label">Registro y complementación</div>
-        <div class="matriz-calidad-valor" style="background:#1976A6;">30%</div>
+    </div>
+    <div id="matrizVistaDetalle" style="display:none;">
+      <button class="cintillo-btn" style="margin-bottom:18px;" onclick="mostrarMatrizPrincipal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+      </button>
+      <div class="matriz-detalle-layout">
+        <div class="matriz-detalle-resumen">
+          <div class="matriz-calidad-fila" id="matrizDetalleResumen" style="background:#0A3D62;">
+            <div class="matriz-calidad-label"></div>
+            <div class="matriz-calidad-valor" style="background:#0A3D62;"></div>
+          </div>
+          <div class="matriz-detalle-trofeo">🏆</div>
+        </div>
+        <div class="matriz-detalle-items" id="matrizDetalleItems"></div>
       </div>
-      <div class="matriz-calidad-fila" style="background:#2196F3;">
-        <div class="matriz-calidad-label">Gestión de la llamada</div>
-        <div class="matriz-calidad-valor" style="background:#2196F3;">30%</div>
-      </div>
-      <div class="matriz-calidad-fila" style="background:#7EC8F0;">
-        <div class="matriz-calidad-label">Gestión del tiempo</div>
-        <div class="matriz-calidad-valor" style="background:#7EC8F0;">10%</div>
-      </div>
-      <div class="matriz-calidad-fila" style="background:#E53935;">
-        <div class="matriz-calidad-label">Autofails totales</div>
-        <div class="matriz-calidad-valor" style="background:#E53935;">100%</div>
-      </div>
+    </div>
+    <div id="matrizVistaExplicacion" style="display:none;">
+      <button class="cintillo-btn" style="margin-bottom:18px;" onclick="mostrarDetalleMatriz(matrizKeyActual)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+      </button>
+      <h3 class="modal-titulo" id="matrizExplicacionTitulo"></h3>
+      <div class="modal-ayuda-cuerpo" id="matrizExplicacionCuerpo"></div>
     </div>
   </div>
 </div>
@@ -2031,12 +2065,110 @@
     document.getElementById('modalAyudaTipificacion').classList.remove('open');
   }
 
+  var MATRIZ_DETALLE = {
+    expresion: {
+      label: 'Expresión y personalización de la llamada',
+      valor: '30%',
+      color: '#0A3D62',
+      items: [
+        { label: 'Uso de vocabulario profesional y adecuado', valor: '6%',
+          explicacion:
+            '<p>El agente utiliza un vocabulario profesional, respetuoso y acorde al servicio, dirigiéndose al usuario de "usted".</p>' +
+            '<p>Evita el uso de tecnicismos innecesarios, lenguaje coloquial, impropio o informal, así como el uso excesivo de muletillas durante la interacción, manteniendo una comunicación clara y profesional.</p>' +
+            '<p><strong>Regla: no utiliza más de <span style="color:#E53935;">3</span> muletillas en un lapso de <span style="color:#E53935;">3</span> minutos durante la interacción.</strong></p>'
+        },
+        { label: 'Personalización de la atención', valor: '3%',
+          explicacion:
+            '<p>El agente personaliza la llamada utilizando el nombre o apellido del usuario en los siguientes momentos: <strong>en el saludo (obligatorio) y en la despedida (obligatorio).</strong></p>' +
+            '<p>Adicionalmente, se espera su uso de manera opcional al retomar tiempos de espera y al solicitar acciones específicas al usuario.</p>' +
+            '<p><strong>Regla:</strong> En llamadas cortas (&lt;5min), la personalización es obligatoria en el saludo y en la despedida. El incumplimiento de los momentos adicionales no constituye falta en este tipo de llamada. Sin embargo, si los utiliza en otros momentos adicionales al saludo y despedida tampoco incurre en falta.</p>' +
+            '<p>Se recomienda evitar menciones repetitivas en respuestas consecutivas, utilizándolo únicamente cuando aporte valor al contexto o ayude a personalizar la interacción.</p>'
+        },
+        { label: 'Mantiene tono de voz adecuado', valor: '5%',
+          explicacion:
+            '<p>El agente mantiene durante toda la interacción un tono de voz modulado, audible y con un ritmo adecuado que facilita la comprensión del usuario.</p>' +
+            '<p>Proyecta seguridad, cordialidad y profesionalismo a través de su expresión oral, sin elevar ni bajar excesivamente el volumen y evitando silencios prolongados que afecten la fluidez de la conversación.</p>' +
+            '<p><strong>Regla:</strong> Se activa cuando el agente mantiene un tono elevado, muy bajo o inseguro de forma sostenida o cambiante en cualquier momento de la llamada.</p>'
+        },
+        { label: 'Se expresa de manera clara y comprensible', valor: '6%',
+          explicacion:
+            '<p>El agente demuestra dominio en la articulación de palabras y frases, transmitiendo de forma clara el mensaje o la solución al usuario. Su expresión oral es fluida, ordenada y coherente, sin generar confusión ni requerir repeticiones innecesarias por parte del usuario.</p>' +
+            '<p><strong>Regla:</strong> Se considera incumplimiento cuando el agente presenta más de 2 palabras o frases mal articuladas dentro de un mismo lapso de evaluación, definido según la duración de la llamada:</p>' +
+            '<p>- Llamada corta (&lt;5 min): se evalúa la llamada completa como un solo lapso.</p>' +
+            '<p>- Llamada larga (&gt;5 min): se evalúa en lapsos de 2 minutos de forma continua en cualquier momento de la llamada (es de forma reincidente)</p>'
+        },
+        { label: 'Saludo inicial al usuario, se presenta con nombre y apellido', valor: '5%',
+          explicacion:
+            '<p>El agente responde de manera inmediata (máximo 3 segundos luego de contestar la llamada), saluda cordialmente, agradece la llamada, identifica la institución y se presenta con nombre y apellido, estableciendo una atención formal y profesional desde el inicio de la interacción.</p>'
+        },
+        { label: 'Cierre cordial de la llamada', valor: '5%',
+          explicacion:
+            '<p>Al finalizar la atención, el agente consulta si el usuario tiene alguna duda adicional y cierra la llamada de manera cordial, utilizando una frase empática y de despedida que refuerce una experiencia positiva.</p>'
+        },
+        { label: 'No demuestra escucha activa durante la interacción', valor: '30%', rojo: true,
+          explicacion:
+            '<p>El agente no se mantiene atento ni concentrado durante toda la llamada, no procesa correctamente la información proporcionada por el usuario y responde de forma desalineada a su solicitud.</p>' +
+            '<p>Interrumpe al usuario antes de que complete sus ideas o vuelve a solicitar datos que ya fueron proporcionados durante la interacción, demostrando poca retención y/o poca comprensión activa del contenido de la llamada.</p>' +
+            '<p><strong>Excepción:</strong> No se penaliza cuando se solicite una segunda confirmación de datos por motivos de seguridad, o cuando se evidencien interferencias o ruido ambiental durante la llamada.</p>'
+        },
+        { label: 'No demuestra respeto', valor: '30%', rojo: true },
+        { label: 'No responde con frases de empatía ante comentarios negativos', valor: '30%', rojo: true,
+          explicacion:
+            '<p>Cuando el usuario expresa inconformidad, molestia o comentarios negativos sobre el servicio, la aplicación o la atención recibida, el agente no utiliza frases empáticas para validar la situación del usuario, limitándose a responder de forma neutral, evasiva o indiferente, sin incurrir en la aceptación del comentario negativo.</p>' +
+            '<p>Ejemplos: "Siento que esta experiencia no haya sido como esperaba" / "Entiendo que esto puede ser molesto para usted, sin embargo estoy trabajando para apoyarle" / "Comprendo que esto pueda causarte molestia, sin embargo estoy trabajando para solventar su caso"</p>'
+        }
+      ]
+    }
+  };
+
   function abrirModalMatrizCalidad() {
+    mostrarMatrizPrincipal();
     document.getElementById('modalMatrizCalidad').classList.add('open');
   }
 
   function cerrarModalMatrizCalidad() {
     document.getElementById('modalMatrizCalidad').classList.remove('open');
+  }
+
+  var matrizKeyActual = null;
+
+  function mostrarMatrizPrincipal() {
+    document.getElementById('matrizVistaPrincipal').style.display = 'block';
+    document.getElementById('matrizVistaDetalle').style.display = 'none';
+    document.getElementById('matrizVistaExplicacion').style.display = 'none';
+  }
+
+  function mostrarDetalleMatriz(key) {
+    var datos = MATRIZ_DETALLE[key];
+    if (!datos) return;
+
+    matrizKeyActual = key;
+    document.getElementById('matrizVistaPrincipal').style.display = 'none';
+    document.getElementById('matrizVistaDetalle').style.display = 'block';
+    document.getElementById('matrizVistaExplicacion').style.display = 'none';
+
+    var resumen = document.getElementById('matrizDetalleResumen');
+    resumen.style.background = datos.color;
+    resumen.querySelector('.matriz-calidad-label').textContent = datos.label;
+    var valorEl = resumen.querySelector('.matriz-calidad-valor');
+    valorEl.textContent = datos.valor;
+    valorEl.style.background = datos.color;
+
+    document.getElementById('matrizDetalleItems').innerHTML = datos.items.map(function(it, i) {
+      var clickeable = it.explicacion ? ' style="cursor:pointer;" onclick="mostrarExplicacionMatriz(' + i + ')"' : '';
+      return '<div class="matriz-detalle-item' + (it.rojo ? ' rojo' : '') + '"' + clickeable + '><span>' + it.label + '</span><span>' + it.valor + '</span></div>';
+    }).join('');
+  }
+
+  function mostrarExplicacionMatriz(i) {
+    var datos = MATRIZ_DETALLE[matrizKeyActual];
+    var item = datos.items[i];
+    if (!item || !item.explicacion) return;
+
+    document.getElementById('matrizVistaDetalle').style.display = 'none';
+    document.getElementById('matrizVistaExplicacion').style.display = 'block';
+    document.getElementById('matrizExplicacionTitulo').textContent = item.label;
+    document.getElementById('matrizExplicacionCuerpo').innerHTML = item.explicacion;
   }
 
   function abrirModalTip(html) {
