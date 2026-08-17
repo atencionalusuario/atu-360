@@ -828,21 +828,6 @@
             '</div>'
         }
       ] },
-      { label: 'Usuario recibió un contacto previo',
-        tituloModal: 'Consulta sobre contacto previo',
-        texto:
-          '<p>Comprendo lo que nos comenta, Sr./Sra.XXX. Permítame un momento en línea mientras valido el motivo del contacto.</p>' +
-          '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070; text-align:center; margin:16px 0 8px;">SÍ SE CUENTA CON TICKET</h4>' +
-          '<div class="triage-resultado">' +
-            '<p>Muchas gracias por su amable espera. Al verificar la información, identifico que nos comunicamos con usted para dar seguimiento al ticket <strong>XXXX</strong>, con el fin de solicitarle/informarle <strong>[detalle correspondiente]</strong>.</p>' +
-          '</div>' +
-          '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción:<br>Validar en SDP con el número del que nos contacta el usuario y documento de identidad del usuario para validar el motivo del contacto. Según sea el caso proceder a dar respuesta al usuario.</p>' +
-          '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Adicional, según sea el caso cambiarlo al estado correspondiente.</p>' +
-          '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070; text-align:center; margin:16px 0 8px;">NO SE CUENTA CON TICKET</h4>' +
-          '<div class="triage-resultado">' +
-            '<p>Lamento informarle que no logramos identificar la razón por la cual nos estuvimos comunicando con usted. Sin embargo, estamos a la orden para cualquier consulta sobre <strong>DoctorSV</strong>.</p>' +
-          '</div>'
-      },
       { label: 'Retirar medicamento',
         tituloModal: 'Retiro de medicamento',
         texto:
@@ -970,6 +955,21 @@
       'Cómo tomarse los signos vitales'
     ] },
     { label: 'Otras orientaciones', hijos: [
+      { label: 'Usuario recibió un contacto previo',
+        tituloModal: 'Consulta sobre contacto previo',
+        texto:
+          '<p>Comprendo lo que nos comenta, Sr./Sra.XXX. Permítame un momento en línea mientras valido el motivo del contacto.</p>' +
+          '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070; text-align:center; margin:16px 0 8px;">SÍ SE CUENTA CON TICKET</h4>' +
+          '<div class="triage-resultado">' +
+            '<p>Muchas gracias por su amable espera. Al verificar la información, identifico que nos comunicamos con usted para dar seguimiento al ticket <strong>XXXX</strong>, con el fin de solicitarle/informarle <strong>[detalle correspondiente]</strong>.</p>' +
+          '</div>' +
+          '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción:<br>Validar en SDP con el número del que nos contacta el usuario y documento de identidad del usuario para validar el motivo del contacto. Según sea el caso proceder a dar respuesta al usuario.</p>' +
+          '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Adicional, según sea el caso cambiarlo al estado correspondiente.</p>' +
+          '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070; text-align:center; margin:16px 0 8px;">NO SE CUENTA CON TICKET</h4>' +
+          '<div class="triage-resultado">' +
+            '<p>Lamento informarle que no logramos identificar la razón por la cual nos estuvimos comunicando con usted. Sin embargo, estamos a la orden para cualquier consulta sobre <strong>DoctorSV</strong>.</p>' +
+          '</div>'
+      },
       { label: 'Usuario en sala de espera',
         texto:
           '<p style="color:#64748B; font-style:italic;">Instrucción: ¿Dónde se encuentra el usuario? ¿Ya inició la hora de la consulta?</p>' +
@@ -1626,7 +1626,43 @@
             '</div>'
         }
       ] },
-      'Gestiones programa crónicos'
+      { label: 'Gestiones programa crónicos', pregunta: '¿Qué desea hacer al usuario?', hijos: [
+        { label: 'Darse de baja de notificaciones',
+          texto:
+            '<p>Con mucho gusto le ayudamos con su solicitud.</p>' +
+            '<p>Procederé a crear un reporte para el área correspondiente. Lamentamos los inconvenientes que esto haya podido causarle.</p>' +
+            '<p>¿Me podría indicar si el número del cual desea darse de baja es el mismo desde el cual nos contacta?</p>' +
+            '<p>Muchas gracias. Haré el reporte para atender su solicitud a la brevedad posible.</p>'
+        },
+        { label: 'Darse de baja del programa',
+          texto:
+            '<p>Entiendo su solicitud. Es importante que tenga en cuenta que, al realizar la desvinculación del Programa de Crónicos, perderá el seguimiento que ha llevado hasta el momento. Asimismo, las órdenes de estudios y recetas que tenga pendientes serán canceladas y ya no podrán ser utilizadas.</p>' +
+            '<p><strong>¿Desea continuar con el proceso de desvinculación?</strong></p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" onclick="mostrarUno(\'bajaProgramaSi\', \'bajaProgramaNo\')">Confirma que sí.</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'bajaProgramaNo\', \'bajaProgramaSi\')">Confirma que no.</button>' +
+            '</div>' +
+            '<div id="bajaProgramaSi" class="triage-resultado" style="display:none;">' +
+              '<p>Gracias por la confirmación. Para continuar con la gestión, recibirá un código de verificación por mensaje de texto. Cuando lo reciba, ¿me lo puede compartir, por favor?</p>' +
+              '<p style="color:#64748B; font-style:italic;">Usuario comparte código de verificación</p>' +
+              '<p>Permítame un momento en línea mientras realizo la gestión.</p>' +
+              '<p>Muchas gracias por su amable espera en línea. Le confirmo que la desvinculación del Programa de Crónicos se ha realizado correctamente. Puede verificar el cambio ingresando a la aplicación <strong>DoctorSV</strong> y consultando la sección de Inicio.</p>' +
+              '<p>Recuerde que puede continuar utilizando <strong>DoctorSV</strong> con normalidad para agendar sus citas con médicos generales o especialistas.</p>' +
+            '</div>' +
+            '<div id="bajaProgramaNo" class="triage-resultado" style="display:none;">' +
+              '<p>Gracias por su confirmación. Comentarle que sus seguimientos, citas, órdenes de estudio y recetas continuarán activos dentro del Programa de Crónicos y podrá consultarlos directamente desde la aplicación <strong>DoctorSV</strong>.</p>' +
+            '</div>'
+        },
+        { label: 'Reiniciar el formulario',
+          texto:
+            '<p>Con gusto le asistimos con su solicitud. Procederé a reiniciar el formulario para que pueda llenarlo nuevamente.</p>' +
+            '<p>En breve recibirá un código de verificación por mensaje de texto. Cuando lo reciba, ¿me lo puede compartir, por favor?</p>' +
+            '<p style="color:#64748B; font-style:italic;">Usuario comparte código de verificación</p>' +
+            '<p>Permítame un momento en línea mientras realizo la gestión.</p>' +
+            '<p>Muchas gracias por su amable espera en línea. Le confirmo que el reinicio del formulario se ha realizado correctamente. Ahora puede ingresar a la aplicación <strong>DoctorSV</strong> y verificar que el apartado de "Programa de Crónicos" se encuentra disponible para que pueda completar el formulario nuevamente.</p>' +
+            '<p>¿Le gustaría que le asista con el paso a paso para llenar el formulario?</p>'
+        }
+      ] }
     ],
     incidencia: [
       { label: 'Médicos', tooltip: 'El inconveniente está relacionado al área médica', pregunta: '¿Qué fallo ocurrió con el área médica?', hijos: [
