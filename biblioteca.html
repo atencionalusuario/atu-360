@@ -148,6 +148,12 @@
   .cintillo-btn.cintillo-cat:hover { background: #1A3DAA; }
   .cintillo-btn.cintillo-despedida { background: #0F2070; }
   .cintillo-btn.cintillo-despedida:hover { background: #1A3DAA; }
+  .cintillo-btn.cintillo-matriz { background: #0F2070; }
+  .cintillo-btn.cintillo-matriz:hover { background: #1A3DAA; }
+  .matriz-calidad-grid { display: flex; flex-direction: column; gap: 3px; margin-top: 16px; }
+  .matriz-calidad-fila { display: grid; grid-template-columns: 1fr 110px; align-items: stretch; border-radius: 6px; overflow: hidden; min-height: 72px; }
+  .matriz-calidad-label { padding: 16px 18px; color: white; font-weight: 700; font-family: 'Montserrat', sans-serif; font-size: 0.92rem; display: flex; align-items: center; border-right: 1px solid rgba(255,255,255,0.25); }
+  .matriz-calidad-valor { padding: 16px 18px; color: white; font-weight: 700; font-family: 'Montserrat', sans-serif; font-size: 0.92rem; display: flex; align-items: center; justify-content: center; }
 
   .modal-despedida-cuerpo .despedida-etiqueta { font-family: 'Montserrat', sans-serif; font-size: 0.78rem; font-weight: 600; font-style: italic; color: #64748B; margin: 0 0 8px; }
   .modal-despedida-cuerpo .despedida-caja { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 18px 22px; margin-bottom: 20px; }
@@ -354,6 +360,9 @@
   <button class="cintillo-btn cintillo-ayuda" title="¿Cómo tipificar?" onclick="abrirModalAyuda()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 17v-5"/><circle cx="12" cy="8.2" r="0.1" fill="currentColor" stroke-width="1.5"/></svg>
   </button>
+  <button class="cintillo-btn cintillo-matriz" title="Matriz de calidad" onclick="abrirModalMatrizCalidad()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="13" width="3" height="5" rx="0.5"/><rect x="12" y="9" width="3" height="9" rx="0.5"/><rect x="17" y="5" width="3" height="13" rx="0.5"/></svg>
+  </button>
   <button class="cintillo-btn cintillo-despedida" title="Script de despedida" onclick="abrirModalDespedida()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12"/>
@@ -382,6 +391,35 @@
       <div class="modal-ayuda-ejemplo">Consultas &gt; Información general del servicio &gt; Orientación sobre todo el servicio</div>
       <p>Al finalizar la atención, registra esa misma ruta en el campo de tipificación del sistema de gestión, seleccionando cada nivel en el orden en que aparece aquí.</p>
       <p>Esto asegura que la llamada quede clasificada correctamente para las métricas del equipo.</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalMatrizCalidad" onclick="if(event.target===this) cerrarModalMatrizCalidad()">
+  <div class="modal-box" style="max-width:560px;">
+    <button class="modal-close" onclick="cerrarModalMatrizCalidad()">&times;</button>
+    <h3 class="modal-titulo">Matriz de calidad</h3>
+    <div class="matriz-calidad-grid">
+      <div class="matriz-calidad-fila" style="background:#0A3D62;">
+        <div class="matriz-calidad-label">Expresión y personalización de la llamada</div>
+        <div class="matriz-calidad-valor" style="background:#0A3D62;">30%</div>
+      </div>
+      <div class="matriz-calidad-fila" style="background:#1976A6;">
+        <div class="matriz-calidad-label">Registro y complementación</div>
+        <div class="matriz-calidad-valor" style="background:#1976A6;">30%</div>
+      </div>
+      <div class="matriz-calidad-fila" style="background:#2196F3;">
+        <div class="matriz-calidad-label">Gestión de la llamada</div>
+        <div class="matriz-calidad-valor" style="background:#2196F3;">30%</div>
+      </div>
+      <div class="matriz-calidad-fila" style="background:#7EC8F0;">
+        <div class="matriz-calidad-label">Gestión del tiempo</div>
+        <div class="matriz-calidad-valor" style="background:#7EC8F0;">10%</div>
+      </div>
+      <div class="matriz-calidad-fila" style="background:#E53935;">
+        <div class="matriz-calidad-label">Autofails totales</div>
+        <div class="matriz-calidad-valor" style="background:#E53935;">100%</div>
+      </div>
     </div>
   </div>
 </div>
@@ -1991,6 +2029,14 @@
 
   function cerrarModalAyuda() {
     document.getElementById('modalAyudaTipificacion').classList.remove('open');
+  }
+
+  function abrirModalMatrizCalidad() {
+    document.getElementById('modalMatrizCalidad').classList.add('open');
+  }
+
+  function cerrarModalMatrizCalidad() {
+    document.getElementById('modalMatrizCalidad').classList.remove('open');
   }
 
   function abrirModalTip(html) {
