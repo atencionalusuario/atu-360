@@ -2208,11 +2208,29 @@
       valor: '100%',
       color: '#E53935',
       items: [
-        { label: 'Habla negativamente del servicio', valor: '', rojo: true },
-        { label: 'Discute con el usuario', valor: '', rojo: true },
-        { label: 'Registro incorrecto de Tipificación y Estado Inicial', valor: '', rojo: true },
+        { label: 'Habla negativamente del servicio', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente emite y/o confirma comentarios negativos, desacreditantes o despectivos sobre el servicio, la aplicación, tercerías o cualquier aspecto relacionado con DoctorSV, ya sea de forma directa o indirecta.</p>' +
+            '<p>Realiza expresiones que generan desconfianza en el usuario, afectan la imagen institucional y debilitan la percepción de calidad del servicio, en lugar de brindar una explicación orientada a la solución.</p>' +
+            '<p>Ejemplos: "La aplicación a veces falla", "Las farmacias no conocen el proceso".</p>'
+        },
+        { label: 'Discute con el usuario', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente adopta una actitud confrontativa durante la atención, contradice al usuario con tono inapropiado, eleva la voz, interrumpe, invalida su experiencia o intenta imponer su criterio en lugar de enfocarse en la solución.</p>' +
+            '<p>Utiliza expresiones que generan tensión, conflicto o incomodidad, afectando el clima de la interacción y la satisfacción del usuario.</p>' +
+            '<p>Ejemplo: "Usted está equivocado", "le digo que no es un error", "como ya le expliqué", "Escucheme nuevamente", "Calmese", "como ya le dije"…</p>'
+        },
+        { label: 'Registro incorrecto de Tipificación y Estado Inicial', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente clasifica incorrectamente el ticket al seleccionar una tipificación o estado inicial que no corresponde a la solicitud del usuario. Esta mala clasificación impide la correcta derivación, escalamiento o priorización del caso, afecta la gestión por parte de las áreas involucradas y retrasa la resolución del servicio.</p>'
+        },
         { label: 'Registro incorrecto de ticket', valor: '', rojo: true },
-        { label: 'No crea ticket/Crea ticket sin respetar jerarquía', valor: '', rojo: true },
+        { label: 'No crea ticket/Crea ticket sin respetar jerarquía', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente omite registrar una o más solicitudes del usuario en el sistema SDP o crea los tickets sin respetar la jerarquía de tipificaciones establecida, incumpliendo el procedimiento definido para la correcta gestión de los casos.</p>' +
+            '<p>Asimismo, incurre en falta cuando no cumple con el tiempo de creación despues de finalizada la interacción (máximo 3 minutos). Excepción solo si genera más de un ticket por el tipo de gestión del usuario.</p>' +
+            '<p>Este incumplimiento impide la correcta trazabilidad, el seguimiento oportuno y la verificación posterior de la gestión, afectando la continuidad del servicio, la derivación adecuada a las áreas correspondientes y la calidad de la atención brindada al usuario.</p>'
+        },
         { label: 'Agente no resolvió al usuario', valor: '', rojo: true },
         { label: 'Agente brinda información incorrecta o imprecisa', valor: '', rojo: true },
         { label: 'Solicita o proporciona datos confidenciales', valor: '', rojo: true },
