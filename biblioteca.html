@@ -272,6 +272,11 @@
     <p class="instruccion" id="instMenu" style="display:none;">¿Qué necesita el usuario?</p>
     <p class="instruccion" id="instMenuDetalle" style="display:none; color:#64748B; font-style:italic;">Escucha atentamente al usuario e identifica el motivo de su contacto.</p>
 
+    <div class="busqueda-input-wrap" id="accesoBusquedaMenu" style="display:none; margin-bottom:14px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" placeholder="Buscar en toda la biblioteca..." readonly onclick="abrirModalBusquedaGlobal()">
+    </div>
+
     <div class="sdp-botones" id="botonesMenu" style="display:none;">
       <div class="btn-col">
         <p class="instruccion instruccion-btn">¿Me pide que le explique algo?</p>
@@ -467,7 +472,7 @@
     pilaVistas = [];
     document.getElementById('vistaCategoria').style.display = 'none';
     document.getElementById('flujoSDP').style.display = 'flex';
-    ['cajaSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'botonesMenu'].forEach(function(id) {
+    ['cajaSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'accesoBusquedaMenu', 'botonesMenu'].forEach(function(id) {
       document.getElementById(id).style.display = 'none';
     });
     ['btnSdpSi', 'btnSdpNo', 'btnConfSi', 'btnConfNo'].forEach(function(id) {
@@ -579,6 +584,7 @@
 
     document.getElementById('instMenu').style.display = esNo ? 'block' : 'none';
     document.getElementById('instMenuDetalle').style.display = esNo ? 'block' : 'none';
+    document.getElementById('accesoBusquedaMenu').style.display = esNo ? 'block' : 'none';
     document.getElementById('botonesMenu').style.display = esNo ? 'flex' : 'none';
 
     pilaVistas = [];
@@ -605,6 +611,7 @@
 
     document.getElementById('instMenu').style.display = 'block';
     document.getElementById('instMenuDetalle').style.display = 'block';
+    document.getElementById('accesoBusquedaMenu').style.display = 'block';
     document.getElementById('botonesMenu').style.display = 'flex';
 
     historial = historial.slice(0, 2).concat([{
