@@ -444,8 +444,8 @@
   <button class="cintillo-btn cintillo-ayuda" title="¿Cómo tipificar?" onclick="abrirModalAyuda()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 17v-5"/><circle cx="12" cy="8.2" r="0.1" fill="currentColor" stroke-width="1.5"/></svg>
   </button>
-  <button class="cintillo-btn cintillo-matriz" title="Matriz de calidad" onclick="abrirModalMatrizCalidad()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 3v2a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V3"/><path d="m9 13 2 2 4-4"/></svg>
+  <button class="cintillo-btn cintillo-matriz" title="Recursos" onclick="abrirModalRecursos()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
   </button>
   <button class="cintillo-btn cintillo-temporizador" title="Temporizador" onclick="toggleTemporizador()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>
@@ -486,6 +486,16 @@
       <div class="modal-ayuda-ejemplo">Consultas &gt; Información general del servicio &gt; Orientación sobre todo el servicio</div>
       <p>Al finalizar la atención, registra esa misma ruta en el campo de tipificación del sistema de gestión, seleccionando cada nivel en el orden en que aparece aquí.</p>
       <p>Esto asegura que la llamada quede clasificada correctamente para las métricas del equipo.</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalRecursos" onclick="if(event.target===this) cerrarModalRecursos()">
+  <div class="modal-box" style="max-width:420px;">
+    <button class="modal-close" onclick="cerrarModalRecursos()">&times;</button>
+    <h3 class="modal-titulo">Recursos</h3>
+    <div class="sdp-botones" style="margin-top:16px;">
+      <button class="bib-btn" onclick="cerrarModalRecursos(); abrirModalMatrizCalidad();">Matriz de calidad</button>
     </div>
   </div>
 </div>
@@ -2665,6 +2675,14 @@
     actualizarDisplayTemporizador();
     document.getElementById('btnTemporizadorIniciar').textContent = 'Iniciar';
     document.getElementById('btnTemporizadorIniciar').onclick = iniciarTemporizador;
+  }
+
+  function abrirModalRecursos() {
+    document.getElementById('modalRecursos').classList.add('open');
+  }
+
+  function cerrarModalRecursos() {
+    document.getElementById('modalRecursos').classList.remove('open');
   }
 
   function abrirModalMatrizCalidad() {
