@@ -277,6 +277,7 @@
         <button class="bib-btn" onclick="mostrarUno('casoTercero', [])">Persona comunicándose en nombre de un tercero</button>
       </div>
       <div id="casoTercero" class="triage-resultado" style="display:none;">
+        <p style="color:#64748B; font-style:italic;">Este caso aplica únicamente cuando quien nos contacta es un tercero (no el usuario titular ni un familiar asociado a su cuenta) que se comunica en nombre de un usuario titular de DoctorSV.</p>
         <p>Entiendo lo que me comenta. Para poder brindarle la atención correspondiente, ¿me podría comunicar, por favor, con la persona que necesita la asistencia?</p>
         <div class="triage-acciones">
           <button class="bib-btn btn-si-verde" onclick="mostrarUno('casoTerceroSiPuede', ['casoTerceroNoPuede'])">SI puede contestar</button>
@@ -285,11 +286,12 @@
         <div id="casoTerceroSiPuede" class="triage-resultado" style="display:none;">
           <p>Buenos días / tardes / noches, ¿usted autoriza a que se puedan brindar sus datos personales y gestionar requerimientos en su nombre?</p>
           <div class="triage-acciones">
-            <button class="bib-btn" onclick="mostrarUno('casoTerceroAutorizaSi', ['casoTerceroAutorizaNo'])">Sí</button>
+            <button class="bib-btn" onclick="mostrarUno('casoTerceroAutorizaSi', ['casoTerceroAutorizaNo']); mostrarMenuPrincipal(); historialBaseMenu = historial.length;">Sí</button>
             <button class="bib-btn" onclick="mostrarUno('casoTerceroAutorizaNo', ['casoTerceroAutorizaSi'])">No</button>
           </div>
           <div id="casoTerceroAutorizaSi" class="triage-resultado" style="display:none;">
             <p>Gracias por la confirmación, ¿me puede comunicar nuevamente con el/la Sr/Sra XXXX?</p>
+            <p>Gracias, dígame, ¿cómo puedo ayudarle?</p>
           </div>
           <div id="casoTerceroAutorizaNo" class="triage-resultado" style="display:none;">
             <p>Entiendo. En este caso, con el objetivo de proteger la información de nuestros usuarios, para hacer solicitudes o gestiones en nombre de un tercero es necesario contar con la aprobación o con los datos solicitados. Le pedimos que nos contacte en otra oportunidad cuando el usuario pueda confirmar y gustosamente le atenderemos.</p>
@@ -749,17 +751,21 @@
         '<p><strong>¿Cómo puedo ayudarle?</strong></p>'
   };
 
+  function mostrarMenuPrincipal() {
+    document.getElementById('instMenu').style.display = 'block';
+    document.getElementById('instMenuDetalle').style.display = 'block';
+    document.getElementById('accesoBusquedaMenu').style.display = 'block';
+    document.getElementById('botonesMenu').style.display = 'flex';
+    document.getElementById('botonesMenuExtra').style.display = 'flex';
+  }
+
   function mostrarConfirmacion(tipo) {
     document.getElementById('btnConfSi').classList.toggle('active', tipo === 'si');
     document.getElementById('btnConfNo').classList.toggle('active', tipo === 'no');
     document.getElementById('cajaConfirmacion').style.display = 'block';
     document.getElementById('textoConfirmacion').innerHTML = TEXTOS_CONFIRMACION[tipo];
 
-    document.getElementById('instMenu').style.display = 'block';
-    document.getElementById('instMenuDetalle').style.display = 'block';
-    document.getElementById('accesoBusquedaMenu').style.display = 'block';
-    document.getElementById('botonesMenu').style.display = 'flex';
-    document.getElementById('botonesMenuExtra').style.display = 'flex';
+    mostrarMenuPrincipal();
 
     historial = historial.slice(0, 2).concat([{
       label: tipo === 'si' ? 'Mismo número' : 'Cambió de número',
