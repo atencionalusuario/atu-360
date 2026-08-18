@@ -883,7 +883,56 @@
           '<p>X: <strong>@doctorsvapp</strong></p>' +
           '<p>Instagram: <strong>doctorsvapp</strong></p>' +
           '<p>Tiktok: <strong>doctorsvapp</strong></p>'
-      }
+      },
+      { label: 'Programa de crónicos', vistaTarjetas: true, hijos: [
+        { label: 'En qué consiste el programa de crónicos',
+          tituloModal: 'Programa crónicos',
+          texto:
+            '<p>El <strong>Programa de Crónicos</strong> de <strong>DoctorSV</strong> es un programa diseñado para detectar oportunamente factores de riesgo y dar seguimiento continuo a las enfermedades crónicas.</p>' +
+            '<p>Es totalmente gratuito: desde la consulta médica hasta los medicamentos, exámenes de laboratorio y estudios de imágenes.</p>' +
+            '<p>Las enfermadades cubiertas por el programa son: <strong>Diabetes mellitus, hipertensión, enfermedad renal crónica en estadios tempranos (estadios 1 a 3), dislipidemias, enfermedad pulmonar obstructiva crónica y asma.</strong></p>'
+        },
+        { label: 'Registrarse en el programa de crónicos',
+          texto:
+            '<p>Ahora, por favor ingrese a su cuenta en la aplicación <strong>DoctorSV</strong> utilizando su usuario y contraseña. Al acceder, en la sección <strong>"Mis Novedades"</strong> encontrará un recuadro celeste del <strong>Programa de Crónicos</strong>. Seleccione la opción <strong>"Ver ahora"</strong> para iniciar el formulario.</p>' +
+            '<p>A continuación, seleccione al paciente que registrará en el programa. Recuerde que este programa está dirigido únicamente a personas mayores de edad. Después, complete las preguntas del formulario. Si en la primera pregunta no está seguro de si padece una enfermedad crónica o no encuentra su condición en el listado, seleccione la opción <strong>"No estoy seguro"</strong>.</p>' +
+            '<p>Al finalizar el formulario, y de acuerdo con sus respuestas, la aplicación le indicará los estudios que deberá realizarse en la red de laboratorios autorizados.</p>' +
+            '<p>¿Me puede confirmar si ya visualiza los estudios que le fueron indicados?</p>' +
+            '<p>Muchas gracias por su confirmación. Al seleccionar cada estudio, en la parte inferior podrá consultar el listado de laboratorios autorizados, junto con su dirección, horario de atención y teléfono de contacto.<br>Una vez cuente con los resultados, podrá programar una consulta desde la sección del <strong>Programa de Crónicos</strong>, donde un médico evaluará su caso y le brindará el seguimiento correspondiente.</p>' +
+            '<p style="color:#64748B; font-style:italic;">Recuerde comunicarse previamente con el laboratorio para programar su cita o recibir indicaciones sobre la preparación según el estudio.</p>'
+        },
+        { label: 'Agendar cita en el programa',
+          texto:
+            '<p>Me confirma ¿al registrarse en el programa se le <strong>indicaron estudios</strong> y si <strong>ya fueron realizados</strong>?</p>' +
+            '<p style="text-align:center; color:#64748B; font-style:italic;">Validar en TCA el estado de los estudios</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" onclick="mostrarUno(\'cronicosSiRealizo\', [\'cronicosNoRealizado\',\'cronicosEnProceso\'])">Ya se realizó los estudios</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'cronicosNoRealizado\', [\'cronicosSiRealizo\',\'cronicosEnProceso\'])">No se ha realizado los estudios</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'cronicosEnProceso\', [\'cronicosSiRealizo\',\'cronicosNoRealizado\'])">Estudios en proceso</button>' +
+            '</div>' +
+            '<div id="cronicosSiRealizo" class="triage-resultado" style="display:none;">' +
+              '<p>Muchas gracias por su confirmación.</p>' +
+              '<p>Para continuar, le solicito que coloque su celular en altavoz, ya que realizaremos juntos el proceso de agendamiento de la cita desde la aplicación. ¿Me confirma si está listo para iniciar?</p>' +
+              '<p>Perfecto. Ingrese a la aplicación y encontrará un recuadro celeste con el mensaje: <strong>"Podrás programar tu cita médica cuando hayas completado los estudios indicados"</strong>. Seleccione la opción <strong>"Agendar ahora"</strong>.</p>' +
+              '<p>A continuación, seleccione al paciente para quien programará la cita y pulse <strong>"Siguiente"</strong>. Luego, acepte los términos y condiciones, seleccione <strong>"Continuar"</strong> y elija la fecha y la hora de su preferencia. Una vez seleccionada, de clic en <strong>"Confirmar fecha y hora"</strong>.</p>' +
+              '<p>¡Listo! Su cita quedará agendada. ¿Me confirma, por favor, si logró agendar su cita correctamente?</p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn" onclick="toggleBloque(\'cronicosRecomendacionesGenerales\')">Recomendaciones generales</button>' +
+              '</div>' +
+              '<div id="cronicosRecomendacionesGenerales" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_VIDEO + '</div>' +
+            '</div>' +
+            '<div id="cronicosNoRealizado" class="triage-resultado" style="display:none;">' +
+              '<p>Muchas gracias por su confirmación.</p>' +
+              '<p>Para continuar con el agendamiento de la cita del <strong>Programa de Crónicos</strong>, es necesario que primero se realice los estudios indicados.</p>' +
+              '<p>Una vez que estos se encuentren en estado <strong>"Procesado"</strong>, se habilitará la opción para programar su cita desde la sección del <strong>Programa de Crónicos</strong> en la aplicación.</p>' +
+            '</div>' +
+            '<div id="cronicosEnProceso" class="triage-resultado" style="display:none;">' +
+              '<p>Muchas gracias por su confirmación.</p>' +
+              '<p>Debido a que sus estudios aún se encuentran en estado <strong>"En proceso"</strong>, será necesario esperar a que cambien a estado <strong>"Procesado"</strong>.</p>' +
+              '<p>Una vez estén disponibles en ese estado, se habilitará la opción para agendar su cita de seguimiento en el <strong>Programa de Crónicos</strong>, donde el médico evaluará su estado de salud y realizará la lectura e interpretación de los resultados de sus exámenes.</p>' +
+            '</div>'
+        }
+      ] }
     ] },
     { label: 'Dudas sobre las funciones de la aplicación', vistaTarjetas: true, hijos: [
       { label: 'Cómo cambiar la contraseña',
@@ -1694,7 +1743,7 @@
     ],
     incidencia: [
       { label: 'Médicos', tooltip: 'El inconveniente está relacionado al área médica', pregunta: '¿Qué fallo ocurrió con el área médica?', hijos: [
-        { label: 'Temas con la calidad de la atención',
+        { label: 'Calidad de la atención',
           pregunta: '¿Con cuál de estos temas tiene inconveniente el usuario?',
           hijos: [
             { label: 'No se conectó el médico',
@@ -1727,7 +1776,7 @@
             }
           ]
         },
-        { label: 'Errores en los productos de la consulta', hijos: [
+        { label: 'Errores en los productos', hijos: [
           { label: 'Error en receta',
             alerta:
               '<p><strong>Error en receta:</strong> cuando efectivamente hay un dato incorrecto con la receta en cuanto al nombre del medicamento o en cuanto a la dosis recetada.</p>' +
@@ -1766,7 +1815,7 @@
               '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           }
         ] },
-        { label: 'Ausencia de productos de la consulta',
+        { label: 'Faltaron productos',
           texto:
             '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
             '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
@@ -1776,7 +1825,7 @@
             '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
             '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
         },
-        { label: 'Temas con la calidez de la atención',
+        { label: 'Calidez de la atención',
           texto:
             '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
             '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
