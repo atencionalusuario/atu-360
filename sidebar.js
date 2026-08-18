@@ -83,8 +83,9 @@ var ITEMS_NAV = {
 // reportes:  ítems del bloque "Reportes" (puede ser vacío)
 var NAV_POR_ROL = {
   agente: {
-    principal: ['home', 'bandeja', 'actce', 'flash', 'notificaciones', 'solicitudes', 'biblioteca', 'miturno'],
-    reportes:  ['metricas', 'transporte', 'perfil']
+    // Modo restringido temporal (ver ROLES_RESTRINGIDOS_TEMP): solo Biblioteca y Flash.
+    principal: ['biblioteca', 'flash'],
+    reportes:  []
   },
   'agente-inmersion': {
     principal: ['home', 'bandeja', 'actce', 'flash', 'notificaciones', 'biblioteca', 'miturno'],
@@ -99,11 +100,13 @@ var NAV_POR_ROL = {
     reportes:  []
   },
   jefe: {
-    principal: ['jefe-usuarios','jefe-bases','jefe-actce','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
+    // Modo restringido temporal (ver ROLES_RESTRINGIDOS_TEMP): solo Biblioteca y Flash.
+    principal: ['jefe-biblioteca', 'jefe-flash'],
     reportes:  []
   },
   supervisor: {
-    principal: ['sup-jornada','sup-turno','sup-monitoreo','sup-bases','sup-actce','sup-metricas','sup-flash','sup-notif','sup-solicitudes','sup-acciones','sup-licencias','sup-badges','sup-biblioteca','sup-transporte','sup-perfil'],
+    // Modo restringido temporal (ver ROLES_RESTRINGIDOS_TEMP): solo Biblioteca y Flash.
+    principal: ['sup-biblioteca', 'sup-flash'],
     reportes:  []
   },
   wfm: {
@@ -318,6 +321,16 @@ function verificarSesion() {
   setTimeout(cerrarSesionExpirada, MAX_SESSION_MS - elapsed);
 }
 
+// ── Modo restringido temporal ────────────────────────────────────────────────
+// Mientras esta lista no esté vacía, los roles indicados solo pueden abrir las
+// páginas listadas en PAGINAS_PERMITIDAS_TEMP (se les redirige a la primera si
+// intentan entrar a cualquier otra). Para reactivar un módulo para alguno de
+// estos roles: 1) agregar su archivo .html a PAGINAS_PERMITIDAS_TEMP, y
+// 2) agregar el id correspondiente de ITEMS_NAV a su lista en NAV_POR_ROL.
+// Para quitar la restricción por completo, vaciar ROLES_RESTRINGIDOS_TEMP.
+var ROLES_RESTRINGIDOS_TEMP   = ['agente', 'supervisor', 'jefe'];
+var PAGINAS_PERMITIDAS_TEMP   = ['biblioteca.html', 'flash.html'];
+
 function initSidebar() {
   var paginaActiva = detectarPagina();
   firebase.auth().onAuthStateChanged(function(user) {
@@ -327,6 +340,15 @@ function initSidebar() {
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
       var rol    = doc.exists ? (doc.data().rol || 'agente') : 'agente';
       var nombre = (doc.exists && doc.data().nombre) ? doc.data().nombre : user.email.split('@')[0];
+
+      if (ROLES_RESTRINGIDOS_TEMP.indexOf(rol) > -1) {
+        var archivoActual = window.location.pathname.split('/').pop() || '';
+        if (PAGINAS_PERMITIDAS_TEMP.indexOf(archivoActual) < 0) {
+          window.location.href = BASE + PAGINAS_PERMITIDAS_TEMP[0];
+          return;
+        }
+      }
+
       renderSidebar(paginaActiva, rol);
       document.getElementById('sbName').textContent   = nombre;
       var sbAv = document.getElementById('sbAvatar');

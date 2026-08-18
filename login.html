@@ -171,7 +171,11 @@
     if (errEl) { errEl.textContent = 'Tu sesión expiró. Inicia sesión nuevamente.'; errEl.classList.add('show'); }
   }
 
-  var RUTAS = { agente: BASE+'home.html', 'agente-inmersion': BASE+'home.html', formacion: BASE+'home.html', admin: BASE+'usuarios.html', wfm: BASE+'usuarios.html', jefe: BASE+'usuarios.html', superadmin: BASE+'usuarios.html', supervisor: BASE+'tiemporeal.html' }; // v2
+  // Modo restringido temporal: agente, supervisor y jefe entran directo a Biblioteca
+  // (ver ROLES_RESTRINGIDOS_TEMP en sidebar.js). Al quitar la restricción, restaurar
+  // sus rutas normales: agente/agente-inmersion/formacion -> home.html,
+  // jefe -> usuarios.html, supervisor -> tiemporeal.html.
+  var RUTAS = { agente: BASE+'biblioteca.html', 'agente-inmersion': BASE+'home.html', formacion: BASE+'home.html', admin: BASE+'usuarios.html', wfm: BASE+'usuarios.html', jefe: BASE+'biblioteca.html', superadmin: BASE+'usuarios.html', supervisor: BASE+'biblioteca.html' }; // v2
 
   var LABELS_ROL_LOG = { agente:'Agente', 'agente-inmersion':'Agente Inmersión', supervisor:'Supervisor', formacion:'Formación', admin:'Admin', wfm:'WFM', jefe:'Jefe', superadmin:'Superadmin' };
   function registrarLogLogin(uid, email, rol) {
