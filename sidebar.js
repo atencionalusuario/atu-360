@@ -58,6 +58,7 @@ var ITEMS_NAV = {
   'jefe-perfil':      { id: 'jefe-perfil',      label: 'Mi Perfil',          url: BASE+'perfil.html',         icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
   'wfm-jornada':      { id: 'wfm-jornada',      label: 'Inicio',             url: BASE+'home.html',           icon: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>' },
   'super-logs':       { id: 'super-logs',       label: 'Logs de usuarios',   url: BASE+'logs.html',           icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/>' },
+  'super-modulos':    { id: 'super-modulos',    label: 'Control de módulos', url: BASE+'modulos.html',        icon: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 008.6 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H2a2 2 0 110-4h.09A1.65 1.65 0 003.6 8.6a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H8a1.65 1.65 0 001-1.51V2a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V8c.14.51.5.93 1 1.15.32.14.68.19 1.03.15H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/>' },
   'jefe-bases':       { id: 'jefe-bases',       label: 'Bases',              url: BASE+'bases.html',          icon: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>' },
   'jefe-actce':       { id: 'jefe-actce',       label: 'Actividades CE',     url: BASE+'actividadesce.html',  icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>' },
   // Supervisor items — páginas standalone
@@ -82,10 +83,11 @@ var ITEMS_NAV = {
 // principal: ítems del bloque "Principal"
 // reportes:  ítems del bloque "Reportes" (puede ser vacío)
 var NAV_POR_ROL = {
+  // Listas completas — para agente/jefe/supervisor, initSidebar() las filtra en
+  // tiempo real según el documento config/modulos_restringidos (ver más abajo).
   agente: {
-    // Modo restringido temporal (ver ROLES_RESTRINGIDOS_TEMP): solo Biblioteca y Flash.
-    principal: ['biblioteca', 'flash'],
-    reportes:  []
+    principal: ['home', 'bandeja', 'actce', 'flash', 'notificaciones', 'solicitudes', 'biblioteca', 'miturno'],
+    reportes:  ['metricas', 'transporte', 'perfil']
   },
   'agente-inmersion': {
     principal: ['home', 'bandeja', 'actce', 'flash', 'notificaciones', 'biblioteca', 'miturno'],
@@ -100,13 +102,11 @@ var NAV_POR_ROL = {
     reportes:  []
   },
   jefe: {
-    // Modo restringido temporal (ver ROLES_RESTRINGIDOS_TEMP): solo Biblioteca y Flash.
-    principal: ['jefe-biblioteca', 'jefe-flash'],
+    principal: ['jefe-usuarios','jefe-bases','jefe-actce','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
     reportes:  []
   },
   supervisor: {
-    // Modo restringido temporal (ver ROLES_RESTRINGIDOS_TEMP): solo Biblioteca y Flash.
-    principal: ['sup-biblioteca', 'sup-flash'],
+    principal: ['sup-jornada','sup-turno','sup-monitoreo','sup-bases','sup-actce','sup-metricas','sup-flash','sup-notif','sup-solicitudes','sup-acciones','sup-licencias','sup-badges','sup-biblioteca','sup-transporte','sup-perfil'],
     reportes:  []
   },
   wfm: {
@@ -114,7 +114,7 @@ var NAV_POR_ROL = {
     reportes:  []
   },
   superadmin: {
-    principal: ['jefe-usuarios','jefe-bases','jefe-actce','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','super-logs','jefe-transporte','jefe-perfil'],
+    principal: ['jefe-usuarios','jefe-bases','jefe-actce','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','super-logs','super-modulos','jefe-transporte','jefe-perfil'],
     reportes:  []
   },
   // Fallback para cualquier otro rol que use sidebar.js
@@ -322,14 +322,23 @@ function verificarSesion() {
 }
 
 // ── Modo restringido temporal ────────────────────────────────────────────────
-// Mientras esta lista no esté vacía, los roles indicados solo pueden abrir las
-// páginas listadas en PAGINAS_PERMITIDAS_TEMP (se les redirige a la primera si
-// intentan entrar a cualquier otra). Para reactivar un módulo para alguno de
-// estos roles: 1) agregar su archivo .html a PAGINAS_PERMITIDAS_TEMP, y
-// 2) agregar el id correspondiente de ITEMS_NAV a su lista en NAV_POR_ROL.
-// Para quitar la restricción por completo, vaciar ROLES_RESTRINGIDOS_TEMP.
-var ROLES_RESTRINGIDOS_TEMP   = ['agente', 'supervisor', 'jefe'];
-var PAGINAS_PERMITIDAS_TEMP   = ['biblioteca.html', 'flash.html'];
+// Los roles listados aquí solo pueden ver/abrir los módulos que el superadmin
+// haya habilitado para ellos desde "Control de módulos" (modulos.html), guardado
+// en Firestore: config/modulos_restringidos → { agente: [ids...], jefe: [...], supervisor: [...] }.
+// Si el documento no existe todavía, se usa DEFAULT_HABILITADOS_TEMP (Biblioteca + Flash).
+// Para quitar la restricción de un rol por completo: en modulos.html, marcar todos
+// sus módulos. Para eliminar el mecanismo entero: vaciar ROLES_RESTRINGIDOS_TEMP.
+var ROLES_RESTRINGIDOS_TEMP  = ['agente', 'supervisor', 'jefe'];
+var DEFAULT_HABILITADOS_TEMP = {
+  agente:     ['biblioteca', 'flash'],
+  jefe:       ['jefe-biblioteca', 'jefe-flash'],
+  supervisor: ['sup-biblioteca', 'sup-flash']
+};
+
+function idsCompletosDeRol(rol) {
+  var c = NAV_POR_ROL[rol]; if (!c) return [];
+  return (c.principal || []).concat(c.reportes || []);
+}
 
 function initSidebar() {
   var paginaActiva = detectarPagina();
@@ -341,28 +350,50 @@ function initSidebar() {
       var rol    = doc.exists ? (doc.data().rol || 'agente') : 'agente';
       var nombre = (doc.exists && doc.data().nombre) ? doc.data().nombre : user.email.split('@')[0];
 
-      if (ROLES_RESTRINGIDOS_TEMP.indexOf(rol) > -1) {
+      var restringir = function(habilitados) {
+        var permitidos = idsCompletosDeRol(rol).filter(function(id) { return habilitados.indexOf(id) > -1; });
+        NAV_POR_ROL[rol] = {
+          principal: (NAV_POR_ROL[rol].principal || []).filter(function(id) { return permitidos.indexOf(id) > -1; }),
+          reportes:  (NAV_POR_ROL[rol].reportes  || []).filter(function(id) { return permitidos.indexOf(id) > -1; })
+        };
+        var archivosPermitidos = permitidos.map(function(id) { return ITEMS_NAV[id] ? ITEMS_NAV[id].url.split('/').pop() : null; }).filter(Boolean);
         var archivoActual = window.location.pathname.split('/').pop() || '';
-        if (PAGINAS_PERMITIDAS_TEMP.indexOf(archivoActual) < 0) {
-          window.location.href = BASE + PAGINAS_PERMITIDAS_TEMP[0];
-          return;
+        if (archivosPermitidos.indexOf(archivoActual) < 0) {
+          window.location.href = archivosPermitidos[0] ? (BASE + archivosPermitidos[0]) : (BASE + 'login.html');
+          return true;
         }
-      }
+        return false;
+      };
 
-      renderSidebar(paginaActiva, rol);
-      document.getElementById('sbName').textContent   = nombre;
-      var sbAv = document.getElementById('sbAvatar');
-      if (doc.exists && doc.data().fotoPerfil) {
-        sbAv.innerHTML = '<img src="'+doc.data().fotoPerfil+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="foto">';
+      var continuar = function() {
+        renderSidebar(paginaActiva, rol);
+        document.getElementById('sbName').textContent   = nombre;
+        var sbAv = document.getElementById('sbAvatar');
+        if (doc.exists && doc.data().fotoPerfil) {
+          sbAv.innerHTML = '<img src="'+doc.data().fotoPerfil+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="foto">';
+        } else {
+          sbAv.textContent = nombre.substring(0, 2).toUpperCase();
+        }
+        var rolEl = document.querySelector('.sb-user-role');
+        if (rolEl) rolEl.textContent = LABELS_ROL[rol] || 'Agente';
+        var conBadges = ['agente', 'supervisor', 'formacion'].indexOf(rol) > -1;
+        if (conBadges) cargarBadges(user.uid, db);
+        cargarFlashBadge(user.uid, db);
+        cargarNotifBadge(user.uid, rol, db);
+      };
+
+      if (ROLES_RESTRINGIDOS_TEMP.indexOf(rol) > -1) {
+        db.collection('config').doc('modulos_restringidos').get().then(function(cfgDoc) {
+          var cfg = cfgDoc.exists ? cfgDoc.data() : {};
+          var habilitados = cfg[rol] || DEFAULT_HABILITADOS_TEMP[rol] || [];
+          if (!restringir(habilitados)) continuar();
+        }).catch(function(e) {
+          console.error('config modulos:', e);
+          if (!restringir(DEFAULT_HABILITADOS_TEMP[rol] || [])) continuar();
+        });
       } else {
-        sbAv.textContent = nombre.substring(0, 2).toUpperCase();
+        continuar();
       }
-      var rolEl = document.querySelector('.sb-user-role');
-      if (rolEl) rolEl.textContent = LABELS_ROL[rol] || 'Agente';
-      var conBadges = ['agente', 'supervisor', 'formacion'].indexOf(rol) > -1;
-      if (conBadges) cargarBadges(user.uid, db);
-      cargarFlashBadge(user.uid, db);
-      cargarNotifBadge(user.uid, rol, db);
     });
   });
 }

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script src="mobile-guard.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/atu-360/">
+<title>ATU 360 — Control de módulos</title>
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="base.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter','Segoe UI',sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+
+  .content { padding: 24px 28px; display: flex; flex-direction: column; gap: 20px; flex: 1; max-width: 900px; }
+  .intro { background: white; border: 1px solid #E2E8F0; border-radius: 10px; padding: 16px 20px; font-size: 0.82rem; color: #475569; line-height: 1.6; }
+  .intro b { color: #1E293B; }
+
+  .rol-card { background: white; border: 1px solid #E2E8F0; border-radius: 10px; overflow: hidden; }
+  .rol-head { padding: 16px 20px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .rol-titulo { font-size: 0.95rem; font-weight: 700; color: #1E293B; }
+  .rol-sub { font-size: 0.75rem; color: #94A3B8; margin-top: 2px; }
+  .rol-actions { display: flex; gap: 8px; }
+  .link-btn { color: #1A3DAA; font-weight: 600; font-size: 0.76rem; cursor: pointer; background: none; border: none; font-family: inherit; padding: 0; }
+  .mod-list { display: flex; flex-direction: column; }
+  .mod-row { display: flex; align-items: center; gap: 12px; padding: 11px 20px; border-bottom: 1px solid #F8FAFC; font-size: 0.85rem; }
+  .mod-row:last-child { border-bottom: none; }
+  .mod-row input { width: 17px; height: 17px; flex-shrink: 0; cursor: pointer; }
+  .mod-row label { flex: 1; cursor: pointer; }
+  .rol-foot { padding: 14px 20px; border-top: 1px solid #F1F5F9; display: flex; align-items: center; gap: 12px; }
+  .btn-pri { padding: 9px 18px; border: none; border-radius: 7px; background: #1A3DAA; color: white; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn-pri:hover { opacity: 0.88; }
+  .btn-pri:disabled { opacity: 0.5; cursor: not-allowed; }
+  .estado-txt { font-size: 0.75rem; color: #94A3B8; }
+  .loading { font-size: 0.82rem; color: #94A3B8; text-align: center; padding: 24px; }
+
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="sidebar"></div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Control de módulos</h2>
+      <span class="topbar-sep">/</span>
+      <p>Habilita o restringe módulos por rol</p>
+    </div>
+    <div class="tb-clock" id="clock">--:--:--</div>
+  </div>
+
+  <div class="content">
+    <div class="intro">
+      Aquí controlas qué módulos puede ver y abrir cada rol <b>mientras esté en modo restringido</b> (actualmente: Agente, Supervisor y Jefe).
+      Marca todos los módulos de un rol para devolverle acceso completo, o solo los que necesite por ahora. Los cambios aplican la próxima vez que esa persona cargue una página (puede requerir recargar o volver a iniciar sesión).
+    </div>
+    <div id="rolesBody"><div class="loading">Cargando...</div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+  var ROLES_PERMITIDOS = ['superadmin'];
+
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var db   = firebase.firestore();
+  var auth = firebase.auth();
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  auth.onAuthStateChanged(function(user) {
+    if (!user) { window.location.href = BASE + 'login.html'; return; }
+    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
+        window.location.href = BASE + 'home.html'; return;
+      }
+      cargarConfig();
+    });
+  });
+
+  var ROLES_A_CONTROLAR = [
+    { rol: 'agente',     label: 'Agente' },
+    { rol: 'supervisor', label: 'Supervisor' },
+    { rol: 'jefe',       label: 'Jefe' }
+  ];
+
+  var configActual = {};
+
+  function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function idsCompletosDeRolLocal(rol) {
+    var c = NAV_POR_ROL[rol]; if (!c) return [];
+    return (c.principal || []).concat(c.reportes || []);
+  }
+
+  function cargarConfig() {
+    db.collection('config').doc('modulos_restringidos').get().then(function(doc) {
+      configActual = doc.exists ? doc.data() : {};
+      render();
+    }).catch(function(e) { console.error(e); showToast('Error al cargar la configuración.'); });
+  }
+
+  function render() {
+    document.getElementById('rolesBody').innerHTML = ROLES_A_CONTROLAR.map(function(r) {
+      var ids = idsCompletosDeRolLocal(r.rol);
+      var habilitados = configActual[r.rol] || DEFAULT_HABILITADOS_TEMP[r.rol] || [];
+      var filas = ids.map(function(id) {
+        var item = ITEMS_NAV[id];
+        if (!item) return '';
+        var checked = habilitados.indexOf(id) > -1;
+        return '<div class="mod-row"><input type="checkbox" id="chk-'+r.rol+'-'+id+'" data-rol="'+r.rol+'" data-id="'+id+'" '+(checked?'checked':'')+'>'
+          + '<label for="chk-'+r.rol+'-'+id+'">'+escHtml(item.label)+'</label></div>';
+      }).join('');
+      return '<div class="rol-card">'
+        + '<div class="rol-head">'
+        + '<div><div class="rol-titulo">'+r.label+'</div><div class="rol-sub">'+habilitados.length+' de '+ids.length+' módulos habilitados</div></div>'
+        + '<div class="rol-actions">'
+        + '<button class="link-btn" onclick="marcarTodos(\''+r.rol+'\',true)">Habilitar todos</button>'
+        + '<button class="link-btn" onclick="marcarTodos(\''+r.rol+'\',false)">Deshabilitar todos</button>'
+        + '</div></div>'
+        + '<div class="mod-list">'+filas+'</div>'
+        + '<div class="rol-foot"><button class="btn-pri" onclick="guardarRol(\''+r.rol+'\')">Guardar cambios de '+r.label+'</button><span class="estado-txt" id="estado-'+r.rol+'"></span></div>'
+        + '</div>';
+    }).join('');
+  }
+
+  window.marcarTodos = function(rol, valor) {
+    document.querySelectorAll('[data-rol="'+rol+'"]').forEach(function(chk) { chk.checked = valor; });
+  };
+
+  window.guardarRol = function(rol) {
+    var habilitados = Array.prototype.slice.call(document.querySelectorAll('[data-rol="'+rol+'"]:checked')).map(function(chk) { return chk.dataset.id; });
+    var estadoEl = document.getElementById('estado-'+rol);
+    estadoEl.textContent = 'Guardando...';
+    var patch = {}; patch[rol] = habilitados;
+    db.collection('config').doc('modulos_restringidos').set(patch, { merge: true }).then(function() {
+      configActual[rol] = habilitados;
+      var label = (ROLES_A_CONTROLAR.find(function(r){ return r.rol === rol; }) || {}).label || rol;
+      registrarLog('cambio-config-modulos', (firebase.auth().currentUser.email) + ' actualizó los módulos habilitados para el rol ' + label + ' (' + habilitados.length + ' módulos).');
+      estadoEl.textContent = 'Guardado.';
+      showToast('Módulos de ' + label + ' actualizados.');
+      render();
+    }).catch(function(e) {
+      console.error(e); estadoEl.textContent = ''; showToast('Error al guardar: ' + e.message);
+    });
+  };
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
+</script>
+<script src="notif.js"></script>
+<script src="sidebar.js"></script>
+<script>
+  initSidebar();
+  initNotif(db, auth);
+</script>
+</body>
+</html>
