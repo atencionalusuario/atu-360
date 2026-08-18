@@ -274,9 +274,22 @@
 
     <div id="casosEspecialesSDP" class="triage-resultado" style="display:none;">
       <div class="triage-acciones">
-        <button class="bib-btn" onclick="mostrarUno('casoTercero', [])">Persona comunicándose en nombre de un tercero</button>
+        <button class="bib-btn" onclick="mostrarUno('casoTercero', ['casoSinDocumento','casoMenorEdad'])">Persona comunicándose en nombre de un tercero</button>
+        <button class="bib-btn" onclick="mostrarUno('casoSinDocumento', ['casoTercero','casoMenorEdad'])">Usuario sin documento</button>
+        <button class="bib-btn" onclick="mostrarUno('casoMenorEdad', ['casoTercero','casoSinDocumento'])">Contacto de menor de edad</button>
+      </div>
+      <div id="casoMenorEdad" class="triage-resultado" style="display:none;">
+        <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; text-align:center;">Menores de edad</h4>
+        <p>Comprendo su consulta. Sin embargo, le informo que para utilizar los servicios de <strong>DoctorSV</strong> es necesario ser <strong>mayor de 18 años</strong> y contar con un <strong>documento de identidad</strong>. En caso de ser menor de edad, será necesario que un adulto responsable se comunique con nosotros para proporcionarnos la información necesaria y gestionar la atención que usted requiere.</p>
+        <p>En este momento, ¿podría confirmarme si presenta alguna situación de emergencia?</p>
+      </div>
+      <div id="casoSinDocumento" class="triage-resultado" style="display:none;">
+        <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; text-align:center;">Usuario sin DUI, Carnet de residente o Pasaporte salvadoreño</h4>
+        <p>Comprendo su consulta Sr./Sra. xxx. Sin embargo, le informo que para utilizar los servicios de <strong>DoctorSV</strong> es necesario contar con un documento de identidad vigente. Los documentos válidos son: DUI, carné de residente o pasaporte salvadoreño. Si actualmente no dispone de alguno de estos documentos, no será posible completar el proceso de registro y brindarle la atención a través de la plataforma hasta que cuente con uno de ellos.</p>
+        <p>En este momento, ¿podría confirmarme si presenta alguna situación de emergencia?</p>
       </div>
       <div id="casoTercero" class="triage-resultado" style="display:none;">
+        <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; text-align:center;">Contacto de tercero en nombre de un usuario</h4>
         <p style="color:#64748B; font-style:italic;">Este caso aplica únicamente cuando quien nos contacta es un tercero (no el usuario titular ni un familiar asociado a su cuenta) que se comunica en nombre de un usuario titular de DoctorSV.</p>
         <p>Entiendo lo que me comenta. Para poder brindarle la atención correspondiente, ¿me podría comunicar, por favor, con la persona que necesita la asistencia?</p>
         <div class="triage-acciones">
