@@ -269,6 +269,43 @@
     <div class="sdp-botones">
       <button class="bib-btn" id="btnSdpSi" onclick="mostrarSDP('si')">Ya está registrado en el SDP</button>
       <button class="bib-btn" id="btnSdpNo" onclick="mostrarSDP('no')">No está registrado en el SDP</button>
+      <button class="bib-btn" id="btnSdpCasosEspeciales" onclick="toggleBloque('casosEspecialesSDP')">Casos especiales</button>
+    </div>
+
+    <div id="casosEspecialesSDP" class="triage-resultado" style="display:none;">
+      <div class="triage-acciones">
+        <button class="bib-btn" onclick="mostrarUno('casoTercero', [])">Persona comunicándose en nombre de un tercero</button>
+      </div>
+      <div id="casoTercero" class="triage-resultado" style="display:none;">
+        <p>Entiendo lo que me comenta. Para poder brindarle la atención correspondiente, ¿me podría comunicar, por favor, con la persona que necesita la asistencia?</p>
+        <div class="triage-acciones">
+          <button class="bib-btn btn-si-verde" onclick="mostrarUno('casoTerceroSiPuede', ['casoTerceroNoPuede'])">SI puede contestar</button>
+          <button class="bib-btn btn-no-rojo" onclick="mostrarUno('casoTerceroNoPuede', ['casoTerceroSiPuede'])">No puede contestar</button>
+        </div>
+        <div id="casoTerceroSiPuede" class="triage-resultado" style="display:none;">
+          <p>Buenos días / tardes / noches, ¿usted autoriza a que se puedan brindar sus datos personales y gestionar requerimientos en su nombre?</p>
+          <div class="triage-acciones">
+            <button class="bib-btn" onclick="mostrarUno('casoTerceroAutorizaSi', ['casoTerceroAutorizaNo'])">Sí</button>
+            <button class="bib-btn" onclick="mostrarUno('casoTerceroAutorizaNo', ['casoTerceroAutorizaSi'])">No</button>
+          </div>
+          <div id="casoTerceroAutorizaSi" class="triage-resultado" style="display:none;">
+            <p>Gracias por la confirmación, ¿me puede comunicar nuevamente con el/la Sr/Sra XXXX?</p>
+          </div>
+          <div id="casoTerceroAutorizaNo" class="triage-resultado" style="display:none;">
+            <p>Entiendo. En este caso, con el objetivo de proteger la información de nuestros usuarios, para hacer solicitudes o gestiones en nombre de un tercero es necesario contar con la aprobación o con los datos solicitados. Le pedimos que nos contacte en otra oportunidad cuando el usuario pueda confirmar y gustosamente le atenderemos.</p>
+          </div>
+        </div>
+        <div id="casoTerceroNoPuede" class="triage-resultado" style="display:none;">
+          <p>Comprendo. ¿Me podría indicar por favor los siguientes datos de la persona que está asistiendo? Su nombre completo, su número de documento y su fecha de nacimiento.</p>
+          <p style="color:#64748B; font-style:italic;">Instrucción: agregar datos en la sección Datos del paciente del SDP.</p>
+          <div class="triage-acciones">
+            <button class="bib-btn btn-no-rojo" onclick="mostrarUno('casoTerceroNoSuministra', [])">No suministra datos</button>
+          </div>
+          <div id="casoTerceroNoSuministra" class="triage-resultado" style="display:none;">
+            <p>Entiendo. En este caso, con el objetivo de proteger la información de nuestros usuarios, para hacer solicitudes o gestiones en nombre de un tercero es necesario contar con la aprobación o con los datos solicitados. Le pedimos que nos contacte en otra oportunidad cuando el usuario pueda confirmar y gustosamente le atenderemos.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="bib-saludo" id="cajaSDP" style="display:none;">
@@ -577,7 +614,7 @@
     pilaVistas = [];
     document.getElementById('vistaCategoria').style.display = 'none';
     document.getElementById('flujoSDP').style.display = 'flex';
-    ['cajaSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'accesoBusquedaMenu', 'botonesMenu', 'botonesMenuExtra'].forEach(function(id) {
+    ['cajaSDP', 'casosEspecialesSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'accesoBusquedaMenu', 'botonesMenu', 'botonesMenuExtra'].forEach(function(id) {
       document.getElementById(id).style.display = 'none';
     });
     ['btnSdpSi', 'btnSdpNo', 'btnConfSi', 'btnConfNo'].forEach(function(id) {
