@@ -307,6 +307,17 @@
         <button class="bib-btn" id="btnCatIncidencia" onclick="mostrarCategoria('incidencia')">Incidencias</button>
       </div>
     </div>
+
+    <div class="sdp-botones" id="botonesMenuExtra" style="display:none; margin-top:8px;">
+      <div class="btn-col">
+        <p class="instruccion instruccion-btn">¿Es una emergencia?</p>
+        <button class="bib-btn" id="btnCatEmergencia" onclick="mostrarCategoria('emergencia')">Emergencia</button>
+      </div>
+      <div class="btn-col">
+        <p class="instruccion instruccion-btn">¿No está relacionado con el servicio?</p>
+        <button class="bib-btn" id="btnCatNoRelacionado" onclick="mostrarCategoria('norelacionado')">No relacionado</button>
+      </div>
+    </div>
   </div>
   </div>
 
@@ -544,7 +555,7 @@
     pilaVistas = [];
     document.getElementById('vistaCategoria').style.display = 'none';
     document.getElementById('flujoSDP').style.display = 'flex';
-    ['cajaSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'accesoBusquedaMenu', 'botonesMenu'].forEach(function(id) {
+    ['cajaSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'accesoBusquedaMenu', 'botonesMenu', 'botonesMenuExtra'].forEach(function(id) {
       document.getElementById(id).style.display = 'none';
     });
     ['btnSdpSi', 'btnSdpNo', 'btnConfSi', 'btnConfNo'].forEach(function(id) {
@@ -658,6 +669,7 @@
     document.getElementById('instMenuDetalle').style.display = esNo ? 'block' : 'none';
     document.getElementById('accesoBusquedaMenu').style.display = esNo ? 'block' : 'none';
     document.getElementById('botonesMenu').style.display = esNo ? 'flex' : 'none';
+    document.getElementById('botonesMenuExtra').style.display = esNo ? 'flex' : 'none';
 
     pilaVistas = [];
     document.getElementById('vistaCategoria').style.display = 'none';
@@ -688,6 +700,7 @@
     document.getElementById('instMenuDetalle').style.display = 'block';
     document.getElementById('accesoBusquedaMenu').style.display = 'block';
     document.getElementById('botonesMenu').style.display = 'flex';
+    document.getElementById('botonesMenuExtra').style.display = 'flex';
 
     historial = historial.slice(0, 2).concat([{
       label: tipo === 'si' ? 'Mismo número' : 'Cambió de número',
@@ -697,7 +710,7 @@
     renderRuta();
   }
 
-  var NOMBRES_CATEGORIA = { consulta: 'Consulta', gestion: 'Gestión', incidencia: 'Incidencia' };
+  var NOMBRES_CATEGORIA = { consulta: 'Consulta', gestion: 'Gestión', incidencia: 'Incidencia', emergencia: 'Emergencia', norelacionado: 'No relacionado' };
   var CATEGORIAS_CON_BUSQUEDA = {
     consulta: '¿Qué tipo de información necesita el usuario?',
     gestion: '¿Qué gestión necesita el usuario que hagamos?',
@@ -2010,7 +2023,9 @@
             '<p>Muchas gracias por la información, le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido, ya que nos permite mejorar cada día.</p>'
         }
       ] }
-    ]
+    ],
+    emergencia: [],
+    norelacionado: []
   };
 
   var pilaVistas = [];
