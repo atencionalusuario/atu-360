@@ -269,11 +269,14 @@
     <div class="sdp-botones">
       <button class="bib-btn" id="btnSdpSi" onclick="mostrarSDP('si')">Ya está registrado en el SDP</button>
       <button class="bib-btn" id="btnSdpNo" onclick="mostrarSDP('no')">No está registrado en el SDP</button>
+    </div>
+
+    <div class="sdp-botones" style="margin-top:8px;">
       <button class="bib-btn" id="btnSdpCasosEspeciales" onclick="toggleBloque('casosEspecialesSDP')">Casos especiales</button>
     </div>
 
     <div id="casosEspecialesSDP" class="triage-resultado" style="display:none;">
-      <div class="triage-acciones">
+      <div class="triage-acciones" style="flex-direction:column; align-items:center;">
         <button class="bib-btn" onclick="mostrarUno('casoTercero', ['casoSinDocumento','casoMenorEdad'])">Persona comunicándose en nombre de un tercero</button>
         <button class="bib-btn" onclick="mostrarUno('casoSinDocumento', ['casoTercero','casoMenorEdad'])">Usuario sin documento</button>
         <button class="bib-btn" onclick="mostrarUno('casoMenorEdad', ['casoTercero','casoSinDocumento'])">Contacto de menor de edad</button>
