@@ -120,6 +120,14 @@
   .panel-temporizador.open { display: flex; }
   .panel-temporizador-display { font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 700; color: #0F2070; letter-spacing: 1px; }
   .panel-temporizador-display.alerta { color: #DC2626; }
+  .panel-temporizador-display.vibrando { animation: vibrarTemporizador 0.15s linear 6; }
+  @keyframes vibrarTemporizador {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
   .panel-temporizador-botones { display: flex; gap: 8px; }
   .panel-temporizador-botones button { border: none; border-radius: 8px; padding: 8px 12px; font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; background: #0F2070; color: white; }
   .panel-temporizador-botones button:hover { background: #1A3DAA; }
@@ -2673,6 +2681,9 @@
         temporizadorIntervalo = null;
         document.getElementById('btnTemporizadorIniciar').textContent = 'Iniciar';
         document.getElementById('btnTemporizadorIniciar').onclick = iniciarTemporizador;
+        var display = document.getElementById('temporizadorDisplay');
+        display.classList.add('vibrando');
+        setTimeout(function() { display.classList.remove('vibrando'); }, 1000);
       }
     }, 1000);
   }
