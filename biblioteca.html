@@ -499,6 +499,13 @@
     <h3 class="modal-titulo">Recursos</h3>
     <div class="sdp-botones" style="margin-top:16px;">
       <button class="bib-btn" onclick="cerrarModalRecursos(); abrirModalMatrizCalidad();">Matriz de calidad</button>
+      <button class="bib-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/1xm8aO7uZ5cGHl8nhKJdSCr235spSumnleJhByHvrzvc/edit?gid=0#gid=0', '_blank')">Matriz de tipificaciones SDP</button>
+      <button class="bib-btn" onclick="window.open('https://docs.google.com/presentation/d/12K0ZEoxTFIK6PTb0ge9ctWGAF1oniXQwc2mEzKWwFTk/edit', '_blank')">Pantallas de la aplicación</button>
+      <button class="bib-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/1S4HQ0oKIieVa9jSYlukzCLJ3Z0UeYMt6/edit?gid=1995540795#gid=1995540795&fvid=939997235', '_blank')">Directorio de farmacias y laboratorios</button>
+      <button class="bib-btn" onclick="window.open('https://telemed.telesalud.gob.sv/', '_blank')">TCA</button>
+      <button class="bib-btn" onclick="window.open('https://app.nerds.ai/login', '_blank')">Nerds</button>
+      <button class="bib-btn" onclick="window.open('https://atencion.telesalud.gob.sv/HomePage.do', '_blank')">SDP</button>
+      <button class="bib-btn" onclick="window.open('https://tercemed.com/#/login', '_blank')">P2H</button>
     </div>
   </div>
 </div>
@@ -630,11 +637,17 @@
   setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
 
+  function acortarNombreAgente(nombreCompleto) {
+    var partes = nombreCompleto.trim().split(/\s+/);
+    if (partes.length <= 2) return nombreCompleto;
+    return partes[0] + ' ' + partes[partes.length - 2];
+  }
+
   auth.onAuthStateChanged(function(user) {
     if (!user) return;
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
       var nombre = (doc.exists && doc.data().nombre) ? doc.data().nombre : user.email.split('@')[0];
-      document.getElementById('nombreAgente').textContent = nombre;
+      document.getElementById('nombreAgente').textContent = acortarNombreAgente(nombre);
     });
   });
 
