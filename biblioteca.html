@@ -116,6 +116,15 @@
   .tarjeta-script .modal-tipificacion { margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9; font-size: 0.78rem; }
 
   .cintillo-lateral { position: fixed; top: 50%; right: 0; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; background: white; padding: 10px 8px; border-radius: 14px 0 0 14px; box-shadow: -3px 0 16px rgba(15,32,112,0.14); border: 1px solid #E2E8F0; border-right: none; z-index: 50; }
+  .panel-temporizador { position: fixed; top: 50%; right: 74px; transform: translateY(-50%); background: white; border: 1px solid #E2E8F0; border-radius: 14px; box-shadow: -3px 0 16px rgba(15,32,112,0.14); padding: 18px 20px; z-index: 51; display: none; flex-direction: column; align-items: center; gap: 10px; width: 160px; }
+  .panel-temporizador.open { display: flex; }
+  .panel-temporizador-display { font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 700; color: #0F2070; letter-spacing: 1px; }
+  .panel-temporizador-display.alerta { color: #DC2626; }
+  .panel-temporizador-botones { display: flex; gap: 8px; }
+  .panel-temporizador-botones button { border: none; border-radius: 8px; padding: 8px 12px; font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; background: #0F2070; color: white; }
+  .panel-temporizador-botones button:hover { background: #1A3DAA; }
+  .panel-temporizador-botones button.reiniciar { background: #E2E8F0; color: #334155; }
+  .panel-temporizador-botones button.reiniciar:hover { background: #CBD5E1; }
   .cintillo-btn { width: 42px; height: 42px; border-radius: 50%; background: #0F2070; color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
   .cintillo-btn:hover { background: #1A3DAA; transform: scale(1.07); }
   .cintillo-btn svg { width: 20px; height: 20px; }
@@ -150,6 +159,8 @@
   .cintillo-btn.cintillo-despedida:hover { background: #1A3DAA; }
   .cintillo-btn.cintillo-matriz { background: #0F2070; }
   .cintillo-btn.cintillo-matriz:hover { background: #1A3DAA; }
+  .cintillo-btn.cintillo-temporizador { background: #0F2070; }
+  .cintillo-btn.cintillo-temporizador:hover { background: #1A3DAA; }
   .matriz-calidad-grid { display: flex; flex-direction: column; gap: 3px; margin-top: 16px; }
   .matriz-calidad-fila { display: grid; grid-template-columns: 1fr 110px; align-items: stretch; border-radius: 6px; overflow: hidden; min-height: 72px; }
   .matriz-calidad-label { padding: 16px 18px; color: white; font-weight: 700; font-family: 'Montserrat', sans-serif; font-size: 0.92rem; display: flex; align-items: center; border-right: 1px solid rgba(255,255,255,0.25); }
@@ -384,6 +395,9 @@
   <button class="cintillo-btn cintillo-matriz" title="Matriz de calidad" onclick="abrirModalMatrizCalidad()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 3v2a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V3"/><path d="m9 13 2 2 4-4"/></svg>
   </button>
+  <button class="cintillo-btn cintillo-temporizador" title="Temporizador" onclick="toggleTemporizador()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>
+  </button>
   <button class="cintillo-btn cintillo-despedida" title="Script de despedida" onclick="abrirModalDespedida()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12"/>
@@ -397,6 +411,14 @@
   <button class="cintillo-btn cintillo-gem" title="Asistente Gemini" onclick="window.open('https://gemini.google.com/u/1/gem/54309f25a04c', '_blank')">
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.6 4.6 3.4 7.4 8 8-4.6.6-7.4 3.4-8 8-.6-4.6-3.4-7.4-8-8 4.6-.6 7.4-3.4 8-8Z"/></svg>
   </button>
+</div>
+
+<div class="panel-temporizador" id="panelTemporizador">
+  <div class="panel-temporizador-display" id="temporizadorDisplay">01:30</div>
+  <div class="panel-temporizador-botones">
+    <button onclick="iniciarTemporizador()" id="btnTemporizadorIniciar">Iniciar</button>
+    <button class="reiniciar" onclick="reiniciarTemporizador()">Reiniciar</button>
+  </div>
 </div>
 
 <button class="btn-scroll-top" id="btnScrollTop" title="Ir arriba" onclick="irArriba()">
@@ -2540,6 +2562,54 @@
       ]
     }
   };
+
+  var TEMPORIZADOR_INICIAL = 90;
+  var temporizadorSegundos = TEMPORIZADOR_INICIAL;
+  var temporizadorIntervalo = null;
+
+  function actualizarDisplayTemporizador() {
+    var min = Math.floor(temporizadorSegundos / 60);
+    var seg = temporizadorSegundos % 60;
+    var display = document.getElementById('temporizadorDisplay');
+    display.textContent = (min < 10 ? '0' : '') + min + ':' + (seg < 10 ? '0' : '') + seg;
+    display.classList.toggle('alerta', temporizadorSegundos <= 10);
+  }
+
+  function toggleTemporizador() {
+    document.getElementById('panelTemporizador').classList.toggle('open');
+  }
+
+  function iniciarTemporizador() {
+    if (temporizadorIntervalo) return;
+    document.getElementById('btnTemporizadorIniciar').textContent = 'Pausar';
+    document.getElementById('btnTemporizadorIniciar').onclick = pausarTemporizador;
+    temporizadorIntervalo = setInterval(function() {
+      temporizadorSegundos--;
+      actualizarDisplayTemporizador();
+      if (temporizadorSegundos <= 0) {
+        clearInterval(temporizadorIntervalo);
+        temporizadorIntervalo = null;
+        document.getElementById('btnTemporizadorIniciar').textContent = 'Iniciar';
+        document.getElementById('btnTemporizadorIniciar').onclick = iniciarTemporizador;
+      }
+    }, 1000);
+  }
+
+  function pausarTemporizador() {
+    clearInterval(temporizadorIntervalo);
+    temporizadorIntervalo = null;
+    document.getElementById('btnTemporizadorIniciar').textContent = 'Reanudar';
+    document.getElementById('btnTemporizadorIniciar').onclick = iniciarTemporizador;
+  }
+
+  function reiniciarTemporizador() {
+    clearInterval(temporizadorIntervalo);
+    temporizadorIntervalo = null;
+    temporizadorSegundos = TEMPORIZADOR_INICIAL;
+    actualizarDisplayTemporizador();
+    document.getElementById('btnTemporizadorIniciar').textContent = 'Iniciar';
+    document.getElementById('btnTemporizadorIniciar').onclick = iniciarTemporizador;
+  }
 
   function abrirModalMatrizCalidad() {
     mostrarMatrizPrincipal();
