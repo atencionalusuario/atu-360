@@ -1840,11 +1840,10 @@
         },
         { label: 'Calidez de la atención',
           texto:
-            '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+            '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que lo que nos comenta sea evaluado por el área correspondiente.</p>' +
             '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
             '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
-            '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
-            '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+            '<p>Muchas gracias. Agregaré toda la información descrita por usted.</p>' +
             '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
             '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
         }
@@ -2024,8 +2023,22 @@
         }
       ] }
     ],
-    emergencia: [],
-    norelacionado: []
+    emergencia: [
+      { label: 'Emergencia',
+        texto:
+          '<div class="triage-alerta">' +
+            '<p>Entiendo lo que me comenta. Para poder brindarle la atención correspondiente, le solicitare datos personales. Podría proporcionarme, por favor, la siguiente información:</p>' +
+            '<ul><li>Su edad.</li><li>El distrito (municipio) donde se encuentra.</li><li>Su dirección exacta.</li><li>Un punto de referencia.</li><li>Un número de teléfono de contacto.</li></ul>' +
+            '<p>Muchas gracias por la información. En este momento transferiré su llamada a uno de nuestros médicos de apoyo. Le solicito, por favor, que no cuelgue y me permita un momento en línea mientras realizo la transferencia.</p>' +
+          '</div>'
+      }
+    ],
+    norelacionado: [
+      { label: 'No relacionado',
+        texto:
+          '<p>Comprendemos su consulta, sin embargo, debo comentarle que ésta es una línea exclusiva para atender dudas relacionadas al servicio de <strong>DoctorSV</strong>, por lo que no podremos ayudarle con su inquietud.</p>'
+      }
+    ]
   };
 
   var pilaVistas = [];
@@ -2043,6 +2056,11 @@
     historial = historial.slice(0, historialBaseMenu);
     historialBaseCategoria = historial.length;
     pushVistaOpciones(NOMBRES_CATEGORIA[cat], OPCIONES_CATEGORIA[cat]);
+
+    var opciones = OPCIONES_CATEGORIA[cat];
+    if (opciones && opciones.length === 1 && opciones[0] && opciones[0].texto && !opciones[0].hijos) {
+      clickOpcion(0);
+    }
   }
 
   function aplanarArbol(items, ancestros) {
