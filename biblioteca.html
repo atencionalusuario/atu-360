@@ -514,6 +514,12 @@
       <button class="bib-btn" onclick="window.open('https://app.nerds.ai/login', '_blank')">Nerds</button>
       <button class="bib-btn" onclick="window.open('https://atencion.telesalud.gob.sv/HomePage.do', '_blank')">SDP</button>
       <button class="bib-btn" onclick="window.open('https://tercemed.com/#/login', '_blank')">P2H</button>
+      <button class="bib-btn" style="background:#EA580C" onclick="toggleBloque('scriptEvacuacion')">Script evacuación</button>
+    </div>
+    <div id="scriptEvacuacion" class="triage-resultado" style="display:none;">
+      <p>Por motivos de seguridad, debemos finalizar la llamada de manera inmediata. Lamentamos cualquier inconveniente que esto pueda causar. Quedamos a su disposición para cualquier consulta en otro momento.</p>
+      <p style="color:#64748B; font-style:italic;">Instrucción: Luego de dar el script:</p>
+      <p style="color:#64748B; font-style:italic;">Cambiar de auxiliar a Pausa administrativa</p>
     </div>
   </div>
 </div>
@@ -1841,8 +1847,8 @@
             '<p>Entiendo su solicitud. Es importante que tenga en cuenta que, al realizar la desvinculación del Programa de Crónicos, perderá el seguimiento que ha llevado hasta el momento. Asimismo, las órdenes de estudios y recetas que tenga pendientes serán canceladas y ya no podrán ser utilizadas.</p>' +
             '<p><strong>¿Desea continuar con el proceso de desvinculación?</strong></p>' +
             '<div class="triage-acciones">' +
-              '<button class="bib-btn" onclick="mostrarUno(\'bajaProgramaSi\', \'bajaProgramaNo\')">Confirma que sí.</button>' +
-              '<button class="bib-btn" onclick="mostrarUno(\'bajaProgramaNo\', \'bajaProgramaSi\')">Confirma que no.</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'bajaProgramaSi\', \'bajaProgramaNo\')">Confirma que sí</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'bajaProgramaNo\', \'bajaProgramaSi\')">Confirma que no</button>' +
             '</div>' +
             '<div id="bajaProgramaSi" class="triage-resultado" style="display:none;">' +
               '<p>Gracias por la confirmación. Para continuar con la gestión, recibirá un código de verificación por mensaje de texto. Cuando lo reciba, ¿me lo puede compartir, por favor?</p>' +
@@ -2132,6 +2138,12 @@
             '<p>¿Me podría informar a <strong>cuál establecimiento visitó</strong>? ¿Me podría confirmar a <strong>qué institución pertenece</strong>?</p>' +
             '<p style="color:#64748B; font-style:italic;">Completar campos del SDP con la información descrita por el usuario</p>' +
             '<p>Muchas gracias por la información, le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido, ya que nos permite mejorar cada día.</p>'
+        },
+        { label: 'Incidencias con centro de soporte',
+          texto:
+            '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+            '<p>Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido. También le comento que se le dará seguimiento a su reporte a través del <strong>ticket nro XXXXXXX</strong>.</p>' +
+            '<p style="color:#64748B; font-style:italic;">NOTA INTERNA: En los casos en los que la queja o denuncia tenga relación a la atención de un medico/agente de call center u otro; <strong>es importante solicitar el nombre de la persona, el cargo, fecha y hora del inconveniente y la descripción del caso.</strong></p>'
         }
       ] }
     ],
