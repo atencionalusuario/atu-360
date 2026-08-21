@@ -378,7 +378,7 @@
       </div>
       <div class="btn-col">
         <p class="instruccion instruccion-btn">¿Me reporta que algo falla?</p>
-        <button class="bib-btn" id="btnCatIncidencia" onclick="mostrarCategoria('incidencia')">Incidencias</button>
+        <button class="bib-btn" id="btnCatIncidencia" onclick="mostrarCategoria('incidencia'); abrirModalTip('<p>Busca el documento del usuario en el SDP y revisa su historial de tickets, ¿tiene ticket ya creado por el mismo motivo?</p>')">Incidencias</button>
       </div>
     </div>
 
@@ -797,11 +797,54 @@
   var TEXTOS_CONFIRMACION = {
     si: '<p>Muchas gracias SR / SRA XXX, dígame, <strong>¿cómo puedo ayudarle?</strong></p>',
     no: '<p>De acuerdo, antes de continuar con su atención, con mucho gusto le ayudo a actualizarlo, ¿me indica su nuevo número de contacto?</p>' +
-        '<div class="triage-acciones">' +
-          '<button class="bib-btn" onclick="mostrarCategoria(\'gestion\'); abrirActualizarDato(\'Cambio de teléfono\')">Ir a cambio de teléfono</button>' +
+        '<p>Me confirma: ¿usted tiene acceso a su correo electrónico registrado en <strong>DoctorSV</strong>? ¿Me podría indicar el correo registrado?</p>' +
+        '<p style="color:#64748B; font-style:italic;">Instrucción: El usuario debe mencionar el correo electrónico registrado. Depende de lo que diga el usuario selecciona la opción. Le puedes dar pistas al usuario del correo registrado. Nunca el correo completo.</p>' +
+        '<div id="cambioTelefonoConfirmacion" class="triage-resultado" style="display:block;">' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfSiCorreo\', [\'telefonoConfSiRecuerdaNoAcceso\',\'telefonoConfNoCorreo\'])">Sí lo recuerda y tiene acceso</button>' +
+            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfSiRecuerdaNoAcceso\', [\'telefonoConfSiCorreo\',\'telefonoConfNoCorreo\'])">Sí lo recuerda, pero no tiene acceso</button>' +
+            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfNoCorreo\', [\'telefonoConfSiCorreo\',\'telefonoConfSiRecuerdaNoAcceso\'])">No lo recuerda</button>' +
+          '</div>' +
+          '<div id="telefonoConfSiCorreo" class="triage-resultado" style="display:none;">' +
+            '<p>Muchas gracias. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al correo electrónico confirmado</p>' +
+            '<p>Por favor, compártame el código una vez lo reciba.</p>' +
+            '<p>Perfecto, muchas gracias. Ahora, ¿me podría indicar, por favor, el nuevo número de teléfono a registrar?</p>' +
+            '<p>Muchas gracias. Le confirmo que su <strong>número de teléfono ha sido actualizado exitosamente</strong> en su cuenta de <strong>DoctorSV</strong>.</p>' +
+          '</div>' +
+          '<div id="telefonoConfSiRecuerdaNoAcceso" class="triage-resultado" style="display:none;">' +
+            '<p>Gracias por su confirmación. En este momento le ayudaré a actualizar su nuevo número de teléfono. ¿Me brinda su nuevo número?</p>' +
+            '<p style="color:#64748B; font-style:italic;">Instrucción: Marcar check en "Verificado".</p>' +
+            '<p>Le confirmo que hemos actualizado su teléfono en <strong>DoctorSV</strong>.</p>' +
+            '<p>Procederemos ahora a la actualización de su correo. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al nuevo número de teléfono.</p>' +
+            '<p>Por favor, compártame el código una vez lo reciba.</p>' +
+            '<p>Muchas gracias. ¿Me podría indicar, por favor, el nuevo correo a registrar?</p>' +
+            '<p>Le confirmo que su <strong>correo ha sido actualizado exitosamente</strong> en su cuenta de <strong>DoctorSV</strong>.</p>' +
+          '</div>' +
+          '<div id="telefonoConfNoCorreo" class="triage-resultado" style="display:none;">' +
+            '<p>Comprendo lo que nos comenta. Para proceder, le haré unas preguntas de validación con el objetivo de proteger su información.</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" style="background:#EA580C" onclick="generarPreguntasSeguridadInline(\'telefonoConfNoRecuerda\')">Preguntas de seguridad</button>' +
+            '</div>' +
+            '<div id="psPreguntas_telefonoConfNoRecuerda"></div>' +
+            '<div id="psResultado_telefonoConfNoRecuerda"></div>' +
+            '<div id="psPasa_telefonoConfNoRecuerda" class="triage-resultado" style="display:none;">' +
+              '<p>Gracias, ¿me podría indicar, por favor, el nuevo número de teléfono a registrar?</p>' +
+              '<p>Le confirmo que su <strong>número de teléfono ha sido actualizado exitosamente</strong> en su cuenta de <strong>DoctorSV</strong>.</p>' +
+            '</div>' +
+            '<div id="psNoPasa_telefonoConfNoRecuerda" class="triage-resultado" style="display:none;">' +
+              '<p>En este caso, para hacer el proceso, debemos hacer una <strong>validación de su identidad.</strong> Le pedimos que por favor nos envíe una fotografía de su rostro junto a su documento de identidad, de manera que en la imagen se logren ver ambos (tanto su rostro como el documento).</p>' +
+              '<p>Por favor, envíe esta imagen al correo electrónico <strong>soporte@doctorsv.gob.sv</strong> o a nuestro WhatsApp <strong>2397-2600</strong> para brindarle el seguimiento correspondiente.</p>' +
+              '<p>Le haremos seguimiento a su reporte a través del número ticket XXX. Si gusta puede anotarlo.</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn btn-si-verde" onclick="toggleBloque(\'telefonoConfContinuar\'); mostrarMenuPrincipal();">Teléfono actualizado, continuar</button>' +
+          '</div>' +
         '</div>' +
-        '<p style="color:#64748B; font-style:italic;">Instrucción: una vez actualizado el teléfono en el SDP y en TCA:</p>' +
-        '<p><strong>¿Cómo puedo ayudarle?</strong></p>'
+        '<div id="telefonoConfContinuar" style="display:none;">' +
+          '<p style="color:#64748B; font-style:italic;">Instrucción: una vez actualizado el teléfono en el SDP y en TCA:</p>' +
+          '<p><strong>¿Cómo puedo ayudarle?</strong></p>' +
+        '</div>'
   };
 
   function mostrarMenuPrincipal() {
@@ -818,7 +861,13 @@
     document.getElementById('cajaConfirmacion').style.display = 'block';
     document.getElementById('textoConfirmacion').innerHTML = TEXTOS_CONFIRMACION[tipo];
 
-    mostrarMenuPrincipal();
+    if (tipo === 'si') {
+      mostrarMenuPrincipal();
+    } else {
+      ['instMenu', 'instMenuDetalle', 'accesoBusquedaMenu', 'botonesMenu', 'botonesMenuExtra'].forEach(function(id) {
+        document.getElementById(id).style.display = 'none';
+      });
+    }
 
     historial = historial.slice(0, 2).concat([{
       label: tipo === 'si' ? 'Mismo número' : 'Cambió de número',
