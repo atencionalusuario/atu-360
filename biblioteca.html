@@ -2233,6 +2233,7 @@
     var opciones = OPCIONES_CATEGORIA[cat];
     if (opciones && opciones.length === 1 && opciones[0] && opciones[0].texto && !opciones[0].hijos) {
       clickOpcion(0);
+      document.getElementById('opcionesCategoria').style.display = 'none';
     }
   }
 
@@ -2334,6 +2335,7 @@
     panelEpoch++;
     document.getElementById('flujoSDP').style.display = 'none';
     document.getElementById('vistaCategoria').style.display = 'flex';
+    document.getElementById('opcionesCategoria').style.display = '';
 
     var esPreguntaPropia = vista.tituloVista && vista.tituloVista !== vista.titulo;
     var preguntaBusqueda = esPreguntaPropia ? vista.tituloVista : CATEGORIAS_CON_BUSQUEDA[categoriaActualId];
