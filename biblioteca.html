@@ -1744,7 +1744,32 @@
               '<p>Le invito a que pueda validar la información solicitada y contactarnos nuevamente o buscar un medio para ingresar a la aplicación.</p>' +
             '</div>'
         },
-        'Desvincular perfil de familiar',
+        { label: 'Desvincular perfil de familiar',
+          texto:
+            '<p>Comprendo lo que nos comenta. Enseguida le ayudamos a desvincular a su familiar.</p>' +
+            '<p>Sólo para confirmar, ¿me podría indicar el nombre completo del familiar a desvincular?</p>' +
+            '<p style="color:#64748B; font-style:italic;">Instrucción: Busca al usuario en la sección "Familiares" de TCA. Identifica si el familiar es mayor o menor de edad.</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" onclick="mostrarUno(\'familiarDesvincularMayor\', \'familiarDesvincularMenor\')">Familiar mayor de edad</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'familiarDesvincularMenor\', \'familiarDesvincularMayor\')">Familiar menor de edad</button>' +
+            '</div>' +
+            '<div id="familiarDesvincularMayor" class="triage-resultado" style="display:none;">' +
+              '<p style="color:#64748B; font-style:italic;">Instrucción: Sondea con el usuario: ¿Se quiere desvincular para tener su usuario propio? ¿Se quiere desvincular para vincularse a otro usuario titular?</p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn" onclick="mostrarUno(\'familiarMayorUsuarioPropio\', \'familiarMayorOtroTitular\')">Familiar desea tener su usuario propio</button>' +
+                '<button class="bib-btn" onclick="mostrarUno(\'familiarMayorOtroTitular\', \'familiarMayorUsuarioPropio\')">Familiar desea vincularse a otro titular</button>' +
+              '</div>' +
+              '<div id="familiarMayorUsuarioPropio" class="triage-resultado" style="display:none;">' +
+                '<p>Con gusto le asisto con la desvinculación de su familiar.</p>' +
+                '<p>Para realizar el proceso, por favor bríndeme el número de documento de identidad de su familiar.</p>' +
+                '<p>Permítame un momento en línea mientras realizo la gestión.</p>' +
+                '<p>Muchas gracias por su amable espera. Le confirmo que la desvinculación del familiar se ha realizado correctamente.</p>' +
+                '<p>Puede verificar el cambio ingresando a la aplicación, en la sección Pacientes.</p>' +
+              '</div>' +
+              '<div id="familiarMayorOtroTitular" class="triage-resultado" style="display:none;"></div>' +
+            '</div>' +
+            '<div id="familiarDesvincularMenor" class="triage-resultado" style="display:none;"></div>'
+        },
         { label: 'Deshabilitar al paciente',
           texto:
             '<p>Comprendo lo que nos comenta y <strong>lamentamos los inconvenientes</strong> que haya podido tener utilizando el servicio.</p>' +
