@@ -1744,13 +1744,9 @@
               '<p>Le invito a que pueda validar la información solicitada y contactarnos nuevamente o buscar un medio para ingresar a la aplicación.</p>' +
             '</div>'
         },
-        { label: 'Desvincular perfil de familiar',
-          texto:
-            '<div class="triage-acciones">' +
-              '<button class="bib-btn" onclick="mostrarUno(\'familiarDesvincularTitular\', \'familiarDesvincularFamiliar\')">Nos contacta el titular</button>' +
-              '<button class="bib-btn" onclick="mostrarUno(\'familiarDesvincularFamiliar\', \'familiarDesvincularTitular\')">Nos contacta el familiar</button>' +
-            '</div>' +
-            '<div id="familiarDesvincularTitular" class="triage-resultado" style="display:none;">' +
+        { label: 'Desvincular perfil de familiar', hijos: [
+          { label: 'Nos contacta el titular',
+            texto:
             '<p>Comprendo lo que nos comenta. Enseguida le ayudamos a desvincular a su familiar.</p>' +
             '<p>Sólo para confirmar, ¿me podría indicar el nombre completo del familiar a desvincular?</p>' +
             '<p style="color:#64748B; font-style:italic;">Instrucción: Busca al usuario en la sección "Familiares" de TCA. Identifica si el familiar es mayor o menor de edad.</p>' +
@@ -1779,10 +1775,10 @@
                 '<p>Ahora puedo ayudarle a vincular a su familiar al nuevo perfil. ¿Desea que le ayude?</p>' +
               '</div>' +
             '</div>' +
-            '<div id="familiarDesvincularMenor" class="triage-resultado" style="display:none;"></div>' +
-            '</div>' +
-            '<div id="familiarDesvincularFamiliar" class="triage-resultado" style="display:none;"></div>'
-        },
+            '<div id="familiarDesvincularMenor" class="triage-resultado" style="display:none;"></div>'
+          },
+          { label: 'Nos contacta el familiar', texto: '' }
+        ] },
         { label: 'Deshabilitar al paciente',
           texto:
             '<p>Comprendo lo que nos comenta y <strong>lamentamos los inconvenientes</strong> que haya podido tener utilizando el servicio.</p>' +
