@@ -1746,6 +1746,11 @@
         },
         { label: 'Desvincular perfil de familiar',
           texto:
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" onclick="mostrarUno(\'familiarDesvincularTitular\', \'familiarDesvincularFamiliar\')">Nos contacta el titular</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'familiarDesvincularFamiliar\', \'familiarDesvincularTitular\')">Nos contacta el familiar</button>' +
+            '</div>' +
+            '<div id="familiarDesvincularTitular" class="triage-resultado" style="display:none;">' +
             '<p>Comprendo lo que nos comenta. Enseguida le ayudamos a desvincular a su familiar.</p>' +
             '<p>Sólo para confirmar, ¿me podría indicar el nombre completo del familiar a desvincular?</p>' +
             '<p style="color:#64748B; font-style:italic;">Instrucción: Busca al usuario en la sección "Familiares" de TCA. Identifica si el familiar es mayor o menor de edad.</p>' +
@@ -1762,13 +1767,21 @@
               '<div id="familiarMayorUsuarioPropio" class="triage-resultado" style="display:none;">' +
                 '<p>Con gusto le asisto con la desvinculación de su familiar.</p>' +
                 '<p>Para realizar el proceso, por favor bríndeme el número de documento de identidad de su familiar.</p>' +
-                '<p>Permítame un momento en línea mientras realizo la gestión.</p>' +
+                '<p>Gracias. Permítame un momento en línea mientras realizo la gestión.</p>' +
                 '<p>Muchas gracias por su amable espera. Le confirmo que la desvinculación del familiar se ha realizado correctamente.</p>' +
-                '<p>Puede verificar el cambio ingresando a la aplicación, en la sección Pacientes.</p>' +
+                '<p>Usted puede verificar el cambio ingresando a la aplicación, en la sección Pacientes. Su familiar puede ahora registrarse y tener su propio usuario y contraseña.</p>' +
               '</div>' +
-              '<div id="familiarMayorOtroTitular" class="triage-resultado" style="display:none;"></div>' +
+              '<div id="familiarMayorOtroTitular" class="triage-resultado" style="display:none;">' +
+                '<p>Con gusto le asisto con la desvinculación de su familiar.</p>' +
+                '<p>Para realizar el proceso, por favor bríndeme el número de documento de identidad de su familiar.</p>' +
+                '<p>Gracias. Permítame un momento en línea mientras realizo la gestión.</p>' +
+                '<p>Muchas gracias por su amable espera. Le confirmo que la desvinculación del familiar se ha realizado correctamente.</p>' +
+                '<p>Ahora puedo ayudarle a vincular a su familiar al nuevo perfil. ¿Desea que le ayude?</p>' +
+              '</div>' +
             '</div>' +
-            '<div id="familiarDesvincularMenor" class="triage-resultado" style="display:none;"></div>'
+            '<div id="familiarDesvincularMenor" class="triage-resultado" style="display:none;"></div>' +
+            '</div>' +
+            '<div id="familiarDesvincularFamiliar" class="triage-resultado" style="display:none;"></div>'
         },
         { label: 'Deshabilitar al paciente',
           texto:
