@@ -3125,8 +3125,6 @@
       btn.classList.toggle('active', idx === i);
     });
     var contSubTexto = document.getElementById('modalSubTexto');
-    contSubTexto.style.display = 'block';
-    contSubTexto.innerHTML = b.texto;
 
     pushPanelCrumb('subBotonesModal', b.label,
       function() { mostrarSubBotonModal(i); },
@@ -3136,6 +3134,9 @@
         contSubTexto.innerHTML = '';
       }
     );
+
+    contSubTexto.style.display = 'block';
+    contSubTexto.innerHTML = b.texto;
   }
 
   function toggleBloque(id) {
