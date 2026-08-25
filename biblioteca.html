@@ -2524,6 +2524,14 @@
   var panelEpoch = 0;
   var historialBasePanelEpoch = -1;
 
+  function scrollBloqueAVista(el) {
+    if (!el) return;
+    el.style.scrollMarginTop = '90px';
+    requestAnimationFrame(function() {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }
+
   function aplicarMostrarUno(idMostrar, lista) {
     lista.forEach(function(id) {
       var el = document.getElementById(id);
@@ -2535,6 +2543,7 @@
       var boton = document.querySelector('[onclick*="mostrarUno(\'' + id + '\'"]');
       if (boton) boton.classList.toggle('active', id === idMostrar);
     });
+    scrollBloqueAVista(elMostrar);
   }
 
   function pushPanelCrumb(groupKey, label, onRestaurar, onRemove) {
@@ -3140,7 +3149,10 @@
 
   function toggleBloque(id) {
     var el = document.getElementById(id);
-    if (el) el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    if (!el) return;
+    var abriendo = el.style.display !== 'block';
+    el.style.display = abriendo ? 'block' : 'none';
+    if (abriendo) scrollBloqueAVista(el);
   }
 
   function mostrarUno(idMostrar, idsOcultar) {
