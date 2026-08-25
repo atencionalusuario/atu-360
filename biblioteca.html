@@ -1270,7 +1270,7 @@
                 '</div>' +
                 '<div id="triageFamiliarNo" class="triage-resultado" style="display:none;"></div>'
             },
-            { label: 'Cita nueva proveniente de triage',
+            { label: 'Cita nueva sin triage',
               texto:
                 '<div class="triage-video-caja">' +
                   '<p>De acuerdo, ¿puede conectarse a una <strong>videollamada</strong>?</p>' +
@@ -1299,7 +1299,6 @@
                   '<div id="recTelTriageDirecto" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_TEL + '</div>' +
                 '</div>'
             },
-            { label: 'Cita para lectura de exámenes', texto: '' },
         { label: 'Referencia con especialista',
           texto:
             '<p>Con mucho gusto le ayudo a agendar su cita con el médico especialista.</p>' +
@@ -3121,9 +3120,6 @@
 
   function mostrarSubBotonModal(i) {
     var b = subBotonesActuales[i];
-    document.querySelectorAll('#modalSubBotones .bib-btn').forEach(function(btn, idx) {
-      btn.classList.toggle('active', idx === i);
-    });
     var contSubTexto = document.getElementById('modalSubTexto');
 
     pushPanelCrumb('subBotonesModal', b.label,
@@ -3135,6 +3131,9 @@
       }
     );
 
+    document.querySelectorAll('#modalSubBotones .bib-btn').forEach(function(btn, idx) {
+      btn.classList.toggle('active', idx === i);
+    });
     contSubTexto.style.display = 'block';
     contSubTexto.innerHTML = b.texto;
   }
