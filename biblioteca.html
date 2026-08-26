@@ -286,9 +286,16 @@
 
     <div id="casosEspecialesSDP" class="triage-resultado" style="display:none;">
       <div class="triage-acciones" style="flex-direction:column; align-items:center;">
-        <button class="bib-btn" onclick="mostrarUno('casoTercero', ['casoSinDocumento','casoMenorEdad'])">Persona comunicándose en nombre de un tercero</button>
-        <button class="bib-btn" onclick="mostrarUno('casoSinDocumento', ['casoTercero','casoMenorEdad'])">Usuario sin documento</button>
-        <button class="bib-btn" onclick="mostrarUno('casoMenorEdad', ['casoTercero','casoSinDocumento'])">Contacto de menor de edad</button>
+        <button class="bib-btn" onclick="mostrarUno('casoTercero', ['casoSinDocumento','casoMenorEdad','casoAgresion'])">Persona comunicándose en nombre de un tercero</button>
+        <button class="bib-btn" onclick="mostrarUno('casoSinDocumento', ['casoTercero','casoMenorEdad','casoAgresion'])">Usuario sin documento</button>
+        <button class="bib-btn" onclick="mostrarUno('casoMenorEdad', ['casoTercero','casoSinDocumento','casoAgresion'])">Contacto de menor de edad</button>
+        <button class="bib-btn" onclick="mostrarUno('casoAgresion', ['casoTercero','casoSinDocumento','casoMenorEdad'])">Script agresión a agente</button>
+      </div>
+      <div id="casoAgresion" class="triage-resultado" style="display:none;">
+        <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; text-align:center;">Agresión a agente</h4>
+        <p><strong>1° Aviso:</strong> Sr./Srta. XXXXXXX, le solicito amablemente que mantengamos el respeto para que continuemos con su gestión.</p>
+        <p><strong>2° Aviso:</strong> Sr./Srta. XXXXXXX, comprendo su molestia y nos disculpamos por los inconvenientes, le solicito por favor expresarse manteniendo siempre un vocabulario respetuoso para que continuemos con su gestión, ya que de lo contrario tendré que finalizar la llamada.</p>
+        <p><strong>3° Aviso:</strong> Sr./Srta. XXXXXXX, debido a que le he solicitado mantener una actitud respetuosa en varias ocasiones sin obtener su colaboración, se procederá a finalizar la llamada. Le invitamos a contactarnos nuevamente cuando podamos comunicarnos de forma adecuada.</p>
       </div>
       <div id="casoMenorEdad" class="triage-resultado" style="display:none;">
         <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; text-align:center;">Menores de edad</h4>
@@ -955,6 +962,7 @@
         }
       ] },
       { label: 'Ubicación de farmacias / laboratorios',
+        tipificacion: 'Consultas > Información general del servicio > Ubicación y teléfono de farmacia / laboratorio',
         texto:
           '<p>Con mucho gusto le puedo ayudar a ubicar la farmacia / laboratorio que usted requiere.</p>' +
           '<p>Si tiene la aplicación <strong>DoctorSV</strong> a la mano, le puedo guiar para que pueda ver las opciones más cercanas a su ubicación. Además podrá tener la función del mapa para ayudarle a llegar.</p>' +
@@ -1059,6 +1067,7 @@
           '</div>'
       },
       { label: 'Proceso para ver a un especialista',
+        tipificacion: 'Consultas > Información general del servicio > Proceso de referencia / seguimiento',
         texto:
           '<p>Con mucho gusto le comento el proceso para que pueda pasar consulta con uno de nuestros <strong>médicos especialistas</strong>:</p>' +
           '<p>1) El <strong>PRIMER PASO</strong> es asistir a una cita para que pueda ser evaluado y, en caso de ser necesario, el médico general le emitirá órdenes de estudios médicos.</p>' +
@@ -1080,6 +1089,7 @@
       },
       { label: 'Programa de crónicos', vistaTarjetas: true, hijos: [
         { label: 'En qué consiste el programa de crónicos',
+          tipificacion: 'Consultas > Información sobre el programa crónicos',
           tituloModal: 'Programa crónicos',
           texto:
             '<p>El <strong>Programa de Crónicos</strong> de <strong>DoctorSV</strong> es un programa diseñado para detectar oportunamente factores de riesgo y dar seguimiento continuo a las enfermedades crónicas.</p>' +
@@ -1087,6 +1097,7 @@
             '<p>Las enfermadades cubiertas por el programa son: <strong>Diabetes mellitus, hipertensión, enfermedad renal crónica en estadios tempranos (estadios 1 a 3), dislipidemias, enfermedad pulmonar obstructiva crónica y asma.</strong></p>'
         },
         { label: 'Registrarse en el programa de crónicos',
+          tipificacion: 'Consultas > Información sobre el programa crónicos',
           texto:
             '<p>Ahora, por favor ingrese a su cuenta en la aplicación <strong>DoctorSV</strong> utilizando su usuario y contraseña. Al acceder, en la sección <strong>"Mis Novedades"</strong> encontrará un recuadro celeste del <strong>Programa de Crónicos</strong>. Seleccione la opción <strong>"Ver ahora"</strong> para iniciar el formulario.</p>' +
             '<p>A continuación, seleccione al paciente que registrará en el programa. Recuerde que este programa está dirigido únicamente a personas mayores de edad. Después, complete las preguntas del formulario. Si en la primera pregunta no está seguro de si padece una enfermedad crónica o no encuentra su condición en el listado, seleccione la opción <strong>"No estoy seguro"</strong>.</p>' +
@@ -1096,6 +1107,7 @@
             '<p style="color:#64748B; font-style:italic;">Recuerde comunicarse previamente con el laboratorio para programar su cita o recibir indicaciones sobre la preparación según el estudio.</p>'
         },
         { label: 'Agendar cita en el programa',
+          tipificacion: 'Consultas > Información sobre el programa crónicos',
           texto:
             '<p>Me confirma ¿al registrarse en el programa se le <strong>indicaron estudios</strong> y si <strong>ya fueron realizados</strong>?</p>' +
             '<p style="text-align:center; color:#64748B; font-style:italic;">Validar en TCA el estado de los estudios</p>' +
@@ -1130,6 +1142,7 @@
     ] },
     { label: 'Dudas sobre las funciones de la aplicación', vistaTarjetas: true, hijos: [
       { label: 'Cómo cambiar la contraseña',
+        tipificacion: 'Consultas > Funciones de la aplicación > Cómo cambiar la contraseña',
         texto:
           '<p>Para cambiar su contraseña deberá ingresar en <strong>"Perfil"</strong> y seleccionar <strong>"Configuración"</strong>.</p>' +
           '<p>Seleccione <strong>"Cambiar contraseña"</strong> y pulse la opción <strong>"Continuar"</strong> para recibir el código de verificación vía SMS.</p>' +
@@ -1137,6 +1150,7 @@
           '<p>Luego debe establecer una contraseña para su cuenta, la cual deberá tener números y/o letras y como mínimo debe estar conformada por 8 caracteres. Por último, debe dar clic en <strong>"Enviar"</strong> y la contraseña se habrá cambiado exitosamente.</p>'
       },
       { label: 'Cómo conectarse a la videoconsulta',
+        tipificacion: 'Consultas > Funciones de la aplicación > Cómo conectarse a la videoconsulta',
         texto:
           '<p>Con gusto le ayudo, para ingresar a su cita médica, siga los siguientes pasos:</p>' +
           '<ol>' +
@@ -1149,6 +1163,7 @@
       },
       'Cómo actualizar la app',
       { label: 'Cómo hacer una cita médica propia',
+        tipificacion: 'Consultas > Funciones de la aplicación > Cómo hacer una cita médica propia / familiar',
         texto:
           '<p>Con gusto le explico cómo hacer una cita.</p>' +
           '<p>En la pantalla principal de su aplicación, puede seleccionar el botón <strong>"Hacer cita médica virtual"</strong>. En la siguiente pantalla, seleccione para quién va a ser la cita; si es para usted, seleccione su nombre y pulse el botón <strong>"Siguiente"</strong>. Luego debe descartar que presente una emergencia, para hacerlo pulse el botón <strong>"No, ninguno"</strong>.</p>' +
@@ -1158,6 +1173,7 @@
       },
       'Cómo hacer una cita médica a familiar',
       { label: 'Cómo modificar cita',
+        tipificacion: 'Consultas > Funciones de la aplicación > Cómo modificar cita',
         texto:
           '<p>De acuerdo, le ayudaremos en el proceso para modificar su cita.</p>' +
           '<p>Veo en sistema que usted tiene una cita pautada para el día XX-XX-XXXX a las XX:XX am/pm, ¿esta es la cita que desea modificar?</p>' +
@@ -1166,12 +1182,14 @@
           '<p><strong>No:</strong> ¿Le gustaría un día diferente o una hora diferente? Excelente, queda programada su cita con el/la médico XXXXXXXX XXXXXXX, el día XXXXXX XX a las XX de la tarde / de la mañana.</p>'
       },
       { label: 'Cómo cancelar cita',
+        tipificacion: 'Consultas > Funciones de la aplicación > Cómo cancelar cita',
         texto:
           '<p>De acuerdo, le ayudaremos en el proceso para cancelar su cita. ¿Me podría confirmar si su cita agendada es con un médico general o con un médico especialista?</p>' +
           '<p><strong>Médico general:</strong> Muy bien, en este momento puedo confirmar en sistema que usted tiene una cita pautada para el día XX-XX-XXXX a las XX:XX am/pm, ¿esta es la cita que desea cancelar? De acuerdo, en este momento procederé a cancelar la cita que nos menciona.</p>' +
           '<p><strong>Médico especialista:</strong> Antes de proceder, nos gustaría comentarle que al cancelar esta cita podría perderse la continuidad de su proceso médico. Si en un futuro desea consultar nuevamente con un especialista, tendría que comenzar el proceso desde el inicio, agendando primero una cita con un médico general. ¿Desea que cancelemos su cita con el especialista, o prefiere modificar el horario?</p>'
       },
       { label: 'Cómo registrar a un familiar en la cuenta',
+        tipificacion: 'Consultas > Funciones de la aplicación > Cómo registrar a un familiar en la cuenta',
         texto:
           '<p>Para poder registrar a su familiar, ingrese en la sección de <strong>Perfil</strong> (ícono de una persona ubicado en la parte inferior derecha). Allí pulse sobre el botón <strong>"Pacientes"</strong>.</p>' +
           '<p>Seleccione el botón azul <strong>"+ Agregar otro paciente"</strong> ubicado en la parte inferior de la pantalla.</p>' +
@@ -1180,6 +1198,7 @@
           '<p>De esta manera el familiar queda agregado y podrá hacer uso del servicio a través de su cuenta.</p>'
       },
       { label: 'Cómo ver estudios médicos',
+        tipificacion: 'Consultas > Funciones de la aplicación > Cómo ver estudios médicos',
         texto:
           '<p>Con mucho gusto le apoyo para que visualice el estatus de su orden de estudio.</p>' +
           '<p>Ingrese a la aplicación <strong>DoctorSV</strong> y seleccione la opción <strong>"Estudios clínicos"</strong> (ícono de un corazón).</p>' +
@@ -1188,6 +1207,7 @@
           '<p>Al hacer clic en el estudio, podrá ver el motivo, tipo de examen y el código QR.</p>'
       },
       { label: 'Cómo ver constancia médica',
+        tipificacion: 'Consultas > Funciones de la aplicación > Cómo ver constancia médica',
         texto:
           '<p>Con gusto le ayudo: en la pantalla de inicio de la aplicación ingrese en la sección <strong>"Constancia Médica"</strong>. Allí podrá visualizar sus constancias médicas emitidas, empezando por la más reciente. También podrá filtrarlas por paciente o por estado.</p>' +
           '<p>La constancia médica puede estar <strong>"vigente"</strong> o <strong>"inactiva"</strong> cuando ya haya caducado.</p>' +
@@ -1214,6 +1234,7 @@
           '</div>'
       },
       { label: 'Usuario en sala de espera',
+        tipificacion: 'Consultas > Información general del servicio > Sala de espera',
         texto:
           '<p style="color:#64748B; font-style:italic;">Instrucción: ¿Dónde se encuentra el usuario? ¿Ya inició la hora de la consulta?</p>' +
           '<svg viewBox="0 0 640 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:600px;display:block;margin:0 auto 18px;">' +
@@ -1243,6 +1264,7 @@
         texto: TEXTO_RECOMENDACIONES_TEL
       },
       { label: 'Orientación de salud',
+        tipificacion: 'Consultas > Orientación de salud > Según el caso',
         texto:
           '<p>Comprendo lo que nos comenta Sr / Sra. XXXX, <strong>estamos aquí para ayudarle</strong>.</p>' +
           '<p>Sólo para confirmar, ¿usted ya tuvo una videoconsulta con un médico del servicio de <strong>DoctorSV</strong>?</p>' +
