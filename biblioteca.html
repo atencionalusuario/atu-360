@@ -422,7 +422,7 @@
       <div id="modalCuerpoTexto" class="modal-cuerpo"></div>
       <div class="sdp-botones" id="modalSubBotones" style="display:none;"></div>
       <div id="modalSubTexto" class="modal-cuerpo" style="display:none;"></div>
-      <p class="modal-tipificacion"><strong>Tipificación:</strong> <span id="modalTipificacion"></span></p>
+      <p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> <span id="modalTipificacion"></span></p>
       <div class="modal-footer">
         <button class="bib-btn" onclick="abrirModalDespedida()">Despedida</button>
       </div>
@@ -900,6 +900,7 @@
             '<p>Le comento que la aplicación es muy fácil de instalar, primero debe descargarla en las tiendas de aplicaciones, buscándola con el nombre <strong>"Doctorsv"</strong>. Si usted tiene 18 años en adelante, podrá registrarse y hacer una cita. Si gusta, lo puedo ayudar con el paso a paso para descargarla y registrarse.</p>'
         },
         { label: 'Descarga Android',
+          tipificacion: 'Consultas > Funciones de la aplicación > Cómo descargar la app',
           texto:
             '<p>Ahora ingrese a <strong>Google Play Store</strong>, la tienda de aplicaciones.</p>' +
             '<p>En la parte superior de la pantalla podrá ubicar el buscador. Allí escriba <strong>"Doctorsv"</strong>.</p>' +
@@ -908,12 +909,14 @@
             '<p>Luego, en esa misma pantalla pulse <strong>"Abrir"</strong>.</p>'
         },
         { label: 'Descarga iOS',
+          tipificacion: 'Consultas > Funciones de la aplicación > Cómo descargar la app',
           texto:
             '<p>Ahora ingrese a la <strong>App Store</strong>, la tienda de aplicaciones. En la parte inferior de la pantalla podrá ubicar el buscador. Allí escriba <strong>Doctorsv</strong>.</p>' +
             '<p>El siguiente paso es pulsar el botón que dice <strong>"Obtener"</strong> (o, en su defecto, le aparecerá un ícono que parece una nube con una flecha hacia abajo). Espere un instante mientras se descarga e instala la aplicación.</p>' +
             '<p>Luego, en esa misma pantalla pulse <strong>"Abrir"</strong>.</p>'
         },
         { label: 'Cómo registrarse',
+          tipificacion: 'Consultas > Funciones de la aplicación > Cómo registrarse',
           texto:
             '<p>Con gusto le ayudo en el proceso para registrarse en la aplicación.</p>' +
             '<p>Para iniciar, pulse el ícono de la aplicación, que lo llevará a la pantalla principal. Una vez allí, seleccione el botón <strong>"Regístrate"</strong> (en la parte inferior). El primer paso es ingresar el tipo de documento de identidad con el cual se va a registrar (puede ser DUI, pasaporte salvadoreño o carnet de residente). En el campo siguiente, escribirá su número de documento y su fecha de nacimiento.</p>' +
@@ -921,12 +924,14 @@
             '<p>Debe ingresar el código de verificación que recibió vía SMS y establecer una contraseña para su cuenta, la cual deberá tener números y/o letras y estar conformada por 8 caracteres como mínimo. Por último, debe aceptar los Términos y Condiciones de la aplicación y hacer clic en <strong>"Enviar"</strong>. Cuando ya esté registrado/a, aparecerá el mensaje <strong>"Registro Exitoso"</strong>. Pulse <strong>"Continuar"</strong> para observar tutorial de pantallas de uso de la aplicación o pulse <strong>"Menú Principal"</strong> para iniciar sesión y hacer uso del servicio.</p>'
         },
         { label: 'Cómo ingresar',
+          tipificacion: 'Consultas > Funciones de la aplicación > Cómo ingresar',
           texto:
             '<p>Para ingresar a la aplicación usted deberá pulsar la opción <strong>"Iniciar Sesión"</strong> ubicada en la parte inferior de la pantalla inicial de la aplicación.</p>' +
             '<p>En la siguiente pantalla, ingrese el tipo y el número de documento con el cual se registró y contraseña.</p>' +
             '<p>Una vez ingresados esos datos estará dentro de la aplicación y podrá ver las diferentes secciones como: mi cita médica, recetas, estudios clínicos, antecedentes, entre otras.</p>'
         },
         { label: 'Cómo hacer una cita',
+          tipificacion: 'Consultas > Funciones de la aplicación > Cómo hacer una cita médica propia / familiar',
           texto:
             '<p>En la pantalla principal de su aplicación, puede seleccionar el botón <strong>"Hacer cita médica virtual"</strong>. En la siguiente pantalla, seleccione para quién va a ser la cita; si es para usted, seleccione su nombre y pulse el botón <strong>"Siguiente"</strong>. Luego debe descartar que presente una emergencia, pulsando el botón <strong>"No, presento otros síntomas"</strong>.</p>' +
             '<p>Justo después deberá aceptar los Términos y Condiciones, el Consentimiento Informado y la Política y Aviso de Privacidad, luego pulse el botón <strong>"Hacer cita médica virtual"</strong>. En la siguiente pantalla usted podrá ver la opción más próxima de videollamada disponible.</p>' +
@@ -943,7 +948,9 @@
               '<li>La aplicación lo llevará a Google Meet. Deberá seleccionar la cuenta de correo con la que se unirá a la videollamada. Si su teléfono es marca Huawei, no será necesario tener Google Meet, podrá ingresar sin problemas.</li>' +
               '<li>Habilite micrófono y cámara y seleccione <strong>"solicitar unirse"</strong>.</li>' +
               '<li>Espere en línea mientras el médico le permite ingresar a la videollamada.</li>' +
-            '</ol>'
+            '</ol>' +
+            '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Consultas &gt; Funciones de la aplicación &gt; Cómo conectarse a la videoconsulta</p>' +
+            '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Si se brindó toda la información inicial a un usuario: Consultas &gt; Información general del servicio &gt; Orientación sobre todo el servicio</p>'
         }
       ] },
       { label: 'Ubicación de farmacias / laboratorios',
@@ -2427,7 +2434,7 @@
         return '<div class="tarjeta-script" id="tarjeta-' + i + '">' +
           '<h4>' + (op.tituloModal || op.label) + '</h4>' +
           '<div class="tarjeta-script-cuerpo">' + op.texto + '</div>' +
-          (op.tipificacion ? '<p class="modal-tipificacion"><strong>Tipificación:</strong> <span>' + op.tipificacion + '</span></p>' : '') +
+          (op.tipificacion ? '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> <span>' + op.tipificacion + '</span></p>' : '') +
           '</div>';
       }).join('');
       return;
