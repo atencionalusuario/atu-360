@@ -90,6 +90,7 @@
   .modal-close:hover { background: #E2E8F0; color: #1E293B; }
   .modal-titulo { font-size: 1rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 14px; padding-right: 20px; }
   .modal-cuerpo p { font-size: 0.85rem; line-height: 1.65; color: #374151; margin-bottom: 10px; font-family: 'Montserrat', sans-serif; }
+  .modal-cuerpo p.modal-tipificacion { font-size: 0.76rem; color: #94A3B8; font-family: 'Inter', sans-serif; }
   .modal-cuerpo p:last-child { margin-bottom: 0; }
   .modal-cuerpo ol { margin: 0 0 10px 20px; }
   .modal-cuerpo li { font-size: 0.85rem; line-height: 1.65; color: #374151; margin-bottom: 6px; font-family: 'Montserrat', sans-serif; }
@@ -1217,8 +1218,21 @@
           '<p>Al seleccionar la opción <strong>"Ver Constancia"</strong> se podrán observar los detalles. En esa misma pantalla también podrá descargar su constancia en formato PDF, o pulsar sobre <strong>"Compartir constancia"</strong> para obtener un enlace y enviarlo por otro medio.</p>'
       },
       'Cómo ver recetas',
-      'Cómo ver referencia externa',
-      'Cómo tomarse los signos vitales'
+      { label: 'Cómo ver referencia externa',
+        texto:
+          '<p>Las referencias médicas externas tienen una vigencia de <strong>un año</strong>. Durante ese tiempo, debe asistir al establecimiento de salud que se indica en la referencia. Para conocer los horarios de atención, le recomendamos comunicarse directamente con dicho establecimiento.</p>' +
+          '<p>En caso de que su referencia sea externa o para emergencias, debe de presentarse de manera inmediata al establecimiento más cercano.</p>' +
+          '<p>Al presentarse, no olvide llevar su documento de identidad original y la referencia médica externa.</p>'
+      },
+      { label: 'Cómo tomarse los signos vitales',
+        texto:
+          '<p>En la aplicación <strong>DoctorSV</strong> usted podrá medir su frecuencia cardíaca, frecuencia respiratoria, presión arterial, saturación de oxígeno, nivel de estrés, índice de estrés, respuesta del intervalo de reposo del corazón, entre otros. Su médico podrá ver los valores en su portal de práctica médica.</p>' +
+          '<p>Si gusta, le indico los pasos:</p>' +
+          '<p>-En la cita agendada aparece un botón que dice "Medir signos vitales".</p>' +
+          '<p>-Al presionar el botón de toma de signos vitales sale una sección de recomendaciones para que la toma sea de manera exitosa.</p>' +
+          '<p>-Al continuar, el paciente debe permanecer por lo menos un minuto sin moverse y que la aplicación logre identificar el rostro.</p>' +
+          '<p>-El paciente verá una pantalla de confirmación.</p>'
+      }
     ] },
     { label: 'Otras orientaciones', hijos: [
       { label: 'Usuario recibió un contacto previo',
@@ -1288,7 +1302,8 @@
             '<p>Me confirma, ¿la cita nueva sería para <strong>usted</strong> o <strong>para un familiar asociado a su perfil</strong>?</p>',
           subBotones: [
             { label: 'Es para el propio usuario',
-              texto: bloqueTriageCita('Propio', 'propio')
+              texto: bloqueTriageCita('Propio', 'propio') +
+                '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
             },
             { label: 'Es para un familiar',
               texto:
@@ -1301,7 +1316,8 @@
                 '<div id="triageFamiliarSi" class="triage-resultado" style="display:none;">' +
                   bloqueTriageCita('Familiar', 'familiar') +
                 '</div>' +
-                '<div id="triageFamiliarNo" class="triage-resultado" style="display:none;"></div>'
+                '<div id="triageFamiliarNo" class="triage-resultado" style="display:none;"></div>' +
+                '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
             },
             { label: 'Cita nueva sin triage',
               texto:
@@ -1330,7 +1346,8 @@
                     '<button class="bib-btn" onclick="toggleBloque(\'recTelTriageDirecto\')">Recomendaciones para cita vía telefónica</button>' +
                   '</div>' +
                   '<div id="recTelTriageDirecto" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_TEL + '</div>' +
-                '</div>'
+                '</div>' +
+                '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
             },
         { label: 'Referencia con especialista',
           texto:
@@ -1427,7 +1444,8 @@
                   '* Especialidad' +
                 '</p>' +
               '</div>' +
-            '</div>'
+            '</div>' +
+            '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
         },
         { label: 'Cita de seguimiento',
           texto:
@@ -1531,12 +1549,13 @@
                 '<p>Comprendo lo que me comenta Sr/Sra XXXXX. Sin embargo, debo comentarle que nos estaremos comunicando con usted unos días antes de su cita de seguimiento, para ayudarle con el agendamiento.</p>' +
                 '<p>Le pedimos que se mantenga pendiente de su teléfono, que uno de nuestros agentes se pondrá en contacto para concretar el agendamiento de su cita.</p>' +
               '</div>' +
-            '</div>'
+            '</div>' +
+            '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
         }
           ]
         },
         { label: 'Modificar cita',
-          texto: TEXTO_MODIFICAR_CITA
+          texto: TEXTO_MODIFICAR_CITA + '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Modificación de cita</p>'
         },
         { label: 'Cancelar cita',
           texto:
