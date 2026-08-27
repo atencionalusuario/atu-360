@@ -2076,6 +2076,7 @@
           pregunta: '¿Con cuál de estos temas tiene inconveniente el usuario?',
           hijos: [
             { label: 'No se conectó el médico',
+              tipificacion: 'Incidencias calidad médica > Según sea el caso',
               texto:
                 '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para escalar su caso y, además, le asistiré en el agendamiento de una nueva cita.</p>' +
                 '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
@@ -2094,6 +2095,7 @@
                 '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* Especialidad</p>'
             },
             { label: 'Otros temas de calidad de atención',
+              tipificacion: 'Incidencias calidad médica > Según sea el caso',
               tituloModal: 'Otras inconformidades/ errores en la consulta',
               texto:
                 '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
@@ -2107,6 +2109,7 @@
         },
         { label: 'Errores en los productos', hijos: [
           { label: 'Error en receta',
+            tipificacion: 'Incidencias calidad médica > Problemas con prescripción médica > Error en receta',
             alerta:
               '<p><strong>Error en receta:</strong> cuando efectivamente hay un dato incorrecto con la receta en cuanto al nombre del medicamento o en cuanto a la dosis recetada.</p>' +
               '<p><strong>Medicamento no disponible:</strong> cuando el usuario nos dice que en la farmacia le dijeron que no había existencia del medicamento o que no había existencia de la presentación recetada.</p>',
@@ -2120,6 +2123,7 @@
               '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
           },
           { label: 'Error en estudios de laboratorio',
+            tipificacion: 'Incidencias calidad médica > Problemas con estudios de laboratorio > Error en estudios de laboratorio',
             alerta:
               '<p><strong>Error en estudios de laboratorio:</strong> Usuario reporta que su órden de estudios de laboratorio tiene errores y se desea asistencia de un médico para corregirla.</p>',
             texto:
@@ -2155,6 +2159,7 @@
             '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
         },
         { label: 'Calidez de la atención',
+          tipificacion: 'Incidencias calidez médica > Según el caso',
           texto:
             '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que lo que nos comenta sea evaluado por el área correspondiente.</p>' +
             '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
