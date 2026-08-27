@@ -91,6 +91,10 @@
   .modal-titulo { font-size: 1rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 14px; padding-right: 20px; }
   .modal-cuerpo p { font-size: 0.85rem; line-height: 1.65; color: #374151; margin-bottom: 10px; font-family: 'Montserrat', sans-serif; }
   .modal-cuerpo p.modal-tipificacion { font-size: 0.76rem; color: #94A3B8; font-family: 'Inter', sans-serif; }
+  .tipificacion-rama { font-size: 0.76rem; color: #94A3B8; margin-top: 16px; padding-top: 12px; border-top: 1px solid #F1F5F9; font-family: 'Inter', sans-serif; }
+  .tipificacion-rama strong { color: #64748B; font-weight: 600; }
+  .modal-cuerpo p.tipificacion-rama, .tarjeta-script-cuerpo p.tipificacion-rama { font-size: 0.76rem; color: #94A3B8; font-family: 'Inter', sans-serif; }
+  .tarjeta-script-cuerpo p.tipificacion-rama strong { color: #64748B; }
   .modal-cuerpo p:last-child { margin-bottom: 0; }
   .modal-cuerpo ol { margin: 0 0 10px 20px; }
   .modal-cuerpo li { font-size: 0.85rem; line-height: 1.65; color: #374151; margin-bottom: 6px; font-family: 'Montserrat', sans-serif; }
@@ -1639,6 +1643,7 @@
         },
         { label: 'Actualizar datos del usuario', hijos: [
           { label: 'Cambio de teléfono',
+            tipificacion: 'Gestión de perfiles > Actualización de datos',
             texto:
               '<p>De acuerdo, Sr./Sra. XXX. Con mucho gusto le apoyaré con la actualización de su número de teléfono.</p>' +
               '<p>Antes de continuar, ¿me confirma: usted tiene acceso a su correo electrónico registrado en <strong>DoctorSV</strong>? ¿Me podría indicar el correo registrado?</p>' +
@@ -1682,6 +1687,7 @@
               '</div>'
           },
           { label: 'Cambio de correo',
+            tipificacion: 'Gestión de perfiles > Actualización de datos',
             texto:
               '<p>De acuerdo, Sr./Sra. XXX. Con mucho gusto le apoyaré con la actualización de su correo electrónico.</p>' +
               '<p>Antes de continuar, ¿me confirma, por favor, si el número de teléfono registrado finaliza en XXXX?</p>' +
@@ -1715,6 +1721,7 @@
               '</div>'
           },
           { label: 'Cambio de correo y teléfono',
+            tipificacion: 'Gestión de perfiles > Actualización de datos',
             texto:
               '<p>Comprendo lo que nos comenta. Vamos a proceder a actualizar sus datos en <strong>DoctorSV</strong>.</p>' +
               '<p>Primero, me gustaría confirmar con usted algunos datos. ¿Usted recuerda su teléfono y correo registrado?</p>' +
@@ -1761,12 +1768,14 @@
               '</div>'
           },
           { label: 'Cambio de género',
+            tipificacion: 'Gestión de perfiles > Actualización de datos',
             texto:
               '<p>Con gusto le ayudo con el cambio. ¿Me confirma el género?</p>' +
               '<p>Muchas gracias.</p>' +
               '<p>Le confirmo, el dato ha sido actualizado en este momento.</p>'
           },
           { label: 'Cambio de otro dato',
+            tipificacion: 'Gestión de perfiles > Actualización de datos',
             texto:
               '<p>De acuerdo, con gusto le ayudamos.</p>' +
               '<p>¿Qué dato le gustaría cambiar?</p>',
@@ -1827,6 +1836,7 @@
                 '<p>Gracias. Permítame un momento en línea mientras realizo la gestión.</p>' +
                 '<p>Muchas gracias por su amable espera. Le confirmo que la desvinculación del familiar se ha realizado correctamente.</p>' +
                 '<p>Usted puede verificar el cambio ingresando a la aplicación, en la sección Pacientes. Su familiar puede ahora registrarse y tener su propio usuario y contraseña.</p>' +
+                '<p class="tipificacion-rama"><strong>Tipificación sugerida:</strong> Gestión de perfiles &gt; Solicitud de usuario propio</p>' +
               '</div>' +
               '<div id="familiarMayorOtroTitular" class="triage-resultado" style="display:none;">' +
                 '<p>Con gusto le asisto con la desvinculación de su familiar.</p>' +
@@ -1834,6 +1844,7 @@
                 '<p>Gracias. Permítame un momento en línea mientras realizo la gestión.</p>' +
                 '<p>Muchas gracias por su amable espera. Le confirmo que la desvinculación del familiar se ha realizado correctamente.</p>' +
                 '<p>Ahora puedo ayudarle a vincular a su familiar al nuevo perfil. ¿Desea que le ayude?</p>' +
+                '<p class="tipificacion-rama"><strong>Tipificación sugerida:</strong> Gestión de perfiles &gt; Eliminación de perfil de familiar</p>' +
               '</div>' +
             '</div>' +
             '<div id="familiarDesvincularMenor" class="triage-resultado" style="display:none;"></div>'
@@ -1853,11 +1864,13 @@
                 '<div class="triage-acciones">' +
                   '<button class="bib-btn" onclick="abrirScriptPerfiles(\'Registrar a usuario nuevo\')">Registro de usuario nuevo</button>' +
                 '</div>' +
+                '<p class="tipificacion-rama"><strong>Tipificación sugerida:</strong> Gestión de perfiles &gt; Solicitud de usuario propio</p>' +
               '</div>' +
               '<div id="familiarContactaOtroTitular" class="triage-resultado" style="display:none;">' +
                 '<p>Gracias por la confirmación. Permítame un momento en línea mientras realizo la gestión.</p>' +
                 '<p>Muchas gracias por su amable espera. Le confirmo que la desvinculación del familiar se ha realizado correctamente.</p>' +
                 '<p>Ahora puedo ayudarle a vincularle a su otro familiar. ¿Su familiar se encuentra disponible en este momento para que podamos tener una confirmación?</p>' +
+                '<p class="tipificacion-rama"><strong>Tipificación sugerida:</strong> Gestión de perfiles &gt; Eliminación de perfil de familiar</p>' +
               '</div>'
           }
         ] },
@@ -1870,7 +1883,17 @@
             '<p>Para ello, le solicitamos, que nos envíe una fotografía de su rostro junto a su documento de identidad, de manera que en la imagen se logren ver ambos (tanto su rostro como el documento), puede enviarla al correo electrónico <strong>soporte@doctorsv.gob.sv</strong> o a nuestro WhatsApp <strong>2397-2600</strong>, donde se dará el seguimiento correspondiente a su solicitud.</p>' +
             '<p>Asimismo, se ha generado el <strong>ticket N.° XXX</strong> para el seguimiento de su caso. Si lo desea, puede anotarlo para futuras consultas.</p>'
         },
-        'Habilitar al usuario',
+        { label: 'Habilitar al usuario',
+          tituloModal: 'Habilitar a usuario',
+          tipificacion: 'Gestión de perfiles > Habilitación de usuario',
+          texto:
+            '<p>Comprendo lo que nos comenta.</p>' +
+            '<p>Con gusto le ayudo a que usted pueda ingresar y utilizar nuevamente la aplicación <strong>DoctorSV</strong>.</p>' +
+            '<p style="color:#64748B; font-style:italic;">Instrucción:<br>Ingresar en TCA, en la sección Datos Generales y habilitar usuario.</p>' +
+            '<p>Le confirmo que ya su usuario ha sido habilitado.</p>' +
+            '<p>El siguiente paso es que usted ingrese a la aplicación y haga el proceso de registro.</p>' +
+            '<p>Tendrá disponible su expediente médico e historial de citas.</p>'
+        },
         { label: 'Usuario ya aparece como registrado',
           texto:
             '<p>Comprendo lo que nos comenta y <strong>lamentamos los inconvenientes</strong> que ésto le haya podido causar.</p>' +
