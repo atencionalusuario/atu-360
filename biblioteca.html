@@ -1555,7 +1555,8 @@
           ]
         },
         { label: 'Modificar cita',
-          texto: TEXTO_MODIFICAR_CITA + '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Modificación de cita</p>'
+          tipificacion: 'Gestión de citas > Modificación de cita',
+          texto: TEXTO_MODIFICAR_CITA
         },
         { label: 'Cancelar cita',
           texto:
@@ -1953,6 +1954,7 @@
       ] },
       { label: 'Gestión de recetas / órdenes', hijos: [
         { label: 'Receta vencida',
+          tipificacion: 'Gestión de recetas / órdenes de estudio > Reactivación excepcional de receta caducada',
           texto:
             '<p>Entiendo lo que nos comenta. Por favor, Sr / Sra XXXXXXX. ¿Me indica el código de su receta para verificar en nuestro sistema?</p>' +
             '<p>Muchas gracias, por favor, permítame unos momentos en línea para verificar la información.</p>' +
@@ -1972,10 +1974,10 @@
               '<p>Hemos revisado el estado de su receta en nuestro sistema y aparece como "Expirada". En este caso, realizaremos un reporte al área correspondiente con el ticket XXXX.</p>' +
               '<p>Le pedimos estar pendiente, ya que se pondrán en contacto con usted para darle seguimiento a su caso a la brevedad posible.</p>' +
               '<p style="color:#64748B; font-style:italic;">Instrucción: Crear ticket y enviar a MED Critico (si fue emitida por un médico general) o MED ESP Critico (si fue emitida por un médico especialista)</p>' +
-            '</div>' +
-            '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de recetas / órdenes de estudio &gt; Reactivación excepcional de receta caducada</p>'
+            '</div>'
         },
         { label: 'Órdenes vencidas',
+          tipificacion: 'Gestión de recetas / órdenes de estudio > Reactivación excepcional de orden caducada',
           texto:
             '<p>Entiendo lo que nos comenta. Por favor, Sr / Sra XXXXXXX. ¿Me indica el código de su orden de estudio para verificar en nuestro sistema?</p>' +
             '<p>Muchas gracias, por favor, permítame unos momentos en línea para verificar la información.</p>' +
