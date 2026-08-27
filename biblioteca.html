@@ -2175,6 +2175,7 @@
       { label: 'Tercerías', tooltip: 'El inconveniente está relacionado a una empresa que presta servicio a DoctorSV', pregunta: '¿Con quién tuvo el inconveniente el usuario?', hijos: [
         { label: 'Farmacias', hijos: [
           { label: 'Calidad del servicio farmacias',
+            tipificacion: 'Incidencias con farmacias > Calidad del servicio farmacias > Según sea el caso',
             texto:
               '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>.</p>' +
               '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que se puedan tomar las acciones internas correspondientes.</p>' +
@@ -2185,6 +2186,7 @@
               '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* ID de la receta</p>'
           },
           { label: 'Error en dispensación',
+            tipificacion: 'Incidencias con farmacias > Error en dispensación > Entrega errónea de medicamento',
             texto:
               '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
               '<p>Nos gustaría hacerle la siguiente consulta: ¿usted recibió un medicamento errado? ¿Ya empezó a tomar el medicamento?</p>' +
@@ -2206,6 +2208,7 @@
               '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* ID de la receta</p>'
           },
           { label: 'Medicamento no disponible',
+            tipificacion: 'Incidencias con farmacias > Medicamento no disponible',
             alerta:
               '<p>En esta tipificación es muy importante conocer si el medicamento no disponible forma parte del programa de crónicos o si fue recetado por un médico de agudos.</p>' +
               '<p><strong>Error en receta:</strong> cuando efectivamente hay un dato incorrecto con la receta en cuanto al nombre del medicamento o en cuanto a la dosis recetada.</p>' +
