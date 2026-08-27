@@ -1564,7 +1564,8 @@
             { label: 'Médico general',
               texto:
                 '<p>Muy bien, en este momento puedo confirmar en sistema que usted tiene una cita agendada para el día XXX a las XX:XX am/pm, ¿esta es la cita que desea cancelar?</p>' +
-                '<p>De acuerdo, en este momento procederé a cancelar la cita que nos menciona.</p>'
+                '<p>De acuerdo, en este momento procederé a cancelar la cita que nos menciona.</p>' +
+                '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Cancelación de cita</p>'
             },
             { label: 'Médico especialista',
               texto:
@@ -1583,7 +1584,8 @@
                   '<p>De acuerdo, Sr./Sra. XXX. Al validar en nuestro sistema, identifico que cuenta con una cita programada para el día <strong>XX/XX/XXXX</strong>, a las <strong>XX:XX a. m./p. m.</strong></p>' +
                   '<p>¿Me confirma, por favor, que esta es la cita que desea cancelar? Muchas gracias por su confirmación.</p>' +
                   '<p>Le informo que su cita ha sido cancelada exitosamente.</p>' +
-                '</div>'
+                '</div>' +
+                '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Cancelación de cita</p>'
             }
           ]
         },
@@ -1970,7 +1972,8 @@
               '<p>Hemos revisado el estado de su receta en nuestro sistema y aparece como "Expirada". En este caso, realizaremos un reporte al área correspondiente con el ticket XXXX.</p>' +
               '<p>Le pedimos estar pendiente, ya que se pondrán en contacto con usted para darle seguimiento a su caso a la brevedad posible.</p>' +
               '<p style="color:#64748B; font-style:italic;">Instrucción: Crear ticket y enviar a MED Critico (si fue emitida por un médico general) o MED ESP Critico (si fue emitida por un médico especialista)</p>' +
-            '</div>'
+            '</div>' +
+            '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de recetas / órdenes de estudio &gt; Reactivación excepcional de receta caducada</p>'
         },
         { label: 'Órdenes vencidas',
           texto:
