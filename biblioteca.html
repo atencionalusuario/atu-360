@@ -2076,7 +2076,7 @@
           pregunta: '¿Con cuál de estos temas tiene inconveniente el usuario?',
           hijos: [
             { label: 'No se conectó el médico',
-              tipificacion: 'Incidencias calidad médica > Según sea el caso',
+              tipificacion: 'Incidencias calidad médica > No se conectó el médico',
               texto:
                 '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para escalar su caso y, además, le asistiré en el agendamiento de una nueva cita.</p>' +
                 '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
@@ -2136,6 +2136,7 @@
               '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           },
           { label: 'Error en estudios de imágenes',
+            tipificacion: 'Incidencias calidad médica > Problemas con estudios de imágenes > Error en estudios de imágenes',
             alerta:
               '<p><strong>Error en estudios de imágenes:</strong> Usuario reporta que su órden de estudios de imágenes tiene errores y se desea asistencia de un médico para corregirla.</p>',
             texto:
@@ -2149,6 +2150,8 @@
           }
         ] },
         { label: 'Faltaron productos',
+          tituloModal: 'Faltaron productos en la consulta',
+          tipificacion: 'Incidencias calidad médica > Según sea el caso > Según sea el caso',
           texto:
             '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
             '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
@@ -2266,7 +2269,7 @@
         'Centros de imágenes',
         'Centros de procedimientos presenciales'
       ] },
-      { label: 'IT', tooltip: 'El inconveniente está relacionado a un problema técnico o con la tecnología', hijos: [
+      { label: 'IT (Tecnología)', tooltip: 'El inconveniente está relacionado a un problema técnico o con la tecnología', hijos: [
         'Problemas con las funciones de la aplicación',
         'Aplicación no disponible / en mantenimiento',
         { label: 'No llega el código OTP',
