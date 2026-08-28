@@ -745,6 +745,12 @@
       '<div id="recTelModificar" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_TEL + '</div>' +
     '</div>';
 
+  function abrirAgendarCitaNueva() {
+    var citas = OPCIONES_CATEGORIA.gestion.find(function(x) { return x.label === 'Gestión de citas'; });
+    var item = citas.hijos.find(function(x) { return x && x.label === 'Agendar cita nueva'; });
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter);
+  }
+
   function abrirModificarCita() {
     abrirModalTexto('Modificar cita', TEXTO_MODIFICAR_CITA);
   }
@@ -1328,7 +1334,12 @@
                 '<div id="triageFamiliarSi" class="triage-resultado" style="display:none;">' +
                   bloqueTriageCita('Familiar', 'familiar') +
                 '</div>' +
-                '<div id="triageFamiliarNo" class="triage-resultado" style="display:none;"></div>' +
+                '<div id="triageFamiliarNo" class="triage-resultado" style="display:none;">' +
+                  '<p>Comprendo. En ese caso, primero debemos registrar a su familiar en su cuenta.</p>' +
+                  '<div class="triage-acciones">' +
+                    '<button class="bib-btn" onclick="abrirScriptPerfiles(\'Registrar familiar nuevo\')">Registrar familiar nuevo</button>' +
+                  '</div>' +
+                '</div>' +
                 '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
             },
             { label: 'Cita nueva sin triage',
@@ -1390,15 +1401,19 @@
                 '</div>' +
                 '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Instrucción: dejar nota en el ticket y cerrarlo.</p>' +
               '</div>' +
-              '<div id="referenciaNoHayCupo" class="triage-resultado" style="display:none;"></div>' +
+              '<div id="referenciaNoHayCupo" class="triage-resultado" style="display:none;">' +
+                '<p>Comentarle que actualmente hemos reportado su caso con el número de ticket XXX. En cuanto haya disponibilidad para programar su cita, nos contactaremos con usted lo más pronto posible.</p>' +
+                '<p>Agradecemos que se mantenga pendiente de celular, ya que uno de nuestros asesores se comunicará con usted próximamente.</p>' +
+              '</div>' +
             '</div>' +
             '<div id="referenciaNoTicket" class="triage-resultado" style="display:none;">' +
               '<p style="text-align:center; color:#64748B; font-style:italic;">Buscar el DUI o nombre del usuario en la sección de Referencias de TCA.</p>' +
               '<p style="text-align:center;"><strong>¿Existe la referencia?</strong></p>' +
               '<div class="triage-acciones">' +
-                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'referenciaNtHayCupo\', [\'referenciaNtNoHayCupo\',\'referenciaNtSinReferencia\'])">Sí existe la referencia y hay cupo</button>' +
-                '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'referenciaNtNoHayCupo\', [\'referenciaNtHayCupo\',\'referenciaNtSinReferencia\'])">Sí existe la referencia pero no hay cupo</button>' +
-                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'referenciaNtSinReferencia\', [\'referenciaNtHayCupo\',\'referenciaNtNoHayCupo\'])">Pasó consulta y no se cuenta con referencia</button>' +
+                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'referenciaNtHayCupo\', [\'referenciaNtNoHayCupo\',\'referenciaNtSinReferencia\',\'referenciaNtMasDeUnMes\'])">Sí existe la referencia y hay cupo</button>' +
+                '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'referenciaNtNoHayCupo\', [\'referenciaNtHayCupo\',\'referenciaNtSinReferencia\',\'referenciaNtMasDeUnMes\'])">Sí existe la referencia pero no hay cupo</button>' +
+                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'referenciaNtSinReferencia\', [\'referenciaNtHayCupo\',\'referenciaNtNoHayCupo\',\'referenciaNtMasDeUnMes\'])">Pasó consulta hace poco, no tiene referencia</button>' +
+                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'referenciaNtMasDeUnMes\', [\'referenciaNtHayCupo\',\'referenciaNtNoHayCupo\',\'referenciaNtSinReferencia\'])">Pasó consulta hace más de 1 mes</button>' +
               '</div>' +
               '<div id="referenciaNtHayCupo" class="triage-resultado" style="display:none;">' +
                 '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
@@ -1455,6 +1470,13 @@
                   '* Fecha y hora de la cita<br>' +
                   '* Especialidad' +
                 '</p>' +
+              '</div>' +
+              '<div id="referenciaNtMasDeUnMes" class="triage-resultado" style="display:none;">' +
+                '<p>Comprendo Sr/Sra. XXXX. En este caso, por el tiempo que ha transcurrido, usted debe pasar consulta nuevamente con uno de nuestros médicos generales, para que pueda ser reevaluado.</p>' +
+                '<p>Con mucho gusto le puedo ayudar a agendar una cita con médico general.</p>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" onclick="abrirAgendarCitaNueva()">Ir a agendar cita nueva</button>' +
+                '</div>' +
               '</div>' +
             '</div>' +
             '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
@@ -1857,7 +1879,10 @@
                 '<p class="tipificacion-rama"><strong>Tipificación sugerida:</strong> Gestión de perfiles &gt; Eliminación de perfil de familiar</p>' +
               '</div>' +
             '</div>' +
-            '<div id="familiarDesvincularMenor" class="triage-resultado" style="display:none;"></div>'
+            '<div id="familiarDesvincularMenor" class="triage-resultado" style="display:none;">' +
+              '<p>Con gusto le asistiremos con la desvinculación del menor.</p>' +
+              '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser evaluado por nuestra área técnica y se pueda gestionar la desvinculación del perfil del menor.</p>' +
+            '</div>'
           },
           { label: 'Nos contacta el familiar',
             texto:
@@ -2285,7 +2310,44 @@
         'Centros de procedimientos presenciales'
       ] },
       { label: 'IT (Tecnología)', tooltip: 'El inconveniente está relacionado a un problema técnico o con la tecnología', hijos: [
-        'Problemas con las funciones de la aplicación',
+        { label: 'Problemas con las funciones de la aplicación',
+          texto:
+            '<p>Lamentamos escuchar los inconvenientes Sr / Sra XXXX. Sin embargo, en este momento, le sugerimos realizar con nosotros <strong>una serie de pasos para intentar solventarlo</strong>. Si gusta, comencemos.</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" onclick="toggleBloque(\'itHacerTroubleshooting\')">Hacer troubleshooting</button>' +
+            '</div>' +
+            '<div id="itHacerTroubleshooting" class="triage-resultado" style="display:none;">' +
+              '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">TROUBLESHOOTING</h4>' +
+              '<p>Solicitar al usuario que revise en la sección "Perfil" la <strong>versión</strong> de la app y <strong>validar</strong> que tenga instalada la última versión.<br>' +
+              '¿Está conectado a <strong>internet</strong> o <strong>datos</strong> con su teléfono?<br>' +
+              '¿Tiene señal de <strong>red móvil</strong>?<br>' +
+              '¿Tiene instalada la <strong>aplicación oficial</strong>?<br>' +
+              '¿Ya ha intentado <strong>cerrar e iniciar sesión</strong>?<br>' +
+              '¿Ha intentado <strong>borrar el caché</strong> de la app?</p>' +
+              '<p style="color:#64748B;">Si es problema para conectarse a la cita:</p>' +
+              '<p>¿Tiene descargada la última versión del Google Meet?<br>' +
+              '¿Tiene Google Hangouts instalado?</p>' +
+              '<p style="text-align:center; color:#64748B; font-style:italic;">¿Se pudo solucionar el inconveniente?</p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn" onclick="mostrarUno(\'itTroubleshootingSi\', \'itTroubleshootingNo\')">Sí</button>' +
+                '<button class="bib-btn" onclick="mostrarUno(\'itTroubleshootingNo\', \'itTroubleshootingSi\')">No</button>' +
+              '</div>' +
+              '<div id="itTroubleshootingSi" class="triage-resultado" style="display:none;">' +
+                '<p>Excelente, nos alegra escuchar que pudo solucionar su inconveniente. Estamos a su disposición para ayudarle cuando lo requiera.</p>' +
+                '<p>¿Le podemos asistir con alguna otra duda relacionada con el servicio de <strong>DoctorSV</strong>?</p>' +
+                '<p>Que tenga feliz día / tarde / noche.</p>' +
+              '</div>' +
+              '<div id="itTroubleshootingNo" class="triage-resultado" style="display:none;">' +
+                '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070; text-align:center;">Incidencias técnicas</h4>' +
+                '<p>Lamentamos lo sucedido y <strong>agradecemos su paciencia al respecto.</strong> Le comento que procederé a <strong>crear el reporte del caso</strong> para que nuestro equipo técnico realice las verificaciones y ajustes correspondientes.</p>' +
+                '<p>Para complementar el reporte, ¿nos podría enviar una <strong>captura de pantalla</strong> donde se pueda evidenciar el problema presentado?</p>' +
+                '<p>Esta captura la puede enviar al correo <strong>soporte@doctorsv.gob.sv</strong></p>' +
+                '<p>Le solicitamos que, por favor, <strong>se mantenga a la espera</strong> de nuestro contacto, ya que <strong>nos comunicaremos con usted lo antes posible</strong>.</p>' +
+                '<p>Le haremos seguimiento a su reporte a través del <strong>número ticket</strong> XXXXXXXXXXXX. Si gusta puede anotarlo.</p>' +
+                '<p><strong>Lamentamos los inconvenientes que esto haya podido causar.</strong> Le estaremos contactando a la brevedad.</p>' +
+              '</div>' +
+            '</div>'
+        },
         'Aplicación no disponible / en mantenimiento',
         { label: 'No llega el código OTP',
           tituloModal: 'Recomendaciones para recibir código OTP.',
