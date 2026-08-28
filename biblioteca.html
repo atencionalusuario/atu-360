@@ -830,6 +830,7 @@
   var TEXTOS_CONFIRMACION = {
     si: '<p>Muchas gracias SR / SRA XXX, dígame, <strong>¿cómo puedo ayudarle?</strong></p>',
     no: '<p>De acuerdo, antes de continuar con su atención, con mucho gusto le ayudo a actualizarlo, ¿me indica su nuevo número de contacto?</p>' +
+        '<p style="color:#64748B; font-style:italic;">Instrucción: Actualizar el número de contacto en el SDP. Verificar si el número en TCA coincide. Si no coincide, actualizarlo con el script siguiente.</p>' +
         '<p>Me confirma: ¿usted tiene acceso a su correo electrónico registrado en <strong>DoctorSV</strong>? ¿Me podría indicar el correo registrado?</p>' +
         '<p style="color:#64748B; font-style:italic;">Instrucción: El usuario debe mencionar el correo electrónico registrado. Depende de lo que diga el usuario selecciona la opción. Le puedes dar pistas al usuario del correo registrado. Nunca el correo completo.</p>' +
         '<div id="cambioTelefonoConfirmacion" class="triage-resultado" style="display:block;">' +
@@ -1479,7 +1480,7 @@
                 '</div>' +
               '</div>' +
             '</div>' +
-            '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
+            '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Referencia &gt; Referencia interna con especialista</p>'
         },
         { label: 'Cita de seguimiento',
           texto:
@@ -1584,7 +1585,7 @@
                 '<p>Le pedimos que se mantenga pendiente de su teléfono, que uno de nuestros agentes se pondrá en contacto para concretar el agendamiento de su cita.</p>' +
               '</div>' +
             '</div>' +
-            '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
+            '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Seguimiento &gt; Según sea el caso</p>'
         }
           ]
         },
@@ -2317,13 +2318,13 @@
               '<button class="bib-btn" onclick="toggleBloque(\'itHacerTroubleshooting\')">Hacer troubleshooting</button>' +
             '</div>' +
             '<div id="itHacerTroubleshooting" class="triage-resultado" style="display:none;">' +
-              '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">TROUBLESHOOTING</h4>' +
-              '<p>Solicitar al usuario que revise en la sección "Perfil" la <strong>versión</strong> de la app y <strong>validar</strong> que tenga instalada la última versión.<br>' +
-              '¿Está conectado a <strong>internet</strong> o <strong>datos</strong> con su teléfono?<br>' +
+              '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">Troubleshooting</h4>' +
+              '<p>¿Está conectado a <strong>internet</strong> o <strong>datos</strong> con su teléfono?<br>' +
               '¿Tiene señal de <strong>red móvil</strong>?<br>' +
               '¿Tiene instalada la <strong>aplicación oficial</strong>?<br>' +
               '¿Ya ha intentado <strong>cerrar e iniciar sesión</strong>?<br>' +
               '¿Ha intentado <strong>borrar el caché</strong> de la app?</p>' +
+              '<p>¿Podríamos revisar si tiene actualizada la aplicación?</p>' +
               '<p style="color:#64748B;">Si es problema para conectarse a la cita:</p>' +
               '<p>¿Tiene descargada la última versión del Google Meet?<br>' +
               '¿Tiene Google Hangouts instalado?</p>' +
