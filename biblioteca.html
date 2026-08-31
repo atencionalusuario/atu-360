@@ -2571,7 +2571,11 @@
               '¿Ha revisado su bandeja de mensajes de texto (SMS)?</p>' +
               '<p>Gracias por sus respuestas. En este momento crearé un reporte para que nuestro equipo técnico revise su caso. ¿Nos puede compartir, por favor, su compañía movil, modelo de Telefono y tipo de sistema operativo (Android o iOS)?</p>' +
               '<p>Gracias. Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-            '</div>'
+            '</div>' +
+            '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">Posibles códigos de error</h4>' +
+            '<p><strong>412 &ndash; Código OTP inválido:</strong> Verificar que el usuario o el agente ingresen correctamente los dígitos del OTP.</p>' +
+            '<p><strong>429 &ndash; Teléfono bloqueado por exceso de intentos:</strong> Se permite un máximo de 5 intentos. Si se supera este límite, el número quedará bloqueado durante 10 minutos.</p>' +
+            '<p><strong>406 &ndash; Código OTP expirado:</strong> El código tiene una validez de 10 minutos. Si expira, será necesario solicitar un nuevo OTP para el teléfono.</p>'
         },
         { label: 'Cambio de región de Google Play Store',
           texto:
@@ -2582,6 +2586,39 @@
               '<li>Vaya a Configuración → General → Preferencias de cuenta y dispositivo.</li>' +
               '<li>En País y perfiles, seleccione el nuevo país y agregue un método de pago válido para esa región. Reinicie la Play Store para que los cambios se apliquen.</li>' +
             '</ol>'
+        },
+        { label: 'Tamaño de fuente',
+          tituloModal: 'Tamaño de fuente',
+          texto:
+            '<p>Muchas gracias. Para poder asistirle con su solicitud, ¿me puede indicar el <strong>modelo de su dispositivo móvil</strong> y el <strong>sistema operativo</strong> que utiliza?</p>' +
+            '<div class="triage-criterios-grid">' +
+              '<div class="triage-criterio-caja">' +
+                '<p class="triage-criterio-titulo" style="text-align:center;"><strong>ANDROID</strong><br>(Samsung, Google, Pixel, Xiaomi, etc.)</p>' +
+                '<div class="triage-criterio-texto">' +
+                  '<ol>' +
+                    '<li>Abra la aplicación de Ajustes o Configuración.</li>' +
+                    '<li>Desplácese al apartado de Pantalla, Fondo de pantalla y brillo o Fuentes (o similar, dependiendo del modelo).</li>' +
+                    '<li>Dentro de este menú, busque y seleccione Tamaño de fuente o Ajustes de fuente.</li>' +
+                    '<li>Verá un deslizador en la parte inferior. Arrástrelo hacia la derecha (A+) para aumentar el tamaño o hacia la izquierda (A&minus;) para disminuirlo.</li>' +
+                    '<li>Al disminuir el tamaño de la fuente, podrá visualizar completamente las opciones dentro del menú.</li>' +
+                  '</ol>' +
+                  '<p>¿Me confirma si ahora puede visualizar todas las opciones completas de la aplicación?</p>' +
+                '</div>' +
+              '</div>' +
+              '<div class="triage-criterio-caja">' +
+                '<p class="triage-criterio-titulo" style="text-align:center;"><strong>iOS</strong></p>' +
+                '<div class="triage-criterio-texto">' +
+                  '<ol>' +
+                    '<li>Abra la aplicación de Configuración.</li>' +
+                    '<li>Desplácese hacia abajo y toque la opción Pantalla y brillo.</li>' +
+                    '<li>Dentro de este menú, busque y seleccione Tamaño del texto.</li>' +
+                    '<li>Verá un deslizador en la parte inferior. Arrástrelo hacia la derecha (A+) para aumentar el tamaño o hacia la izquierda (A&minus;) para disminuirlo.</li>' +
+                    '<li>Al disminuir el tamaño de la fuente, podrá visualizar completamente las opciones dentro del menú.</li>' +
+                  '</ol>' +
+                  '<p>¿Me confirma si ahora puede visualizar todas las opciones completas de la aplicación?</p>' +
+                '</div>' +
+              '</div>' +
+            '</div>'
         }
       ] },
       { label: 'Operativas de todo el servicio', pregunta: 'Incidencias operativas', hijos: [
