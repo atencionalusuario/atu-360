@@ -248,6 +248,38 @@
   .modal-ayuda-cuerpo p:last-child { margin-bottom: 0; }
   .modal-ayuda-cuerpo strong { color: #0F2070; }
   .modal-ayuda-ejemplo { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px 14px; font-size: 0.8rem; color: #0F2070; font-weight: 600; margin: 6px 0 14px; }
+  .tip-paso { margin-bottom: 22px; }
+  .tip-paso:last-child { margin-bottom: 0; }
+  .tip-paso-numero { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: #0F2070; color: #fff; font-size: 0.72rem; font-weight: 700; font-family: 'Montserrat', sans-serif; margin-right: 8px; flex-shrink: 0; }
+  .tip-paso-titulo { display: flex; align-items: center; font-family: 'Montserrat', sans-serif; font-weight: 700; color: #0F2070; font-size: 0.92rem; margin-bottom: 4px; }
+  .tip-paso-pregunta { font-size: 0.82rem; color: #64748B; font-style: italic; margin: 0 0 12px 30px; font-family: 'Montserrat', sans-serif; }
+  .tip-flujo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-left: 30px; }
+  @media (max-width: 560px) { .tip-flujo { grid-template-columns: 1fr; } }
+  .tip-flujo-col { background: #F1F5F9; border-radius: 10px; padding: 12px; }
+  .tip-flujo-col-titulo { font-family: 'Montserrat', sans-serif; font-weight: 700; color: #1E293B; font-size: 0.78rem; margin-bottom: 8px; line-height: 1.3; }
+  .tip-flujo-col-desc { font-size: 0.76rem; color: #475569; margin-bottom: 10px; line-height: 1.4; }
+  .tip-flujo-fila { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .tip-flujo-fila:last-child { margin-bottom: 0; }
+  .tip-flujo-caja { flex: 1; border-radius: 6px; padding: 8px 10px; font-size: 0.72rem; font-weight: 700; color: #fff; text-align: center; line-height: 1.25; }
+  .tip-flujo-caja.tip-c-claro { background: #38BDF8; }
+  .tip-flujo-caja.tip-c-oscuro { background: #0F2070; }
+  .tip-flujo-flecha { flex-shrink: 0; color: #334155; font-size: 1rem; }
+  .tip-arbol { margin-left: 30px; }
+  .tip-arbol-titulo { font-family: 'Montserrat', sans-serif; font-weight: 700; color: #1E293B; font-size: 0.92rem; text-align: center; }
+  .tip-arbol-svg { display: block; width: 100%; height: 30px; }
+  .tip-arbol-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  @media (max-width: 560px) { .tip-arbol-cols { grid-template-columns: 1fr 1fr; } }
+  .tip-arbol-col { border-radius: 8px; padding: 12px 8px; color: #fff; text-align: center; }
+  .tip-arbol-col.tip-navy { background: #0F2070; }
+  .tip-arbol-col.tip-blue { background: #2A7DB8; }
+  .tip-arbol-col-h { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.78rem; margin-bottom: 12px; line-height: 1.25; }
+  .tip-arbol-item { font-size: 0.7rem; margin-bottom: 8px; line-height: 1.3; }
+  .tip-arbol-item:last-child { margin-bottom: 0; }
+  .tip-relevancia-wrap { display: flex; gap: 12px; margin-left: 30px; }
+  .tip-relevancia-label { display: flex; flex-direction: column; justify-content: space-between; width: 62px; flex-shrink: 0; }
+  .tip-relevancia-label div { font-family: 'Montserrat', sans-serif; font-weight: 700; color: #1E293B; font-size: 0.76rem; text-align: center; line-height: 1.2; }
+  .tip-relevancia-bars { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+  .tip-relevancia-bar { padding: 7px 10px; border-radius: 16px; font-size: 0.68rem; font-weight: 700; text-align: center; font-family: 'Montserrat', sans-serif; line-height: 1.3; }
 </style>
 </head>
 <body>
@@ -506,10 +538,103 @@
     <button class="modal-close" onclick="cerrarModalAyuda()">&times;</button>
     <h3 class="modal-titulo">¿Cómo tipificar?</h3>
     <div class="modal-ayuda-cuerpo">
-      <p>Al final de cada tarjeta de información encontrarás una línea de <strong>Tipificación</strong>, con la ruta completa de dónde se ubica ese contenido dentro del menú.</p>
-      <div class="modal-ayuda-ejemplo">Consultas &gt; Información general del servicio &gt; Orientación sobre todo el servicio</div>
-      <p>Al finalizar la atención, registra esa misma ruta en el campo de tipificación del sistema de gestión, seleccionando cada nivel en el orden en que aparece aquí.</p>
-      <p>Esto asegura que la llamada quede clasificada correctamente para las métricas del equipo.</p>
+      <p>Para saber cómo tipificar sigue estos 3 pasos:</p>
+      <div class="tip-paso">
+        <div class="tip-paso-titulo"><span class="tip-paso-numero">1</span>Identifica la cantidad de tickets</div>
+        <div class="tip-paso-pregunta">¿Cuántos temas se trataron en el contacto?</div>
+        <div class="tip-flujo">
+          <div class="tip-flujo-col">
+            <div class="tip-flujo-col-titulo">Se trató sobre un solo tema, con una sola solicitud:</div>
+            <div class="tip-flujo-col-desc">Durante el contacto se trató un solo tema y se le brindó al usuario una sola solución a su solicitud.</div>
+            <div class="tip-flujo-fila">
+              <div class="tip-flujo-caja tip-c-claro">UNA SOLA SOLICITUD = UNA SOLA SOLUCIÓN</div>
+              <span class="tip-flujo-flecha">&#8594;</span>
+              <div class="tip-flujo-caja tip-c-oscuro">CREAR UN SOLO TICKET</div>
+            </div>
+          </div>
+          <div class="tip-flujo-col">
+            <div class="tip-flujo-col-titulo">Se trataron dos (o más) temas, con dos (o más) solicitudes:</div>
+            <div class="tip-flujo-col-desc">Durante el contacto se trataron temas distintos, con soluciones distintas.</div>
+            <div class="tip-flujo-fila">
+              <div class="tip-flujo-caja tip-c-claro">TODAS LAS SOLICITUDES LAS PUEDE GESTIONAR EL AGENTE</div>
+              <span class="tip-flujo-flecha">&#8594;</span>
+              <div class="tip-flujo-caja tip-c-oscuro">CREAR UN SOLO TICKET Y DEJAR NOTA DE LAS GESTIONES</div>
+            </div>
+            <div class="tip-flujo-fila">
+              <div class="tip-flujo-caja tip-c-claro">UNA DE LAS SOLICITUDES DEBE SER ESCALADA A OTRA ÁREA</div>
+              <span class="tip-flujo-flecha">&#8594;</span>
+              <div class="tip-flujo-caja tip-c-oscuro">CREAR UN SOLO TICKET</div>
+            </div>
+            <div class="tip-flujo-fila">
+              <div class="tip-flujo-caja tip-c-claro">DOS (O MÁS) SOLICITUDES DEBEN SER ESCALADAS A OTRAS ÁREAS</div>
+              <span class="tip-flujo-flecha">&#8594;</span>
+              <div class="tip-flujo-caja tip-c-oscuro">CREAR DOS (O MÁS) TICKETS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tip-paso">
+        <div class="tip-paso-titulo"><span class="tip-paso-numero">2</span>Selecciona el tipo de necesidad que tenía el usuario</div>
+        <div class="tip-arbol">
+          <div class="tip-arbol-titulo">Tipos de necesidades</div>
+          <svg class="tip-arbol-svg" viewBox="0 0 400 30" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+            <path d="M200,0 L50,28" stroke="#334155" stroke-width="1.5" stroke-dasharray="3,3" fill="none"/>
+            <path d="M200,0 L150,28" stroke="#334155" stroke-width="1.5" stroke-dasharray="3,3" fill="none"/>
+            <path d="M200,0 L250,28" stroke="#334155" stroke-width="1.5" stroke-dasharray="3,3" fill="none"/>
+            <path d="M200,0 L350,28" stroke="#334155" stroke-width="1.5" stroke-dasharray="3,3" fill="none"/>
+          </svg>
+          <div class="tip-arbol-cols">
+            <div class="tip-arbol-col tip-navy">
+              <div class="tip-arbol-col-h">Necesidad de información</div>
+              <div class="tip-arbol-item">Consultas</div>
+              <div class="tip-arbol-item">No relacionado al servicio</div>
+            </div>
+            <div class="tip-arbol-col tip-blue">
+              <div class="tip-arbol-col-h">Necesidad de reportar algo</div>
+              <div class="tip-arbol-item">Incidencias con centro de soporte</div>
+              <div class="tip-arbol-item">Incidencias con farmacias</div>
+              <div class="tip-arbol-item">Incidencias con imágenes</div>
+              <div class="tip-arbol-item">Incidencias con laboratorios</div>
+              <div class="tip-arbol-item">Incidencias operativas</div>
+              <div class="tip-arbol-item">Incidencias calidad médica</div>
+              <div class="tip-arbol-item">Incidencias calidez médica</div>
+              <div class="tip-arbol-item">Incidencias técnicas</div>
+            </div>
+            <div class="tip-arbol-col tip-navy">
+              <div class="tip-arbol-col-h">Necesidad de una gestión</div>
+              <div class="tip-arbol-item">Gestión de citas</div>
+              <div class="tip-arbol-item">Gestión de perfiles</div>
+              <div class="tip-arbol-item">Gestión de recetas / órdenes de estudio</div>
+            </div>
+            <div class="tip-arbol-col tip-blue">
+              <div class="tip-arbol-col-h">Necesidad de descartar emergencia</div>
+              <div class="tip-arbol-item">Emergencias</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tip-paso">
+        <div class="tip-paso-titulo"><span class="tip-paso-numero">3</span>Selecciona la tipificación de acuerdo a la jerarquía de la relevancia</div>
+        <div class="tip-relevancia-wrap">
+          <div class="tip-relevancia-label">
+            <div>+<br>Relevancia</div>
+            <div>&minus;<br>Relevancia</div>
+          </div>
+          <div class="tip-relevancia-bars">
+            <div class="tip-relevancia-bar" style="background:#0A1B4A; color:#fff;">Emergencias</div>
+            <div class="tip-relevancia-bar" style="background:#0F2464; color:#fff;">Incidencias técnicas</div>
+            <div class="tip-relevancia-bar" style="background:#142F7E; color:#fff;">Incidencias calidez médica, Incidencias calidad médica</div>
+            <div class="tip-relevancia-bar" style="background:#1A3F96; color:#fff;">Incidencias con farmacias, Incidencias con imágenes, Incidencias con laboratorios</div>
+            <div class="tip-relevancia-bar" style="background:#1F55A8; color:#fff;">Denuncias</div>
+            <div class="tip-relevancia-bar" style="background:#2569B4; color:#fff;">Incidencias operativas, Incidencias con centro de soporte</div>
+            <div class="tip-relevancia-bar" style="background:#2C7EC0; color:#fff;">Gestión de perfiles</div>
+            <div class="tip-relevancia-bar" style="background:#3993CC; color:#fff;">Gestión de citas</div>
+            <div class="tip-relevancia-bar" style="background:#4EA8D8; color:#fff;">Gestión de recetas / órdenes de estudio</div>
+            <div class="tip-relevancia-bar" style="background:#8FCBE9; color:#0F2070;">Consultas, Sugerencias</div>
+            <div class="tip-relevancia-bar" style="background:#D3ECF9; color:#0F2070;">No relacionado al servicio</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1275,12 +1400,12 @@
         texto:
           '<p style="color:#64748B; font-style:italic;">Instrucción: ¿Dónde se encuentra el usuario? ¿Ya inició la hora de la consulta?</p>' +
           '<svg viewBox="0 0 640 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:600px;display:block;margin:0 auto 18px;">' +
-            '<rect x="20" y="20" width="213" height="46" fill="#93C5FD"/>' +
-            '<rect x="233" y="20" width="170" height="46" fill="#86EFAC"/>' +
-            '<rect x="403" y="20" width="217" height="46" fill="#FDBA74"/>' +
-            '<text x="126" y="48" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="700" font-size="15" fill="#1E293B">Cómo conectarse</text>' +
-            '<text x="318" y="48" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="700" font-size="15" fill="#1E293B">Sala de espera</text>' +
-            '<text x="511" y="48" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="700" font-size="13" fill="#1E293B">No se conectó el médico</text>' +
+            '<rect x="20" y="20" width="213" height="46" fill="#93C5FD" style="cursor:pointer;" onclick="abrirModalTip(\'<strong>Cómo conectarse:</strong> El usuario nos contacta antes de haber iniciado la hora de su cita.\')"/>' +
+            '<rect x="233" y="20" width="170" height="46" fill="#86EFAC" style="cursor:pointer;" onclick="abrirModalTip(\'<strong>Sala de espera:</strong> El usuario nos contacta una vez ha iniciado la hora de su cita.\')"/>' +
+            '<rect x="403" y="20" width="217" height="46" fill="#FDBA74" style="cursor:pointer;" onclick="abrirModalTip(\'<strong>No se conectó el médico:</strong> Usuario nos contacta una vez finalizado el horario de su cita.\')"/>' +
+            '<text x="126" y="48" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="700" font-size="15" fill="#1E293B" style="pointer-events:none;">Cómo conectarse</text>' +
+            '<text x="318" y="48" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="700" font-size="15" fill="#1E293B" style="pointer-events:none;">Sala de espera</text>' +
+            '<text x="511" y="48" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="700" font-size="13" fill="#1E293B" style="pointer-events:none;">No se conectó el médico</text>' +
             '<line x1="20" y1="90" x2="620" y2="90" stroke="#334155" stroke-width="2"/>' +
             '<line x1="233" y1="80" x2="233" y2="100" stroke="#334155" stroke-width="2"/>' +
             '<line x1="403" y1="80" x2="403" y2="100" stroke="#334155" stroke-width="2"/>' +
@@ -2447,6 +2572,16 @@
               '<p>Gracias por sus respuestas. En este momento crearé un reporte para que nuestro equipo técnico revise su caso. ¿Nos puede compartir, por favor, su compañía movil, modelo de Telefono y tipo de sistema operativo (Android o iOS)?</p>' +
               '<p>Gracias. Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
             '</div>'
+        },
+        { label: 'Cambio de región de Google Play Store',
+          texto:
+            '<p>Le comparto los pasos a seguir para realizar el cambio de región en Google Play Store:</p>' +
+            '<ol>' +
+              '<li>Abra la aplicación Google Play Store.</li>' +
+              '<li>Toque su perfil en la esquina superior derecha.</li>' +
+              '<li>Vaya a Configuración → General → Preferencias de cuenta y dispositivo.</li>' +
+              '<li>En País y perfiles, seleccione el nuevo país y agregue un método de pago válido para esa región. Reinicie la Play Store para que los cambios se apliquen.</li>' +
+            '</ol>'
         }
       ] },
       { label: 'Operativas de todo el servicio', pregunta: 'Incidencias operativas', hijos: [
