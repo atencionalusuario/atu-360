@@ -1313,7 +1313,24 @@
             '<li>Espere en línea mientras el médico le permite ingresar a la videollamada.</li>' +
           '</ol>'
       },
-      'Cómo actualizar la app',
+      { label: 'Cómo actualizar la app',
+        texto:
+          '<p>Gracias. Antes de iniciar ¿Me podría indicar el <strong>modelo de su dispositivo</strong>?</p>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn" onclick="mostrarUno(\'actualizarAppAndroid\', \'actualizarAppIos\')">ANDROID</button>' +
+            '<button class="bib-btn" onclick="mostrarUno(\'actualizarAppIos\', \'actualizarAppAndroid\')">IOS</button>' +
+          '</div>' +
+          '<div id="actualizarAppAndroid" class="triage-resultado" style="display:none;">' +
+            '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">ANDROID</h4>' +
+            '<p>Ingrese a la tienda de aplicaciones <strong>Google Play Store</strong>. En el buscador, escriba <strong>DOCTOR ESE VE</strong> y, cuando aparezca la aplicación, seleccione <strong>"Instalar"</strong>.</p>' +
+            '<p>Espere unos momentos mientras se descarga e instala. Una vez finalice la instalación, en la misma pantalla seleccione la opción <strong>"Abrir"</strong> para ingresar a la aplicación.</p>' +
+          '</div>' +
+          '<div id="actualizarAppIos" class="triage-resultado" style="display:none;">' +
+            '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">iOS</h4>' +
+            '<p>Ingrese a la <strong>App Store</strong>. En el buscador, escriba <strong>DOCTOR ESE VE</strong> y, cuando aparezca la aplicación, seleccione <strong>"Obtener"</strong>.</p>' +
+            '<p>Si su dispositivo solicita una autenticación para descargar la aplicación, utilice <strong>Face ID</strong>, <strong>Touch ID</strong> o ingrese la contraseña de su <strong>Apple ID</strong> para iniciar la descarga. Espere unos momentos mientras la aplicación se instala. Una vez finalice la instalación, seleccione la opción <strong>"Abrir"</strong> para ingresar a la aplicación.</p>' +
+          '</div>'
+      },
       { label: 'Cómo hacer una cita médica propia',
         tipificacion: 'Consultas > Funciones de la aplicación > Cómo hacer una cita médica propia / familiar',
         texto:
@@ -1323,7 +1340,6 @@
           '<p>En caso que requiera una cita en otro día u horario deberá seleccionar la opción <strong>"Siguiente día"</strong>. Elija la cita de su preferencia y pulse el botón <strong>"Hacer cita médica virtual"</strong> y se mostrará la confirmación de su cita médica con el detalle de fecha y hora.</p>' +
           '<p>Podrá ver la cita agendada en la pantalla principal de la aplicación o en la sección <strong>"Mis Citas"</strong> al inferior de la pantalla.</p>'
       },
-      'Cómo hacer una cita médica a familiar',
       { label: 'Cómo modificar cita',
         tipificacion: 'Consultas > Funciones de la aplicación > Cómo modificar cita',
         texto:
@@ -1365,7 +1381,13 @@
           '<p>La constancia médica puede estar <strong>"vigente"</strong> o <strong>"inactiva"</strong> cuando ya haya caducado.</p>' +
           '<p>Al seleccionar la opción <strong>"Ver Constancia"</strong> se podrán observar los detalles. En esa misma pantalla también podrá descargar su constancia en formato PDF, o pulsar sobre <strong>"Compartir constancia"</strong> para obtener un enlace y enviarlo por otro medio.</p>'
       },
-      'Cómo ver recetas',
+      { label: 'Cómo ver recetas',
+        texto:
+          '<p>Con mucho gusto le ayudo. Para conseguir su receta por favor ingrese a la aplicación <strong>DoctorSV</strong>. En la pantalla principal (o Inicio) usted podrá ver el botón <strong>"Recetas"</strong> ubicado a la derecha.</p>' +
+          '<p>Al ingresar en esa sección usted podrá ver las recetas emitidas. Usted puede filtrar las recetas por estado: <strong>Pendiente</strong>, <strong>Parcialmente dispensada</strong>, <strong>Dispensada</strong> o <strong>Expirada</strong>.</p>' +
+          '<p>En esta sección usted también podrá ver el detalle de la receta pulsando sobre <strong>"Ver Receta"</strong>. Allí podrá ver el código QR para presentarlo en la farmacia.</p>' +
+          '<p>En esta sección usted también podrá descargar su receta para compartirla a quien usted decida.</p>'
+      },
       { label: 'Cómo ver referencia externa',
         texto:
           '<p>Las referencias médicas externas tienen una vigencia de <strong>un año</strong>. Durante ese tiempo, debe asistir al establecimiento de salud que se indica en la referencia. Para conocer los horarios de atención, le recomendamos comunicarse directamente con dicho establecimiento.</p>' +
