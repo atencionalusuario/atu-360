@@ -396,6 +396,8 @@
 
     <p class="instruccion" id="instHold" style="display:none;">Poner el hold al usuario.</p>
 
+    <p class="instruccion" id="instTCARegistro" style="display:none;">Ingresar a TCA en la sección de Registro y digitar el documento y la fecha de nacimiento para obtener el nombre completo del usuario.</p>
+
     <p class="instruccion" id="instRegistro" style="display:none;">Agregar al usuario como Solicitante en el SDP con los datos solicitados.</p>
 
     <p class="instruccion" id="instRetomar" style="display:none;">Retomar la llamada:</p>
@@ -807,7 +809,7 @@
     pilaVistas = [];
     document.getElementById('vistaCategoria').style.display = 'none';
     document.getElementById('flujoSDP').style.display = 'flex';
-    ['cajaSDP', 'casosEspecialesSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'accesoBusquedaMenu', 'botonesMenu', 'botonesMenuExtra'].forEach(function(id) {
+    ['cajaSDP', 'casosEspecialesSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instTCARegistro', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'accesoBusquedaMenu', 'botonesMenu', 'botonesMenuExtra'].forEach(function(id) {
       document.getElementById(id).style.display = 'none';
     });
     ['btnSdpSi', 'btnSdpNo', 'btnConfSi', 'btnConfNo'].forEach(function(id) {
@@ -933,6 +935,7 @@
 
     var esNo = tipo === 'no';
     document.getElementById('instHold').style.display = esNo ? 'block' : 'none';
+    document.getElementById('instTCARegistro').style.display = esNo ? 'block' : 'none';
     document.getElementById('instRegistro').style.display = esNo ? 'block' : 'none';
     document.getElementById('instRetomar').style.display = esNo ? 'block' : 'none';
     document.getElementById('cajaRegistro').style.display = esNo ? 'block' : 'none';
