@@ -400,21 +400,21 @@
     <p class="instruccion" id="instTCARegistro" style="display:none;">Ingresar a TCA en la sección de Registro y digitar el documento y la fecha de nacimiento para obtener el nombre completo del usuario. ¿Está registrado en TCA?</p>
 
     <div class="triage-acciones" id="botonesTCARegistro" style="display:none;">
-      <button class="bib-btn btn-si-verde" id="btnTcaRegistradoSi" onclick="mostrarUno('tcaRegistradoSi', 'tcaRegistradoNo')">Está registrado en TCA</button>
-      <button class="bib-btn btn-no-rojo" id="btnTcaRegistradoNo" onclick="mostrarUno('tcaRegistradoNo', 'tcaRegistradoSi'); mostrarRegistroSDPCompleto();">No está registrado en TCA</button>
+      <button class="bib-btn btn-si-verde" id="btnTcaRegistradoSi" onclick="mostrarUnoSDP('tcaRegistradoSi', 'tcaRegistradoNo')">Está registrado en TCA</button>
+      <button class="bib-btn btn-no-rojo" id="btnTcaRegistradoNo" onclick="mostrarUnoSDP('tcaRegistradoNo', 'tcaRegistradoSi'); mostrarRegistroSDPCompleto();">No está registrado en TCA</button>
     </div>
     <div id="tcaRegistradoSi" class="triage-resultado" style="display:none;">
       <p style="color:#64748B; font-style:italic;">Instrucción: ¿El número en TCA es el mismo que nos ha dicho?</p>
       <div class="triage-acciones">
-        <button class="bib-btn btn-si-verde" id="btnTcaNumeroMismo" onclick="mostrarUno('tcaNumeroMismo', 'tcaNumeroDistinto'); mostrarRegistroSDPCompleto();">Es el mismo</button>
-        <button class="bib-btn btn-no-rojo" id="btnTcaNumeroDistinto" onclick="mostrarUno('tcaNumeroDistinto', 'tcaNumeroMismo')">No es el mismo</button>
+        <button class="bib-btn btn-si-verde" id="btnTcaNumeroMismo" onclick="mostrarUnoSDP('tcaNumeroMismo', 'tcaNumeroDistinto'); mostrarRegistroSDPCompleto();">Es el mismo</button>
+        <button class="bib-btn btn-no-rojo" id="btnTcaNumeroDistinto" onclick="mostrarUnoSDP('tcaNumeroDistinto', 'tcaNumeroMismo')">No es el mismo</button>
       </div>
       <div id="tcaNumeroMismo" class="triage-resultado" style="display:none;"></div>
       <div id="tcaNumeroDistinto" class="triage-resultado" style="display:none;">
         <p>Muchas gracias por su espera en línea, SR / SRA XXX, antes de continuar, puedo ver en nuestro sistema que usted tiene registrado otro número. ¿Desea que le ayude con la actualización?</p>
         <div class="triage-acciones">
-          <button class="bib-btn btn-si-verde" id="btnTcaNumeroActualizarSi" onclick="mostrarUno('tcaNumeroActualizarSi', 'tcaNumeroActualizarNo')">Sí, actualizar</button>
-          <button class="bib-btn btn-no-rojo" id="btnTcaNumeroActualizarNo" onclick="mostrarUno('tcaNumeroActualizarNo', 'tcaNumeroActualizarSi'); mostrarRegistroSDPCompleto();">No, continuar</button>
+          <button class="bib-btn btn-si-verde" id="btnTcaNumeroActualizarSi" onclick="mostrarUnoSDP('tcaNumeroActualizarSi', 'tcaNumeroActualizarNo')">Sí, actualizar</button>
+          <button class="bib-btn btn-no-rojo" id="btnTcaNumeroActualizarNo" onclick="mostrarUnoSDP('tcaNumeroActualizarNo', 'tcaNumeroActualizarSi'); mostrarRegistroSDPCompleto();">No, continuar</button>
         </div>
         <div id="tcaNumeroActualizarSi" class="triage-resultado" style="display:none;"></div>
         <div id="tcaNumeroActualizarNo" class="triage-resultado" style="display:none;"></div>
@@ -1049,6 +1049,23 @@
           '<p><strong>¿Cómo puedo ayudarle?</strong></p>' +
         '</div>'
   };
+
+  function mostrarUnoSDP(idMostrar, idsOcultar) {
+    var lista = Array.isArray(idsOcultar) ? idsOcultar : [idsOcultar];
+    var elMostrar = document.getElementById(idMostrar);
+    if (!elMostrar) return;
+    var yaVisible = elMostrar.style.display === 'block';
+    lista.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    elMostrar.style.display = yaVisible ? 'none' : 'block';
+    [idMostrar].concat(lista).forEach(function(id) {
+      var boton = document.querySelector('[onclick*="mostrarUnoSDP(\'' + id + '\'"]');
+      if (boton) boton.classList.toggle('active', id === idMostrar && !yaVisible);
+    });
+    if (!yaVisible) scrollBloqueAVista(elMostrar);
+  }
 
   function mostrarRegistroSDPCompleto() {
     document.getElementById('instRegistro').style.display = 'block';
