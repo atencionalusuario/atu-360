@@ -648,6 +648,7 @@
     <div class="sdp-botones" style="margin-top:16px;">
       <button class="bib-btn" onclick="cerrarModalRecursos(); abrirModalMatrizCalidad();">Matriz de calidad</button>
       <button class="bib-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/1xm8aO7uZ5cGHl8nhKJdSCr235spSumnleJhByHvrzvc/edit?gid=0#gid=0', '_blank')">Matriz de tipificaciones SDP</button>
+      <button class="bib-btn" onclick="window.open('https://drive.google.com/file/d/1pzqYm-wYs0FjeOpVNfE9y-4aKxSyJys7/view', '_blank')">Plantilla de notas SDP</button>
       <button class="bib-btn" onclick="window.open('https://docs.google.com/presentation/d/12K0ZEoxTFIK6PTb0ge9ctWGAF1oniXQwc2mEzKWwFTk/edit', '_blank')">Pantallas de la aplicación</button>
       <button class="bib-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/1S4HQ0oKIieVa9jSYlukzCLJ3Z0UeYMt6/edit?gid=1995540795#gid=1995540795&fvid=939997235', '_blank')">Directorio de farmacias y laboratorios</button>
       <button class="bib-btn" onclick="window.open('https://telemed.telesalud.gob.sv/', '_blank')">TCA</button>
@@ -655,6 +656,7 @@
       <button class="bib-btn" onclick="window.open('https://atencion.telesalud.gob.sv/HomePage.do', '_blank')">SDP</button>
       <button class="bib-btn" onclick="window.open('https://tercemed.com/#/login', '_blank')">P2H</button>
       <button class="bib-btn" style="background:#EA580C" onclick="toggleBloque('scriptEvacuacion')">Script evacuación</button>
+      <button class="bib-btn" onclick="cerrarModalRecursos(); mostrarCategoria('salientes');">Scripts salientes</button>
     </div>
     <div id="scriptEvacuacion" class="triage-resultado" style="display:none;">
       <p>Por motivos de seguridad, debemos finalizar la llamada de manera inmediata. Lamentamos cualquier inconveniente que esto pueda causar. Quedamos a su disposición para cualquier consulta en otro momento.</p>
@@ -1040,7 +1042,7 @@
     renderRuta();
   }
 
-  var NOMBRES_CATEGORIA = { consulta: 'Consulta', gestion: 'Gestión', incidencia: 'Incidencia', emergencia: 'Emergencia', norelacionado: 'No relacionado' };
+  var NOMBRES_CATEGORIA = { consulta: 'Consulta', gestion: 'Gestión', incidencia: 'Incidencia', emergencia: 'Emergencia', norelacionado: 'No relacionado', salientes: 'Scripts salientes' };
   var CATEGORIAS_CON_BUSQUEDA = {
     consulta: '¿Qué tipo de información necesita el usuario?',
     gestion: '¿Qué gestión necesita el usuario que hagamos?',
@@ -2725,6 +2727,100 @@
         texto:
           '<p>Comprendemos su consulta, sin embargo, debo comentarle que ésta es una línea exclusiva para atender dudas relacionadas al servicio de <strong>DoctorSV</strong>, por lo que no podremos ayudarle con su inquietud.</p>'
       }
+    ],
+    salientes: [
+      { label: 'Seguimientos',
+        texto:
+          '<p>Buenos días / buenas tardes / buenas noches, le saluda el/la agente [NOMBRE Y APELLIDO DEL AGENTE] de <strong>DoctorSV</strong>.</p>' +
+          '<p>- ¿Tengo el gusto de conversar con el Sr / la Sra [NOMBRE Y APELLIDO DEL PACIENTE]?<br>' +
+          '- ¿Tengo el gusto de comunicarme con los padres de [NOMBRE Y APELLIDO DEL MENOR]?</p>' +
+          '<p>Un gusto saludarle, en esta oportunidad nos comunicamos con usted a solicitud de su médico general/ del especialista en [ESPECIALIDAD], para agendarle su cita de seguimiento.</p>' +
+          '<p>Vemos en nuestro sistema, que la cita más próxima disponible es el día [DÍA] a las [HORA] de la mañana / tarde / noche. ¿<strong>Le parece bien a esa hora</strong>?</p>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'salienteSeguimientoSi\', \'salienteSeguimientoNo\')">Sí</button>' +
+            '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'salienteSeguimientoNo\', \'salienteSeguimientoSi\')">No</button>' +
+          '</div>' +
+          '<div id="salienteSeguimientoSi" class="triage-resultado" style="display:none;">' +
+            '<p>Muchas gracias por su confirmación. Queda programada su cita para el día <strong>XX</strong> a las <strong>XX am / pm</strong> con medicina general / especialidad en <strong>XXXX</strong>.</p>' +
+            '<p>La programación de su cita, ya se encuentra disponible dentro de la sección <strong>*Mis Citas*</strong> en la aplicación DoctorSV.</p>' +
+          '</div>' +
+          '<div id="salienteSeguimientoNo" class="triage-resultado" style="display:none;">' +
+            '<p>¿Podría indicarnos el día y la hora que prefiere para agendar la cita?</p>' +
+            '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">Disponibilidad de horario con el especialista asignado</h4>' +
+            '<p>Muchas gracias por su confirmación. Queda programada su cita para el día <strong>XX</strong> a las <strong>XX am / pm</strong> con medicina general / especialidad en <strong>XXXX</strong>.</p>' +
+            '<p>La programación de su cita, ya se encuentra disponible dentro de la sección <strong>*Mis Citas*</strong> en la aplicación DoctorSV.</p>' +
+            '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">Cambio de especialista para agendar el día y la hora que solicita el usuario</h4>' +
+            '<p>Muchas gracias por su confirmación. Para poder agendar la cita en el día y horario que me indica, será necesario realizar un cambio de especialista.</p>' +
+            '<p>¿Está de acuerdo con que efectúe este cambio para gestionar su cita?</p>' +
+            '<p>Recuerde que el especialista tendrá acceso a su historial médico, lo que permitirá dar continuidad al seguimiento de su atención.</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'salienteCambioEspSi\', \'salienteCambioEspNo\')">Sí confirma cambio</button>' +
+              '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'salienteCambioEspNo\', \'salienteCambioEspSi\')">No confirma cambio</button>' +
+            '</div>' +
+            '<div id="salienteCambioEspSi" class="triage-resultado" style="display:none;">' +
+              '<p>Gracias. Queda programada su cita para el día XX a las XX am / pm con medicina general / especialidad en XXXX.</p>' +
+              '<p>La programación de su cita, ya se encuentra disponible dentro de la sección <em>Mis Citas</em> en la aplicación DoctorSV.</p>' +
+            '</div>' +
+            '<div id="salienteCambioEspNo" class="triage-resultado" style="display:none;">' +
+              '<p>Entiendo lo que nos comenta Sr/Sra XXX, estaremos a su disposición para que continúe con su proceso médico.</p>' +
+              '<p>Le pedimos que, al conocer su disponibilidad, se ponga en contacto con nosotros nuevamente. <em>Mis Citas</em> en la aplicación DoctorSV.</p>' +
+              '<p style="color:#64748B; font-style:italic;">Enviar a estado SIN CUPO SEGUIMIENTO</p>' +
+            '</div>' +
+          '</div>'
+      },
+      { label: 'Referencia con especialista',
+        tituloModal: 'Referencia con especialista',
+        texto:
+          '<p>Buenos días / buenas tardes / buenas noches, le saluda el/la agente XXXX XXXX de <strong>DoctorSV</strong>.</p>' +
+          '<p>- ¿Tengo el gusto de conversar con el Sr / la Sra XXXXXXX XXXXXX?<br>' +
+          '- ¿Tengo el gusto de comunicarme con los padres de XXXXXX?</p>' +
+          '<p>Un gusto saludarle, nos ponemos en contacto con usted para <strong>generarle una cita médica</strong> con el especialista xxx.</p>' +
+          '<p>La próxima cita disponible es el día [fecha], a las [hora] [AM/PM]. ¿Le parece bien esta fecha y hora para programar su cita médica?</p>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'salienteRefEspSi\', [\'salienteRefEspNo\', \'salienteRefEspNoQuiere\', \'salienteRefEspNoSabe\', \'salienteRefEspAgendarApp\'])">Sí</button>' +
+            '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'salienteRefEspNo\', [\'salienteRefEspSi\', \'salienteRefEspNoQuiere\', \'salienteRefEspNoSabe\', \'salienteRefEspAgendarApp\'])">No</button>' +
+          '</div>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn" style="background:#EA580C" onclick="mostrarUno(\'salienteRefEspNoQuiere\', [\'salienteRefEspSi\', \'salienteRefEspNo\', \'salienteRefEspNoSabe\', \'salienteRefEspAgendarApp\'])">No quiere usar la referencia</button>' +
+            '<button class="bib-btn" style="background:#EA580C" onclick="mostrarUno(\'salienteRefEspNoSabe\', [\'salienteRefEspSi\', \'salienteRefEspNo\', \'salienteRefEspNoQuiere\', \'salienteRefEspAgendarApp\'])">No sabe para cuándo agendar</button>' +
+          '</div>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn" onclick="mostrarUno(\'salienteRefEspAgendarApp\', [\'salienteRefEspSi\', \'salienteRefEspNo\', \'salienteRefEspNoQuiere\', \'salienteRefEspNoSabe\'])">Agendamiento de cita desde la App</button>' +
+          '</div>' +
+          '<div id="salienteRefEspSi" class="triage-resultado" style="display:none;">' +
+            '<p>Muchas gracias por su confirmación. Queda programada su cita para el día <strong>XX</strong> a las <strong>XX am / pm</strong> con medicina general / especialidad en <strong>XXXX</strong>.</p>' +
+            '<p>La programación de su cita, ya se encuentra disponible dentro de la sección <strong>*Mis Citas*</strong> en la aplicación DoctorSV.</p>' +
+          '</div>' +
+          '<div id="salienteRefEspNo" class="triage-resultado" style="display:none;">' +
+            '<p>¿Podría indicarnos el día y la hora que prefiere para agendar la cita?</p>' +
+            '<p style="color:#94A3B8; font-style:italic;">Menciona día y hora</p>' +
+            '<p>Muchas gracias por su confirmación. Queda programada su cita para el día <strong>XX</strong> a las <strong>XX am / pm</strong> con medicina general / especialidad en <strong>XXXX</strong>.</p>' +
+            '<p>La programación de su cita, ya se encuentra disponible dentro de la sección <strong>*Mis Citas*</strong> en la aplicación DoctorSV.</p>' +
+          '</div>' +
+          '<div id="salienteRefEspNoQuiere" class="triage-resultado" style="display:none;">' +
+            '<p>Entiendo lo que nos comenta Sr/Sra XXXXXXX, en este caso tomaremos nota de que no desea agendar una cita. Estaremos a su disposición para que continúe con su proceso médico cuando usted lo desee.</p>' +
+            '<p>Quedaremos atentos y con gusto continuaremos con el agendamiento de su cita tan pronto nos contacte al 136.</p>' +
+          '</div>' +
+          '<div id="salienteRefEspNoSabe" class="triage-resultado" style="display:none;">' +
+            '<p>Entiendo lo que nos comenta, Sr./Sra. XXXXXXX. Estaremos a su disposición para brindarle apoyo y dar continuidad a su proceso médico.</p>' +
+            '<p>Le solicitamos que, cuando conozca su disponibilidad, realice el agendamiento de su cita a través de la aplicación, seleccionando el botón <strong>"Agendar ahora"</strong> en la alerta <strong>"Tiene una nueva referencia a especialista"</strong>.</p>' +
+            '<p>Si lo prefiere, también puede comunicarse nuevamente con nosotros al <strong>136</strong>, y con gusto le apoyaremos con el agendamiento de su cita.</p>' +
+          '</div>' +
+          '<div id="salienteRefEspAgendarApp" class="triage-resultado" style="display:none;">' +
+            '<p>Con gusto le guiaré paso a paso para agendar su cita de referencia desde la aplicación. Antes de iniciar, ¿podría colocar su teléfono en altavoz para que podamos realizar el proceso juntos?</p>' +
+            '<p>Gracias por su confirmación.</p>' +
+            '<ol>' +
+              '<li>Ingrese a la aplicación y seleccione el botón "Agendar ahora" que aparece en la alerta "Tiene una nueva referencia a especialista".</li>' +
+              '<li>Presione "Continuar" para confirmar el inicio del proceso de agendamiento de su cita con el especialista.</li>' +
+              '<li>Responda las preguntas relacionadas con los síntomas o condiciones de salud que presenta actualmente.</li>' +
+              '<li>Lea y acepte los términos y condiciones y, posteriormente, seleccione la opción "Hacer cita médica virtual".</li>' +
+              '<li>Seleccione la especialidad con la que desea agendar su cita y presione "Continuar".</li>' +
+              '<li>Elija la fecha y la hora de su preferencia entre los espacios disponibles.</li>' +
+              '<li>Finalmente, seleccione cómo desea recibir su videoconsulta: desde la aplicación o mediante Google Meet.</li>' +
+            '</ol>' +
+            '<p>Su cita con el especialista ha quedado agendada exitosamente.</p>' +
+          '</div>'
+      }
     ]
   };
 
@@ -2745,7 +2841,7 @@
     pushVistaOpciones(NOMBRES_CATEGORIA[cat], OPCIONES_CATEGORIA[cat]);
 
     var opciones = OPCIONES_CATEGORIA[cat];
-    if (opciones && opciones.length === 1 && opciones[0] && opciones[0].texto && !opciones[0].hijos) {
+    if (cat !== 'salientes' && opciones && opciones.length === 1 && opciones[0] && opciones[0].texto && !opciones[0].hijos) {
       var indiceCrumbCategoria = historial.length - 1;
       clickOpcion(0);
       document.getElementById('cajaOpcionesCategoria').style.display = 'none';
