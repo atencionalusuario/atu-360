@@ -396,7 +396,34 @@
 
     <p class="instruccion" id="instHold" style="display:none;">Poner el hold al usuario.</p>
 
-    <p class="instruccion" id="instTCARegistro" style="display:none;">Ingresar a TCA en la sección de Registro y digitar el documento y la fecha de nacimiento para obtener el nombre completo del usuario.</p>
+    <p class="instruccion" id="instTCARegistro" style="display:none;">Ingresar a TCA en la sección de Registro y digitar el documento y la fecha de nacimiento para obtener el nombre completo del usuario. ¿Está registrado en TCA?</p>
+
+    <div class="triage-acciones" id="botonesTCARegistro" style="display:none;">
+      <button class="bib-btn btn-si-verde" onclick="mostrarUno('tcaRegistradoSi', 'tcaRegistradoNo')">Está registrado en TCA</button>
+      <button class="bib-btn btn-no-rojo" onclick="mostrarUno('tcaRegistradoNo', 'tcaRegistradoSi'); mostrarRegistroSDPCompleto();">No está registrado en TCA</button>
+    </div>
+    <div id="tcaRegistradoSi" class="triage-resultado" style="display:none;">
+      <p style="color:#64748B; font-style:italic;">Instrucción: ¿El número en TCA es el mismo que nos ha dicho?</p>
+      <div class="triage-acciones">
+        <button class="bib-btn btn-si-verde" onclick="mostrarUno('tcaNumeroMismo', 'tcaNumeroDistinto'); mostrarRegistroSDPCompleto();">Es el mismo</button>
+        <button class="bib-btn btn-no-rojo" onclick="mostrarUno('tcaNumeroDistinto', 'tcaNumeroMismo')">No es el mismo</button>
+      </div>
+      <div id="tcaNumeroMismo" class="triage-resultado" style="display:none;">
+      </div>
+      <div id="tcaNumeroDistinto" class="triage-resultado" style="display:none;">
+        <p>Muchas gracias por su espera en línea, SR / SRA XXX, antes de continuar, puedo ver en nuestro sistema que usted tiene registrado otro número. ¿Desea que le ayude con la actualización?</p>
+        <div class="triage-acciones">
+          <button class="bib-btn btn-si-verde" onclick="mostrarUno('tcaNumeroActualizarSi', 'tcaNumeroActualizarNo')">Sí, actualizar</button>
+          <button class="bib-btn btn-no-rojo" onclick="mostrarUno('tcaNumeroActualizarNo', 'tcaNumeroActualizarSi'); mostrarRegistroSDPCompleto();">No, continuar</button>
+        </div>
+        <div id="tcaNumeroActualizarSi" class="triage-resultado" style="display:none;">
+        </div>
+        <div id="tcaNumeroActualizarNo" class="triage-resultado" style="display:none;">
+        </div>
+      </div>
+    </div>
+    <div id="tcaRegistradoNo" class="triage-resultado" style="display:none;">
+    </div>
 
     <p class="instruccion" id="instRegistro" style="display:none;">Agregar al usuario como Solicitante en el SDP con los datos solicitados.</p>
 
@@ -811,7 +838,7 @@
     pilaVistas = [];
     document.getElementById('vistaCategoria').style.display = 'none';
     document.getElementById('flujoSDP').style.display = 'flex';
-    ['cajaSDP', 'casosEspecialesSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instTCARegistro', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'accesoBusquedaMenu', 'botonesMenu', 'botonesMenuExtra'].forEach(function(id) {
+    ['cajaSDP', 'casosEspecialesSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instTCARegistro', 'botonesTCARegistro', 'tcaRegistradoSi', 'tcaRegistradoNo', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'accesoBusquedaMenu', 'botonesMenu', 'botonesMenuExtra'].forEach(function(id) {
       document.getElementById(id).style.display = 'none';
     });
     ['btnSdpSi', 'btnSdpNo', 'btnConfSi', 'btnConfNo'].forEach(function(id) {
@@ -915,7 +942,7 @@
 
   var TEXTOS_SDP = {
     si: '<p>Muchas gracias, ¿me podría confirmar si los últimos 4 dígitos de su teléfono siguen siendo XXXX?</p>',
-    no: '<p>Muchas gracias, ¿me podría indicar su fecha de nacimiento y su número de teléfono?</p>' +
+    no: '<p>Muchas gracias, ¿me podría indicar su <strong>fecha de nacimiento</strong> y su <strong>número de teléfono</strong>?</p>' +
         '<p>Le confirmo: su teléfono es XXXX-XXXX y su fecha de nacimiento es XX/XX/XXXX</p>' +
         '<p>De acuerdo, por favor, permítame un momento en línea para verificar en nuestro sistema.</p>'
   };
@@ -935,18 +962,25 @@
     document.getElementById('btnConfSi').classList.remove('active');
     document.getElementById('btnConfNo').classList.remove('active');
 
+    // El paso de registro en TCA aun no se ha elegido de nuevo, se oculta siempre al reentrar aqui
+    document.getElementById('tcaRegistradoSi').style.display = 'none';
+    document.getElementById('tcaRegistradoNo').style.display = 'none';
+
     var esNo = tipo === 'no';
     document.getElementById('instHold').style.display = esNo ? 'block' : 'none';
     document.getElementById('instTCARegistro').style.display = esNo ? 'block' : 'none';
-    document.getElementById('instRegistro').style.display = esNo ? 'block' : 'none';
-    document.getElementById('instRetomar').style.display = esNo ? 'block' : 'none';
-    document.getElementById('cajaRegistro').style.display = esNo ? 'block' : 'none';
+    document.getElementById('botonesTCARegistro').style.display = esNo ? 'flex' : 'none';
 
-    document.getElementById('instMenu').style.display = esNo ? 'block' : 'none';
-    document.getElementById('instMenuDetalle').style.display = esNo ? 'block' : 'none';
-    document.getElementById('accesoBusquedaMenu').style.display = esNo ? 'block' : 'none';
-    document.getElementById('botonesMenu').style.display = esNo ? 'flex' : 'none';
-    document.getElementById('botonesMenuExtra').style.display = esNo ? 'flex' : 'none';
+    // El resto del flujo depende de la opcion elegida en "¿Está registrado en TCA?", se oculta siempre al reentrar aqui
+    document.getElementById('instRegistro').style.display = 'none';
+    document.getElementById('instRetomar').style.display = 'none';
+    document.getElementById('cajaRegistro').style.display = 'none';
+
+    document.getElementById('instMenu').style.display = 'none';
+    document.getElementById('instMenuDetalle').style.display = 'none';
+    document.getElementById('accesoBusquedaMenu').style.display = 'none';
+    document.getElementById('botonesMenu').style.display = 'none';
+    document.getElementById('botonesMenuExtra').style.display = 'none';
 
     pilaVistas = [];
     document.getElementById('vistaCategoria').style.display = 'none';
@@ -1011,6 +1045,13 @@
           '<p><strong>¿Cómo puedo ayudarle?</strong></p>' +
         '</div>'
   };
+
+  function mostrarRegistroSDPCompleto() {
+    document.getElementById('instRegistro').style.display = 'block';
+    document.getElementById('instRetomar').style.display = 'block';
+    document.getElementById('cajaRegistro').style.display = 'block';
+    mostrarMenuPrincipal();
+  }
 
   function mostrarMenuPrincipal() {
     document.getElementById('instMenu').style.display = 'block';
