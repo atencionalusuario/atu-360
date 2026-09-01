@@ -400,20 +400,20 @@
     <p class="instruccion" id="instTCARegistro" style="display:none;">Ingresar a TCA en la sección de Registro y digitar el documento y la fecha de nacimiento para obtener el nombre completo del usuario. ¿Está registrado en TCA?</p>
 
     <div class="triage-acciones" id="botonesTCARegistro" style="display:none;">
-      <button class="bib-btn btn-si-verde" id="btnTcaRegistradoSi" onclick="mostrarUno('tcaRegistradoSi', 'tcaRegistradoNo')">Está registrado en TCA</button>
+      <button class="bib-btn btn-si-verde" id="btnTcaRegistradoSi" onclick="mostrarUno('tcaRegistradoSi', 'tcaRegistradoNo'); ocultarRegistroSDPCompleto();">Está registrado en TCA</button>
       <button class="bib-btn btn-no-rojo" id="btnTcaRegistradoNo" onclick="mostrarUno('tcaRegistradoNo', 'tcaRegistradoSi'); mostrarRegistroSDPCompleto();">No está registrado en TCA</button>
     </div>
     <div id="tcaRegistradoSi" class="triage-resultado" style="display:none;">
       <p style="color:#64748B; font-style:italic;">Instrucción: ¿El número en TCA es el mismo que nos ha dicho?</p>
       <div class="triage-acciones">
         <button class="bib-btn btn-si-verde" id="btnTcaNumeroMismo" onclick="mostrarUno('tcaNumeroMismo', 'tcaNumeroDistinto'); mostrarRegistroSDPCompleto();">Es el mismo</button>
-        <button class="bib-btn btn-no-rojo" id="btnTcaNumeroDistinto" onclick="mostrarUno('tcaNumeroDistinto', 'tcaNumeroMismo')">No es el mismo</button>
+        <button class="bib-btn btn-no-rojo" id="btnTcaNumeroDistinto" onclick="mostrarUno('tcaNumeroDistinto', 'tcaNumeroMismo'); ocultarRegistroSDPCompleto();">No es el mismo</button>
       </div>
       <div id="tcaNumeroMismo" class="triage-resultado" style="display:none;"></div>
       <div id="tcaNumeroDistinto" class="triage-resultado" style="display:none;">
         <p>Muchas gracias por su espera en línea, SR / SRA XXX, antes de continuar, puedo ver en nuestro sistema que usted tiene registrado otro número. ¿Desea que le ayude con la actualización?</p>
         <div class="triage-acciones">
-          <button class="bib-btn btn-si-verde" id="btnTcaNumeroActualizarSi" onclick="mostrarUno('tcaNumeroActualizarSi', 'tcaNumeroActualizarNo')">Sí, actualizar</button>
+          <button class="bib-btn btn-si-verde" id="btnTcaNumeroActualizarSi" onclick="mostrarUno('tcaNumeroActualizarSi', 'tcaNumeroActualizarNo'); ocultarRegistroSDPCompleto();">Sí, actualizar</button>
           <button class="bib-btn btn-no-rojo" id="btnTcaNumeroActualizarNo" onclick="mostrarUno('tcaNumeroActualizarNo', 'tcaNumeroActualizarSi'); mostrarRegistroSDPCompleto();">No, continuar</button>
         </div>
         <div id="tcaNumeroActualizarSi" class="triage-resultado" style="display:none;"></div>
@@ -1006,9 +1006,12 @@
         '<p style="color:#64748B; font-style:italic;">Instrucción: El usuario debe mencionar el correo electrónico registrado. Depende de lo que diga el usuario selecciona la opción. Le puedes dar pistas al usuario del correo registrado. Nunca el correo completo.</p>' +
         '<div id="cambioTelefonoConfirmacion" class="triage-resultado" style="display:block;">' +
           '<div class="triage-acciones">' +
-            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfSiCorreo\', [\'telefonoConfSiRecuerdaNoAcceso\',\'telefonoConfNoCorreo\'])">Sí lo recuerda y tiene acceso</button>' +
-            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfSiRecuerdaNoAcceso\', [\'telefonoConfSiCorreo\',\'telefonoConfNoCorreo\'])">Sí lo recuerda, pero no tiene acceso</button>' +
-            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfNoCorreo\', [\'telefonoConfSiCorreo\',\'telefonoConfSiRecuerdaNoAcceso\'])">No lo recuerda</button>' +
+            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfSiCorreo\', [\'telefonoConfSiRecuerdaNoAcceso\',\'telefonoConfNoCorreo\']); document.getElementById(\'telefonoConfBotonActualizadoWrap\').style.display=\'flex\';">Sí lo recuerda y tiene acceso</button>' +
+            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfSiRecuerdaNoAcceso\', [\'telefonoConfSiCorreo\',\'telefonoConfNoCorreo\']); document.getElementById(\'telefonoConfBotonActualizadoWrap\').style.display=\'flex\';">Sí lo recuerda, pero no tiene acceso</button>' +
+            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfNoCorreo\', [\'telefonoConfSiCorreo\',\'telefonoConfSiRecuerdaNoAcceso\']); document.getElementById(\'telefonoConfBotonActualizadoWrap\').style.display=\'none\';">No lo recuerda</button>' +
+          '</div>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn btn-no-rojo" onclick="toggleBloque(\'telefonoConfContinuar\'); mostrarMenuPrincipal();">No quiere actualizar su teléfono, continuar</button>' +
           '</div>' +
           '<div id="telefonoConfSiCorreo" class="triage-resultado" style="display:none;">' +
             '<p>Muchas gracias. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al correo electrónico confirmado</p>' +
@@ -1042,9 +1045,8 @@
               '<p>Le haremos seguimiento a su reporte a través del número ticket XXX. Si gusta puede anotarlo.</p>' +
             '</div>' +
           '</div>' +
-          '<div class="triage-acciones">' +
+          '<div id="telefonoConfBotonActualizadoWrap" class="triage-acciones" style="display:none;">' +
             '<button class="bib-btn btn-si-verde" onclick="toggleBloque(\'telefonoConfContinuar\'); mostrarMenuPrincipal();">Teléfono actualizado, continuar</button>' +
-            '<button class="bib-btn btn-no-rojo" onclick="toggleBloque(\'telefonoConfContinuar\'); mostrarMenuPrincipal();">No quiere actualizar su teléfono, continuar</button>' +
           '</div>' +
         '</div>' +
         '<div id="telefonoConfContinuar" style="display:none;">' +
@@ -1058,6 +1060,17 @@
     document.getElementById('instRetomar').style.display = 'block';
     document.getElementById('cajaRegistro').style.display = 'block';
     mostrarMenuPrincipal();
+  }
+
+  function ocultarRegistroSDPCompleto() {
+    document.getElementById('instRegistro').style.display = 'none';
+    document.getElementById('instRetomar').style.display = 'none';
+    document.getElementById('cajaRegistro').style.display = 'none';
+    document.getElementById('instMenu').style.display = 'none';
+    document.getElementById('instMenuDetalle').style.display = 'none';
+    document.getElementById('accesoBusquedaMenu').style.display = 'none';
+    document.getElementById('botonesMenu').style.display = 'none';
+    document.getElementById('botonesMenuExtra').style.display = 'none';
   }
 
   function mostrarMenuPrincipal() {
@@ -1087,6 +1100,9 @@
       restaurar: function() { mostrarSDP('si'); mostrarConfirmacion(tipo); }
     }]);
     historialBaseMenu = historial.length;
+    historialBasePanel = historial.length;
+    historialBasePanelEpoch = panelEpoch;
+    panelHistorialStack = [];
     renderRuta();
   }
 
@@ -3656,6 +3672,11 @@
     var noPasaDiv = document.getElementById('psNoPasa_' + prefix);
     if (pasaDiv) pasaDiv.style.display = pasa ? 'block' : 'none';
     if (noPasaDiv) noPasaDiv.style.display = pasa ? 'none' : 'block';
+
+    if (pasa) {
+      var wrapActualizado = document.getElementById('telefonoConfBotonActualizadoWrap');
+      if (wrapActualizado) wrapActualizado.style.display = 'flex';
+    }
 
     var resultadoDiv = document.getElementById('psResultado_' + prefix);
     if (resultadoDiv) {
