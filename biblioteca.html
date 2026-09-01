@@ -1006,12 +1006,12 @@
         '<p style="color:#64748B; font-style:italic;">Instrucción: El usuario debe mencionar el correo electrónico registrado. Depende de lo que diga el usuario selecciona la opción. Le puedes dar pistas al usuario del correo registrado. Nunca el correo completo.</p>' +
         '<div id="cambioTelefonoConfirmacion" class="triage-resultado" style="display:block;">' +
           '<div class="triage-acciones">' +
-            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfSiCorreo\', [\'telefonoConfSiRecuerdaNoAcceso\',\'telefonoConfNoCorreo\']); document.getElementById(\'telefonoConfBotonActualizadoWrap\').style.display=\'flex\';">Sí lo recuerda y tiene acceso</button>' +
-            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfSiRecuerdaNoAcceso\', [\'telefonoConfSiCorreo\',\'telefonoConfNoCorreo\']); document.getElementById(\'telefonoConfBotonActualizadoWrap\').style.display=\'flex\';">Sí lo recuerda, pero no tiene acceso</button>' +
-            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfNoCorreo\', [\'telefonoConfSiCorreo\',\'telefonoConfSiRecuerdaNoAcceso\']); document.getElementById(\'telefonoConfBotonActualizadoWrap\').style.display=\'none\';">No lo recuerda</button>' +
+            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfSiCorreo\', [\'telefonoConfSiRecuerdaNoAcceso\',\'telefonoConfNoCorreo\']); document.getElementById(\'telefonoConfBotonActualizadoWrap\').style.display=\'flex\'; document.getElementById(\'telefonoConfNoQuiereContinuar\').style.display=\'none\'; ocultarMenuPrincipal();">Sí lo recuerda y tiene acceso</button>' +
+            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfSiRecuerdaNoAcceso\', [\'telefonoConfSiCorreo\',\'telefonoConfNoCorreo\']); document.getElementById(\'telefonoConfBotonActualizadoWrap\').style.display=\'flex\'; document.getElementById(\'telefonoConfNoQuiereContinuar\').style.display=\'none\'; ocultarMenuPrincipal();">Sí lo recuerda, pero no tiene acceso</button>' +
+            '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfNoCorreo\', [\'telefonoConfSiCorreo\',\'telefonoConfSiRecuerdaNoAcceso\']); document.getElementById(\'telefonoConfBotonActualizadoWrap\').style.display=\'none\'; document.getElementById(\'telefonoConfNoQuiereContinuar\').style.display=\'none\'; ocultarMenuPrincipal();">No lo recuerda</button>' +
           '</div>' +
           '<div class="triage-acciones">' +
-            '<button class="bib-btn btn-no-rojo" onclick="toggleBloque(\'telefonoConfContinuar\'); mostrarMenuPrincipal();">No quiere actualizar su teléfono, continuar</button>' +
+            '<button class="bib-btn btn-no-rojo" onclick="document.getElementById(\'telefonoConfNoQuiereContinuar\').style.display=\'block\'; document.getElementById(\'telefonoConfBotonActualizadoWrap\').style.display=\'none\'; document.getElementById(\'telefonoConfContinuar\').style.display=\'none\'; mostrarMenuPrincipal();">No quiere actualizar su teléfono, continuar</button>' +
           '</div>' +
           '<div id="telefonoConfSiCorreo" class="triage-resultado" style="display:none;">' +
             '<p>Muchas gracias. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al correo electrónico confirmado</p>' +
@@ -1052,6 +1052,9 @@
         '<div id="telefonoConfContinuar" style="display:none;">' +
           '<p style="color:#64748B; font-style:italic;">Instrucción: una vez actualizado el teléfono en el SDP y en TCA:</p>' +
           '<p><strong>¿Cómo puedo ayudarle?</strong></p>' +
+        '</div>' +
+        '<div id="telefonoConfNoQuiereContinuar" style="display:none;">' +
+          '<p>De acuerdo, se puede actualizar en otro momento. Dígame, <strong>¿cómo puedo ayudarle?</strong></p>' +
         '</div>'
   };
 
@@ -1066,6 +1069,14 @@
     document.getElementById('instRegistro').style.display = 'none';
     document.getElementById('instRetomar').style.display = 'none';
     document.getElementById('cajaRegistro').style.display = 'none';
+    document.getElementById('instMenu').style.display = 'none';
+    document.getElementById('instMenuDetalle').style.display = 'none';
+    document.getElementById('accesoBusquedaMenu').style.display = 'none';
+    document.getElementById('botonesMenu').style.display = 'none';
+    document.getElementById('botonesMenuExtra').style.display = 'none';
+  }
+
+  function ocultarMenuPrincipal() {
     document.getElementById('instMenu').style.display = 'none';
     document.getElementById('instMenuDetalle').style.display = 'none';
     document.getElementById('accesoBusquedaMenu').style.display = 'none';
