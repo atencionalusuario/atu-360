@@ -229,6 +229,7 @@
   .btn-naranja:hover { background: #C2410C; }
   .triage-btn-si:hover { background: #9A3412; }
   .triage-resultado { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px; }
+  .triage-resultado:empty { display: none !important; padding: 0; border: none; margin-bottom: 0; }
   .triage-resultado:last-child { margin-bottom: 0; }
   .triage-resultado p { font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
   .triage-resultado ul { padding-left: 20px; font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
@@ -399,25 +400,27 @@
     <p class="instruccion" id="instTCARegistro" style="display:none;">Ingresar a TCA en la sección de Registro y digitar el documento y la fecha de nacimiento para obtener el nombre completo del usuario. ¿Está registrado en TCA?</p>
 
     <div class="triage-acciones" id="botonesTCARegistro" style="display:none;">
-      <button class="bib-btn btn-si-verde" id="btnTcaRegistradoSi" onclick="mostrarUno('tcaRegistradoSi', 'tcaRegistradoNo'); document.getElementById('btnTcaRegistradoNo').classList.remove('active');">Está registrado en TCA</button>
-      <button class="bib-btn btn-no-rojo" id="btnTcaRegistradoNo" onclick="ocultarYActivar('tcaRegistradoSi', this, 'btnTcaRegistradoSi'); mostrarRegistroSDPCompleto();">No está registrado en TCA</button>
+      <button class="bib-btn btn-si-verde" id="btnTcaRegistradoSi" onclick="mostrarUno('tcaRegistradoSi', 'tcaRegistradoNo')">Está registrado en TCA</button>
+      <button class="bib-btn btn-no-rojo" id="btnTcaRegistradoNo" onclick="mostrarUno('tcaRegistradoNo', 'tcaRegistradoSi'); mostrarRegistroSDPCompleto();">No está registrado en TCA</button>
     </div>
     <div id="tcaRegistradoSi" class="triage-resultado" style="display:none;">
       <p style="color:#64748B; font-style:italic;">Instrucción: ¿El número en TCA es el mismo que nos ha dicho?</p>
       <div class="triage-acciones">
-        <button class="bib-btn btn-si-verde" id="btnTcaNumeroMismo" onclick="ocultarYActivar('tcaNumeroDistinto', this, 'btnTcaNumeroDistinto'); mostrarRegistroSDPCompleto();">Es el mismo</button>
-        <button class="bib-btn btn-no-rojo" id="btnTcaNumeroDistinto" onclick="mostrarUno('tcaNumeroDistinto', 'tcaNumeroMismo'); document.getElementById('btnTcaNumeroMismo').classList.remove('active');">No es el mismo</button>
+        <button class="bib-btn btn-si-verde" id="btnTcaNumeroMismo" onclick="mostrarUno('tcaNumeroMismo', 'tcaNumeroDistinto'); mostrarRegistroSDPCompleto();">Es el mismo</button>
+        <button class="bib-btn btn-no-rojo" id="btnTcaNumeroDistinto" onclick="mostrarUno('tcaNumeroDistinto', 'tcaNumeroMismo')">No es el mismo</button>
       </div>
+      <div id="tcaNumeroMismo" class="triage-resultado" style="display:none;"></div>
       <div id="tcaNumeroDistinto" class="triage-resultado" style="display:none;">
         <p>Muchas gracias por su espera en línea, SR / SRA XXX, antes de continuar, puedo ver en nuestro sistema que usted tiene registrado otro número. ¿Desea que le ayude con la actualización?</p>
         <div class="triage-acciones">
-          <button class="bib-btn btn-si-verde" id="btnTcaNumeroActualizarSi" onclick="mostrarUno('tcaNumeroActualizarSi', 'tcaNumeroActualizarNo'); document.getElementById('btnTcaNumeroActualizarNo').classList.remove('active');">Sí, actualizar</button>
-          <button class="bib-btn btn-no-rojo" id="btnTcaNumeroActualizarNo" onclick="ocultarYActivar('tcaNumeroActualizarSi', this, 'btnTcaNumeroActualizarSi'); mostrarRegistroSDPCompleto();">No, continuar</button>
+          <button class="bib-btn btn-si-verde" id="btnTcaNumeroActualizarSi" onclick="mostrarUno('tcaNumeroActualizarSi', 'tcaNumeroActualizarNo')">Sí, actualizar</button>
+          <button class="bib-btn btn-no-rojo" id="btnTcaNumeroActualizarNo" onclick="mostrarUno('tcaNumeroActualizarNo', 'tcaNumeroActualizarSi'); mostrarRegistroSDPCompleto();">No, continuar</button>
         </div>
-        <div id="tcaNumeroActualizarSi" class="triage-resultado" style="display:none;">
-        </div>
+        <div id="tcaNumeroActualizarSi" class="triage-resultado" style="display:none;"></div>
+        <div id="tcaNumeroActualizarNo" class="triage-resultado" style="display:none;"></div>
       </div>
     </div>
+    <div id="tcaRegistradoNo" class="triage-resultado" style="display:none;"></div>
 
     <p class="instruccion" id="instRegistro" style="display:none;">Agregar al usuario como Solicitante en el SDP con los datos solicitados.</p>
 
@@ -832,7 +835,7 @@
     pilaVistas = [];
     document.getElementById('vistaCategoria').style.display = 'none';
     document.getElementById('flujoSDP').style.display = 'flex';
-    ['cajaSDP', 'casosEspecialesSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instTCARegistro', 'botonesTCARegistro', 'tcaRegistradoSi', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'accesoBusquedaMenu', 'botonesMenu', 'botonesMenuExtra'].forEach(function(id) {
+    ['cajaSDP', 'casosEspecialesSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instTCARegistro', 'botonesTCARegistro', 'tcaRegistradoSi', 'tcaRegistradoNo', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'accesoBusquedaMenu', 'botonesMenu', 'botonesMenuExtra'].forEach(function(id) {
       document.getElementById(id).style.display = 'none';
     });
     ['btnSdpSi', 'btnSdpNo', 'btnConfSi', 'btnConfNo', 'btnTcaRegistradoSi', 'btnTcaRegistradoNo', 'btnTcaNumeroMismo', 'btnTcaNumeroDistinto', 'btnTcaNumeroActualizarSi', 'btnTcaNumeroActualizarNo'].forEach(function(id) {
@@ -958,8 +961,11 @@
 
     // El paso de registro en TCA aun no se ha elegido de nuevo, se oculta siempre al reentrar aqui
     document.getElementById('tcaRegistradoSi').style.display = 'none';
+    document.getElementById('tcaRegistradoNo').style.display = 'none';
+    document.getElementById('tcaNumeroMismo').style.display = 'none';
     document.getElementById('tcaNumeroDistinto').style.display = 'none';
     document.getElementById('tcaNumeroActualizarSi').style.display = 'none';
+    document.getElementById('tcaNumeroActualizarNo').style.display = 'none';
     ['btnTcaRegistradoSi', 'btnTcaRegistradoNo', 'btnTcaNumeroMismo', 'btnTcaNumeroDistinto', 'btnTcaNumeroActualizarSi', 'btnTcaNumeroActualizarNo'].forEach(function(id) {
       document.getElementById(id).classList.remove('active');
     });
@@ -1043,13 +1049,6 @@
           '<p><strong>¿Cómo puedo ayudarle?</strong></p>' +
         '</div>'
   };
-
-  function ocultarYActivar(idOcultar, botonActivo, idBotonContrario) {
-    var elOcultar = document.getElementById(idOcultar);
-    if (elOcultar) elOcultar.style.display = 'none';
-    document.getElementById(idBotonContrario).classList.remove('active');
-    botonActivo.classList.add('active');
-  }
 
   function mostrarRegistroSDPCompleto() {
     document.getElementById('instRegistro').style.display = 'block';
