@@ -1040,9 +1040,7 @@
               '<p>Le confirmo que su <strong>número de teléfono ha sido actualizado exitosamente</strong> en su cuenta de <strong>DoctorSV</strong>.</p>' +
             '</div>' +
             '<div id="psNoPasa_telefonoConfNoRecuerda" class="triage-resultado" style="display:none;">' +
-              '<p>En este caso, para hacer el proceso, debemos hacer una <strong>validación de su identidad.</strong> Le pedimos que por favor nos envíe una fotografía de su rostro junto a su documento de identidad, de manera que en la imagen se logren ver ambos (tanto su rostro como el documento).</p>' +
-              '<p>Por favor, envíe esta imagen al correo electrónico <strong>soporte@doctorsv.gob.sv</strong> o a nuestro WhatsApp <strong>2397-2600</strong> para brindarle el seguimiento correspondiente.</p>' +
-              '<p>Le haremos seguimiento a su reporte a través del número ticket XXX. Si gusta puede anotarlo.</p>' +
+              '<p>De acuerdo, se puede actualizar en otro momento. Dígame, <strong>¿cómo puedo ayudarle?</strong></p>' +
             '</div>' +
           '</div>' +
           '<div id="telefonoConfBotonActualizadoWrap" class="triage-acciones" style="display:none;">' +
@@ -3684,10 +3682,8 @@
     if (pasaDiv) pasaDiv.style.display = pasa ? 'block' : 'none';
     if (noPasaDiv) noPasaDiv.style.display = pasa ? 'none' : 'block';
 
-    if (pasa) {
-      var wrapActualizado = document.getElementById('telefonoConfBotonActualizadoWrap');
-      if (wrapActualizado) wrapActualizado.style.display = 'flex';
-    }
+    var wrapActualizado = document.getElementById('telefonoConfBotonActualizadoWrap');
+    if (wrapActualizado) wrapActualizado.style.display = pasa ? 'flex' : 'none';
 
     var resultadoDiv = document.getElementById('psResultado_' + prefix);
     if (resultadoDiv) {
