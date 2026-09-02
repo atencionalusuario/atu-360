@@ -329,6 +329,17 @@
       .catch(function(e){ console.error(e); showToast('No se pudo eliminar.'); });
   }
 
+  window.eliminarPublicado = function(id) {
+    if (!confirm('¿Eliminar esta publicación? Ya no será visible para nadie y esta acción no se puede deshacer.')) return;
+    db.collection('flash_lecturas').where('postId', '==', id).get().then(function(snap) {
+      var batch = db.batch();
+      snap.forEach(function(d){ batch.delete(d.ref); });
+      batch.delete(db.collection('flash_posts').doc(id));
+      return batch.commit();
+    }).then(function(){ showToast('Publicación eliminada.'); })
+      .catch(function(e){ console.error(e); showToast('No se pudo eliminar.'); });
+  };
+
   // Formato seguro: escapa todo y luego convierte SOLO los marcadores controlados
   function formatFlash(s) {
     var t = escHtml(s);
@@ -489,8 +500,11 @@
       var fecha = _d ? _d.toLocaleDateString('es-SV', {day:'2-digit', month:'long', year:'numeric'}) + ' · ' + _d.toLocaleTimeString('es-SV', {hour:'2-digit', minute:'2-digit'}) : '';
       html += '<article class="blog-entry'+(leido?'':' unread')+'" id="entry-'+p.id+'">'
         +'<div class="entry-header">'
+        +'<div style="display:flex;align-items:center;gap:8px">'
         +'<span class="post-cat '+(p.categoria||'')+'">'+escHtml(CATS[p.categoria]||p.categoria||'General')+'</span>'
         +(leido?'':'<div class="unread-dot"></div>')
+        +'</div>'
+        +(esGestor?'<button onclick="eliminarPublicado(\''+p.id+'\')" style="padding:5px 12px;border:1px solid #FECACA;border-radius:6px;background:#FEF2F2;color:#DC2626;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit">Eliminar</button>':'')
         +'</div>'
         +'<div class="entry-title">'+escHtml(p.titulo)+'</div>'
         +'<div class="entry-date"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'+fecha+'</div>'
