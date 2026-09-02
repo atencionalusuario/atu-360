@@ -319,7 +319,7 @@
     </div>
 
     <div class="sdp-botones" style="margin-top:8px;">
-      <button class="bib-btn" id="btnSdpCasosEspeciales" onclick="toggleBloque('casosEspecialesSDP')">Casos especiales</button>
+      <button class="bib-btn" id="btnSdpCasosEspeciales" onclick="toggleCasosEspeciales()">Casos especiales</button>
     </div>
 
     <div id="casosEspecialesSDP" class="triage-resultado" style="display:none;">
@@ -848,9 +848,10 @@
     ['cajaSDP', 'casosEspecialesSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instTCARegistro', 'botonesTCARegistro', 'tcaRegistradoSi', 'tcaRegistradoNo', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'accesoBusquedaMenu', 'botonesMenu', 'botonesMenuExtra'].forEach(function(id) {
       document.getElementById(id).style.display = 'none';
     });
-    ['btnSdpSi', 'btnSdpNo', 'btnConfSi', 'btnConfNo', 'btnTcaRegistradoSi', 'btnTcaRegistradoNo', 'btnTcaNumeroMismo', 'btnTcaNumeroDistinto', 'btnTcaNumeroActualizarSi', 'btnTcaNumeroActualizarNo'].forEach(function(id) {
+    ['btnSdpSi', 'btnSdpNo', 'btnConfSi', 'btnConfNo', 'btnTcaRegistradoSi', 'btnTcaRegistradoNo', 'btnTcaNumeroMismo', 'btnTcaNumeroDistinto', 'btnTcaNumeroActualizarSi', 'btnTcaNumeroActualizarNo', 'btnSdpCasosEspeciales'].forEach(function(id) {
       document.getElementById(id).classList.remove('active');
     });
+    casosEspecialesEstadoPrevio = null;
   }
 
   var historial = [{ label: 'Inicio', restaurar: irAInicio }];
@@ -962,6 +963,8 @@
 
     // Casos especiales es independiente del flujo SDP, se cierra siempre al elegir Sí/No
     document.getElementById('casosEspecialesSDP').style.display = 'none';
+    document.getElementById('btnSdpCasosEspeciales').classList.remove('active');
+    casosEspecialesEstadoPrevio = null;
 
     var esSi = tipo === 'si';
     document.getElementById('instConfirmacion').style.display = esSi ? 'block' : 'none';
@@ -1085,6 +1088,47 @@
     document.getElementById('accesoBusquedaMenu').style.display = 'none';
     document.getElementById('botonesMenu').style.display = 'none';
     document.getElementById('botonesMenuExtra').style.display = 'none';
+  }
+
+  var casosEspecialesEstadoPrevio = null;
+  var IDS_FLUJO_SDP = ['cajaSDP', 'instConfirmacion', 'botonesConfirmacion', 'cajaConfirmacion', 'instHold', 'instTCARegistro', 'botonesTCARegistro', 'tcaRegistradoSi', 'tcaRegistradoNo', 'instRegistro', 'instRetomar', 'cajaRegistro', 'instMenu', 'instMenuDetalle', 'accesoBusquedaMenu', 'botonesMenu', 'botonesMenuExtra'];
+
+  function toggleCasosEspeciales() {
+    var panel = document.getElementById('casosEspecialesSDP');
+    var btn = document.getElementById('btnSdpCasosEspeciales');
+    var abriendo = panel.style.display !== 'block';
+    if (abriendo) {
+      casosEspecialesEstadoPrevio = {
+        historial: historial.slice(),
+        btnSdpSiActivo: document.getElementById('btnSdpSi').classList.contains('active'),
+        btnSdpNoActivo: document.getElementById('btnSdpNo').classList.contains('active')
+      };
+      IDS_FLUJO_SDP.forEach(function(id) {
+        var el = document.getElementById(id);
+        casosEspecialesEstadoPrevio[id] = el.style.display;
+        el.style.display = 'none';
+      });
+      document.getElementById('btnSdpSi').classList.remove('active');
+      document.getElementById('btnSdpNo').classList.remove('active');
+      panel.style.display = 'block';
+      btn.classList.add('active');
+      historial = historial.concat([{ label: 'Casos especiales', restaurar: function() { toggleCasosEspeciales(); } }]);
+      renderRuta();
+      scrollBloqueAVista(panel);
+    } else {
+      panel.style.display = 'none';
+      btn.classList.remove('active');
+      if (casosEspecialesEstadoPrevio) {
+        IDS_FLUJO_SDP.forEach(function(id) {
+          document.getElementById(id).style.display = casosEspecialesEstadoPrevio[id];
+        });
+        document.getElementById('btnSdpSi').classList.toggle('active', casosEspecialesEstadoPrevio.btnSdpSiActivo);
+        document.getElementById('btnSdpNo').classList.toggle('active', casosEspecialesEstadoPrevio.btnSdpNoActivo);
+        historial = casosEspecialesEstadoPrevio.historial;
+        renderRuta();
+        casosEspecialesEstadoPrevio = null;
+      }
+    }
   }
 
   function ocultarMenuPrincipal() {
