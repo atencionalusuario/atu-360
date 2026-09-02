@@ -324,10 +324,20 @@
 
     <div id="casosEspecialesSDP" class="triage-resultado" style="display:none;">
       <div class="triage-acciones" style="flex-direction:column; align-items:center;">
-        <button class="bib-btn" onclick="mostrarUno('casoTercero', ['casoSinDocumento','casoMenorEdad','casoAgresion'])">Persona comunicándose en nombre de un tercero</button>
-        <button class="bib-btn" onclick="mostrarUno('casoSinDocumento', ['casoTercero','casoMenorEdad','casoAgresion'])">Usuario sin documento</button>
-        <button class="bib-btn" onclick="mostrarUno('casoMenorEdad', ['casoTercero','casoSinDocumento','casoAgresion'])">Contacto de menor de edad</button>
-        <button class="bib-btn" onclick="mostrarUno('casoAgresion', ['casoTercero','casoSinDocumento','casoMenorEdad'])">Script agresión a agente</button>
+        <button class="bib-btn" onclick="mostrarUno('casoTercero', ['casoSinDocumento','casoMenorEdad','casoAgresion','casoSalvadoreñoExterior'])">Persona comunicándose en nombre de un tercero</button>
+        <button class="bib-btn" onclick="mostrarUno('casoSinDocumento', ['casoTercero','casoMenorEdad','casoAgresion','casoSalvadoreñoExterior'])">Usuario sin documento</button>
+        <button class="bib-btn" onclick="mostrarUno('casoMenorEdad', ['casoTercero','casoSinDocumento','casoAgresion','casoSalvadoreñoExterior'])">Contacto de menor de edad</button>
+        <button class="bib-btn" onclick="mostrarUno('casoAgresion', ['casoTercero','casoSinDocumento','casoMenorEdad','casoSalvadoreñoExterior'])">Script agresión a agente</button>
+        <button class="bib-btn" onclick="mostrarUno('casoSalvadoreñoExterior', ['casoTercero','casoSinDocumento','casoMenorEdad','casoAgresion'])">Salvadoreño en el exterior</button>
+      </div>
+      <div id="casoSalvadoreñoExterior" class="triage-resultado" style="display:none;">
+        <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; margin-bottom:10px;">Registro en la aplicación de salvadoreño residente o de visita en el extranjero con país específico</h4>
+        <p>La aplicación DoctorSV está disponible actualmente en <strong>El Salvador</strong> y <strong>Estados Unidos</strong>.</p>
+        <p>Desde cualquiera de estos países, usted puede acceder a consultas médicas virtuales sin inconvenientes, así como recibir recetas u órdenes de estudios, incluso si se encuentra fuera del territorio nacional.</p>
+        <p>Sin embargo, para gestionar medicamentos y realizar estudios clínicos, es necesario que se encuentre en El Salvador, ya que estos servicios se brindan únicamente dentro del territorio nacional.</p>
+        <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; margin-top:16px; margin-bottom:10px;">Cobertura de la aplicación para su uso fuera del país</h4>
+        <p>Puede utilizar la aplicación DoctorSV en El Salvador y Estados Unidos para acceder a consultas médicas sin inconvenientes, así como recibir recetas u órdenes de estudios cuando el médico lo indique.</p>
+        <p>No obstante, para la gestión y entrega de medicamentos o la realización de estudios clínicos prescritos, es necesario que se encuentre en El Salvador, ya que estos servicios se brindan exclusivamente dentro del territorio nacional.</p>
       </div>
       <div id="casoAgresion" class="triage-resultado" style="display:none;">
         <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; text-align:center;">Agresión a agente</h4>
