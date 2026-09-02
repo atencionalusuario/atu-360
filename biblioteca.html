@@ -424,9 +424,64 @@
         <p>Muchas gracias por su espera en línea, SR / SRA XXX, antes de continuar, puedo ver en nuestro sistema que usted tiene registrado otro número. ¿Desea que le ayude con la actualización?</p>
         <div class="triage-acciones">
           <button class="bib-btn btn-si-verde" id="btnTcaNumeroActualizarSi" onclick="mostrarUno('tcaNumeroActualizarSi', 'tcaNumeroActualizarNo'); ocultarRegistroSDPCompleto();">Sí, actualizar</button>
-          <button class="bib-btn btn-no-rojo" id="btnTcaNumeroActualizarNo" onclick="mostrarUno('tcaNumeroActualizarNo', 'tcaNumeroActualizarSi'); mostrarRegistroSDPCompleto();">No, continuar</button>
+          <button class="bib-btn btn-no-rojo" id="btnTcaNumeroActualizarNo" onclick="mostrarUno('tcaNumeroActualizarNo', 'tcaNumeroActualizarSi'); mostrarRegistroSDPCompleto(true);">No, continuar</button>
         </div>
-        <div id="tcaNumeroActualizarSi" class="triage-resultado" style="display:none;"></div>
+        <div id="tcaNumeroActualizarSi" class="triage-resultado" style="display:none;">
+          <p>De acuerdo, antes de continuar con su atención, con mucho gusto le ayudo a actualizarlo, ¿me indica su nuevo número de contacto?</p>
+          <p style="color:#64748B; font-style:italic;">Instrucción: Actualizar el número de contacto en el SDP. Verificar si el número en TCA coincide. Si no coincide, actualizarlo con el script siguiente.</p>
+          <p>Me confirma: ¿usted tiene acceso a su correo electrónico registrado en <strong>DoctorSV</strong>? ¿Me podría indicar el correo registrado?</p>
+          <p style="color:#64748B; font-style:italic;">Instrucción: El usuario debe mencionar el correo electrónico registrado. Depende de lo que diga el usuario selecciona la opción. Le puedes dar pistas al usuario del correo registrado. Nunca el correo completo.</p>
+          <div id="tcaActConfirmacion" class="triage-resultado" style="display:block;">
+            <div class="triage-acciones">
+              <button class="bib-btn" onclick="mostrarUno('tcaActSiCorreo', ['tcaActSiRecuerdaNoAcceso','tcaActNoCorreo']); document.getElementById('tcaActBotonActualizadoWrap').style.display='flex'; document.getElementById('tcaActNoQuiereContinuar').style.display='none'; document.getElementById('tcaActContinuar').style.display='none'; ocultarRegistroSDPCompleto();">Sí lo recuerda y tiene acceso</button>
+              <button class="bib-btn" onclick="mostrarUno('tcaActSiRecuerdaNoAcceso', ['tcaActSiCorreo','tcaActNoCorreo']); document.getElementById('tcaActBotonActualizadoWrap').style.display='flex'; document.getElementById('tcaActNoQuiereContinuar').style.display='none'; document.getElementById('tcaActContinuar').style.display='none'; ocultarRegistroSDPCompleto();">Sí lo recuerda, pero no tiene acceso</button>
+              <button class="bib-btn" onclick="mostrarUno('tcaActNoCorreo', ['tcaActSiCorreo','tcaActSiRecuerdaNoAcceso']); document.getElementById('tcaActBotonActualizadoWrap').style.display='none'; document.getElementById('tcaActNoQuiereContinuar').style.display='none'; document.getElementById('tcaActContinuar').style.display='none'; ocultarRegistroSDPCompleto();">No lo recuerda</button>
+            </div>
+            <div class="triage-acciones">
+              <button class="bib-btn btn-no-rojo" onclick="document.getElementById('tcaActNoQuiereContinuar').style.display='block'; document.getElementById('tcaActBotonActualizadoWrap').style.display='none'; document.getElementById('tcaActContinuar').style.display='none'; mostrarRegistroSDPCompleto();">No quiere actualizar su teléfono, continuar</button>
+            </div>
+            <div id="tcaActSiCorreo" class="triage-resultado" style="display:none;">
+              <p>Muchas gracias. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al correo electrónico confirmado</p>
+              <p>Por favor, compártame el código una vez lo reciba.</p>
+              <p>Perfecto, muchas gracias. Ahora, ¿me podría indicar, por favor, el nuevo número de teléfono a registrar?</p>
+              <p>Muchas gracias. Le confirmo que su <strong>número de teléfono ha sido actualizado exitosamente</strong> en su cuenta de <strong>DoctorSV</strong>.</p>
+            </div>
+            <div id="tcaActSiRecuerdaNoAcceso" class="triage-resultado" style="display:none;">
+              <p>Gracias por su confirmación. En este momento le ayudaré a actualizar su nuevo número de teléfono. ¿Me brinda su nuevo número?</p>
+              <p style="color:#64748B; font-style:italic;">Instrucción: Marcar check en "Verificado".</p>
+              <p>Le confirmo que hemos actualizado su teléfono en <strong>DoctorSV</strong>.</p>
+              <p>Procederemos ahora a la actualización de su correo. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al nuevo número de teléfono.</p>
+              <p>Por favor, compártame el código una vez lo reciba.</p>
+              <p>Muchas gracias. ¿Me podría indicar, por favor, el nuevo correo a registrar?</p>
+              <p>Le confirmo que su <strong>correo ha sido actualizado exitosamente</strong> en su cuenta de <strong>DoctorSV</strong>.</p>
+            </div>
+            <div id="tcaActNoCorreo" class="triage-resultado" style="display:none;">
+              <p>Comprendo lo que nos comenta. Para proceder, le haré unas preguntas de validación con el objetivo de proteger su información.</p>
+              <div class="triage-acciones">
+                <button class="bib-btn" style="background:#EA580C" onclick="generarPreguntasSeguridadInline('tcaActNoRecuerda')">Preguntas de seguridad</button>
+              </div>
+              <div id="psPreguntas_tcaActNoRecuerda"></div>
+              <div id="psResultado_tcaActNoRecuerda"></div>
+              <div id="psPasa_tcaActNoRecuerda" class="triage-resultado" style="display:none;">
+                <p>Gracias, ¿me podría indicar, por favor, el nuevo número de teléfono a registrar?</p>
+                <p>Le confirmo que su <strong>número de teléfono ha sido actualizado exitosamente</strong> en su cuenta de <strong>DoctorSV</strong>.</p>
+              </div>
+              <div id="psNoPasa_tcaActNoRecuerda" class="triage-resultado" style="display:none;">
+                <p>De acuerdo, se puede actualizar en otro momento. Dígame, <strong>¿cómo puedo ayudarle?</strong></p>
+              </div>
+            </div>
+            <div id="tcaActBotonActualizadoWrap" class="triage-acciones" style="display:none;">
+              <button class="bib-btn btn-si-verde" onclick="toggleBloque('tcaActContinuar'); mostrarRegistroSDPCompleto();">Teléfono actualizado, continuar</button>
+            </div>
+          </div>
+          <div id="tcaActContinuar" style="display:none;">
+            <p style="color:#64748B; font-style:italic;">Instrucción: una vez actualizado el teléfono en el SDP y en TCA:</p>
+            <p><strong>¿Cómo puedo ayudarle?</strong></p>
+          </div>
+          <div id="tcaActNoQuiereContinuar" style="display:none;">
+            <p>De acuerdo, se puede actualizar en otro momento. Dígame, <strong>¿cómo puedo ayudarle?</strong></p>
+          </div>
+        </div>
         <div id="tcaNumeroActualizarNo" class="triage-resultado" style="display:none;"></div>
       </div>
     </div>
@@ -1072,9 +1127,12 @@
         '</div>'
   };
 
-  function mostrarRegistroSDPCompleto() {
-    document.getElementById('instRegistro').style.display = 'block';
-    document.getElementById('instRetomar').style.display = 'block';
+  function mostrarRegistroSDPCompleto(soloSaludo) {
+    document.getElementById('instRegistro').style.display = soloSaludo ? 'none' : 'block';
+    document.getElementById('instRetomar').style.display = soloSaludo ? 'none' : 'block';
+    document.getElementById('cajaRegistro').innerHTML = soloSaludo ?
+      '<p>De acuerdo, dígame, <strong>¿cómo puedo ayudarle?</strong></p>' :
+      '<p>Muchas gracias por su espera en línea, SR / SRA XXX, dígame, <strong>¿cómo puedo ayudarle?</strong></p>';
     document.getElementById('cajaRegistro').style.display = 'block';
     mostrarMenuPrincipal();
   }
@@ -3759,7 +3817,7 @@
     if (pasaDiv) pasaDiv.style.display = pasa ? 'block' : 'none';
     if (noPasaDiv) noPasaDiv.style.display = pasa ? 'none' : 'block';
 
-    var wrapActualizado = document.getElementById('telefonoConfBotonActualizadoWrap');
+    var wrapActualizado = document.getElementById(prefix.replace('NoRecuerda', 'BotonActualizadoWrap'));
     if (wrapActualizado) wrapActualizado.style.display = pasa ? 'flex' : 'none';
 
     var resultadoDiv = document.getElementById('psResultado_' + prefix);
