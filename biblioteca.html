@@ -231,8 +231,8 @@
   .triage-resultado { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px; }
   .triage-resultado:empty { display: none !important; padding: 0; border: none; margin-bottom: 0; }
   .triage-resultado:last-child { margin-bottom: 0; }
-  .triage-resultado p { font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
-  .triage-resultado ul { padding-left: 20px; font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
+  .triage-resultado p { font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; font-family: 'Montserrat', sans-serif; }
+  .triage-resultado ul, .triage-resultado ol { padding-left: 20px; font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; font-family: 'Montserrat', sans-serif; }
   .triage-resultado p:last-child, .triage-resultado ul:last-child { margin-bottom: 0; }
   .triage-resultado-rojo { background: #FEF2F2; border-color: #FCA5A5; }
   .triage-resultado-rojo p, .triage-resultado-rojo ul, .triage-resultado-rojo li { color: #B91C1C; }
@@ -2893,6 +2893,26 @@
             '</ol>' +
             '<p>Su cita con el especialista ha quedado agendada exitosamente.</p>' +
           '</div>'
+      },
+      { label: 'Valoraciones',
+        texto:
+          '<p>Buenos días / buenas tardes / buenas noches, le saluda el/la agente XXXX XXXX de <strong>DoctorSV</strong>.</p>' +
+          '<p>- ¿Tengo el gusto de conversar con el Sr / la Sra XXXXXXX XXXXXX?<br>' +
+          '- ¿Tengo el gusto de comunicarme con los padres de XXXXXX?</p>' +
+          '<p>Un gusto saludarle, en esta oportunidad nos ponemos en contacto con usted en referencia a la cita agendada a través de la aplicación DoctorSV, del día XXXXX. <strong>Estamos haciendo todo lo posible por mejorar el servicio y su opinión es muy valiosa para nosotros. Al respecto, nos gustaría consultarle, ¿tuvo algún inconveniente con la cita?</strong></p>' +
+          '<ul style="columns:2; list-style:none; padding-left:0; margin:0 0 14px; color:#374151; font-size:0.9rem; line-height:1.9;">' +
+            '<li>-Comprendo lo que nos comenta</li>' +
+            '<li>-Lamento escuchar esto</li>' +
+            '<li>-Le entendemos</li>' +
+            '<li>-Comprendemos su molestia</li>' +
+            '<li>-Estamos de acuerdo con usted</li>' +
+            '<li>-Entendemos su incomodidad</li>' +
+            '<li>-Lamentamos lo sucedido</li>' +
+            '<li>-Comprendemos su preocupación</li>' +
+            '<li>-Agradecemos su retroalimentación</li>' +
+          '</ul>' +
+          '<p>¿Le gustaría agendar nuevamente? ¿Le ayudo con el proceso?</p>' +
+          '<p>De acuerdo, muchas gracias por atender mi llamada y por sus comentarios, que tenga feliz día / tarde / noche.</p>'
       }
     ]
   };
