@@ -960,6 +960,9 @@
     document.getElementById('cajaSDP').style.display = 'block';
     document.getElementById('textoSDP').innerHTML = TEXTOS_SDP[tipo];
 
+    // Casos especiales es independiente del flujo SDP, se cierra siempre al elegir Sí/No
+    document.getElementById('casosEspecialesSDP').style.display = 'none';
+
     var esSi = tipo === 'si';
     document.getElementById('instConfirmacion').style.display = esSi ? 'block' : 'none';
     document.getElementById('botonesConfirmacion').style.display = esSi ? 'flex' : 'none';
