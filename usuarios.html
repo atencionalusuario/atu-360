@@ -833,6 +833,35 @@
       .catch(function(e){ btnG.disabled=false; btnG.textContent='Guardar cambios'; showToast('Error: '+e.message); console.error(e); });
   }
 
+  // Marca como leidos todos los Flash Informativos ya publicados para un usuario recien creado,
+  // asi no tiene que ir marcando uno por uno el historial acumulado antes de su ingreso.
+  function marcarFlashesHistoricosLeidos(uid,email,nombre){
+    return db.collection('flash_posts').where('estado','==','publicado').get()
+      .then(function(snap){
+        var docs=[]; snap.forEach(function(d){docs.push(d.id);});
+        if(!docs.length) return;
+        var chunks=[];
+        for(var i=0;i<docs.length;i+=450) chunks.push(docs.slice(i,i+450));
+        var cadena=Promise.resolve();
+        chunks.forEach(function(chunk){
+          cadena=cadena.then(function(){
+            var batch=db.batch();
+            chunk.forEach(function(postId){
+              var ref=db.collection('flash_lecturas').doc(postId+'_'+uid);
+              batch.set(ref,{
+                postId:postId, uid:uid, email:email, nombre:nombre,
+                timestamp:firebase.firestore.FieldValue.serverTimestamp(),
+                origen:'alta_automatica'
+              });
+            });
+            return batch.commit();
+          });
+        });
+        return cadena;
+      })
+      .catch(function(e){ console.error('No se pudo marcar el historial de Flash como leido:',e); });
+  }
+
   function crearUsuarioAuth(email,datos,btnG){
     authSecondary.createUserWithEmailAndPassword(email,'ATU360*')
       .then(function(cred){
@@ -843,6 +872,7 @@
         return db.collection('usuarios').doc(uid).set(datos).then(function(){return uid;});
       })
       .then(function(uid){
+        marcarFlashesHistoricosLeidos(uid,datos.email,datos.nombre);
         usuarioSeleccionado=uid; cerrarModalForm();
         showToast('Usuario creado. Contraseña inicial: ATU360*');
       })
@@ -1008,9 +1038,9 @@
           datos.activo=true; datos.primerAcceso=true;
           datos.fechaCreacion=firebase.firestore.FieldValue.serverTimestamp();
           datos.creadoPor=currentUser.uid;
-          return db.collection('usuarios').doc(uid).set(datos);
+          return db.collection('usuarios').doc(uid).set(datos).then(function(){ return uid; });
         })
-        .then(function(){ creados++; siguiente(i+1); })
+        .then(function(uid){ marcarFlashesHistoricosLeidos(uid,u.email,u.nombre); creados++; siguiente(i+1); })
         .catch(function(err){ errores++; console.error('Error con '+u.email+':',err.message); siguiente(i+1); });
     }
     siguiente(0);
