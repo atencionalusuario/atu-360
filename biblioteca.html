@@ -1753,10 +1753,10 @@
               '<p style="text-align:center; color:#64748B; font-style:italic;">Buscar el DUI o nombre del usuario en la sección de Referencias de TCA.</p>' +
               '<p style="text-align:center;"><strong>¿Existe la referencia?</strong></p>' +
               '<div class="triage-acciones">' +
-                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'referenciaNtHayCupo\', [\'referenciaNtNoHayCupo\',\'referenciaNtSinReferencia\',\'referenciaNtMasDeUnMes\'])">Sí existe la referencia y hay cupo</button>' +
-                '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'referenciaNtNoHayCupo\', [\'referenciaNtHayCupo\',\'referenciaNtSinReferencia\',\'referenciaNtMasDeUnMes\'])">Sí existe la referencia pero no hay cupo</button>' +
-                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'referenciaNtSinReferencia\', [\'referenciaNtHayCupo\',\'referenciaNtNoHayCupo\',\'referenciaNtMasDeUnMes\'])">Pasó consulta hace poco, no tiene referencia</button>' +
-                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'referenciaNtMasDeUnMes\', [\'referenciaNtHayCupo\',\'referenciaNtNoHayCupo\',\'referenciaNtSinReferencia\'])">Pasó consulta hace más de 1 mes</button>' +
+                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'referenciaNtHayCupo\', [\'referenciaNtNoHayCupo\',\'referenciaNtSinReferencia\',\'referenciaNtMasDeUnMes\']); document.getElementById(\'refEspTipificacion\').innerHTML = \'<strong>Tipificación sugerida:</strong> Gestión de citas &gt; Referencia &gt; Referencia interna con especialista\';">Sí existe la referencia y hay cupo</button>' +
+                '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'referenciaNtNoHayCupo\', [\'referenciaNtHayCupo\',\'referenciaNtSinReferencia\',\'referenciaNtMasDeUnMes\']); document.getElementById(\'refEspTipificacion\').innerHTML = \'<strong>Tipificación sugerida:</strong> Gestión de citas &gt; Referencia &gt; Referencia interna con especialista\';">Sí existe la referencia pero no hay cupo</button>' +
+                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'referenciaNtSinReferencia\', [\'referenciaNtHayCupo\',\'referenciaNtNoHayCupo\',\'referenciaNtMasDeUnMes\']); document.getElementById(\'refEspTipificacion\').innerHTML = \'<strong>Tipificación sugerida:</strong> Incidencias calidad médica &gt; Problemas con referencia interna &gt; No generó referencia interna o externa\';">Pasó consulta hace poco, no tiene referencia</button>' +
+                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'referenciaNtMasDeUnMes\', [\'referenciaNtHayCupo\',\'referenciaNtNoHayCupo\',\'referenciaNtSinReferencia\']); document.getElementById(\'refEspTipificacion\').innerHTML = \'<strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita\';">Pasó consulta hace más de 1 mes</button>' +
               '</div>' +
               '<div id="referenciaNtHayCupo" class="triage-resultado" style="display:none;">' +
                 '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
@@ -1822,7 +1822,7 @@
                 '</div>' +
               '</div>' +
             '</div>' +
-            '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Referencia &gt; Referencia interna con especialista</p>'
+            '<p class="modal-tipificacion" id="refEspTipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Referencia &gt; Referencia interna con especialista</p>'
         },
         { label: 'Cita de seguimiento',
           texto:
