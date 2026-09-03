@@ -1685,6 +1685,7 @@
                 '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
             },
             { label: 'Cita nueva sin triage',
+              tooltip: 'Esta sección es para agendar cita para lectura de exámenes y cita para usuario que es transferido desde el área de triage.',
               texto:
                 '<div class="triage-video-caja">' +
                   '<p>De acuerdo, ¿puede conectarse a una <strong>videollamada</strong>?</p>' +
@@ -3238,7 +3239,8 @@
     if (subBotonesActuales.length) {
       contBotones.style.display = 'flex';
       contBotones.innerHTML = subBotonesActuales.map(function(b, i) {
-        return '<button class="bib-btn" onclick="mostrarSubBotonModal(' + i + ')">' + b.label + '</button>';
+        var tooltip = b.tooltip ? ' tiene-tooltip" data-tooltip="' + b.tooltip + '"' : '"';
+        return '<button class="bib-btn' + tooltip + ' onclick="mostrarSubBotonModal(' + i + ')">' + b.label + '</button>';
       }).join('');
     } else {
       contBotones.style.display = 'none';
