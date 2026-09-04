@@ -48,6 +48,7 @@
 
   /* CUPOS POR GRADO */
   .cupos-box { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .cupos-box.un-solo-metodo { grid-template-columns: 1fr; }
   .cupo-card {
     border: 1.5px solid var(--borde); border-radius: 12px; padding: 16px 12px;
     display: flex; flex-direction: column; gap: 6px; text-align: center;
@@ -60,7 +61,6 @@
   .cupo-card .cupo-stat.pendiente .cupo-stat-val { color: var(--texto); }
   .cupo-card.completo { border-color: var(--verde); background: #F0FDF4; }
   .cupo-card.completo .cupo-stat-val { color: var(--verde); }
-  .cupo-card.sin-cupo { opacity: 0.45; }
 
   .metodos { display: grid; grid-template-columns: 1fr; gap: 8px; }
   .metodo-btn {
@@ -302,10 +302,9 @@
       return;
     }
     function tarjeta(medidos, cupo, nombre){
-      var completo = cupo > 0 && medidos >= cupo;
-      var sinCupo  = cupo <= 0;
+      var completo = medidos >= cupo;
       var porCronometrar = Math.max(cupo - medidos, 0);
-      return '<div class="cupo-card'+(completo?' completo':'')+(sinCupo?' sin-cupo':'')+'">'
+      return '<div class="cupo-card'+(completo?' completo':'')+'">'
         + '<div class="cupo-lbl">'+nombre+'</div>'
         + '<div class="cupo-stat"><div class="cupo-stat-val">'+medidos+'</div><div class="cupo-stat-lbl">Cronometrados</div></div>'
         + '<div class="cupo-stat pendiente"><div class="cupo-stat-val">'+porCronometrar+'</div><div class="cupo-stat-lbl">Por cronometrar</div></div>'
@@ -314,16 +313,23 @@
     document.getElementById('totalAlumnosVal').textContent = g.total;
     totalAlumnosBox.style.display = 'block';
 
-    cuposBox.innerHTML =
-        tarjeta(g.medidos1, g.cupo1, 'Método 1')
-      + tarjeta(g.medidos2, g.cupo2, 'Método 2');
-    cuposBox.style.display = 'grid';
+    var tarjetas = [];
+    if (g.cupo1 > 0) tarjetas.push(tarjeta(g.medidos1, g.cupo1, 'Método 1'));
+    if (g.cupo2 > 0) tarjetas.push(tarjeta(g.medidos2, g.cupo2, 'Método 2'));
+
+    cuposBox.innerHTML = tarjetas.join('');
+    cuposBox.classList.toggle('un-solo-metodo', tarjetas.length === 1);
+    cuposBox.style.display = tarjetas.length > 0 ? 'grid' : 'none';
   }
 
   function actualizarBotonesMetodo(){
     var g = cuposPorGrado[gradoSel.value];
-    btnM1.disabled = !g || g.cupo1 <= 0;
-    btnM2.disabled = !g || g.cupo2 <= 0;
+    var m1 = !!(g && g.cupo1 > 0);
+    var m2 = !!(g && g.cupo2 > 0);
+    btnM1.disabled = !m1;
+    btnM2.disabled = !m2;
+    btnM1.style.display = m1 ? '' : 'none';
+    btnM2.style.display = m2 ? '' : 'none';
   }
 
   // ── Selección de método ──────────────────────────────────────────────────────
