@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medición de Tiempos — Tallaje</title>
+<style>
+  :root {
+    --azul: #1A3DAA;
+    --cian: #29ABE2;
+    --bg: #F1F5F9;
+    --texto: #1E293B;
+    --gris: #94A3B8;
+    --borde: #E2E8F0;
+    --verde: #16A34A;
+    --rojo: #DC2626;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: var(--bg); color: var(--texto); min-height: 100vh;
+    display: flex; justify-content: center; padding: 20px 14px 60px;
+  }
+  .wrap { width: 100%; max-width: 640px; display: flex; flex-direction: column; gap: 16px; }
+
+  header { text-align: center; padding: 6px 0 2px; }
+  header h1 { font-size: 1.15rem; margin: 0 0 2px; color: var(--azul); }
+  header p { margin: 0; font-size: 0.78rem; color: var(--gris); }
+
+  .card { background: white; border: 1px solid var(--borde); border-radius: 12px; padding: 18px; }
+
+  .campo { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .campo:last-child { margin-bottom: 0; }
+  .campo label { font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.4px; }
+  .campo select, .campo input {
+    padding: 10px 12px; border: 1.5px solid var(--borde); border-radius: 8px;
+    font-size: 0.9rem; font-family: inherit; color: var(--texto); background: white; outline: none;
+  }
+  .campo select:focus, .campo input:focus { border-color: var(--azul); }
+
+  /* CUPOS POR GRADO */
+  .cupos-box { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .cupo-card {
+    border: 1.5px solid var(--borde); border-radius: 10px; padding: 10px 12px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .cupo-card .cupo-lbl { font-size: 0.68rem; font-weight: 700; color: #475569; }
+  .cupo-card .cupo-val { font-size: 1.05rem; font-weight: 800; color: var(--azul); }
+  .cupo-card .cupo-val small { font-size: 0.68rem; font-weight: 600; color: var(--gris); }
+  .cupo-card.completo { border-color: var(--verde); background: #F0FDF4; }
+  .cupo-card.completo .cupo-val { color: var(--verde); }
+  .cupo-card.sin-cupo { opacity: 0.45; }
+  .cupo-nota { grid-column: 1 / -1; font-size: 0.7rem; color: var(--gris); text-align: center; }
+
+  .metodos { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .metodo-btn {
+    display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+    border: 1.5px solid var(--borde); border-radius: 10px; background: #F8FAFC;
+    cursor: pointer; text-align: left; font-family: inherit;
+  }
+  .metodo-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .metodo-btn b { font-size: 0.85rem; color: var(--texto); display: block; }
+  .metodo-btn span { font-size: 0.72rem; color: var(--gris); }
+  .metodo-btn .num {
+    width: 26px; height: 26px; border-radius: 50%; background: var(--azul); color: white;
+    font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .metodo-btn.activo { border-color: var(--azul); background: #EEF2FF; box-shadow: 0 0 0 2px rgba(26,61,170,0.15); }
+
+  .timer-box { text-align: center; padding: 22px 10px 6px; }
+  .timer-display {
+    font-size: 3rem; font-weight: 800; font-variant-numeric: tabular-nums;
+    color: var(--texto); letter-spacing: 1px;
+  }
+  .timer-display.corriendo { color: var(--azul); }
+  .timer-sub { font-size: 0.75rem; color: var(--gris); margin-top: 2px; }
+
+  .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+  .btn {
+    flex: 1; padding: 14px 10px; border-radius: 10px; border: none; font-size: 0.92rem;
+    font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.15s;
+  }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-start { background: var(--verde); color: white; }
+  .btn-stop  { background: var(--rojo); color: white; }
+  .btn-reset { background: white; color: #64748B; border: 1.5px solid var(--borde); flex: 0 0 auto; padding: 14px 16px; }
+
+  .resumen-row { display: flex; gap: 10px; }
+  .resumen-chip { flex: 1; background: white; border: 1px solid var(--borde); border-radius: 10px; padding: 10px 12px; text-align: center; }
+  .resumen-chip .val { font-size: 1.15rem; font-weight: 800; color: var(--azul); }
+  .resumen-chip .lbl { font-size: 0.62rem; color: var(--gris); text-transform: uppercase; letter-spacing: 0.4px; }
+
+  .hist-tbl-wrap { overflow-x: auto; }
+  table.hist { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  table.hist th {
+    text-align: left; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.4px;
+    color: var(--gris); font-weight: 700; padding: 8px 8px; border-bottom: 1.5px solid var(--borde); white-space: nowrap;
+  }
+  table.hist td { padding: 8px 8px; border-bottom: 1px solid #F1F5F9; white-space: nowrap; }
+  table.hist tr:last-child td { border-bottom: none; }
+  .estado-pill { font-size: 0.62rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+  .estado-pill.ok { background: #F0FDF4; color: var(--verde); }
+  .estado-pill.pendiente { background: #FFF7ED; color: #C2410C; }
+  .estado-pill.error { background: #FEF2F2; color: var(--rojo); }
+  .empty { text-align: center; padding: 24px; color: var(--gris); font-size: 0.8rem; }
+
+  .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .toolbar h3 { font-size: 0.85rem; margin: 0; }
+  .link-btn { background: none; border: none; color: var(--azul); font-size: 0.75rem; font-weight: 700; cursor: pointer; font-family: inherit; padding: 4px 6px; }
+
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1E293B; color: white; padding: 10px 18px; border-radius: 8px; font-size: 0.8rem;
+    opacity: 0; pointer-events: none; transition: all 0.25s; z-index: 999; max-width: 90vw; text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .config-note { font-size: 0.68rem; color: var(--gris); text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Medición de Tiempos de Tallaje</h1>
+    <p>Selecciona grado y método — envía cada registro a Google Sheets</p>
+  </header>
+
+  <!-- GRADO Y CUPOS -->
+  <div class="card">
+    <div class="toolbar">
+      <label style="font-size:0.75rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.4px">Grado</label>
+      <button class="link-btn" id="btnActualizarCupos">↻ Actualizar cupos</button>
+    </div>
+    <div class="campo" style="margin-top:6px">
+      <select id="gradoSel">
+        <option value="">Cargando grados…</option>
+      </select>
+    </div>
+    <div class="cupos-box" id="cuposBox" style="display:none"></div>
+  </div>
+
+  <!-- SELECCIÓN DE MÉTODO -->
+  <div class="card">
+    <div class="campo">
+      <label>Método de tallaje</label>
+      <div class="metodos" id="metodosBox">
+        <button type="button" class="metodo-btn" data-m="1" disabled><div class="num">1</div><div><b>Método 1</b><span>Prueba individual de uniforme</span></div></button>
+        <button type="button" class="metodo-btn" data-m="2" disabled><div class="num">2</div><div><b>Método 2</b><span>Medición corporal en centímetros</span></div></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRONÓMETRO -->
+  <div class="card">
+    <div class="timer-box">
+      <div class="timer-display" id="timerDisplay">00:00</div>
+      <div class="timer-sub" id="timerSub">Selecciona un grado y un método para iniciar</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-start" id="btnStart">▶ Iniciar</button>
+      <button class="btn btn-stop" id="btnStop" disabled>■ Detener</button>
+      <button class="btn btn-reset" id="btnReset" title="Descartar cronómetro actual">✕</button>
+    </div>
+  </div>
+
+  <!-- RESUMEN DE SESIÓN -->
+  <div class="resumen-row">
+    <div class="resumen-chip"><div class="val" id="rTotal">0</div><div class="lbl">Registros</div></div>
+    <div class="resumen-chip"><div class="val" id="rProm">—</div><div class="lbl">Promedio</div></div>
+    <div class="resumen-chip"><div class="val" id="rPend">0</div><div class="lbl">Pendientes</div></div>
+  </div>
+
+  <!-- HISTORIAL DE LA SESIÓN -->
+  <div class="card">
+    <div class="toolbar">
+      <h3>Historial de esta sesión</h3>
+      <div>
+        <button class="link-btn" id="btnReintentar">↻ Reenviar pendientes</button>
+        <button class="link-btn" id="btnBorrarHistorial" style="color:var(--rojo)">🗑 Borrar historial</button>
+      </div>
+    </div>
+    <div class="hist-tbl-wrap" style="margin-top:10px">
+      <table class="hist">
+        <thead>
+          <tr><th>Hora</th><th>Método</th><th>Grado</th><th>Duración</th><th>Envío</th></tr>
+        </thead>
+        <tbody id="histBody"><tr><td colspan="5"><div class="empty">Aún no hay registros en esta sesión.</div></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="config-note">Destino de guardado: <span id="urlEstado">configurando…</span></p>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+  // ── CONFIGURACIÓN ────────────────────────────────────────────────────────────
+  // 1. Crea una Hoja de Google, ve a Extensiones → Apps Script y pega el código
+  //    de "tallaje-apps-script.gs" (incluido junto a este archivo).
+  // 2. Publica el script como aplicación web (Implementar → Nueva implementación
+  //    → Aplicación web → Ejecutar como: yo → Quién tiene acceso: cualquiera).
+  // 3. Copia la URL que te entrega Google y pégala abajo.
+  var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxn3CqQtLiWFNsF2mOasnr99v8jzlIxHZ24bMCCPcpcE02VBbdQCt7AtgHWnxnwISETSw/exec";
+
+  var METODOS = {
+    '1': 'Método 1 — Prueba individual de uniforme',
+    '2': 'Método 2 — Medición corporal en centímetros'
+  };
+
+  var metodoActual = null;
+  var startTs = null;
+  var tickInterval = null;
+  var registros = cargarRegistrosGuardados();
+  var cuposPorGrado = {};   // { grado: {total, cupo1, cupo2, medidos1, medidos2} }
+
+  function cargarRegistrosGuardados(){
+    try {
+      return JSON.parse(localStorage.getItem('tallaje_registros') || '[]');
+    } catch (e) {
+      return [];
+    }
+  }
+
+  var elTimer   = document.getElementById('timerDisplay');
+  var elSub     = document.getElementById('timerSub');
+  var btnStart  = document.getElementById('btnStart');
+  var btnStop   = document.getElementById('btnStop');
+  var btnReset  = document.getElementById('btnReset');
+  var gradoSel  = document.getElementById('gradoSel');
+  var cuposBox  = document.getElementById('cuposBox');
+  var btnM1     = document.querySelector('.metodo-btn[data-m="1"]');
+  var btnM2     = document.querySelector('.metodo-btn[data-m="2"]');
+
+  document.getElementById('urlEstado').textContent =
+    (SCRIPT_URL.indexOf('PEGA_AQUI') === 0 ? 'no configurado (revisa SCRIPT_URL en el código)' : 'Google Sheets');
+
+  // ── Cupos por grado (desde la pestaña "Mediciones") ─────────────────────────
+  function cargarCupos(reintentosRestantes){
+    if (SCRIPT_URL.indexOf('PEGA_AQUI') === 0) return;
+    if (reintentosRestantes === undefined) reintentosRestantes = 2;
+    fetch(SCRIPT_URL)
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (!data.ok){ showToast('No se pudieron cargar los cupos: ' + (data.error||'')); return; }
+        var opcionPrevia = gradoSel.value;
+        cuposPorGrado = {};
+        gradoSel.innerHTML = '<option value="">Seleccionar…</option>';
+        data.grados.forEach(function(g){
+          cuposPorGrado[g.grado] = g;
+          var op = document.createElement('option');
+          op.value = g.grado; op.textContent = g.grado;
+          gradoSel.appendChild(op);
+        });
+        if (opcionPrevia && cuposPorGrado[opcionPrevia]) gradoSel.value = opcionPrevia;
+        actualizarCuposBox();
+      })
+      .catch(function(){
+        if (reintentosRestantes > 0){
+          setTimeout(function(){ cargarCupos(reintentosRestantes - 1); }, 1500);
+        } else {
+          gradoSel.innerHTML = '<option value="">Sin conexión — pulsa "Actualizar cupos"</option>';
+        }
+      });
+  }
+
+  document.getElementById('btnActualizarCupos').addEventListener('click', function(){
+    gradoSel.innerHTML = '<option value="">Cargando grados…</option>';
+    cargarCupos();
+  });
+
+  gradoSel.addEventListener('change', function(){
+    metodoActual = null;
+    document.querySelectorAll('.metodo-btn').forEach(function(x){ x.classList.remove('activo'); });
+    actualizarCuposBox();
+    actualizarBotonesMetodo();
+    actualizarSub();
+  });
+
+  function actualizarCuposBox(){
+    var g = cuposPorGrado[gradoSel.value];
+    if (!g){ cuposBox.style.display = 'none'; cuposBox.innerHTML = ''; return; }
+    function tarjeta(medidos, cupo, nombre){
+      var completo = cupo > 0 && medidos >= cupo;
+      var sinCupo  = cupo <= 0;
+      return '<div class="cupo-card'+(completo?' completo':'')+(sinCupo?' sin-cupo':'')+'">'
+        + '<div class="cupo-lbl">'+nombre+'</div>'
+        + '<div class="cupo-val">'+medidos+' <small>/ '+cupo+' medidos</small></div>'
+        + '</div>';
+    }
+    cuposBox.innerHTML =
+        tarjeta(g.medidos1, g.cupo1, 'Método 1')
+      + tarjeta(g.medidos2, g.cupo2, 'Método 2')
+      + '<div class="cupo-nota">Total de alumnos en '+escHtml(g.grado)+': '+g.total+'</div>';
+    cuposBox.style.display = 'grid';
+  }
+
+  function actualizarBotonesMetodo(){
+    var g = cuposPorGrado[gradoSel.value];
+    btnM1.disabled = !g || g.cupo1 <= 0;
+    btnM2.disabled = !g || g.cupo2 <= 0;
+  }
+
+  // ── Selección de método ──────────────────────────────────────────────────────
+  document.querySelectorAll('.metodo-btn').forEach(function(b){
+    b.addEventListener('click', function(){
+      if (startTs || b.disabled) return; // no cambiar método con cronómetro corriendo
+      document.querySelectorAll('.metodo-btn').forEach(function(x){ x.classList.remove('activo'); });
+      b.classList.add('activo');
+      metodoActual = b.getAttribute('data-m');
+      actualizarSub();
+    });
+  });
+
+  function gradoActual(){ return gradoSel.value; }
+
+  function listo(){ return !!metodoActual && !!gradoActual(); }
+
+  function actualizarSub(){
+    if (startTs) return;
+    elSub.textContent = listo() ? 'Listo para iniciar' : 'Selecciona un grado y un método para iniciar';
+  }
+
+  // ── Cronómetro ────────────────────────────────────────────────────────────────
+  function fmt(ms){
+    var totalSeg = Math.floor(ms / 1000);
+    var m = Math.floor(totalSeg / 60);
+    var s = totalSeg % 60;
+    return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  }
+
+  btnStart.addEventListener('click', function(){
+    if (!listo()){ showToast('Selecciona grado y método antes de iniciar.'); return; }
+    startTs = Date.now();
+    btnStart.disabled = true;
+    btnStop.disabled = false;
+    elTimer.classList.add('corriendo');
+    elSub.textContent = METODOS[metodoActual] + ' · ' + gradoActual();
+    tickInterval = setInterval(function(){
+      elTimer.textContent = fmt(Date.now() - startTs);
+    }, 100);
+  });
+
+  btnStop.addEventListener('click', function(){
+    if (!startTs) return;
+    var fin = Date.now();
+    var duracionMs = fin - startTs;
+    clearInterval(tickInterval);
+    elTimer.classList.remove('corriendo');
+    btnStop.disabled = true;
+    btnStart.disabled = false;
+
+    var registro = {
+      id: 'r' + fin + Math.floor(Math.random()*1000),
+      fecha: new Date(startTs).toLocaleDateString('es-SV'),
+      horaInicio: new Date(startTs).toLocaleTimeString('es-SV'),
+      horaFin: new Date(fin).toLocaleTimeString('es-SV'),
+      duracionSeg: Math.round(duracionMs / 1000),
+      metodo: metodoActual,
+      metodoLabel: METODOS[metodoActual],
+      grado: gradoActual(),
+      estado: 'pendiente'
+    };
+    registros.unshift(registro);
+    guardarRegistros();
+    renderHistorial();
+    enviarRegistro(registro);
+
+    startTs = null;
+    elTimer.textContent = '00:00';
+    actualizarSub();
+  });
+
+  btnReset.addEventListener('click', function(){
+    if (!startTs){ return; }
+    if (!window.confirm('¿Descartar este cronómetro sin guardar el registro?')) return;
+    clearInterval(tickInterval);
+    startTs = null;
+    elTimer.classList.remove('corriendo');
+    elTimer.textContent = '00:00';
+    btnStop.disabled = true;
+    btnStart.disabled = false;
+    actualizarSub();
+  });
+
+  // ── Persistencia local + envío a Google Sheets ──────────────────────────────
+  function guardarRegistros(){
+    try {
+      localStorage.setItem('tallaje_registros', JSON.stringify(registros.slice(0,200)));
+    } catch (e) { /* almacenamiento no disponible; se continúa solo en memoria */ }
+  }
+
+  function enviarRegistro(r){
+    if (SCRIPT_URL.indexOf('PEGA_AQUI') === 0){
+      r.estado = 'error';
+      actualizarEstado(r.id, 'error');
+      showToast('Registro guardado localmente. Configura SCRIPT_URL para enviarlo a Sheets.');
+      return;
+    }
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        fecha: r.fecha, horaInicio: r.horaInicio, horaFin: r.horaFin,
+        duracionSeg: r.duracionSeg, metodo: r.metodo, metodoLabel: r.metodoLabel, grado: r.grado
+      })
+    }).then(function(){
+      // modo no-cors no permite leer la respuesta; se asume éxito si no hubo excepción de red
+      actualizarEstado(r.id, 'ok');
+      cargarCupos(); // refresca "ya medidos" con el nuevo registro
+    }).catch(function(){
+      actualizarEstado(r.id, 'error');
+      showToast('No se pudo enviar el registro. Se reintentará luego.');
+    });
+  }
+
+  function actualizarEstado(id, estado){
+    var r = registros.find(function(x){ return x.id === id; });
+    if (r){ r.estado = estado; guardarRegistros(); renderHistorial(); }
+  }
+
+  document.getElementById('btnReintentar').addEventListener('click', function(){
+    var pendientes = registros.filter(function(r){ return r.estado !== 'ok'; });
+    if (pendientes.length === 0){ showToast('No hay registros pendientes.'); return; }
+    pendientes.forEach(function(r){ r.estado = 'pendiente'; enviarRegistro(r); });
+    renderHistorial();
+  });
+
+  document.getElementById('btnBorrarHistorial').addEventListener('click', function(){
+    if (registros.length === 0){ showToast('El historial ya está vacío.'); return; }
+    if (!window.confirm('¿Borrar el historial de esta sesión? Esto solo limpia la lista en pantalla; los registros que ya se enviaron siguen guardados en Google Sheets.')) return;
+    registros = [];
+    guardarRegistros();
+    renderHistorial();
+    showToast('Historial de la sesión borrado.');
+  });
+
+  // ── Render de historial y resumen ───────────────────────────────────────────
+  function renderHistorial(){
+    var tbody = document.getElementById('histBody');
+    if (registros.length === 0){
+      tbody.innerHTML = '<tr><td colspan="5"><div class="empty">Aún no hay registros en esta sesión.</div></td></tr>';
+    } else {
+      tbody.innerHTML = registros.map(function(r){
+        var pill = r.estado === 'ok' ? '<span class="estado-pill ok">Enviado</span>'
+                 : r.estado === 'error' ? '<span class="estado-pill error">Error</span>'
+                 : '<span class="estado-pill pendiente">Enviando…</span>';
+        return '<tr><td>'+r.horaInicio+'</td><td>M'+r.metodo+'</td><td>'+escHtml(r.grado)+'</td><td>'+fmtSeg(r.duracionSeg)+'</td><td>'+pill+'</td></tr>';
+      }).join('');
+    }
+
+    document.getElementById('rTotal').textContent = registros.length;
+    document.getElementById('rPend').textContent = registros.filter(function(r){ return r.estado !== 'ok'; }).length;
+    if (registros.length > 0){
+      var prom = registros.reduce(function(a,r){ return a + r.duracionSeg; }, 0) / registros.length;
+      document.getElementById('rProm').textContent = fmtSeg(Math.round(prom));
+    } else {
+      document.getElementById('rProm').textContent = '—';
+    }
+  }
+
+  function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function fmtSeg(seg){
+    var m = Math.floor(seg / 60);
+    var s = seg % 60;
+    return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  }
+
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(window._toastT);
+    window._toastT = setTimeout(function(){ t.classList.remove('show'); }, 3000);
+  }
+
+  renderHistorial();
+  cargarCupos();
+</script>
+</body>
+</html>
