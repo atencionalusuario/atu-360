@@ -125,6 +125,13 @@
   }
   table.hist td { padding: 8px 8px; border-bottom: 1px solid #F1F5F9; white-space: nowrap; }
   table.hist tr:last-child td { border-bottom: none; }
+  table.hist tr.fila-completa { background: #F0FDF4; }
+  table.hist tr.fila-completa td:first-child { color: var(--verde); font-weight: 700; }
+  .check {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; border-radius: 50%; background: var(--verde); color: white;
+    font-size: 0.62rem; font-weight: 900; flex-shrink: 0;
+  }
   .estado-pill { font-size: 0.62rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
   .estado-pill.ok { background: #F0FDF4; color: var(--verde); }
   .estado-pill.pendiente { background: #FFF7ED; color: #C2410C; }
@@ -222,6 +229,22 @@
     </div>
   </div>
 
+  <!-- RESUMEN POR GRADO -->
+  <div class="card">
+    <div class="toolbar">
+      <h3>Resumen por grado</h3>
+      <button class="link-btn" id="btnActualizarResumen">↻ Actualizar</button>
+    </div>
+    <div class="hist-tbl-wrap" style="margin-top:10px">
+      <table class="hist">
+        <thead>
+          <tr><th>Grado</th><th>Cronometrados</th><th>Por cronometrar</th><th></th></tr>
+        </thead>
+        <tbody id="resumenGradosBody"><tr><td colspan="4"><div class="empty">Cargando…</div></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
   <p class="config-note">Destino de guardado: <span id="urlEstado">configurando…</span></p>
 </div>
 
@@ -288,14 +311,41 @@
         });
         if (opcionPrevia && cuposPorGrado[opcionPrevia]) gradoSel.value = opcionPrevia;
         actualizarCuposBox();
+        renderResumenGrados(data.grados);
       })
       .catch(function(){
         if (reintentosRestantes > 0){
           setTimeout(function(){ cargarCupos(reintentosRestantes - 1); }, 1500);
         } else {
           gradoSel.innerHTML = '<option value="">Sin conexión — pulsa "Actualizar cupos"</option>';
+          document.getElementById('resumenGradosBody').innerHTML =
+            '<tr><td colspan="4"><div class="empty">Sin conexión — pulsa "Actualizar".</div></td></tr>';
         }
       });
+  }
+
+  document.getElementById('btnActualizarResumen').addEventListener('click', function(){
+    document.getElementById('resumenGradosBody').innerHTML = '<tr><td colspan="4"><div class="empty">Cargando…</div></td></tr>';
+    cargarCupos();
+  });
+
+  function renderResumenGrados(grados){
+    var tbody = document.getElementById('resumenGradosBody');
+    if (!grados || grados.length === 0){
+      tbody.innerHTML = '<tr><td colspan="4"><div class="empty">No hay grados configurados.</div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = grados.map(function(g){
+      var cronometrados   = g.medidos1 + g.medidos2;
+      var porCronometrar  = Math.max(g.cupo1 - g.medidos1, 0) + Math.max(g.cupo2 - g.medidos2, 0);
+      var completo = gradoCompleto(g);
+      return '<tr'+(completo?' class="fila-completa"':'')+'>'
+        + '<td>'+escHtml(g.grado)+'</td>'
+        + '<td>'+cronometrados+'</td>'
+        + '<td>'+porCronometrar+'</td>'
+        + '<td>'+(completo?'<span class="check">✓</span>':'')+'</td>'
+        + '</tr>';
+    }).join('');
   }
 
   document.getElementById('btnActualizarCupos').addEventListener('click', function(){
