@@ -2451,17 +2451,38 @@
         { label: 'Calidad de la atención',
           pregunta: '¿Con cuál de estos temas tiene inconveniente el usuario?',
           hijos: [
-            { label: 'No se conectó el médico',
+            { label: 'No se conectó el médico (general)',
               tipificacion: 'Incidencias calidad médica > No se conectó el médico',
               texto:
                 '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para escalar su caso y, además, le asistiré en el agendamiento de una nueva cita.</p>' +
                 '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
-                '<p>¿Desea que le asista para agendar una nueva cita?</p>' +
+                '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
+                '<p>¿Desea que le asista para agendar una nueva cita? En este mismo momento crearemos un reporte para que lo que nos comenta sea evaluado por el área correspondiente.</p>' +
                 '<div class="triage-acciones">' +
                   '<button class="bib-btn" onclick="abrirModificarCita()">Reagendar cita</button>' +
-                  '<button class="bib-btn" onclick="mostrarUno(\'calidadNoConectoNo\', [])">No quiere reagendar</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'calidadNoConectoGeneralNo\', [])">No quiere reagendar</button>' +
                 '</div>' +
-                '<div id="calidadNoConectoNo" class="triage-resultado" style="display:none;">' +
+                '<div id="calidadNoConectoGeneralNo" class="triage-resultado" style="display:none;">' +
+                  '<p>Le pedimos nuevamente disculpas por los inconvenientes.</p>' +
+                  '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser escalado a la gerencia y se puedan tomar las acciones internas correspondientes.</p>' +
+                  '<p>¿Me podría indicar, por favor, el nombre y apellido del médico/a y la fecha y hora de la cita?</p>' +
+                  '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
+                '</div>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* Especialidad</p>'
+            },
+            { label: 'No se conectó el médico (especialista)',
+              tipificacion: 'Incidencias calidad médica > No se conectó el médico',
+              texto:
+                '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para escalar su caso y, además, le asistiré en el agendamiento de una nueva cita.</p>' +
+                '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
+                '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
+                '<p>¿Desea que le asista para agendar una nueva cita? En este mismo momento crearemos un reporte para que lo que nos comenta sea evaluado por el área correspondiente.</p>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" onclick="abrirModificarCita()">Reagendar cita</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'calidadNoConectoEspecialistaNo\', [])">No quiere reagendar</button>' +
+                '</div>' +
+                '<div id="calidadNoConectoEspecialistaNo" class="triage-resultado" style="display:none;">' +
                   '<p>Le pedimos nuevamente disculpas por los inconvenientes.</p>' +
                   '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser escalado a la gerencia y se puedan tomar las acciones internas correspondientes.</p>' +
                   '<p>¿Me podría indicar, por favor, el nombre y apellido del médico/a y la fecha y hora de la cita?</p>' +
