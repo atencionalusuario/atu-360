@@ -128,6 +128,16 @@
   table.hist tr.fila-completa { background: #F0FDF4; }
   table.hist tr.fila-completa td:first-child { color: var(--verde); font-weight: 700; }
   table.hist tr.fila-total td { font-weight: 800; color: var(--texto); background: #F8FAFC; border-top: 1.5px solid var(--borde); border-bottom: none; }
+
+  /* MUESTRA DE REFERENCIA */
+  table.tabla-muestra th { white-space: normal; text-transform: none; vertical-align: bottom; }
+  table.tabla-muestra th:not(:first-child),
+  table.tabla-muestra td:not(:first-child) { text-align: right; }
+  table.tabla-muestra th b, table.tabla-muestra .th-sub { display: block; }
+  table.tabla-muestra th { line-height: 1.4; }
+  table.tabla-muestra .th-sub { font-size: 0.6rem; font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--gris); }
+  table.tabla-muestra td:first-child { font-weight: 600; color: var(--texto); }
+  table.tabla-muestra td:not(:first-child) { font-weight: 700; color: var(--azul); font-variant-numeric: tabular-nums; }
   .check {
     display: inline-flex; align-items: center; justify-content: center;
     width: 16px; height: 16px; border-radius: 50%; background: var(--verde); color: white;
@@ -242,6 +252,31 @@
           <tr><th>Grado</th><th>Total mediciones</th><th>Cronometrados</th><th>Por cronometrar</th><th>Promedio</th><th></th></tr>
         </thead>
         <tbody id="resumenGradosBody"><tr><td colspan="6"><div class="empty">Cargando…</div></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MUESTRA DE REFERENCIA -->
+  <div class="card">
+    <h3 style="margin:0 0 10px">Muestra de referencia por grado</h3>
+    <div class="hist-tbl-wrap">
+      <table class="hist tabla-muestra">
+        <thead>
+          <tr>
+            <th>Grado</th>
+            <th>Método 1<br><span class="th-sub">Prueba individual de uniforme</span></th>
+            <th>Método 2<br><span class="th-sub">Medición corporal en centímetros</span></th>
+            <th>Mixtos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Inicial 3</td><td>5</td><td>5</td><td>4</td></tr>
+          <tr><td>Parvularia 4</td><td>13</td><td>12</td><td>12</td></tr>
+          <tr><td>Primer Grado</td><td>17</td><td>17</td><td>17</td></tr>
+          <tr><td>Cuarto Grado</td><td>26</td><td>25</td><td>26</td></tr>
+          <tr><td>Séptimo Grado</td><td>35</td><td>34</td><td>34</td></tr>
+          <tr><td>Primer Año</td><td>14</td><td>13</td><td>13</td></tr>
+        </tbody>
       </table>
     </div>
   </div>
