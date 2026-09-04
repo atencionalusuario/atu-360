@@ -59,8 +59,25 @@
   .cupo-card .cupo-stat-lbl { font-size: 0.72rem; font-weight: 600; color: var(--gris); }
   .cupo-card .cupo-stat + .cupo-stat { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--borde); }
   .cupo-card .cupo-stat.pendiente .cupo-stat-val { color: var(--texto); }
-  .cupo-card.completo { border-color: var(--verde); background: #F0FDF4; }
+  .cupo-card.completo { border-color: var(--verde); background: #F0FDF4; position: relative; }
   .cupo-card.completo .cupo-stat-val { color: var(--verde); }
+  .cupo-card.completo .cupo-lbl { display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .cupo-card.completo .cupo-lbl .check {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; border-radius: 50%; background: var(--verde); color: white;
+    font-size: 0.62rem; font-weight: 900; flex-shrink: 0;
+  }
+
+  .grado-completo-banner {
+    display: flex; align-items: center; gap: 10px; margin-top: 6px;
+    padding: 14px 16px; border-radius: 10px; background: #F0FDF4; border: 1.5px solid var(--verde);
+    color: #15803D; font-size: 0.85rem; font-weight: 600; line-height: 1.4;
+  }
+  .grado-completo-banner .check {
+    display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+    width: 26px; height: 26px; border-radius: 50%; background: var(--verde); color: white;
+    font-size: 0.85rem; font-weight: 900;
+  }
 
   .metodos { display: grid; grid-template-columns: 1fr; gap: 8px; }
   .metodo-btn {
@@ -163,6 +180,9 @@
         <button type="button" class="metodo-btn" data-m="1" disabled><div class="num">1</div><div><b>Método 1</b><span>Prueba individual de uniforme</span></div></button>
         <button type="button" class="metodo-btn" data-m="2" disabled><div class="num">2</div><div><b>Método 2</b><span>Medición corporal en centímetros</span></div></button>
       </div>
+      <div class="grado-completo-banner" id="gradoCompletoBanner" style="display:none">
+        <span class="check">✓</span> Ya las mediciones para este grado están completas, registra otro grado
+      </div>
     </div>
   </div>
 
@@ -190,10 +210,7 @@
   <div class="card">
     <div class="toolbar">
       <h3>Historial de esta sesión</h3>
-      <div>
-        <button class="link-btn" id="btnReintentar">↻ Reenviar pendientes</button>
-        <button class="link-btn" id="btnBorrarHistorial" style="color:var(--rojo)">🗑 Borrar historial</button>
-      </div>
+      <button class="link-btn" id="btnReintentar">↻ Reenviar pendientes</button>
     </div>
     <div class="hist-tbl-wrap" style="margin-top:10px">
       <table class="hist">
@@ -305,7 +322,7 @@
       var completo = medidos >= cupo;
       var porCronometrar = Math.max(cupo - medidos, 0);
       return '<div class="cupo-card'+(completo?' completo':'')+'">'
-        + '<div class="cupo-lbl">'+nombre+'</div>'
+        + '<div class="cupo-lbl">'+nombre+(completo?' <span class="check">✓</span>':'')+'</div>'
         + '<div class="cupo-stat"><div class="cupo-stat-val">'+medidos+'</div><div class="cupo-stat-lbl">Cronometrados</div></div>'
         + '<div class="cupo-stat pendiente"><div class="cupo-stat-val">'+porCronometrar+'</div><div class="cupo-stat-lbl">Por cronometrar</div></div>'
         + '</div>';
@@ -322,14 +339,24 @@
     cuposBox.style.display = tarjetas.length > 0 ? 'grid' : 'none';
   }
 
+  function gradoCompleto(g){
+    if (!g) return false;
+    var m1ok = g.cupo1 <= 0 || g.medidos1 >= g.cupo1;
+    var m2ok = g.cupo2 <= 0 || g.medidos2 >= g.cupo2;
+    return (g.cupo1 > 0 || g.cupo2 > 0) && m1ok && m2ok;
+  }
+
   function actualizarBotonesMetodo(){
     var g = cuposPorGrado[gradoSel.value];
-    var m1 = !!(g && g.cupo1 > 0);
-    var m2 = !!(g && g.cupo2 > 0);
+    var completo = gradoCompleto(g);
+    var m1 = !completo && !!(g && g.cupo1 > 0);
+    var m2 = !completo && !!(g && g.cupo2 > 0);
     btnM1.disabled = !m1;
     btnM2.disabled = !m2;
     btnM1.style.display = m1 ? '' : 'none';
     btnM2.style.display = m2 ? '' : 'none';
+    document.getElementById('metodosBox').style.display = completo ? 'none' : '';
+    document.getElementById('gradoCompletoBanner').style.display = completo ? 'flex' : 'none';
   }
 
   // ── Selección de método ──────────────────────────────────────────────────────
@@ -456,15 +483,6 @@
     if (pendientes.length === 0){ showToast('No hay registros pendientes.'); return; }
     pendientes.forEach(function(r){ r.estado = 'pendiente'; enviarRegistro(r); });
     renderHistorial();
-  });
-
-  document.getElementById('btnBorrarHistorial').addEventListener('click', function(){
-    if (registros.length === 0){ showToast('El historial ya está vacío.'); return; }
-    if (!window.confirm('¿Borrar el historial de esta sesión? Esto solo limpia la lista en pantalla; los registros que ya se enviaron siguen guardados en Google Sheets.')) return;
-    registros = [];
-    guardarRegistros();
-    renderHistorial();
-    showToast('Historial de la sesión borrado.');
   });
 
   // ── Render de historial y resumen ───────────────────────────────────────────
