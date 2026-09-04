@@ -239,9 +239,9 @@
     <div class="hist-tbl-wrap" style="margin-top:10px">
       <table class="hist">
         <thead>
-          <tr><th>Grado</th><th>Cronometrados</th><th>Por cronometrar</th><th></th></tr>
+          <tr><th>Grado</th><th>Total mediciones</th><th>Cronometrados</th><th>Por cronometrar</th><th>Promedio</th><th></th></tr>
         </thead>
-        <tbody id="resumenGradosBody"><tr><td colspan="4"><div class="empty">Cargando…</div></td></tr></tbody>
+        <tbody id="resumenGradosBody"><tr><td colspan="6"><div class="empty">Cargando…</div></td></tr></tbody>
       </table>
     </div>
   </div>
@@ -320,43 +320,58 @@
         } else {
           gradoSel.innerHTML = '<option value="">Sin conexión — pulsa "Actualizar cupos"</option>';
           document.getElementById('resumenGradosBody').innerHTML =
-            '<tr><td colspan="4"><div class="empty">Sin conexión — pulsa "Actualizar".</div></td></tr>';
+            '<tr><td colspan="6"><div class="empty">Sin conexión — pulsa "Actualizar".</div></td></tr>';
         }
       });
   }
 
   document.getElementById('btnActualizarResumen').addEventListener('click', function(){
-    document.getElementById('resumenGradosBody').innerHTML = '<tr><td colspan="4"><div class="empty">Cargando…</div></td></tr>';
+    document.getElementById('resumenGradosBody').innerHTML = '<tr><td colspan="6"><div class="empty">Cargando…</div></td></tr>';
     cargarCupos();
   });
 
   function renderResumenGrados(grados){
     var tbody = document.getElementById('resumenGradosBody');
     if (!grados || grados.length === 0){
-      tbody.innerHTML = '<tr><td colspan="4"><div class="empty">No hay grados configurados.</div></td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty">No hay grados configurados.</div></td></tr>';
       return;
     }
+    var totalMediciones     = 0;
     var totalCronometrados  = 0;
     var totalPorCronometrar = 0;
+    var sumaPromediosPonderada = 0;
+    var hayDatosPromedio = false;
 
     var filas = grados.map(function(g){
-      var cronometrados   = g.medidos1 + g.medidos2;
-      var porCronometrar  = Math.max(g.cupo1 - g.medidos1, 0) + Math.max(g.cupo2 - g.medidos2, 0);
-      totalCronometrados  += cronometrados;
-      totalPorCronometrar += porCronometrar;
+      var totalMed         = g.cupo1 + g.cupo2;
+      var cronometrados    = g.medidos1 + g.medidos2;
+      var porCronometrar   = Math.max(g.cupo1 - g.medidos1, 0) + Math.max(g.cupo2 - g.medidos2, 0);
+      totalMediciones      += totalMed;
+      totalCronometrados   += cronometrados;
+      totalPorCronometrar  += porCronometrar;
+      if (g.promedioSeg != null){ sumaPromediosPonderada += g.promedioSeg * cronometrados; hayDatosPromedio = true; }
       var completo = gradoCompleto(g);
+      var promedioTxt = (g.promedioSeg != null) ? fmtSeg(g.promedioSeg) : '—';
       return '<tr'+(completo?' class="fila-completa"':'')+'>'
         + '<td>'+escHtml(g.grado)+'</td>'
+        + '<td>'+totalMed+'</td>'
         + '<td>'+cronometrados+'</td>'
         + '<td>'+porCronometrar+'</td>'
+        + '<td>'+promedioTxt+'</td>'
         + '<td>'+(completo?'<span class="check">✓</span>':'')+'</td>'
         + '</tr>';
     }).join('');
 
+    var promedioTotalTxt = (hayDatosPromedio && totalCronometrados > 0)
+      ? fmtSeg(Math.round(sumaPromediosPonderada / totalCronometrados))
+      : '—';
+
     var filaTotal = '<tr class="fila-total">'
       + '<td>Total</td>'
+      + '<td>'+totalMediciones+'</td>'
       + '<td>'+totalCronometrados+'</td>'
       + '<td>'+totalPorCronometrar+'</td>'
+      + '<td>'+promedioTotalTxt+'</td>'
       + '<td></td>'
       + '</tr>';
 

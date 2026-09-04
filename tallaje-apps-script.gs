@@ -61,13 +61,16 @@ function doGet(e) {
 
     var grados = cupos.map(function(c) {
       var m = conteos[c.grado] || {};
+      var conteoTotal = (m['1'] || 0) + (m['2'] || 0);
+      var sumaDuracion = m.sumaDuracion || 0;
       return {
-        grado:    c.grado,
-        total:    c.total,
-        cupo1:    c.cupo1,
-        cupo2:    c.cupo2,
-        medidos1: m['1'] || 0,
-        medidos2: m['2'] || 0
+        grado:       c.grado,
+        total:       c.total,
+        cupo1:       c.cupo1,
+        cupo2:       c.cupo2,
+        medidos1:    m['1'] || 0,
+        medidos2:    m['2'] || 0,
+        promedioSeg: conteoTotal > 0 ? Math.round(sumaDuracion / conteoTotal) : null
       };
     });
 
@@ -118,13 +121,15 @@ function contarRegistros(hoja) {
   // Columnas: Timestamp servidor, Fecha, Hora inicio, Hora fin, Duración (s), Método, Grado
   for (var r = 1; r < datos.length; r++) {
     var fila = datos[r];
+    var duracionSeg = Number(fila[4]) || 0;
     var metodoLabel = String(fila[5] || '');
     var grado = String(fila[6] || '').trim();
     var m = metodoLabel.match(/[Mm]étodo\s*(\d)/);
     if (!m || !grado) continue;
     var num = m[1];
-    if (!out[grado]) out[grado] = {};
+    if (!out[grado]) out[grado] = { sumaDuracion: 0 };
     out[grado][num] = (out[grado][num] || 0) + 1;
+    out[grado].sumaDuracion += duracionSeg;
   }
   return out;
 }
