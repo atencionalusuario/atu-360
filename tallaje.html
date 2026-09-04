@@ -38,19 +38,26 @@
   }
   .campo select:focus, .campo input:focus { border-color: var(--azul); }
 
-  /* CUPOS POR GRADO */
-  .cupos-box { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-  .cupo-card {
-    border: 1.5px solid var(--borde); border-radius: 10px; padding: 10px 12px;
-    display: flex; flex-direction: column; gap: 4px;
+  /* TOTAL DE ALUMNOS */
+  .total-alumnos-box {
+    text-align: center; margin-top: 14px; padding: 14px; border-radius: 10px;
+    background: #F8FAFC; border: 1.5px solid var(--borde);
   }
-  .cupo-card .cupo-lbl { font-size: 0.68rem; font-weight: 700; color: #475569; }
-  .cupo-card .cupo-val { font-size: 1.05rem; font-weight: 800; color: var(--azul); }
-  .cupo-card .cupo-val small { font-size: 0.68rem; font-weight: 600; color: var(--gris); }
+  .total-alumnos-box .total-lbl { font-size: 0.72rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
+  .total-alumnos-box .total-val { font-size: 2.4rem; font-weight: 800; color: var(--texto); line-height: 1.15; }
+
+  /* CUPOS POR GRADO */
+  .cupos-box { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .cupo-card {
+    border: 1.5px solid var(--borde); border-radius: 12px; padding: 16px 12px;
+    display: flex; flex-direction: column; gap: 6px; text-align: center;
+  }
+  .cupo-card .cupo-lbl { font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.4px; }
+  .cupo-card .cupo-val { font-size: 2rem; font-weight: 800; color: var(--azul); line-height: 1.1; }
+  .cupo-card .cupo-val small { font-size: 0.8rem; font-weight: 600; color: var(--gris); }
   .cupo-card.completo { border-color: var(--verde); background: #F0FDF4; }
   .cupo-card.completo .cupo-val { color: var(--verde); }
   .cupo-card.sin-cupo { opacity: 0.45; }
-  .cupo-nota { grid-column: 1 / -1; font-size: 0.7rem; color: var(--gris); text-align: center; }
 
   .metodos { display: grid; grid-template-columns: 1fr; gap: 8px; }
   .metodo-btn {
@@ -129,13 +136,18 @@
   <!-- GRADO Y CUPOS -->
   <div class="card">
     <div class="toolbar">
-      <label style="font-size:0.75rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.4px">Grado</label>
+      <h3>Control</h3>
       <button class="link-btn" id="btnActualizarCupos">↻ Actualizar cupos</button>
     </div>
-    <div class="campo" style="margin-top:6px">
+    <div class="campo" style="margin-top:10px">
+      <label>Grado</label>
       <select id="gradoSel">
         <option value="">Cargando grados…</option>
       </select>
+    </div>
+    <div class="total-alumnos-box" id="totalAlumnosBox" style="display:none">
+      <div class="total-lbl">Total de alumnos</div>
+      <div class="total-val" id="totalAlumnosVal">—</div>
     </div>
     <div class="cupos-box" id="cuposBox" style="display:none"></div>
   </div>
@@ -230,6 +242,7 @@
   var btnReset  = document.getElementById('btnReset');
   var gradoSel  = document.getElementById('gradoSel');
   var cuposBox  = document.getElementById('cuposBox');
+  var totalAlumnosBox = document.getElementById('totalAlumnosBox');
   var btnM1     = document.querySelector('.metodo-btn[data-m="1"]');
   var btnM2     = document.querySelector('.metodo-btn[data-m="2"]');
 
@@ -280,7 +293,11 @@
 
   function actualizarCuposBox(){
     var g = cuposPorGrado[gradoSel.value];
-    if (!g){ cuposBox.style.display = 'none'; cuposBox.innerHTML = ''; return; }
+    if (!g){
+      cuposBox.style.display = 'none'; cuposBox.innerHTML = '';
+      totalAlumnosBox.style.display = 'none';
+      return;
+    }
     function tarjeta(medidos, cupo, nombre){
       var completo = cupo > 0 && medidos >= cupo;
       var sinCupo  = cupo <= 0;
@@ -289,10 +306,12 @@
         + '<div class="cupo-val">'+medidos+' <small>/ '+cupo+' medidos</small></div>'
         + '</div>';
     }
+    document.getElementById('totalAlumnosVal').textContent = g.total;
+    totalAlumnosBox.style.display = 'block';
+
     cuposBox.innerHTML =
         tarjeta(g.medidos1, g.cupo1, 'Método 1')
-      + tarjeta(g.medidos2, g.cupo2, 'Método 2')
-      + '<div class="cupo-nota">Total de alumnos en '+escHtml(g.grado)+': '+g.total+'</div>';
+      + tarjeta(g.medidos2, g.cupo2, 'Método 2');
     cuposBox.style.display = 'grid';
   }
 
