@@ -81,16 +81,16 @@
 
   .metodos { display: grid; grid-template-columns: 1fr; gap: 8px; }
   .metodo-btn {
-    display: flex; align-items: center; gap: 10px; padding: 12px 14px;
-    border: 1.5px solid var(--borde); border-radius: 10px; background: #F8FAFC;
+    display: flex; align-items: center; gap: 14px; padding: 18px 16px;
+    border: 1.5px solid var(--borde); border-radius: 12px; background: #F8FAFC;
     cursor: pointer; text-align: left; font-family: inherit;
   }
   .metodo-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .metodo-btn b { font-size: 0.85rem; color: var(--texto); display: block; }
-  .metodo-btn span { font-size: 0.72rem; color: var(--gris); }
+  .metodo-btn b { font-size: 1.15rem; color: var(--texto); display: block; }
+  .metodo-btn span { font-size: 0.82rem; color: var(--gris); }
   .metodo-btn .num {
-    width: 26px; height: 26px; border-radius: 50%; background: var(--azul); color: white;
-    font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    width: 38px; height: 38px; border-radius: 50%; background: var(--azul); color: white;
+    font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
   .metodo-btn.activo { border-color: var(--azul); background: #EEF2FF; box-shadow: 0 0 0 2px rgba(26,61,170,0.15); }
 
@@ -127,6 +127,7 @@
   table.hist tr:last-child td { border-bottom: none; }
   table.hist tr.fila-completa { background: #F0FDF4; }
   table.hist tr.fila-completa td:first-child { color: var(--verde); font-weight: 700; }
+  table.hist tr.fila-total td { font-weight: 800; color: var(--texto); background: #F8FAFC; border-top: 1.5px solid var(--borde); border-bottom: none; }
   .check {
     display: inline-flex; align-items: center; justify-content: center;
     width: 16px; height: 16px; border-radius: 50%; background: var(--verde); color: white;
@@ -210,7 +211,7 @@
   <div class="resumen-row">
     <div class="resumen-chip"><div class="val" id="rTotal">0</div><div class="lbl">Registros</div></div>
     <div class="resumen-chip"><div class="val" id="rProm">—</div><div class="lbl">Promedio</div></div>
-    <div class="resumen-chip"><div class="val" id="rPend">0</div><div class="lbl">Pendientes</div></div>
+    <div class="resumen-chip"><div class="val" id="rPend">0</div><div class="lbl">Pendientes por sincronizar</div></div>
   </div>
 
   <!-- HISTORIAL DE LA SESIÓN -->
@@ -335,9 +336,14 @@
       tbody.innerHTML = '<tr><td colspan="4"><div class="empty">No hay grados configurados.</div></td></tr>';
       return;
     }
-    tbody.innerHTML = grados.map(function(g){
+    var totalCronometrados  = 0;
+    var totalPorCronometrar = 0;
+
+    var filas = grados.map(function(g){
       var cronometrados   = g.medidos1 + g.medidos2;
       var porCronometrar  = Math.max(g.cupo1 - g.medidos1, 0) + Math.max(g.cupo2 - g.medidos2, 0);
+      totalCronometrados  += cronometrados;
+      totalPorCronometrar += porCronometrar;
       var completo = gradoCompleto(g);
       return '<tr'+(completo?' class="fila-completa"':'')+'>'
         + '<td>'+escHtml(g.grado)+'</td>'
@@ -346,6 +352,15 @@
         + '<td>'+(completo?'<span class="check">✓</span>':'')+'</td>'
         + '</tr>';
     }).join('');
+
+    var filaTotal = '<tr class="fila-total">'
+      + '<td>Total</td>'
+      + '<td>'+totalCronometrados+'</td>'
+      + '<td>'+totalPorCronometrar+'</td>'
+      + '<td></td>'
+      + '</tr>';
+
+    tbody.innerHTML = filas + filaTotal;
   }
 
   document.getElementById('btnActualizarCupos').addEventListener('click', function(){
