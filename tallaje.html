@@ -52,11 +52,14 @@
     border: 1.5px solid var(--borde); border-radius: 12px; padding: 16px 12px;
     display: flex; flex-direction: column; gap: 6px; text-align: center;
   }
-  .cupo-card .cupo-lbl { font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.4px; }
-  .cupo-card .cupo-val { font-size: 2rem; font-weight: 800; color: var(--azul); line-height: 1.1; }
-  .cupo-card .cupo-val small { font-size: 0.8rem; font-weight: 600; color: var(--gris); }
+  .cupo-card .cupo-lbl { font-size: 0.75rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+  .cupo-card .cupo-stat { display: flex; flex-direction: column; gap: 0; }
+  .cupo-card .cupo-stat-val { font-size: 1.7rem; font-weight: 800; color: var(--azul); line-height: 1.15; }
+  .cupo-card .cupo-stat-lbl { font-size: 0.72rem; font-weight: 600; color: var(--gris); }
+  .cupo-card .cupo-stat + .cupo-stat { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--borde); }
+  .cupo-card .cupo-stat.pendiente .cupo-stat-val { color: var(--texto); }
   .cupo-card.completo { border-color: var(--verde); background: #F0FDF4; }
-  .cupo-card.completo .cupo-val { color: var(--verde); }
+  .cupo-card.completo .cupo-stat-val { color: var(--verde); }
   .cupo-card.sin-cupo { opacity: 0.45; }
 
   .metodos { display: grid; grid-template-columns: 1fr; gap: 8px; }
@@ -301,9 +304,11 @@
     function tarjeta(medidos, cupo, nombre){
       var completo = cupo > 0 && medidos >= cupo;
       var sinCupo  = cupo <= 0;
+      var porCronometrar = Math.max(cupo - medidos, 0);
       return '<div class="cupo-card'+(completo?' completo':'')+(sinCupo?' sin-cupo':'')+'">'
         + '<div class="cupo-lbl">'+nombre+'</div>'
-        + '<div class="cupo-val">'+medidos+' <small>/ '+cupo+' medidos</small></div>'
+        + '<div class="cupo-stat"><div class="cupo-stat-val">'+medidos+'</div><div class="cupo-stat-lbl">Cronometrados</div></div>'
+        + '<div class="cupo-stat pendiente"><div class="cupo-stat-val">'+porCronometrar+'</div><div class="cupo-stat-lbl">Por cronometrar</div></div>'
         + '</div>';
     }
     document.getElementById('totalAlumnosVal').textContent = g.total;
