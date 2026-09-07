@@ -1310,7 +1310,12 @@
           { label: 'Quiere paso a paso en la aplicación',
             texto:
               '<p>Le voy a ir diciendo el paso a paso para que usted mismo pueda ver la información.</p>' +
-              '<img src="img/farmacias-paso-a-paso.jpg" alt="Paso a paso para ubicar farmacias y laboratorios en la app" class="tarjeta-script-imagen">'
+              '<img id="imgPasoFarmacias" data-paso="1" data-total="6" data-patron="img/farmacias-paso-{n}.png" src="img/farmacias-paso-1.png" alt="Paso 1 de 6 para ubicar farmacias y laboratorios en la app" class="tarjeta-script-imagen">' +
+              '<div class="triage-acciones" style="justify-content:center; align-items:center; gap:14px; margin-top:12px;">' +
+                '<button class="bib-btn" onclick="cambiarPasoImagen(\'imgPasoFarmacias\', \'contadorPasoFarmacias\', -1)">&larr; Anterior</button>' +
+                '<span id="contadorPasoFarmacias" style="font-weight:600; color:#64748B; min-width:50px; text-align:center;">1 / 6</span>' +
+                '<button class="bib-btn" onclick="cambiarPasoImagen(\'imgPasoFarmacias\', \'contadorPasoFarmacias\', 1)">Siguiente &rarr;</button>' +
+              '</div>'
           },
           { label: 'Quiere la información en llamada',
             texto:
@@ -1658,6 +1663,10 @@
         texto:
           '<p><strong>Usuario se contacta por que quiere que su laboratorio/farmacias esten afiliados al DoctorSV para brindar servicios:</strong></p>' +
           '<p>Puede enviar su solicitud e información de participación de su farmacia/laboratorio al correo: <strong>redservicios@doctorsv.gob.sv</strong></p>'
+      },
+      { label: 'Envío de CV a talento humano',
+        texto:
+          '<p>Muchas gracias por su interés. Si está interesado en trabajar con nosotros, puede enviar su hoja de vida al correo <strong>talentohumano@doctorsv.gob.sv</strong></p>'
       }
     ] }
   ];
@@ -3061,6 +3070,39 @@
           '</ul>' +
           '<p>¿Le gustaría agendar nuevamente? ¿Le ayudo con el proceso?</p>' +
           '<p>De acuerdo, muchas gracias por atender mi llamada y por sus comentarios, que tenga feliz día / tarde / noche.</p>'
+      },
+      { label: 'Médico ya no forma parte de DoctorSV',
+        tituloModal: 'Médico ya no forma parte de DoctorSV',
+        texto:
+          '<p>Buenos días / buenas tardes / buenas noches, le saluda XXXX de parte de <strong>DoctorSV.</strong></p>' +
+          '<p>- ¿Tengo el gusto de conversar con el Sr. / la Sra. XXXXXX?<br>' +
+          '- ¿Tengo el gusto de comunicarme con los padres de XXXXXX?</p>' +
+          '<p>Un gusto saludarle Sr./Sra. XXXXX, nos ponemos en contacto con usted en relación con la cita médica programada para el día de hoy a las XX a. m./p. m. con el especialista/médico xxxxx.</p>' +
+          '<p>Con el fin de garantizar la continuidad y calidad de su atención, será necesario realizar un ajuste en la programación de su cita, por lo que esta será reprogramada con otro médico/especialista de la misma especialidad, quien dará seguimiento a su proceso de atención.</p>' +
+          '<p>Le ofrecemos una disculpa por los inconvenientes que este cambio pueda ocasionarle y agradecemos de antemano su comprensión.</p>' +
+          '<p>Es por ello que contamos con disponibilidad de cita para el XX a las XX:XX am / pm. ¿Le parece bien a esa hora?</p>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'salienteMedicoYaNoSi\', [\'salienteMedicoYaNoNo\', \'salienteMedicoYaNoQuiere\'])">Sí</button>' +
+            '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'salienteMedicoYaNoNo\', [\'salienteMedicoYaNoSi\', \'salienteMedicoYaNoQuiere\'])">No</button>' +
+            '<button class="bib-btn" style="background:#EA580C" onclick="mostrarUno(\'salienteMedicoYaNoQuiere\', [\'salienteMedicoYaNoSi\', \'salienteMedicoYaNoNo\'])">Usuario no quiere reprogramar</button>' +
+          '</div>' +
+          '<div id="salienteMedicoYaNoSi" class="triage-resultado" style="display:none;">' +
+            '<p>Muchas gracias por su confirmación. Queda programada su cita para el día <strong>XX</strong> a las <strong>XX am / pm</strong> con medicina general / especialidad en <strong>XXXX</strong>.</p>' +
+            '<p>La programación de su cita, ya se encuentra disponible dentro de la sección <strong>*Mis Citas*</strong> en la aplicación DoctorSV.</p>' +
+          '</div>' +
+          '<div id="salienteMedicoYaNoNo" class="triage-resultado" style="display:none;">' +
+            '<p>¿Podría indicarnos el día y la hora que prefiere para agendar la cita?</p>' +
+            '<p style="color:#94A3B8; font-style:italic;">Menciona día y hora</p>' +
+            '<p>Muchas gracias por su confirmación. Queda programada su cita para el día <strong>XX</strong> a las <strong>XX am / pm</strong> con medicina general / especialidad en <strong>XXXX</strong>.</p>' +
+            '<p>La programación de su cita, ya se encuentra disponible dentro de la sección <strong>*Mis Citas*</strong> en la aplicación DoctorSV.</p>' +
+          '</div>' +
+          '<div id="salienteMedicoYaNoQuiere" class="triage-resultado" style="display:none;">' +
+            '<p>Comprendo lo que nos comenta. Agradecemos el tiempo que nos ha brindado y haber atendido nuestra llamada.</p>' +
+            '<p>En caso desea programar una nueva cita, puede comunicarse con nosotros al 136 o realizar el agendamiento a través de la aplicación DoctorSV.</p>' +
+            '<p>¿Le podemos asistir con alguna otra duda relacionada con DoctorSv?</p>' +
+            '<p>De acuerdo, un placer atenderle, estamos a la orden para apoyarle.</p>' +
+            '<p>¡Feliz día! / ¡Feliz tarde! / ¡Feliz noche!</p>' +
+          '</div>'
       }
     ]
   };
@@ -3940,6 +3982,18 @@
     });
     contSubTexto.style.display = 'block';
     contSubTexto.innerHTML = b.texto;
+  }
+
+  function cambiarPasoImagen(imgId, contadorId, delta) {
+    var img = document.getElementById(imgId);
+    if (!img) return;
+    var total = parseInt(img.getAttribute('data-total'), 10);
+    var actual = parseInt(img.getAttribute('data-paso'), 10) + delta;
+    actual = Math.max(1, Math.min(total, actual));
+    img.setAttribute('data-paso', actual);
+    img.src = img.getAttribute('data-patron').replace('{n}', actual);
+    var contador = document.getElementById(contadorId);
+    if (contador) contador.textContent = actual + ' / ' + total;
   }
 
   function toggleBloque(id) {
