@@ -1311,10 +1311,10 @@
           { label: 'Quiere paso a paso en la aplicación',
             texto:
               '<p>Le voy a ir diciendo el paso a paso para que usted mismo pueda ver la información.</p>' +
-              '<img id="imgPasoFarmacias" data-paso="1" data-total="6" data-patron="img/farmacias-paso-{n}.png" src="img/farmacias-paso-1.png" alt="Paso 1 de 6 para ubicar farmacias y laboratorios en la app" class="tarjeta-script-imagen" style="max-height:320px; width:auto; margin-left:auto; margin-right:auto;">' +
+              '<img id="imgPasoFarmacias" data-paso="1" data-total="7" data-patron="img/farmacias-paso-{n}.png" src="img/farmacias-paso-1.png" alt="Paso 1 de 7 para ubicar farmacias y laboratorios en la app" class="tarjeta-script-imagen" style="max-height:320px; width:auto; margin-left:auto; margin-right:auto;">' +
               '<div class="triage-acciones" style="justify-content:center; align-items:center; gap:14px; margin-top:12px;">' +
                 '<button class="bib-btn" onclick="cambiarPasoImagen(\'imgPasoFarmacias\', \'contadorPasoFarmacias\', -1)">&larr; Anterior</button>' +
-                '<span id="contadorPasoFarmacias" style="font-weight:600; color:#64748B; min-width:50px; text-align:center;">1 / 6</span>' +
+                '<span id="contadorPasoFarmacias" style="font-weight:600; color:#64748B; min-width:50px; text-align:center;">1 / 7</span>' +
                 '<button class="bib-btn" onclick="cambiarPasoImagen(\'imgPasoFarmacias\', \'contadorPasoFarmacias\', 1)">Siguiente &rarr;</button>' +
               '</div>'
           },
@@ -1927,10 +1927,10 @@
             '<div id="seguimientoNoTicket" class="triage-resultado" style="display:none;">' +
               '<p style="text-align:center; color:#64748B; font-style:italic;">Buscar el DUI o nombre del usuario en la sección de Solicitud de Seguimiento de TCA. ¿Existe? ¿La fecha del seguimiento está dentro del periodo de publicación de agenda?</p>' +
               '<div class="triage-acciones">' +
-                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'seguimientoNtHayCupo\', [\'seguimientoNtNoHayCupo\',\'seguimientoNtFueraAgenda\',\'seguimientoNtNoExiste\'])">Sí existe y hay cupo</button>' +
-                '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'seguimientoNtNoHayCupo\', [\'seguimientoNtHayCupo\',\'seguimientoNtFueraAgenda\',\'seguimientoNtNoExiste\'])">Sí existe pero no hay cupo</button>' +
-                '<button class="bib-btn btn-naranja" onclick="mostrarUno(\'seguimientoNtFueraAgenda\', [\'seguimientoNtHayCupo\',\'seguimientoNtNoHayCupo\',\'seguimientoNtNoExiste\'])">Sí existe, fuera de la agenda publicada</button>' +
-                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'seguimientoNtNoExiste\', [\'seguimientoNtHayCupo\',\'seguimientoNtNoHayCupo\',\'seguimientoNtFueraAgenda\'])">No existe</button>' +
+                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'seguimientoNtHayCupo\', [\'seguimientoNtNoHayCupo\',\'seguimientoNtFueraAgenda\',\'seguimientoNtNoExiste\']); document.getElementById(\'seguimientoNtTipificacion\').innerHTML = \'Gestión de citas &gt; Seguimiento &gt; Según sea el caso\';">Sí existe y hay cupo</button>' +
+                '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'seguimientoNtNoHayCupo\', [\'seguimientoNtHayCupo\',\'seguimientoNtFueraAgenda\',\'seguimientoNtNoExiste\']); document.getElementById(\'seguimientoNtTipificacion\').innerHTML = \'Gestión de citas &gt; Seguimiento &gt; Según sea el caso\';">Sí existe pero no hay cupo</button>' +
+                '<button class="bib-btn btn-naranja" onclick="mostrarUno(\'seguimientoNtFueraAgenda\', [\'seguimientoNtHayCupo\',\'seguimientoNtNoHayCupo\',\'seguimientoNtNoExiste\']); document.getElementById(\'seguimientoNtTipificacion\').innerHTML = \'Consultas &gt; Información general del servicio &gt; Proceso de referencia / seguimiento\';">Sí existe, fuera de la agenda publicada</button>' +
+                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'seguimientoNtNoExiste\', [\'seguimientoNtHayCupo\',\'seguimientoNtNoHayCupo\',\'seguimientoNtFueraAgenda\']); document.getElementById(\'seguimientoNtTipificacion\').innerHTML = \'Gestión de citas &gt; Seguimiento &gt; Según sea el caso\';">No existe</button>' +
               '</div>' +
               '<div id="seguimientoNtHayCupo" class="triage-resultado" style="display:none;">' +
                 '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
@@ -1959,7 +1959,7 @@
                 '<p>Le pedimos que se mantenga pendiente de su teléfono, que uno de nuestros agentes se pondrá en contacto para concretar el agendamiento de su cita.</p>' +
               '</div>' +
             '</div>' +
-            '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Seguimiento &gt; Según sea el caso</p>'
+            '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> <span id="seguimientoNtTipificacion">Gestión de citas &gt; Seguimiento &gt; Según sea el caso</span></p>'
         }
           ]
         },
