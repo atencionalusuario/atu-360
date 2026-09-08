@@ -62,6 +62,7 @@
   .instruccion { font-style: italic; color: #64748B; font-size: 0.86rem; font-family: 'Inter', sans-serif; }
   .sdp-botones { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
   #modalSubBotones { justify-content: center; margin-top: 18px; margin-bottom: 20px; }
+  #modalSubBotones.sdp-botones-columna { flex-direction: column; align-items: center; }
   .btn-col { display: flex; flex-direction: column; align-items: center; gap: 5px; }
   .instruccion-btn { max-width: 210px; text-align: center; margin: 0; }
   .bib-btn { background: #0F2070; color: white; padding: 8px 13px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; font-size: 0.73rem; font-family: 'Inter', sans-serif; transition: all 0.15s; min-width: 210px; text-align: center; }
@@ -967,7 +968,7 @@
   function abrirAgendarCitaNueva() {
     var citas = OPCIONES_CATEGORIA.gestion.find(function(x) { return x.label === 'Gestión de citas'; });
     var item = citas.hijos.find(function(x) { return x && x.label === 'Agendar cita nueva'; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
   }
 
   function abrirModificarCita() {
@@ -979,7 +980,7 @@
     var medicos = OPCIONES_CATEGORIA.incidencia.find(function(x) { return x.label === 'Médicos'; });
     var errores = medicos.hijos.find(function(x) { return x.label === 'Errores en los productos'; });
     var item = errores.hijos.find(function(x) { return x && x.label === 'Error en receta'; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
   }
 
   function abrirMedicamentoNoDisponible() {
@@ -987,20 +988,20 @@
     var tercerias = OPCIONES_CATEGORIA.incidencia.find(function(x) { return x.label === 'Tercerías'; });
     var farmacias = tercerias.hijos.find(function(x) { return x.label === 'Farmacias'; });
     var item = farmacias.hijos.find(function(x) { return x && x.label === 'Medicamento no disponible'; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
   }
 
   function abrirScriptPerfiles(label) {
     var perfiles = OPCIONES_CATEGORIA.gestion.find(function(x) { return x.label === 'Gestión de perfiles'; });
     var item = perfiles.hijos.find(function(x) { return x && x.label === label; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
   }
 
   function abrirActualizarDato(label) {
     var perfiles = OPCIONES_CATEGORIA.gestion.find(function(x) { return x.label === 'Gestión de perfiles'; });
     var actualizar = perfiles.hijos.find(function(x) { return x.label === 'Actualizar datos del usuario'; });
     var item = actualizar.hijos.find(function(x) { return x && x.label === label; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
   }
 
   var TEXTOS_SDP = {
@@ -1688,6 +1689,7 @@
       { label: 'Gestión de citas', hijos: [
         { label: 'Agendar cita nueva',
           ocultarFooter: true,
+          subBotonesVertical: true,
           texto:
             '<p>Con gusto le ayudamos en el proceso de hacer una nueva cita en la aplicación <strong>DoctorSV</strong>.</p>' +
             '<p>Me confirma, ¿la cita nueva sería para <strong>usted</strong> o <strong>para un familiar asociado a su perfil</strong>?</p>',
@@ -1783,7 +1785,7 @@
             '<div id="referenciaNoTicket" class="triage-resultado" style="display:none;">' +
               '<p style="text-align:center; color:#64748B; font-style:italic;">Buscar el DUI o nombre del usuario en la sección de Referencias de TCA.</p>' +
               '<p style="text-align:center;"><strong>¿Existe la referencia?</strong></p>' +
-              '<div class="triage-acciones">' +
+              '<div class="triage-acciones" style="flex-direction:column; align-items:center;">' +
                 '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'referenciaNtHayCupo\', [\'referenciaNtNoHayCupo\',\'referenciaNtSinReferencia\',\'referenciaNtMasDeUnMes\']); document.getElementById(\'refEspTipificacion\').innerHTML = \'<strong>Tipificación sugerida:</strong> Gestión de citas &gt; Referencia &gt; Referencia interna con especialista\';">Sí existe la referencia y hay cupo</button>' +
                 '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'referenciaNtNoHayCupo\', [\'referenciaNtHayCupo\',\'referenciaNtSinReferencia\',\'referenciaNtMasDeUnMes\']); document.getElementById(\'refEspTipificacion\').innerHTML = \'<strong>Tipificación sugerida:</strong> Gestión de citas &gt; Referencia &gt; Referencia interna con especialista\';">Sí existe la referencia pero no hay cupo</button>' +
                 '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'referenciaNtSinReferencia\', [\'referenciaNtHayCupo\',\'referenciaNtNoHayCupo\',\'referenciaNtMasDeUnMes\']); document.getElementById(\'refEspTipificacion\').innerHTML = \'<strong>Tipificación sugerida:</strong> Incidencias calidad médica &gt; Problemas con referencia interna &gt; No generó referencia interna o externa\';">Pasó consulta hace poco, no tiene referencia</button>' +
@@ -1925,7 +1927,7 @@
             '</div>' +
             '<div id="seguimientoNoTicket" class="triage-resultado" style="display:none;">' +
               '<p style="text-align:center; color:#64748B; font-style:italic;">Buscar el DUI o nombre del usuario en la sección de Solicitud de Seguimiento de TCA. ¿Existe? ¿La fecha del seguimiento está dentro del periodo de publicación de agenda?</p>' +
-              '<div class="triage-acciones">' +
+              '<div class="triage-acciones" style="flex-direction:column; align-items:center;">' +
                 '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'seguimientoNtHayCupo\', [\'seguimientoNtNoHayCupo\',\'seguimientoNtFueraAgenda\',\'seguimientoNtNoExiste\']); document.getElementById(\'seguimientoNtTipificacion\').innerHTML = \'Gestión de citas &gt; Seguimiento &gt; Según sea el caso\';">Sí existe y hay cupo</button>' +
                 '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'seguimientoNtNoHayCupo\', [\'seguimientoNtHayCupo\',\'seguimientoNtFueraAgenda\',\'seguimientoNtNoExiste\']); document.getElementById(\'seguimientoNtTipificacion\').innerHTML = \'Gestión de citas &gt; Seguimiento &gt; Según sea el caso\';">Sí existe pero no hay cupo</button>' +
                 '<button class="bib-btn btn-naranja" onclick="mostrarUno(\'seguimientoNtFueraAgenda\', [\'seguimientoNtHayCupo\',\'seguimientoNtNoHayCupo\',\'seguimientoNtNoExiste\']); document.getElementById(\'seguimientoNtTipificacion\').innerHTML = \'Consultas &gt; Información general del servicio &gt; Proceso de referencia / seguimiento\';">Sí existe, fuera de la agenda publicada</button>' +
@@ -3179,7 +3181,7 @@
       if (vistaActual && vistaActual.tarjetas) {
         irATarjeta(nodo.index);
       } else {
-        abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter);
+        abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
       }
     }
   }
@@ -3305,14 +3307,14 @@
     if (op && op.hijos) {
       pushVistaOpciones(op.label, op.hijos, op.vistaTarjetas, op.pregunta);
     } else if (op && op.texto) {
-      abrirModalTexto(op.tituloModal || op.label, op.texto, op.tipificacion, op.subBotones, op.ocultarFooter);
+      abrirModalTexto(op.tituloModal || op.label, op.texto, op.tipificacion, op.subBotones, op.ocultarFooter, op.subBotonesVertical);
       if (op.alerta) abrirModalTip(op.alerta);
     }
   }
 
   var subBotonesActuales = [];
 
-  function abrirModalTexto(titulo, texto, tipificacion, subBotones, ocultarFooter) {
+  function abrirModalTexto(titulo, texto, tipificacion, subBotones, ocultarFooter, subBotonesVertical) {
     document.getElementById('modalTituloTexto').textContent = titulo;
     document.getElementById('modalCuerpoTexto').innerHTML = texto;
 
@@ -3321,6 +3323,7 @@
     var contSubTexto = document.getElementById('modalSubTexto');
     contSubTexto.style.display = 'none';
     contSubTexto.innerHTML = '';
+    contBotones.classList.toggle('sdp-botones-columna', !!subBotonesVertical);
     if (subBotonesActuales.length) {
       contBotones.style.display = 'flex';
       contBotones.innerHTML = subBotonesActuales.map(function(b, i) {
