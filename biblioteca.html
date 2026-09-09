@@ -2840,16 +2840,18 @@
               '</div>' +
               '<div id="itTroubleshootingNo" class="triage-resultado" style="display:none;">' +
                 '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070; text-align:center;">Incidencias técnicas</h4>' +
-                '<p>Lamentamos lo sucedido y <strong>agradecemos su paciencia al respecto.</strong> Le comento que procederé a <strong>crear el reporte del caso</strong> para que nuestro equipo técnico realice las verificaciones y ajustes correspondientes.</p>' +
+                '<p>Lamentamos lo sucedido y <strong>agradecemos su paciencia al respecto.</strong> Le comento que procederé a <strong>crear el reporte del caso</strong> para que sea solucionado a la brevedad posible.</p>' +
                 '<p>Para complementar el reporte, ¿nos podría enviar una <strong>captura de pantalla</strong> donde se pueda evidenciar el problema presentado?</p>' +
-                '<p>Esta captura la puede enviar al correo <strong>soporte@doctorsv.gob.sv</strong></p>' +
+                '<p>Esta captura la puede enviar al correo <strong>soporte@doctorsv.gob.sv</strong> Por favor, envíe esta imagen al correo o a nuestro WhatsApp <strong>2397-2600</strong> para brindarle el seguimiento correspondiente.</p>' +
                 '<p>Le solicitamos que, por favor, <strong>se mantenga a la espera</strong> de nuestro contacto, ya que <strong>nos comunicaremos con usted lo antes posible</strong>.</p>' +
                 '<p>Le haremos seguimiento a su reporte a través del <strong>número ticket</strong> XXXXXXXXXXXX. Si gusta puede anotarlo.</p>' +
                 '<p><strong>Lamentamos los inconvenientes que esto haya podido causar.</strong> Le estaremos contactando a la brevedad.</p>' +
+                '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Incidencias técnicas &gt; Según sea el caso &gt; Según sea el caso</p>' +
               '</div>' +
             '</div>'
         },
         { label: 'Aplicación no disponible / en mantenimiento',
+          tipificacion: 'Incidencias técnicas > App no disponible o en mantenimiento',
           alerta:
             '<p><strong>Este script sólo debe ser utilizado bajo aprobación expresa del supervisor.</strong></p>',
           texto:
@@ -2884,7 +2886,7 @@
               '¿El número de celular registrado en la aplicación es correcto y está activo?<br>' +
               '¿Su teléfono tiene señal en este momento?<br>' +
               '¿Ha revisado su bandeja de mensajes de texto (SMS)?</p>' +
-              '<p>Gracias por sus respuestas. En este momento crearé un reporte para que nuestro equipo técnico revise su caso. ¿Nos puede compartir, por favor, su compañía movil, modelo de Telefono y tipo de sistema operativo (Android o iOS)?</p>' +
+              '<p>Gracias por sus respuestas. En este momento crearé un reporte para que pueda ser escalado al área correspondiente. ¿Nos puede compartir, por favor, su compañía movil, modelo de Telefono y tipo de sistema operativo (Android o iOS)?</p>' +
               '<p>Gracias. Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
             '</div>' +
             '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">Posibles códigos de error</h4>' +
@@ -2904,6 +2906,7 @@
         },
         { label: 'Tamaño de fuente',
           tituloModal: 'Tamaño de fuente',
+          tipificacion: 'Incidencias técnicas > Problemas con configuración de teléfono > Tamaño de letra muy grande',
           texto:
             '<p>Muchas gracias. Para poder asistirle con su solicitud, ¿me puede indicar el <strong>modelo de su dispositivo móvil</strong> y el <strong>sistema operativo</strong> que utiliza?</p>' +
             '<div class="triage-criterios-grid">' +
