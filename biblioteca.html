@@ -1535,6 +1535,12 @@
           '<p><strong>2) Aplicación en otra sucursal de la misma cadena:</strong> Si la farmacia donde retiró el medicamento no cuenta con servicio de inyectología, usted puede acudir a otra sucursal de la misma cadena que sí brinde este servicio.</p>' +
           '<p>Tenga en cuenta que deberá presentar el QR o el número de la receta, para que la farmacia pueda verificar cuándo y en qué sucursal retiró el medicamento.</p>' +
           '<p><strong>Importante:</strong> Tenga en cuenta que debe ser en otra sucursal de la MISMA cadena.</p>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn" onclick="toggleBloque(\'inyeccionMenorEdad\')">Es para un menor de edad</button>' +
+          '</div>' +
+          '<div id="inyeccionMenorEdad" class="triage-resultado" style="display:none;">' +
+            '<p>Si es un menor, el proveedor puede solicitar la firma del padre, madre o responsable del menor. Por razones de seguridad, el servicio de inyectología no se brinda a bebés de un año o menos.</p>' +
+          '</div>' +
           '<p><strong>3) Un proveedor de atención presencial:</strong> En caso que usted no cuente con ninguna farmacia con el servicio de inyectología cerca, le puedo ayudar para que pueda ser atendido en un establecimiento de la red de atención presencial.</p>' +
           '<p>¿Desea que le ayude con la información sobre la ubicación de las farmacias con este servicio?</p>' +
           '<div class="triage-acciones">' +
@@ -1542,7 +1548,7 @@
           '</div>'
       }
     ] },
-    { label: 'Dudas sobre las funciones de la aplicación', vistaTarjetas: true, hijos: [
+    { label: 'Dudas sobre secciones de la aplicación', vistaTarjetas: true, hijos: [
       { label: 'Cómo cambiar la contraseña',
         tipificacion: 'Consultas > Funciones de la aplicación > Cómo cambiar la contraseña',
         texto:
@@ -1869,7 +1875,7 @@
                 '</p>' +
               '</div>' +
               '<div id="referenciaNtSinReferencia" class="triage-resultado" style="display:none;">' +
-                '<p>Comprendo Sr/Sra. XXXX. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+                '<p>Comprendo Sr/Sra. XXXX. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
                 '<p>¿Me podría indicar, por favor, el <strong>nombre y apellido del médico/a</strong> y la <strong>fecha y hora de la cita</strong>?</p>' +
                 '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
                 '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
@@ -2534,7 +2540,7 @@
                 '</div>' +
                 '<div id="calidadNoConectoGeneralNo" class="triage-resultado" style="display:none;">' +
                   '<p>Le pedimos nuevamente disculpas por los inconvenientes.</p>' +
-                  '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser escalado a la gerencia y se puedan tomar las acciones internas correspondientes.</p>' +
+                  '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser escalado al área correspondiente y se puedan tomar las acciones internas correspondientes.</p>' +
                   '<p>¿Me podría indicar, por favor, el nombre y apellido del médico/a y la fecha y hora de la cita?</p>' +
                   '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
                 '</div>' +
@@ -2554,7 +2560,7 @@
                 '</div>' +
                 '<div id="calidadNoConectoEspecialistaNo" class="triage-resultado" style="display:none;">' +
                   '<p>Le pedimos nuevamente disculpas por los inconvenientes.</p>' +
-                  '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser escalado a la gerencia y se puedan tomar las acciones internas correspondientes.</p>' +
+                  '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser escalado al área correspondiente y se puedan tomar las acciones internas correspondientes.</p>' +
                   '<p>¿Me podría indicar, por favor, el nombre y apellido del médico/a y la fecha y hora de la cita?</p>' +
                   '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
                 '</div>' +
@@ -2565,7 +2571,7 @@
               tipificacion: 'Incidencias calidad médica > Según sea el caso',
               tituloModal: 'Otras inconformidades/ errores en la consulta',
               texto:
-                '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+                '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
                 '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
                 '<p>¿Me podría indicar, por favor, el <strong>nombre y apellido del médico/a</strong> y la <strong>fecha y hora de la cita</strong>?</p>' +
                 '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
@@ -2713,7 +2719,7 @@
           { label: 'Calidad del servicio laboratorios',
             tipificacion: 'Incidencias con laboratorios > Calidad del servicio laboratorios > Según sea el caso',
             texto:
-              '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+              '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
               '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
               '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
               '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
@@ -2746,7 +2752,7 @@
           { label: 'Calidad del servicio centros de imágenes',
             tipificacion: 'Incidencias con centros de imágenes > Calidad del servicio centros de imágenes > Según sea el caso',
             texto:
-              '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+              '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
               '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
               '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
               '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
@@ -2779,7 +2785,7 @@
           { label: 'Calidad del servicio prod. presenciales',
             tipificacion: 'Incidencias con centros de procedimientos presenciales > Calidad del servicio prod. presenciales > Según sea el caso',
             texto:
-              '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+              '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
               '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
               '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
               '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
@@ -2946,7 +2952,7 @@
           texto:
             '<p>Comprendo, Sr/Sra. XXXX. Lamentamos sinceramente lo que nos comenta.</p>' +
             '<p>Su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>.</p>' +
-            '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>'
+            '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente</strong> y se puedan tomar las acciones internas correspondientes.</p>'
         },
         { label: 'Inconformidad con medicamentos / estudios disponibles',
           tituloModal: 'Medicamentos / Estudios disponibles',
@@ -2954,7 +2960,7 @@
           texto:
             '<p>Comprendo, Sr/Sra. XXXX. Lamentamos sinceramente lo que nos comenta.</p>' +
             '<p>Su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>.</p>' +
-            '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+            '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
             '<p>¿Me podría informar cuál es el medicamento / estudio en el que está interesado?</p>' +
             '<p>Muchas gracias por la información, le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido, ya que nos permite mejorar cada día.</p>'
         },
@@ -2964,7 +2970,7 @@
           texto:
             '<p>Comprendo, Sr/Sra. XXXX. Lamentamos sinceramente lo que nos comenta.</p>' +
             '<p>Su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>.</p>' +
-            '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+            '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
             '<p>¿Me podría indicar cuál es su departamento y la zona donde le gustaría que se incrementara la cobertura?</p>' +
             '<p>Muchas gracias por la información, le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido, ya que nos permite mejorar cada día.</p>'
         },
@@ -2972,7 +2978,7 @@
           tituloModal: 'No homologación de constancia médica',
           tipificacion: 'Incidencias operativas > Inconformidad por no homologación de constancia médica',
           texto:
-            '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia.</strong></p>' +
+            '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente.</strong></p>' +
             '<p>Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>'
         },
         { label: 'Inconformidad con referencia externa',
@@ -2980,7 +2986,7 @@
           texto:
             '<p>Comprendo, Sr/Sra. XXXX. Lamentamos sinceramente lo que nos comenta.</p>' +
             '<p>Su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>.</p>' +
-            '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+            '<p>En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
             '<p>¿Me podría informar a <strong>cuál establecimiento visitó</strong>? ¿Me podría confirmar a <strong>qué institución pertenece</strong>?</p>' +
             '<p style="color:#64748B; font-style:italic;">Completar campos del SDP con la información descrita por el usuario</p>' +
             '<p>Muchas gracias por la información, le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido, ya que nos permite mejorar cada día.</p>'
@@ -2988,7 +2994,7 @@
         { label: 'Incidencias con centro de soporte',
           tipificacion: 'Incidencias con centro de soporte > Según sea el caso',
           texto:
-            '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado a la gerencia</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
+            '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
             '<p>Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido. También le comento que se le dará seguimiento a su reporte a través del <strong>ticket nro XXXXXXX</strong>.</p>' +
             '<p style="color:#64748B; font-style:italic;">NOTA INTERNA: En los casos en los que la queja o denuncia tenga relación a la atención de un medico/agente de call center u otro; <strong>es importante solicitar el nombre de la persona, el cargo, fecha y hora del inconveniente y la descripción del caso.</strong></p>'
         }
