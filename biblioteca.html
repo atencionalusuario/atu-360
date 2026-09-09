@@ -546,6 +546,8 @@
       </div>
     </div>
 
+    <img id="imgReferenciaCategoria" src="" alt="" style="display:none; max-width:640px; width:100%; margin:4px auto 0; border-radius:8px; border:1px solid #E2E8F0;">
+
     <div class="bib-saludo" id="cajaOpcionesCategoria">
       <h3 id="tituloCategoria" class="titulo-categoria"></h3>
       <div class="categoria-opciones" id="opcionesCategoria"></div>
@@ -1242,6 +1244,12 @@
     consulta: '¿Qué tipo de información necesita el usuario?',
     gestion: '¿Qué gestión necesita el usuario que hagamos?',
     incidencia: '¿Con qué área está relacionada la falla?'
+  };
+  var IMAGENES_REFERENCIA_CATEGORIA = {
+    'Gestión de recetas / órdenes': {
+      src: 'img/vigencia-reactivacion-recetas-ordenes.png',
+      alt: 'Vigencia y reactivación de los productos de la consulta'
+    }
   };
 
   var ARBOL_CONSULTA = [
@@ -3274,6 +3282,17 @@
     var preguntaBusqueda = esPreguntaPropia ? vista.tituloVista : CATEGORIAS_CON_BUSQUEDA[categoriaActualId];
     document.getElementById('cajaBusquedaCategoria').style.display = preguntaBusqueda ? 'block' : 'none';
     if (preguntaBusqueda) document.getElementById('preguntaCategoria').textContent = preguntaBusqueda;
+
+    var imgRef = document.getElementById('imgReferenciaCategoria');
+    var infoImg = IMAGENES_REFERENCIA_CATEGORIA[vista.titulo];
+    if (infoImg) {
+      imgRef.src = infoImg.src;
+      imgRef.alt = infoImg.alt;
+      imgRef.style.display = 'block';
+    } else {
+      imgRef.style.display = 'none';
+      imgRef.src = '';
+    }
 
     document.getElementById('vistaCategoria').classList.toggle('vista-categoria-ancha', !!vista.tarjetas);
 
