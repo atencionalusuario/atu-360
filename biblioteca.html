@@ -975,6 +975,12 @@
     abrirModalTexto('Modificar cita', TEXTO_MODIFICAR_CITA);
   }
 
+  function abrirUbicacionFarmacias() {
+    var dudas = ARBOL_CONSULTA.find(function(x) { return x.label === 'Dudas generales del servicio'; });
+    var item = dudas.hijos.find(function(x) { return x && x.label === 'Ubicación de farmacias / laboratorios'; });
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+  }
+
   function abrirErrorEnReceta() {
     cerrarModalTip();
     var medicos = OPCIONES_CATEGORIA.incidencia.find(function(x) { return x.label === 'Médicos'; });
@@ -1503,7 +1509,22 @@
               '<p>Una vez estén disponibles en ese estado, se habilitará la opción para agendar su cita de seguimiento en el <strong>Programa de Crónicos</strong>, donde el médico evaluará su estado de salud y realizará la lectura e interpretación de los resultados de sus exámenes.</p>' +
             '</div>'
         }
-      ] }
+      ] },
+      { label: 'Inyección de medicamento',
+        texto:
+          '<p>Con gusto le guío para que usted pueda administrase su medicamento. Le diré las opciones que existen con su nivel de prioridad:</p>' +
+          '<p><strong>1) Aplicación en la misma farmacia donde retiró el medicamento:</strong> La primera opción es que solicite la inyección en la misma farmacia donde retiró el medicamento. Debe consultar previamente los horarios del servicio de inyectología, ya que este puede no estar disponible durante todo el horario de atención.</p>' +
+          '<p>Si retiró el medicamento fuera del horario de este servicio, deberá regresar durante el horario indicado por la farmacia.</p>' +
+          '<p>Tome en cuenta que, como parte de los procedimientos de control interno del proveedor, es posible que le soliciten brindar su consentimiento verbal o escrito antes de la aplicación del medicamento.</p>' +
+          '<p><strong>2) Aplicación en otra sucursal de la misma cadena:</strong> Si la farmacia donde retiró el medicamento no cuenta con servicio de inyectología, usted puede acudir a otra sucursal de la misma cadena que sí brinde este servicio.</p>' +
+          '<p>Tenga en cuenta que deberá presentar el QR o el número de la receta, para que la farmacia pueda verificar cuándo y en qué sucursal retiró el medicamento.</p>' +
+          '<p><strong>Importante:</strong> Tenga en cuenta que debe ser en otra sucursal de la MISMA cadena.</p>' +
+          '<p><strong>3) Un proveedor de atención presencial:</strong> En caso que usted no cuente con ninguna farmacia con el servicio de inyectología cerca, le puedo ayudar para que pueda ser atendido en un establecimiento de la red de atención presencial.</p>' +
+          '<p>¿Desea que le ayude con la información sobre la ubicación de las farmacias con este servicio?</p>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn" onclick="abrirUbicacionFarmacias()">Ir a Ubicación de farmacias / laboratorios</button>' +
+          '</div>'
+      }
     ] },
     { label: 'Dudas sobre las funciones de la aplicación', vistaTarjetas: true, hijos: [
       { label: 'Cómo cambiar la contraseña',
