@@ -2661,21 +2661,21 @@
               '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
               '<p>Nos gustaría hacerle la siguiente consulta: ¿usted recibió un medicamento errado? ¿Ya empezó a tomar el medicamento?</p>' +
               '<div class="triage-acciones">' +
-                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'dispensacionSiConsumio\', [])">Sí lo consumió</button>' +
+                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'dispensacionSiConsumio\', \'dispensacionNoConsumio\')">Sí lo consumió</button>' +
+                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'dispensacionNoConsumio\', \'dispensacionSiConsumio\')">No lo ha consumido</button>' +
               '</div>' +
               '<div id="dispensacionSiConsumio" class="triage-resultado" style="display:none;">' +
                 '<p>En este caso, nos gustaría asegurarnos que no haya afectaciones a su salud.</p>' +
                 '<p>En este momento, si usted está de acuerdo, le transferiré la llamada con uno de nuestros médicos de apoyo para que evalúe su caso y le pueda brindar las recomendaciones necesarias.</p>' +
                 '<p>Voy a transferir la llamada, por favor no cuelgue.</p>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Tipificación 1: Consultas.<br>Tipificación 2: Orientación de salud<br>Tipificación 3: Sobre indicaciones medicas<br>Estado: MED Triage</p>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Instrucción: Crear dos tickets.<br>1) Consultas &gt; Orientación de salud &gt; Sobre indicaciones medicas. Estado: MED Triage.<br>2) Incidencias con farmacias &gt; Error en dispensación &gt; Entrega errónea de medicamento</p>' +
               '</div>' +
-              '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070; margin:16px 0 8px;">No lo ha consumido:</h4>' +
-              '<div class="triage-resultado">' +
+              '<div id="dispensacionNoConsumio" class="triage-resultado" style="display:none;">' +
                 '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de la receta</strong>?</p>' +
                 '<p>Muchas gracias. Agregaré toda la información a un reporte. Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-              '</div>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* ID de la receta</p>'
+                '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* ID de la receta</p>' +
+              '</div>'
           },
           { label: 'Medicamento no disponible',
             tipificacion: 'Incidencias con farmacias > Medicamento no disponible',
