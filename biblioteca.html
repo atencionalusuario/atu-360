@@ -859,6 +859,7 @@
     <button class="modal-close" onclick="cerrarModalPreguntasSeguridad()">&times;</button>
     <h3 class="modal-titulo">Preguntas de seguridad</h3>
     <p class="instruccion" style="margin-bottom:14px;">El agente debe hacer las 3 preguntas seleccionadas y marcar si el usuario respondió correcta o incorrectamente. Necesita <strong>2 de 3</strong> correctas para pasar la validación.</p>
+    <p style="color:#64748B; font-style:italic; margin-bottom:14px;">Instrucción: Validar las respuestas del usuario con información disponible en TCA.</p>
     <div id="preguntasSeguridadLista"></div>
     <div id="resultadoSeguridad"></div>
     <div class="triage-acciones">
@@ -2823,6 +2824,7 @@
               '¿Ya ha intentado <strong>cerrar e iniciar sesión</strong>?<br>' +
               '¿Ha intentado <strong>borrar el caché</strong> de la app?</p>' +
               '<p>¿Podríamos revisar si tiene actualizada la aplicación?</p>' +
+              '<img src="img/version-app-perfil.jpg" alt="Referencia: dónde ver la versión de la aplicación en la sección Perfil" class="tarjeta-script-imagen" style="max-height:220px; width:auto; margin-left:auto; margin-right:auto;">' +
               '<p style="color:#64748B;">Si es problema para conectarse a la cita:</p>' +
               '<p>¿Tiene descargada la última versión del Google Meet?<br>' +
               '¿Tiene Google Hangouts instalado?</p>' +
@@ -3926,15 +3928,17 @@
     var resultadoDiv = document.getElementById('psResultado_' + prefix);
     if (resultadoDiv) resultadoDiv.innerHTML = '';
 
-    document.getElementById('psPreguntas_' + prefix).innerHTML = elegidas.map(function(idx, i) {
-      return '<div class="pregunta-seguridad-caja">' +
-        '<p>' + (i + 1) + ') ' + PREGUNTAS_SEGURIDAD[idx] + '</p>' +
-        '<div class="triage-acciones">' +
-          '<button class="bib-btn pregunta-seguridad-btn correcta" onclick="marcarRespuestaSeguridadInline(\'' + prefix + '\', ' + idx + ', true, this)">Correcta</button>' +
-          '<button class="bib-btn pregunta-seguridad-btn incorrecta" onclick="marcarRespuestaSeguridadInline(\'' + prefix + '\', ' + idx + ', false, this)">Incorrecta</button>' +
-        '</div>' +
-      '</div>';
-    }).join('');
+    document.getElementById('psPreguntas_' + prefix).innerHTML =
+      '<p style="color:#64748B; font-style:italic; margin-bottom:12px;">Instrucción: Validar las respuestas del usuario con información disponible en TCA.</p>' +
+      elegidas.map(function(idx, i) {
+        return '<div class="pregunta-seguridad-caja">' +
+          '<p>' + (i + 1) + ') ' + PREGUNTAS_SEGURIDAD[idx] + '</p>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn pregunta-seguridad-btn correcta" onclick="marcarRespuestaSeguridadInline(\'' + prefix + '\', ' + idx + ', true, this)">Correcta</button>' +
+            '<button class="bib-btn pregunta-seguridad-btn incorrecta" onclick="marcarRespuestaSeguridadInline(\'' + prefix + '\', ' + idx + ', false, this)">Incorrecta</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
   }
 
   function marcarRespuestaSeguridadInline(prefix, idx, correcta, boton) {
