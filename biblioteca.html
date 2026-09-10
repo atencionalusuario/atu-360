@@ -2883,6 +2883,7 @@
         },
         { label: 'No llega el código OTP',
           tituloModal: 'Recomendaciones para recibir código OTP.',
+          tipificacion: 'Incidencias técnicas > No llega el código de verificación',
           texto:
             '<p>Muchas gracias por su confirmación. En caso de que aún no reciba su código OTP, le recomiendo validar lo siguiente:</p>' +
             '<ol>' +
@@ -3409,7 +3410,7 @@
       contBotones.innerHTML = '';
     }
 
-    document.querySelector('#modalTexto .modal-tipificacion').style.display = (ocultarFooter || !tipificacion) ? 'none' : 'block';
+    document.querySelector('#modalTexto > .modal-tipificacion').style.display = (ocultarFooter || !tipificacion) ? 'none' : 'block';
     document.querySelector('#modalTexto .modal-footer').style.display = ocultarFooter ? 'none' : 'flex';
     document.getElementById('modalTipificacion').textContent = tipificacion || '';
     var panel = document.getElementById('modalTexto');
