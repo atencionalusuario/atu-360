@@ -78,6 +78,7 @@
   .pregunta-categoria { font-size: 1.1rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 6px; }
   .caja-busqueda-cat .instruccion { display: block; margin-bottom: 14px; }
   .busqueda-input-wrap { position: relative; max-width: 420px; margin: 0 auto; }
+  #accesoBusquedaMenu.busqueda-input-wrap { max-width: 640px; }
   .busqueda-input-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #94A3B8; pointer-events: none; }
   .busqueda-input-wrap input { width: 100%; padding: 10px 14px 10px 38px; border-radius: 999px; border: 1.5px solid #E2E8F0; background: #F8FAFC; font-size: 0.85rem; font-family: 'Inter', sans-serif; outline: none; color: #1E293B; }
   .busqueda-input-wrap input:focus { border-color: #29ABE2; background: white; }
@@ -2712,7 +2713,7 @@
                 '</div>' +
               '</div>' +
               '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* ID de la receta</p>'
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* ID de la receta<br>* Medicamento</p>'
           }
         ] },
         { label: 'Laboratorios', hijos: [
@@ -2723,7 +2724,16 @@
               '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
               '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
               '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>' +
+              '<p style="color:#64748B; font-style:italic;">Sólo si tiene aún el estudio pendiente:</p>' +
+              '<p>¿Desea que le ofrezca otra opción de laboratorio para que se haga su estudio?</p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn btn-si-verde" onclick="abrirUbicacionFarmacias()">Sí</button>' +
+                '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'calidadLabNo\', [])">No</button>' +
+              '</div>' +
+              '<div id="calidadLabNo" class="triage-resultado" style="display:none;">' +
+                '<p>De acuerdo, nuevamente le agradecemos por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
+              '</div>'
           },
           { label: 'Error en procesamiento de estudios',
             tipificacion: 'Incidencias con laboratorios > Error en procesamiento de estudios',
