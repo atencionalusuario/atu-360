@@ -124,11 +124,16 @@
   .tarjeta-script .modal-tipificacion { margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9; font-size: 0.78rem; }
 
   .cintillo-lateral { position: fixed; top: 50%; right: 0; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; background: white; padding: 10px 8px; border-radius: 14px 0 0 14px; box-shadow: -3px 0 16px rgba(15,32,112,0.14); border: 1px solid #E2E8F0; border-right: none; z-index: 50; }
-  .panel-temporizador { position: fixed; top: 50%; right: 74px; transform: translateY(-50%); background: white; border: 1px solid #E2E8F0; border-radius: 14px; box-shadow: -3px 0 16px rgba(15,32,112,0.14); padding: 18px 20px; z-index: 51; display: none; flex-direction: column; align-items: center; gap: 10px; width: 160px; }
+  .panel-temporizador { position: fixed; background: white; border: 1px solid #E2E8F0; border-radius: 14px; box-shadow: -3px 0 16px rgba(15,32,112,0.14); padding: 10px 20px 18px; z-index: 51; display: none; flex-direction: column; align-items: center; gap: 10px; width: 160px; }
   .panel-temporizador.open { display: flex; }
+  .panel-temporizador-drag { width: 100%; display: flex; justify-content: center; align-items: center; height: 16px; cursor: move; color: #CBD5E1; touch-action: none; }
+  .panel-temporizador-drag svg { width: 22px; height: 16px; }
+  .panel-temporizador-drag:hover { color: #94A3B8; }
   .panel-temporizador-display { font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 700; color: #0F2070; letter-spacing: 1px; }
   .panel-temporizador-display.alerta { color: #DC2626; }
   .panel-temporizador-display.vibrando { animation: vibrarTemporizador 0.15s linear 6; }
+  .panel-temporizador-display.terminado { animation: parpadearTemporizador 1s ease-in-out infinite; }
+  @keyframes parpadearTemporizador { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
   @keyframes vibrarTemporizador {
     0%, 100% { transform: translateX(0); }
     20% { transform: translateX(-4px); }
@@ -617,6 +622,9 @@
 </div>
 
 <div class="panel-temporizador" id="panelTemporizador">
+  <div class="panel-temporizador-drag" id="panelTemporizadorDrag" title="Arrastrar para mover">
+    <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="8" cy="6" r="1.4"/><circle cx="16" cy="6" r="1.4"/><circle cx="8" cy="12" r="1.4"/><circle cx="16" cy="12" r="1.4"/><circle cx="8" cy="18" r="1.4"/><circle cx="16" cy="18" r="1.4"/></svg>
+  </div>
   <div class="panel-temporizador-display" id="temporizadorDisplay">01:30</div>
   <div class="panel-temporizador-botones">
     <button onclick="iniciarTemporizador()" id="btnTemporizadorIniciar">Iniciar</button>
@@ -3730,8 +3738,28 @@
     document.getElementById('panelTemporizador').classList.toggle('open');
   }
 
+  function reproducirAlarmaTemporizador() {
+    try {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [0, 0.35, 0.7].forEach(function(delay) {
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.001, ctx.currentTime + delay);
+        gain.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + delay + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.28);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + delay);
+        osc.stop(ctx.currentTime + delay + 0.3);
+      });
+    } catch (e) { /* audio no disponible en este navegador */ }
+  }
+
   function iniciarTemporizador() {
     if (temporizadorIntervalo) return;
+    document.getElementById('temporizadorDisplay').classList.remove('terminado');
     document.getElementById('btnTemporizadorIniciar').textContent = 'Pausar';
     document.getElementById('btnTemporizadorIniciar').onclick = pausarTemporizador;
     temporizadorIntervalo = setInterval(function() {
@@ -3743,8 +3771,12 @@
         document.getElementById('btnTemporizadorIniciar').textContent = 'Iniciar';
         document.getElementById('btnTemporizadorIniciar').onclick = iniciarTemporizador;
         var display = document.getElementById('temporizadorDisplay');
-        display.classList.add('vibrando');
+        display.classList.add('vibrando', 'terminado');
         setTimeout(function() { display.classList.remove('vibrando'); }, 1000);
+        reproducirAlarmaTemporizador();
+        if (!document.getElementById('panelTemporizador').classList.contains('open')) {
+          toggleTemporizador();
+        }
       }
     }, 1000);
   }
@@ -3761,9 +3793,74 @@
     temporizadorIntervalo = null;
     temporizadorSegundos = TEMPORIZADOR_INICIAL;
     actualizarDisplayTemporizador();
+    document.getElementById('temporizadorDisplay').classList.remove('terminado');
     document.getElementById('btnTemporizadorIniciar').textContent = 'Iniciar';
     document.getElementById('btnTemporizadorIniciar').onclick = iniciarTemporizador;
   }
+
+  (function initArrastreTemporizador() {
+    var panel = document.getElementById('panelTemporizador');
+    var asa = document.getElementById('panelTemporizadorDrag');
+    if (!panel || !asa) return;
+
+    function posicionPorDefecto() {
+      var rect = panel.getBoundingClientRect();
+      var w = rect.width || 160;
+      var h = rect.height || 150;
+      panel.style.left = (window.innerWidth - 74 - w) + 'px';
+      panel.style.top = ((window.innerHeight - h) / 2) + 'px';
+    }
+
+    try {
+      var guardada = JSON.parse(localStorage.getItem('atu360_temporizador_pos') || 'null');
+      if (guardada && typeof guardada.left === 'number' && typeof guardada.top === 'number') {
+        panel.style.left = guardada.left + 'px';
+        panel.style.top = guardada.top + 'px';
+      } else {
+        posicionPorDefecto();
+      }
+    } catch (e) {
+      posicionPorDefecto();
+    }
+
+    var arrastrando = false;
+    var offsetX = 0, offsetY = 0;
+
+    asa.addEventListener('pointerdown', function(e) {
+      arrastrando = true;
+      asa.setPointerCapture(e.pointerId);
+      var rect = panel.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+    });
+
+    asa.addEventListener('pointermove', function(e) {
+      if (!arrastrando) return;
+      var w = panel.offsetWidth, h = panel.offsetHeight;
+      var left = Math.min(Math.max(0, e.clientX - offsetX), window.innerWidth - w);
+      var top = Math.min(Math.max(0, e.clientY - offsetY), window.innerHeight - h);
+      panel.style.left = left + 'px';
+      panel.style.top = top + 'px';
+    });
+
+    function soltar(e) {
+      if (!arrastrando) return;
+      arrastrando = false;
+      try {
+        localStorage.setItem('atu360_temporizador_pos', JSON.stringify({ left: parseFloat(panel.style.left), top: parseFloat(panel.style.top) }));
+      } catch (e2) { /* localStorage no disponible */ }
+    }
+    asa.addEventListener('pointerup', soltar);
+    asa.addEventListener('pointercancel', soltar);
+
+    window.addEventListener('resize', function() {
+      var rect = panel.getBoundingClientRect();
+      var left = Math.min(rect.left, window.innerWidth - panel.offsetWidth);
+      var top = Math.min(rect.top, window.innerHeight - panel.offsetHeight);
+      panel.style.left = Math.max(0, left) + 'px';
+      panel.style.top = Math.max(0, top) + 'px';
+    });
+  })();
 
   function abrirModalRecursos() {
     document.getElementById('modalRecursos').classList.add('open');
