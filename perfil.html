@@ -33,6 +33,10 @@
   }
   .field input:focus, .field select:focus { border-color: #1A3DAA; background: white; }
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .pass-wrap { position: relative; }
+  .pass-wrap input { padding-right: 40px !important; }
+  .pass-eye { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #94A3B8; display: flex; }
+  .pass-eye:hover { color: #64748B; }
   .toggle-wrap { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 7px; background: #F8FAFC; cursor: pointer; }
   .toggle { width: 36px; height: 20px; border-radius: 10px; background: #E2E8F0; position: relative; transition: background 0.2s; flex-shrink: 0; }
   .toggle.on { background: #1A3DAA; }
@@ -108,16 +112,25 @@
       <div class="card-sub">Elige una contraseña segura de al menos 8 caracteres.</div>
       <div class="field">
         <label>Contraseña actual</label>
-        <input type="password" id="passActual" placeholder="Tu contraseña actual">
+        <div class="pass-wrap">
+          <input type="password" id="passActual" placeholder="Tu contraseña actual">
+          <span class="pass-eye" onclick="togglePass('passActual', this)">👁</span>
+        </div>
       </div>
       <div class="field-row">
         <div class="field">
           <label>Nueva contraseña</label>
-          <input type="password" id="passNueva" placeholder="Mínimo 8 caracteres">
+          <div class="pass-wrap">
+            <input type="password" id="passNueva" placeholder="Mínimo 8 caracteres">
+            <span class="pass-eye" onclick="togglePass('passNueva', this)">👁</span>
+          </div>
         </div>
         <div class="field">
           <label>Confirmar contraseña</label>
-          <input type="password" id="passConfirm" placeholder="Repite la nueva contraseña">
+          <div class="pass-wrap">
+            <input type="password" id="passConfirm" placeholder="Repite la nueva contraseña">
+            <span class="pass-eye" onclick="togglePass('passConfirm', this)">👁</span>
+          </div>
         </div>
       </div>
       <button class="btn-save" id="btnPass" onclick="cambiarPassword()">Actualizar contraseña</button>
@@ -348,6 +361,13 @@
   }
 
   // ===== CONTRASEÑA =====
+  function togglePass(id, el) {
+    var input = document.getElementById(id);
+    var mostrar = input.type === 'password';
+    input.type = mostrar ? 'text' : 'password';
+    el.textContent = mostrar ? '🙈' : '👁';
+  }
+
   function cambiarPassword() {
     ocultarMsgs('pass');
     var actual   = document.getElementById('passActual').value;
