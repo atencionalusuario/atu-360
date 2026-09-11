@@ -2639,8 +2639,13 @@
                 '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
                 '<p>¿Desea que le asista para agendar una nueva cita? En este mismo momento crearemos un reporte para que lo que nos comenta sea evaluado por el área correspondiente.</p>' +
                 '<div class="triage-acciones">' +
-                  '<button class="bib-btn" onclick="abrirModificarCita()">Reagendar cita</button>' +
-                  '<button class="bib-btn" onclick="mostrarUno(\'calidadNoConectoGeneralNo\', [])">No quiere reagendar</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'calidadNoConectoGeneralSi\', \'calidadNoConectoGeneralNo\')">Agendar cita nueva</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'calidadNoConectoGeneralNo\', \'calidadNoConectoGeneralSi\')">No quiere reagendar</button>' +
+                '</div>' +
+                '<div id="calidadNoConectoGeneralSi" class="triage-resultado" style="display:none;">' +
+                  '<p>Con gusto le ayudamos en el proceso de hacer una nueva cita en la aplicación DoctorSV.</p>' +
+                  '<p>Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
+                  '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
                 '</div>' +
                 '<div id="calidadNoConectoGeneralNo" class="triage-resultado" style="display:none;">' +
                   '<p>Le pedimos nuevamente disculpas por los inconvenientes.</p>' +
@@ -2659,8 +2664,23 @@
                 '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
                 '<p>¿Desea que le asista para agendar una nueva cita? En este mismo momento crearemos un reporte para que lo que nos comenta sea evaluado por el área correspondiente.</p>' +
                 '<div class="triage-acciones">' +
-                  '<button class="bib-btn" onclick="abrirModificarCita()">Reagendar cita</button>' +
-                  '<button class="bib-btn" onclick="mostrarUno(\'calidadNoConectoEspecialistaNo\', [])">No quiere reagendar</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'calidadNoConectoEspecialistaSi\', \'calidadNoConectoEspecialistaNo\')">Modificar cita con inasistencia</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'calidadNoConectoEspecialistaNo\', \'calidadNoConectoEspecialistaSi\')">No quiere reagendar</button>' +
+                '</div>' +
+                '<div id="calidadNoConectoEspecialistaSi" class="triage-resultado" style="display:none;">' +
+                  '<p>De acuerdo Sr./Sra. XXX, le ayudaremos en el proceso para reagendar su cita.</p>' +
+                  '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
+                  '<div class="triage-acciones">' +
+                    '<button class="bib-btn" onclick="mostrarUno(\'calidadNoConectoEspecialistaCitaSi\', \'calidadNoConectoEspecialistaCitaNo\')">Sí</button>' +
+                    '<button class="bib-btn" onclick="mostrarUno(\'calidadNoConectoEspecialistaCitaNo\', \'calidadNoConectoEspecialistaCitaSi\')">No</button>' +
+                  '</div>' +
+                  '<div id="calidadNoConectoEspecialistaCitaSi" class="triage-resultado" style="display:none;">' +
+                    '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                  '</div>' +
+                  '<div id="calidadNoConectoEspecialistaCitaNo" class="triage-resultado" style="display:none;">' +
+                    '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
+                    '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                  '</div>' +
                 '</div>' +
                 '<div id="calidadNoConectoEspecialistaNo" class="triage-resultado" style="display:none;">' +
                   '<p>Le pedimos nuevamente disculpas por los inconvenientes.</p>' +
