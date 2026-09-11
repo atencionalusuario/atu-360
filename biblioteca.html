@@ -3502,8 +3502,12 @@
 
   var resultadosBusquedaActuales = [];
 
+  function normalizarBusqueda(str) {
+    return str.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  }
+
   function buscarEnCategoria(q) {
-    q = q.trim().toLowerCase();
+    q = normalizarBusqueda(q.trim());
     var contenedor = document.getElementById('opcionesCategoria');
 
     if (!q) {
@@ -3513,7 +3517,7 @@
 
     var arbol = OPCIONES_CATEGORIA[categoriaActualId] || [];
     resultadosBusquedaActuales = aplanarArbol(arbol, []).filter(function(n) {
-      return n.label.toLowerCase().includes(q);
+      return normalizarBusqueda(n.label).includes(q);
     });
 
     document.getElementById('tituloCategoria').textContent = 'Resultados de la búsqueda';
@@ -4374,7 +4378,7 @@
   }
 
   function buscarGlobal(q) {
-    q = q.trim().toLowerCase();
+    q = normalizarBusqueda(q.trim());
     var contenedor = document.getElementById('resultadosBusquedaGlobal');
 
     if (!q) {
@@ -4388,14 +4392,14 @@
     Object.keys(OPCIONES_CATEGORIA).forEach(function(cat) {
       aplanarArbol(OPCIONES_CATEGORIA[cat], []).forEach(function(n) {
         var item = n.item;
-        var haystack = n.label.toLowerCase();
+        var haystack = normalizarBusqueda(n.label);
         if (item && typeof item === 'object') {
-          if (item.texto) haystack += ' ' + quitarHTML(item.texto).toLowerCase();
-          if (item.pregunta) haystack += ' ' + item.pregunta.toLowerCase();
+          if (item.texto) haystack += ' ' + normalizarBusqueda(quitarHTML(item.texto));
+          if (item.pregunta) haystack += ' ' + normalizarBusqueda(item.pregunta);
           if (item.subBotones) {
-            haystack += ' ' + item.subBotones.map(function(b) {
+            haystack += ' ' + normalizarBusqueda(item.subBotones.map(function(b) {
               return b.label + ' ' + (b.texto ? quitarHTML(b.texto) : '');
-            }).join(' ').toLowerCase();
+            }).join(' '));
           }
         }
         if (palabras.every(function(p) { return haystack.includes(p); })) {
