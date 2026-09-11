@@ -135,8 +135,16 @@
   .panel-temporizador-display { font-family: 'Montserrat', sans-serif; font-size: 2rem; font-weight: 700; color: #0F2070; letter-spacing: 1px; }
   .panel-temporizador-display.alerta { color: #DC2626; }
   .panel-temporizador-display.vibrando { animation: vibrarTemporizador 0.15s linear 6; }
-  .panel-temporizador-display.terminado { animation: parpadearTemporizador 1s ease-in-out infinite; }
+  .panel-temporizador-display.terminado { animation: parpadearTemporizador 0.6s ease-in-out infinite; }
   @keyframes parpadearTemporizador { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+  .panel-temporizador.sacudiendo { animation: sacudirPanelTemporizador 0.5s ease-in-out infinite; }
+  @keyframes sacudirPanelTemporizador {
+    0%, 100% { transform: translateX(0) rotate(0); }
+    20% { transform: translateX(-5px) rotate(-1.5deg); }
+    40% { transform: translateX(5px) rotate(1.5deg); }
+    60% { transform: translateX(-4px) rotate(-1deg); }
+    80% { transform: translateX(4px) rotate(1deg); }
+  }
   @keyframes vibrarTemporizador {
     0%, 100% { transform: translateX(0); }
     20% { transform: translateX(-4px); }
@@ -625,7 +633,7 @@
 </div>
 
 <div class="panel-temporizador" id="panelTemporizador">
-  <button class="panel-temporizador-cerrar" title="Cerrar cronómetro" onclick="toggleTemporizador()">&times;</button>
+  <button class="panel-temporizador-cerrar" title="Cerrar cronómetro" onclick="cerrarTemporizador()">&times;</button>
   <div class="panel-temporizador-drag" id="panelTemporizadorDrag" title="Arrastrar para mover">
     <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="8" cy="6" r="1.4"/><circle cx="16" cy="6" r="1.4"/><circle cx="8" cy="12" r="1.4"/><circle cx="16" cy="12" r="1.4"/><circle cx="8" cy="18" r="1.4"/><circle cx="16" cy="18" r="1.4"/></svg>
   </div>
@@ -3969,27 +3977,53 @@
     document.getElementById('panelTemporizador').classList.toggle('open');
   }
 
-  function reproducirAlarmaTemporizador() {
+  function cerrarTemporizador() {
+    detenerAlarmaTemporizador();
+    document.getElementById('panelTemporizador').classList.remove('sacudiendo', 'open');
+  }
+
+  var alarmaTemporizadorCtx = null;
+  var alarmaTemporizadorIntervalo = null;
+
+  function reproducirCicloAlarmaTemporizador() {
     try {
-      var ctx = new (window.AudioContext || window.webkitAudioContext)();
-      [0, 0.35, 0.7].forEach(function(delay) {
+      if (!alarmaTemporizadorCtx) {
+        alarmaTemporizadorCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      var ctx = alarmaTemporizadorCtx;
+      [0, 0.22, 0.44, 0.66].forEach(function(delay, i) {
         var osc = ctx.createOscillator();
         var gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = 880;
-        gain.gain.setValueAtTime(0.001, ctx.currentTime + delay);
-        gain.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + delay + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.28);
+        osc.type = 'square';
+        osc.frequency.value = i % 2 === 0 ? 1046 : 784;
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay);
+        gain.gain.exponentialRampToValueAtTime(0.5, ctx.currentTime + delay + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + 0.2);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start(ctx.currentTime + delay);
-        osc.stop(ctx.currentTime + delay + 0.3);
+        osc.stop(ctx.currentTime + delay + 0.21);
       });
     } catch (e) { /* audio no disponible en este navegador */ }
   }
 
+  function iniciarAlarmaTemporizador() {
+    detenerAlarmaTemporizador();
+    reproducirCicloAlarmaTemporizador();
+    alarmaTemporizadorIntervalo = setInterval(reproducirCicloAlarmaTemporizador, 1000);
+  }
+
+  function detenerAlarmaTemporizador() {
+    if (alarmaTemporizadorIntervalo) {
+      clearInterval(alarmaTemporizadorIntervalo);
+      alarmaTemporizadorIntervalo = null;
+    }
+  }
+
   function iniciarTemporizador() {
     if (temporizadorIntervalo) return;
+    detenerAlarmaTemporizador();
+    document.getElementById('panelTemporizador').classList.remove('sacudiendo');
     document.getElementById('temporizadorDisplay').classList.remove('terminado');
     document.getElementById('btnTemporizadorIniciar').textContent = 'Pausar';
     document.getElementById('btnTemporizadorIniciar').onclick = pausarTemporizador;
@@ -4002,9 +4036,9 @@
         document.getElementById('btnTemporizadorIniciar').textContent = 'Iniciar';
         document.getElementById('btnTemporizadorIniciar').onclick = iniciarTemporizador;
         var display = document.getElementById('temporizadorDisplay');
-        display.classList.add('vibrando', 'terminado');
-        setTimeout(function() { display.classList.remove('vibrando'); }, 1000);
-        reproducirAlarmaTemporizador();
+        display.classList.add('terminado');
+        document.getElementById('panelTemporizador').classList.add('sacudiendo');
+        iniciarAlarmaTemporizador();
         if (!document.getElementById('panelTemporizador').classList.contains('open')) {
           toggleTemporizador();
         }
@@ -4022,6 +4056,8 @@
   function reiniciarTemporizador() {
     clearInterval(temporizadorIntervalo);
     temporizadorIntervalo = null;
+    detenerAlarmaTemporizador();
+    document.getElementById('panelTemporizador').classList.remove('sacudiendo');
     temporizadorSegundos = TEMPORIZADOR_INICIAL;
     actualizarDisplayTemporizador();
     document.getElementById('temporizadorDisplay').classList.remove('terminado');
