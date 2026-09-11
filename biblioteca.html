@@ -62,7 +62,8 @@
   .instruccion { font-style: italic; color: #64748B; font-size: 0.86rem; font-family: 'Inter', sans-serif; }
   .sdp-botones { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
   #modalSubBotones { justify-content: center; margin-top: 18px; margin-bottom: 20px; }
-  #modalSubBotones.sdp-botones-columna { flex-direction: column; align-items: center; }
+  #modalSubBotones.sdp-botones-columna { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  #modalSubBotones.sdp-botones-columna .bib-btn { width: 100%; min-width: 0; }
   .btn-col { display: flex; flex-direction: column; align-items: center; gap: 5px; }
   .instruccion-btn { max-width: 210px; text-align: center; margin: 0; }
   .bib-btn { background: #0F2070; color: white; padding: 8px 13px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; font-size: 0.73rem; font-family: 'Inter', sans-serif; transition: all 0.15s; min-width: 210px; text-align: center; }
@@ -1780,7 +1781,7 @@
                 '</div>' +
                 '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
             },
-            { label: 'Cita nueva sin triage',
+            { label: 'Cita sin triage',
               tooltip: 'Esta sección es para agendar cita para lectura de exámenes y cita para usuario que es transferido desde el área de triage.',
               texto:
                 '<div class="triage-video-caja">' +
@@ -1808,6 +1809,37 @@
                     '<button class="bib-btn" onclick="toggleBloque(\'recTelTriageDirecto\')">Recomendaciones para cita vía telefónica</button>' +
                   '</div>' +
                   '<div id="recTelTriageDirecto" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_TEL + '</div>' +
+                '</div>' +
+                '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
+            },
+            { label: 'Cita lectura exámenes',
+              tooltip: 'Esta sección es para agendar cita para lectura de exámenes y cita para usuario que es transferido desde el área de triage.',
+              texto:
+                '<div class="triage-video-caja">' +
+                  '<p>De acuerdo, ¿puede conectarse a una <strong>videollamada</strong>?</p>' +
+                '</div>' +
+                '<div class="triage-acciones">' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'triageLecturaVideoSi\', \'triageLecturaNoPuede\')">Sí puede</button>' +
+                  '<button class="bib-btn" onclick="mostrarUno(\'triageLecturaNoPuede\', \'triageLecturaVideoSi\')">No puede</button>' +
+                '</div>' +
+                '<div id="triageLecturaVideoSi" class="triage-resultado" style="display:none;">' +
+                  '<p>Muchas gracias. Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
+                  '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                  '<div class="triage-acciones" style="margin-bottom:0;">' +
+                    '<button class="bib-btn" onclick="toggleBloque(\'recVideoTriageLectura\')">Recomendaciones para conectarse a videollamada</button>' +
+                  '</div>' +
+                  '<div id="recVideoTriageLectura" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_VIDEO + '</div>' +
+                '</div>' +
+                '<div id="triageLecturaNoPuede" class="triage-resultado" style="display:none;">' +
+                  '<p>Entiendo lo que nos comenta, con gusto le puedo ayudar a tener una cita por llamada telefónica.</p>' +
+                  '<p><strong>En esta cita el médico se pondrá en contacto con usted llamándole a su número de teléfono. Sólo tenga en cuenta que las citas por esta vía pueden tener limitaciones en cuanto al diagnóstico que realice su médico.</strong></p>' +
+                  '<p>La cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
+                  '<p>Excelente, queda programada su cita el día XXXXXX XX a las XX de la tarde / de la mañana.</p>' +
+                  '<p style="color:#64748B; font-size:0.82rem;"><em>Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</em></p>' +
+                  '<div class="triage-acciones" style="margin-bottom:0;">' +
+                    '<button class="bib-btn" onclick="toggleBloque(\'recTelTriageLectura\')">Recomendaciones para cita vía telefónica</button>' +
+                  '</div>' +
+                  '<div id="recTelTriageLectura" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_TEL + '</div>' +
                 '</div>' +
                 '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
             },
@@ -2695,6 +2727,52 @@
               '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
               '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
               '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
+          },
+          { label: 'Error en procedimientos presenciales',
+            tipificacion: 'Incidencias calidad médica > Problemas con estudios de imágenes > Error en estudios de imágenes',
+            alerta:
+              '<p><strong>Error en estudios de imágenes:</strong> Usuario reporta que su órden de estudios de imágenes tiene errores y se desea asistencia de un médico para corregirla.</p>',
+            texto:
+              '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+              '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>? O si gusta, también me puede brindar el número del estudio de imágenes.</p>' +
+              '<p>¿Me podría confirmar si su cita fue con <strong>médico general</strong> o con un <strong>especialista</strong>?</p>' +
+              '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+              '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
+          },
+          { label: 'Error en referencia externa',
+            tipificacion: 'Incidencias calidad médica > Problemas con referencia externa > Error en referencia externa',
+            texto:
+              '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+              '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>? O si gusta, también me puede brindar el número del estudio de imágenes.</p>' +
+              '<p>¿Me podría confirmar si su cita fue con <strong>médico general</strong> o con un <strong>especialista</strong>?</p>' +
+              '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+              '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
+          },
+          { label: 'Error en referencia interna',
+            tipificacion: 'Incidencias calidad médica > Problemas con referencia interna > Error en referencia interna',
+            texto:
+              '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+              '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>? O si gusta, también me puede brindar el número del estudio de imágenes.</p>' +
+              '<p>¿Me podría confirmar si su cita fue con <strong>médico general</strong> o con un <strong>especialista</strong>?</p>' +
+              '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+              '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
+          },
+          { label: 'Error en datos de constancia médica',
+            tipificacion: 'Incidencias calidad médica > Problemas con constancia médica > Error en datos de constancia médica',
+            texto:
+              '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+              '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>? O si gusta, también me puede brindar el número del estudio de imágenes.</p>' +
+              '<p>¿Me podría confirmar si su cita fue con <strong>médico general</strong> o con un <strong>especialista</strong>?</p>' +
+              '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+              '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           }
         ] },
         { label: 'No generó productos', hijos: [
@@ -3539,7 +3617,7 @@
     contSubTexto.innerHTML = '';
     contBotones.classList.toggle('sdp-botones-columna', !!subBotonesVertical);
     if (subBotonesActuales.length) {
-      contBotones.style.display = 'flex';
+      contBotones.style.display = subBotonesVertical ? 'grid' : 'flex';
       contBotones.innerHTML = subBotonesActuales.map(function(b, i) {
         var tooltip = b.tooltip ? ' tiene-tooltip" data-tooltip="' + b.tooltip + '"' : '"';
         return '<button class="bib-btn' + tooltip + ' onclick="mostrarSubBotonModal(' + i + ')">' + b.label + '</button>';
