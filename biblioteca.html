@@ -92,7 +92,7 @@
   .modal-close { position: absolute; top: 14px; right: 16px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #F1F5F9; border: none; border-radius: 50%; font-size: 1.4rem; color: #64748B; cursor: pointer; line-height: 1; transition: all 0.15s; }
   .modal-close:hover { background: #E2E8F0; color: #1E293B; }
   .modal-titulo { font-size: 1rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 14px; padding-right: 20px; }
-  .modal-cuerpo p { font-size: 0.85rem; line-height: 1.65; color: #374151; margin-bottom: 10px; font-family: 'Montserrat', sans-serif; }
+  .modal-cuerpo p { font-size: 0.95rem; line-height: 1.65; color: #374151; margin-bottom: 10px; font-family: 'Montserrat', sans-serif; }
   .modal-cuerpo p.modal-tipificacion { font-size: 0.76rem; color: #94A3B8; font-family: 'Inter', sans-serif; }
   .tipificacion-rama { font-size: 0.76rem; color: #94A3B8; margin-top: 16px; padding-top: 12px; border-top: 1px solid #F1F5F9; font-family: 'Inter', sans-serif; }
   .tipificacion-rama strong { color: #64748B; font-weight: 600; }
@@ -236,6 +236,9 @@
   .triage-criterio-caja .bib-btn { align-self: center; }
   .triage-criterio-texto p { font-size: 0.82rem; line-height: 1.55; color: #374151; margin: 0; }
   .triage-acciones { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 16px; margin-bottom: 18px; }
+  .instruccion-interna { font-family: ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', monospace; font-style: normal; font-size: 0.68rem; line-height: 1.55; color: #334155; background: #E2E8F5; border-left: 3px solid #0F2070; border-radius: 0 6px 6px 0; padding: 8px 10px 8px 14px; margin: 10px 0; }
+  .instruccion-interna:last-child { margin-bottom: 0; }
+  .instruccion-interna + .instruccion-interna { margin-top: 0; border-top-left-radius: 0; }
   .triage-btn-si { background: #C2410C; }
   .btn-si-verde { background: #16A34A; }
   .btn-si-verde:hover { background: #15803D; }
@@ -249,7 +252,7 @@
   .triage-resultado { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px; }
   .triage-resultado:empty { display: none !important; padding: 0; border: none; margin-bottom: 0; }
   .triage-resultado:last-child { margin-bottom: 0; }
-  .triage-resultado p { font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; font-family: 'Montserrat', sans-serif; }
+  .triage-resultado p { font-size: 0.95rem; line-height: 1.6; color: #374151; margin-bottom: 8px; font-family: 'Montserrat', sans-serif; }
   .triage-resultado ul, .triage-resultado ol { padding-left: 20px; font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; font-family: 'Montserrat', sans-serif; }
   .triage-resultado p:last-child, .triage-resultado ul:last-child { margin-bottom: 0; }
   .triage-resultado-rojo { background: #FEF2F2; border-color: #FCA5A5; }
@@ -397,7 +400,7 @@
         </div>
         <div id="casoTerceroNoPuede" class="triage-resultado" style="display:none;">
           <p>Comprendo. ¿Me podría indicar por favor los siguientes datos de la persona que está asistiendo? Su nombre completo, su número de documento y su fecha de nacimiento.</p>
-          <p style="color:#64748B; font-style:italic;">Instrucción: agregar datos en la sección Datos del paciente del SDP.</p>
+          <p class="instruccion-interna">Instrucción: agregar datos en la sección Datos del paciente del SDP.</p>
           <div class="triage-acciones">
             <button class="bib-btn btn-no-rojo" onclick="mostrarUno('casoTerceroNoSuministra', [])">No suministra datos</button>
           </div>
@@ -432,7 +435,7 @@
       <button class="bib-btn btn-no-rojo" id="btnTcaRegistradoNo" onclick="mostrarUno('tcaRegistradoNo', 'tcaRegistradoSi'); mostrarRegistroSDPCompleto();">No está registrado en TCA</button>
     </div>
     <div id="tcaRegistradoSi" class="triage-resultado" style="display:none;">
-      <p style="color:#64748B; font-style:italic;">Instrucción: ¿El número en TCA es el mismo que nos ha dicho?</p>
+      <p class="instruccion-interna">Instrucción: ¿El número en TCA es el mismo que nos ha dicho?</p>
       <div class="triage-acciones">
         <button class="bib-btn btn-si-verde" id="btnTcaNumeroMismo" onclick="mostrarUno('tcaNumeroMismo', 'tcaNumeroDistinto'); mostrarRegistroSDPCompleto();">Es el mismo</button>
         <button class="bib-btn btn-no-rojo" id="btnTcaNumeroDistinto" onclick="mostrarUno('tcaNumeroDistinto', 'tcaNumeroMismo'); ocultarRegistroSDPCompleto();">No es el mismo</button>
@@ -446,9 +449,9 @@
         </div>
         <div id="tcaNumeroActualizarSi" class="triage-resultado" style="display:none;">
           <p>De acuerdo, antes de continuar con su atención, con mucho gusto le ayudo a actualizarlo, ¿me indica su nuevo número de contacto?</p>
-          <p style="color:#64748B; font-style:italic;">Instrucción: Actualizar el número de contacto en el SDP. Verificar si el número en TCA coincide. Si no coincide, actualizarlo con el script siguiente.</p>
+          <p class="instruccion-interna">Instrucción: Actualizar el número de contacto en el SDP. Verificar si el número en TCA coincide. Si no coincide, actualizarlo con el script siguiente.</p>
           <p>Me confirma: ¿usted tiene acceso a su correo electrónico registrado en <strong>DoctorSV</strong>? ¿Me podría indicar el correo registrado?</p>
-          <p style="color:#64748B; font-style:italic;">Instrucción: El usuario debe mencionar el correo electrónico registrado. Depende de lo que diga el usuario selecciona la opción. Le puedes dar pistas al usuario del correo registrado. Nunca el correo completo.</p>
+          <p class="instruccion-interna">Instrucción: El usuario debe mencionar el correo electrónico registrado. Depende de lo que diga el usuario selecciona la opción. Le puedes dar pistas al usuario del correo registrado. Nunca el correo completo.</p>
           <div id="tcaActConfirmacion" class="triage-resultado" style="display:block;">
             <div class="triage-acciones">
               <button class="bib-btn" onclick="mostrarUno('tcaActSiCorreo', ['tcaActSiRecuerdaNoAcceso','tcaActNoCorreo']); document.getElementById('tcaActBotonActualizadoWrap').style.display='flex'; document.getElementById('tcaActNoQuiereContinuar').style.display='none'; document.getElementById('tcaActContinuar').style.display='none'; ocultarRegistroSDPCompleto();">Sí lo recuerda y tiene acceso</button>
@@ -466,7 +469,7 @@
             </div>
             <div id="tcaActSiRecuerdaNoAcceso" class="triage-resultado" style="display:none;">
               <p>Gracias por su confirmación. En este momento le ayudaré a actualizar su nuevo número de teléfono. ¿Me brinda su nuevo número?</p>
-              <p style="color:#64748B; font-style:italic;">Instrucción: Marcar check en "Verificado".</p>
+              <p class="instruccion-interna">Instrucción: Marcar check en "Verificado".</p>
               <p>Le confirmo que hemos actualizado su teléfono en <strong>DoctorSV</strong>.</p>
               <p>Procederemos ahora a la actualización de su correo. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al nuevo número de teléfono.</p>
               <p>Por favor, compártame el código una vez lo reciba.</p>
@@ -493,7 +496,7 @@
             </div>
           </div>
           <div id="tcaActContinuar" style="display:none;">
-            <p style="color:#64748B; font-style:italic;">Instrucción: una vez actualizado el teléfono en el SDP y en TCA:</p>
+            <p class="instruccion-interna">Instrucción: una vez actualizado el teléfono en el SDP y en TCA:</p>
             <p><strong>¿Cómo puedo ayudarle?</strong></p>
           </div>
           <div id="tcaActNoQuiereContinuar" style="display:none;">
@@ -773,7 +776,7 @@
     </div>
     <div id="scriptEvacuacion" class="triage-resultado" style="display:none;">
       <p>Por motivos de seguridad, debemos finalizar la llamada de manera inmediata. Lamentamos cualquier inconveniente que esto pueda causar. Quedamos a su disposición para cualquier consulta en otro momento.</p>
-      <p style="color:#64748B; font-style:italic;">Instrucción: Luego de dar el script:</p>
+      <p class="instruccion-interna">Instrucción: Luego de dar el script:</p>
       <p style="color:#64748B; font-style:italic;">Cambiar de auxiliar a Pausa administrativa</p>
     </div>
   </div>
@@ -880,7 +883,7 @@
     <button class="modal-close" onclick="cerrarModalPreguntasSeguridad()">&times;</button>
     <h3 class="modal-titulo">Preguntas de seguridad</h3>
     <p class="instruccion" style="margin-bottom:14px;">El agente debe hacer las 3 preguntas seleccionadas y marcar si el usuario respondió correcta o incorrectamente. Necesita <strong>2 de 3</strong> correctas para pasar la validación.</p>
-    <p style="color:#64748B; font-style:italic; margin-bottom:14px;">Instrucción: Validar las respuestas del usuario con información disponible en TCA.</p>
+    <p class="instruccion-interna">Instrucción: Validar las respuestas del usuario con información disponible en TCA.</p>
     <div id="preguntasSeguridadLista"></div>
     <div id="resultadoSeguridad"></div>
     <div class="triage-acciones">
@@ -1103,9 +1106,9 @@
   var TEXTOS_CONFIRMACION = {
     si: '<p>Muchas gracias SR / SRA XXX, dígame, <strong>¿cómo puedo ayudarle?</strong></p>',
     no: '<p>De acuerdo, antes de continuar con su atención, con mucho gusto le ayudo a actualizarlo, ¿me indica su nuevo número de contacto?</p>' +
-        '<p style="color:#64748B; font-style:italic;">Instrucción: Actualizar el número de contacto en el SDP. Verificar si el número en TCA coincide. Si no coincide, actualizarlo con el script siguiente.</p>' +
+        '<p class="instruccion-interna">Instrucción: Actualizar el número de contacto en el SDP. Verificar si el número en TCA coincide. Si no coincide, actualizarlo con el script siguiente.</p>' +
         '<p>Me confirma: ¿usted tiene acceso a su correo electrónico registrado en <strong>DoctorSV</strong>? ¿Me podría indicar el correo registrado?</p>' +
-        '<p style="color:#64748B; font-style:italic;">Instrucción: El usuario debe mencionar el correo electrónico registrado. Depende de lo que diga el usuario selecciona la opción. Le puedes dar pistas al usuario del correo registrado. Nunca el correo completo.</p>' +
+        '<p class="instruccion-interna">Instrucción: El usuario debe mencionar el correo electrónico registrado. Depende de lo que diga el usuario selecciona la opción. Le puedes dar pistas al usuario del correo registrado. Nunca el correo completo.</p>' +
         '<div id="cambioTelefonoConfirmacion" class="triage-resultado" style="display:block;">' +
           '<div class="triage-acciones">' +
             '<button class="bib-btn" onclick="mostrarUno(\'telefonoConfSiCorreo\', [\'telefonoConfSiRecuerdaNoAcceso\',\'telefonoConfNoCorreo\']); document.getElementById(\'telefonoConfBotonActualizadoWrap\').style.display=\'flex\'; document.getElementById(\'telefonoConfNoQuiereContinuar\').style.display=\'none\'; document.getElementById(\'telefonoConfContinuar\').style.display=\'none\'; ocultarMenuPrincipal();">Sí lo recuerda y tiene acceso</button>' +
@@ -1123,7 +1126,7 @@
           '</div>' +
           '<div id="telefonoConfSiRecuerdaNoAcceso" class="triage-resultado" style="display:none;">' +
             '<p>Gracias por su confirmación. En este momento le ayudaré a actualizar su nuevo número de teléfono. ¿Me brinda su nuevo número?</p>' +
-            '<p style="color:#64748B; font-style:italic;">Instrucción: Marcar check en "Verificado".</p>' +
+            '<p class="instruccion-interna">Instrucción: Marcar check en "Verificado".</p>' +
             '<p>Le confirmo que hemos actualizado su teléfono en <strong>DoctorSV</strong>.</p>' +
             '<p>Procederemos ahora a la actualización de su correo. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al nuevo número de teléfono.</p>' +
             '<p>Por favor, compártame el código una vez lo reciba.</p>' +
@@ -1150,7 +1153,7 @@
           '</div>' +
         '</div>' +
         '<div id="telefonoConfContinuar" style="display:none;">' +
-          '<p style="color:#64748B; font-style:italic;">Instrucción: una vez actualizado el teléfono en el SDP y en TCA:</p>' +
+          '<p class="instruccion-interna">Instrucción: una vez actualizado el teléfono en el SDP y en TCA:</p>' +
           '<p><strong>¿Cómo puedo ayudarle?</strong></p>' +
         '</div>' +
         '<div id="telefonoConfNoQuiereContinuar" style="display:none;">' +
@@ -1701,7 +1704,7 @@
           '<div class="triage-resultado">' +
             '<p>Muchas gracias por su amable espera. Al verificar la información, identifico que nos comunicamos con usted para dar seguimiento al ticket <strong>XXXX</strong>, con el fin de solicitarle/informarle <strong>[detalle correspondiente]</strong>.</p>' +
           '</div>' +
-          '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción:<br>Validar en SDP con el número del que nos contacta el usuario y documento de identidad del usuario para validar el motivo del contacto. Según sea el caso proceder a dar respuesta al usuario.</p>' +
+          '<p class="instruccion-interna">Instrucción:<br>Validar en SDP con el número del que nos contacta el usuario y documento de identidad del usuario para validar el motivo del contacto. Según sea el caso proceder a dar respuesta al usuario.</p>' +
           '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Adicional, según sea el caso cambiarlo al estado correspondiente.</p>' +
           '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070; text-align:center; margin:16px 0 8px;">NO SE CUENTA CON TICKET</h4>' +
           '<div class="triage-resultado">' +
@@ -1711,7 +1714,7 @@
       { label: 'Usuario en sala de espera',
         tipificacion: 'Consultas > Información general del servicio > Sala de espera',
         texto:
-          '<p style="color:#64748B; font-style:italic;">Instrucción: ¿Dónde se encuentra el usuario? ¿Ya inició la hora de la consulta?</p>' +
+          '<p class="instruccion-interna">Instrucción: ¿Dónde se encuentra el usuario? ¿Ya inició la hora de la consulta?</p>' +
           '<svg viewBox="0 0 640 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:600px;display:block;margin:0 auto 18px;">' +
             '<rect x="20" y="20" width="213" height="46" fill="#93C5FD" style="cursor:pointer;" onclick="abrirModalTip(\'<strong>Cómo conectarse:</strong> El usuario nos contacta antes de haber iniciado la hora de su cita.\')"/>' +
             '<rect x="233" y="20" width="170" height="46" fill="#86EFAC" style="cursor:pointer;" onclick="abrirModalTip(\'<strong>Sala de espera:</strong> El usuario nos contacta una vez ha iniciado la hora de su cita.\')"/>' +
@@ -1815,7 +1818,7 @@
                   '<p><strong>En esta cita el médico se pondrá en contacto con usted llamándole a su número de teléfono. Sólo tenga en cuenta que las citas por esta vía pueden tener limitaciones en cuanto al diagnóstico que realice su médico.</strong></p>' +
                   '<p>La cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
                   '<p>Excelente, queda programada su cita el día XXXXXX XX a las XX de la tarde / de la mañana.</p>' +
-                  '<p style="color:#64748B; font-size:0.82rem;"><em>Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</em></p>' +
+                  '<p class="instruccion-interna">Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</p>' +
                   '<div class="triage-acciones" style="margin-bottom:0;">' +
                     '<button class="bib-btn" onclick="toggleBloque(\'recTelTriageDirecto\')">Recomendaciones para cita vía telefónica</button>' +
                   '</div>' +
@@ -1845,7 +1848,7 @@
                   '<p><strong>En esta cita el médico se pondrá en contacto con usted llamándole a su número de teléfono. Sólo tenga en cuenta que las citas por esta vía pueden tener limitaciones en cuanto al diagnóstico que realice su médico.</strong></p>' +
                   '<p>La cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
                   '<p>Excelente, queda programada su cita el día XXXXXX XX a las XX de la tarde / de la mañana.</p>' +
-                  '<p style="color:#64748B; font-size:0.82rem;"><em>Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</em></p>' +
+                  '<p class="instruccion-interna">Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</p>' +
                   '<div class="triage-acciones" style="margin-bottom:0;">' +
                     '<button class="bib-btn" onclick="toggleBloque(\'recTelTriageLectura\')">Recomendaciones para cita vía telefónica</button>' +
                   '</div>' +
@@ -1856,7 +1859,7 @@
         { label: 'Referencia con especialista',
           texto:
             '<p>Con mucho gusto le ayudo a agendar su cita con el médico especialista.</p>' +
-            '<p style="text-align:center; color:#64748B; font-style:italic; margin-bottom:14px;">Instrucción:<br>Buscar en SDP si tiene ticket de referencia abierto. ¿Tiene ticket abierto?</p>' +
+            '<p class="instruccion-interna" style="text-align:center;">Instrucción:<br>Buscar en SDP si tiene ticket de referencia abierto. ¿Tiene ticket abierto?</p>' +
             '<div class="triage-acciones">' +
               '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'referenciaSiTicket\', \'referenciaNoTicket\')">Sí tiene ticket abierto</button>' +
               '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'referenciaNoTicket\', \'referenciaSiTicket\')">No tiene ticket abierto</button>' +
@@ -1880,7 +1883,7 @@
                   '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
                   '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
                 '</div>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Instrucción: dejar nota en el ticket y cerrarlo.</p>' +
+                '<p class="instruccion-interna">Instrucción: dejar nota en el ticket y cerrarlo.</p>' +
               '</div>' +
               '<div id="referenciaNoHayCupo" class="triage-resultado" style="display:none;">' +
                 '<p>Comentarle que actualmente hemos reportado su caso con el número de ticket XXX. En cuanto haya disponibilidad para programar su cita, nos contactaremos con usted lo más pronto posible.</p>' +
@@ -1909,8 +1912,8 @@
                   '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
                   '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
                 '</div>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">' +
+                '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+                '<p class="instruccion-interna">' +
                   '* Nombre del paciente<br>' +
                   '* Teléfono de contacto del paciente<br>' +
                   '* Tipo de documento del paciente<br>' +
@@ -1924,8 +1927,8 @@
               '<div id="referenciaNtNoHayCupo" class="triage-resultado" style="display:none;">' +
                 '<p>Comentarle que actualmente hemos reportado su caso con el número de ticket XXX. En cuanto haya disponibilidad para programar su cita, nos contactaremos con usted lo más pronto posible.</p>' +
                 '<p>Agradecemos que se mantenga pendiente de celular, ya que uno de nuestros asesores se comunicará con usted próximamente.</p>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">' +
+                '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+                '<p class="instruccion-interna">' +
                   '* Nombre del paciente<br>' +
                   '* Teléfono de contacto del paciente<br>' +
                   '* Tipo de documento del paciente<br>' +
@@ -1940,8 +1943,8 @@
                 '<p>Comprendo Sr/Sra. XXXX. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
                 '<p>¿Me podría indicar, por favor, el <strong>nombre y apellido del médico/a</strong> y la <strong>fecha y hora de la cita</strong>?</p>' +
                 '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">' +
+                '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+                '<p class="instruccion-interna">' +
                   '* Nombre del paciente<br>' +
                   '* Teléfono de contacto del paciente<br>' +
                   '* Tipo de documento del paciente<br>' +
@@ -1965,7 +1968,7 @@
         { label: 'Cita de seguimiento',
           texto:
             '<p>Con mucho gusto le ayudo a agendar su cita de seguimiento.</p>' +
-            '<p style="text-align:center; color:#64748B; font-style:italic; margin-bottom:14px;">Instrucción:<br>Buscar en SDP si tiene ticket de seguimiento abierto. ¿Tiene ticket abierto?</p>' +
+            '<p class="instruccion-interna" style="text-align:center;">Instrucción:<br>Buscar en SDP si tiene ticket de seguimiento abierto. ¿Tiene ticket abierto?</p>' +
             '<div class="triage-acciones">' +
               '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'seguimientoSiTicket\', \'seguimientoNoTicket\')">Sí tiene ticket abierto</button>' +
               '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'seguimientoNoTicket\', \'seguimientoSiTicket\')">No tiene ticket abierto</button>' +
@@ -1990,7 +1993,7 @@
                   '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
                   '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
                 '</div>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Instrucción: Dejar nota que el usuario fue agendado y cerrar ticket.</p>' +
+                '<p class="instruccion-interna">Instrucción: Dejar nota que el usuario fue agendado y cerrar ticket.</p>' +
               '</div>' +
               '<div id="seguimientoStNoHayCupo" class="triage-resultado" style="display:none;">' +
                 '<div class="triage-acciones">' +
@@ -2018,7 +2021,7 @@
                     '<p>¿Le gustaría un día diferente o una hora diferente?</p>' +
                     '<p>Excelente, queda programada su cita con el / la médico XXX, el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
                   '</div>' +
-                  '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Instrucción: Dejar nota que el usuario fue agendado y cerrar ticket.</p>' +
+                  '<p class="instruccion-interna">Instrucción: Dejar nota que el usuario fue agendado y cerrar ticket.</p>' +
                 '</div>' +
                 '</div>' +
                 '<div id="seguimientoEsPsicoNutri" class="triage-resultado" style="display:none;">' +
@@ -2026,7 +2029,7 @@
                   '<p>Comentarle que actualmente hemos reportado su caso con el número de ticket XXX. En cuanto haya disponibilidad para programar su cita, nos contactaremos con usted lo más pronto posible.</p>' +
                   '<p>Agradecemos que se mantenga pendiente de celular, ya que uno de nuestros asesores se comunicará con usted próximamente.</p>' +
                 '</div>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Instrucción: Dejar nota y, de ser necesario, enviar ticket a estado ATU Sin cupo seguimiento.</p>' +
+                '<p class="instruccion-interna">Instrucción: Dejar nota y, de ser necesario, enviar ticket a estado ATU Sin cupo seguimiento.</p>' +
                 '</div>' +
               '</div>' +
             '</div>' +
@@ -2159,7 +2162,7 @@
             texto:
               '<p>De acuerdo, Sr./Sra. XXX. Con mucho gusto le apoyaré con la actualización de su número de teléfono.</p>' +
               '<p>Antes de continuar, ¿me confirma: usted tiene acceso a su correo electrónico registrado en <strong>DoctorSV</strong>? ¿Me podría indicar el correo registrado?</p>' +
-              '<p style="color:#64748B; font-style:italic;">Instrucción: El usuario debe mencionar el correo electrónico registrado. Depende de lo que diga el usuario selecciona la opción. Le puedes dar pistas al usuario del correo registrado. Nunca el correo completo.</p>' +
+              '<p class="instruccion-interna">Instrucción: El usuario debe mencionar el correo electrónico registrado. Depende de lo que diga el usuario selecciona la opción. Le puedes dar pistas al usuario del correo registrado. Nunca el correo completo.</p>' +
               '<div class="triage-acciones">' +
                 '<button class="bib-btn" onclick="mostrarUno(\'telefonoSiCorreo\', [\'telefonoSiRecuerdaNoAcceso\',\'telefonoNoCorreo\'])">Sí lo recuerda y tiene acceso</button>' +
                 '<button class="bib-btn" onclick="mostrarUno(\'telefonoSiRecuerdaNoAcceso\', [\'telefonoSiCorreo\',\'telefonoNoCorreo\'])">Sí lo recuerda, pero no tiene acceso</button>' +
@@ -2173,7 +2176,7 @@
               '</div>' +
               '<div id="telefonoSiRecuerdaNoAcceso" class="triage-resultado" style="display:none;">' +
                 '<p>Gracias por su confirmación. En este momento le ayudaré a actualizar su nuevo número de teléfono. ¿Me brinda su nuevo número?</p>' +
-                '<p style="color:#64748B; font-style:italic;">Instrucción: Marcar check en "Verificado".</p>' +
+                '<p class="instruccion-interna">Instrucción: Marcar check en "Verificado".</p>' +
                 '<p>Le confirmo que hemos actualizado su teléfono en <strong>DoctorSV</strong>.</p>' +
                 '<p>Procederemos ahora a la actualización de su correo. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al nuevo número de teléfono.</p>' +
                 '<p>Por favor, compártame el código una vez lo reciba.</p>' +
@@ -2203,7 +2206,7 @@
             texto:
               '<p>De acuerdo, Sr./Sra. XXX. Con mucho gusto le apoyaré con la actualización de su correo electrónico.</p>' +
               '<p>Antes de continuar, ¿me confirma, por favor, si el número de teléfono registrado finaliza en XXXX?</p>' +
-              '<p style="color:#64748B; font-style:italic;">Instrucción: El usuario debe mencionar el teléfono registrado. Depende de lo que diga el usuario selecciona la opción.</p>' +
+              '<p class="instruccion-interna">Instrucción: El usuario debe mencionar el teléfono registrado. Depende de lo que diga el usuario selecciona la opción.</p>' +
               '<div class="triage-acciones">' +
                 '<button class="bib-btn" onclick="mostrarUno(\'correoSiTelefono\', \'correoNoTelefono\')">Sí</button>' +
                 '<button class="bib-btn" onclick="mostrarUno(\'correoNoTelefono\', \'correoSiTelefono\')">No</button>' +
@@ -2237,7 +2240,7 @@
             texto:
               '<p>Comprendo lo que nos comenta. Vamos a proceder a actualizar sus datos en <strong>DoctorSV</strong>.</p>' +
               '<p>Primero, me gustaría confirmar con usted algunos datos. ¿Usted recuerda su teléfono y correo registrado?</p>' +
-              '<p style="color:#64748B; font-style:italic;">Instrucción: El usuario debe mencionar el correo electrónico y el teléfono registrado. Depende de lo que diga el usuario selecciona la opción. Le puedes dar pistas al usuario del correo registrado o del teléfono. Nunca los datos completos.</p>' +
+              '<p class="instruccion-interna">Instrucción: El usuario debe mencionar el correo electrónico y el teléfono registrado. Depende de lo que diga el usuario selecciona la opción. Le puedes dar pistas al usuario del correo registrado o del teléfono. Nunca los datos completos.</p>' +
               '<div class="triage-acciones">' +
                 '<button class="bib-btn" onclick="mostrarUno(\'ambosSiAcceso\', [\'ambosSiNoAcceso\',\'ambosNoRecuerda\'])">Sí los recuerda y tiene acceso</button>' +
                 '<button class="bib-btn" onclick="mostrarUno(\'ambosSiNoAcceso\', [\'ambosSiAcceso\',\'ambosNoRecuerda\'])">Sí los recuerda, pero no tiene acceso</button>' +
@@ -2252,7 +2255,7 @@
               '</div>' +
               '<div id="ambosSiNoAcceso" class="triage-resultado" style="display:none;">' +
                 '<p>Gracias por su confirmación. En este momento le ayudaré a actualizar su nuevo número de teléfono. ¿Me brinda su nuevo número?</p>' +
-                '<p style="color:#64748B; font-style:italic;">Instrucción: Marcar check en "Verificado".</p>' +
+                '<p class="instruccion-interna">Instrucción: Marcar check en "Verificado".</p>' +
                 '<p>Le confirmo que hemos actualizado su teléfono en <strong>DoctorSV</strong>.</p>' +
                 '<p>Procederemos ahora a la actualización de su correo. Como parte del proceso de seguridad, le enviaremos un código de verificación de <strong>6 dígitos</strong> al nuevo número de teléfono.</p>' +
                 '<p>Por favor, compártame el código una vez lo reciba.</p>' +
@@ -2301,7 +2304,7 @@
               { label: 'Otro dato (Sexo, tipo de sangre, peso, estatura)',
                 texto:
                   '<p>Con mucho gusto le ayudamos a cambiar el dato que nos comenta.</p>' +
-                  '<p style="color:#64748B; font-style:italic;">Instrucción: actualizar dato en TCA.</p>' +
+                  '<p class="instruccion-interna">Instrucción: actualizar dato en TCA.</p>' +
                   '<p>Le confirmo Sr/Sra XXXXXXX, el dato ha sido actualizado en este momento.</p>'
               }
             ]
@@ -2332,13 +2335,13 @@
             texto:
             '<p>Comprendo lo que nos comenta. Enseguida le ayudamos a desvincular a su familiar.</p>' +
             '<p>Sólo para confirmar, ¿me podría indicar el nombre completo del familiar a desvincular?</p>' +
-            '<p style="color:#64748B; font-style:italic;">Instrucción: Busca al usuario en la sección "Familiares" de TCA. Identifica si el familiar es mayor o menor de edad.</p>' +
+            '<p class="instruccion-interna">Instrucción: Busca al usuario en la sección "Familiares" de TCA. Identifica si el familiar es mayor o menor de edad.</p>' +
             '<div class="triage-acciones">' +
               '<button class="bib-btn" onclick="mostrarUno(\'familiarDesvincularMayor\', \'familiarDesvincularMenor\')">Familiar mayor de edad</button>' +
               '<button class="bib-btn" onclick="mostrarUno(\'familiarDesvincularMenor\', \'familiarDesvincularMayor\')">Familiar menor de edad</button>' +
             '</div>' +
             '<div id="familiarDesvincularMayor" class="triage-resultado" style="display:none;">' +
-              '<p style="color:#64748B; font-style:italic;">Instrucción: Sondea con el usuario: ¿Se quiere desvincular para tener su usuario propio? ¿Se quiere desvincular para vincularse a otro usuario titular?</p>' +
+              '<p class="instruccion-interna">Instrucción: Sondea con el usuario: ¿Se quiere desvincular para tener su usuario propio? ¿Se quiere desvincular para vincularse a otro usuario titular?</p>' +
               '<div class="triage-acciones">' +
                 '<button class="bib-btn" onclick="mostrarUno(\'familiarMayorUsuarioPropio\', \'familiarMayorOtroTitular\')">Familiar desea tener su usuario propio</button>' +
                 '<button class="bib-btn" onclick="mostrarUno(\'familiarMayorOtroTitular\', \'familiarMayorUsuarioPropio\')">Familiar desea vincularse a otro titular</button>' +
@@ -2368,7 +2371,7 @@
           { label: 'Nos contacta el familiar',
             texto:
               '<p>Comprendo lo que nos comenta. Enseguida le ayudamos a desvincularse de su familiar.</p>' +
-              '<p style="color:#64748B; font-style:italic;">Instrucción: Busca al usuario en la sección "Familiares" de TCA. Sondea con el usuario: ¿Se quiere desvincular para tener su usuario propio? ¿Se quiere desvincular para vincularse a otro usuario titular?</p>' +
+              '<p class="instruccion-interna">Instrucción: Busca al usuario en la sección "Familiares" de TCA. Sondea con el usuario: ¿Se quiere desvincular para tener su usuario propio? ¿Se quiere desvincular para vincularse a otro usuario titular?</p>' +
               '<div class="triage-acciones">' +
                 '<button class="bib-btn" onclick="mostrarUno(\'familiarContactaUsuarioPropio\', \'familiarContactaOtroTitular\')">Familiar desea tener su usuario propio</button>' +
                 '<button class="bib-btn" onclick="mostrarUno(\'familiarContactaOtroTitular\', \'familiarContactaUsuarioPropio\')">Familiar desea vincularse a otro titular</button>' +
@@ -2406,7 +2409,7 @@
           texto:
             '<p>Comprendo lo que nos comenta.</p>' +
             '<p>Con gusto le ayudo a que usted pueda ingresar y utilizar nuevamente la aplicación <strong>DoctorSV</strong>.</p>' +
-            '<p style="color:#64748B; font-style:italic;">Instrucción:<br>Ingresar en TCA, en la sección Datos Generales y habilitar usuario.</p>' +
+            '<p class="instruccion-interna">Instrucción:<br>Ingresar en TCA, en la sección Datos Generales y habilitar usuario.</p>' +
             '<p>Le confirmo que ya su usuario ha sido habilitado.</p>' +
             '<p>El siguiente paso es que usted ingrese a la aplicación y haga el proceso de registro.</p>' +
             '<p>Tendrá disponible su expediente médico e historial de citas.</p>'
@@ -2501,13 +2504,13 @@
           texto:
             '<p>Entiendo lo que nos comenta. Por favor, Sr / Sra XXXXXXX. ¿Me indica el código de su receta para verificar en nuestro sistema?</p>' +
             '<p>Muchas gracias, por favor, permítame unos momentos en línea para verificar la información.</p>' +
-            '<p style="color:#64748B; font-style:italic;">Instrucción: Validar en TCA el estado de la receta. ¿Qué estado tiene?</p>' +
+            '<p class="instruccion-interna">Instrucción: Validar en TCA el estado de la receta. ¿Qué estado tiene?</p>' +
             '<div class="triage-acciones">' +
               '<button class="bib-btn" onclick="mostrarUno(\'recetaMenos72\', \'recetaMas72\')">Tiene menos de 5 días vencida</button>' +
               '<button class="bib-btn" onclick="mostrarUno(\'recetaMas72\', \'recetaMenos72\')">Tiene más de 5 días vencida</button>' +
             '</div>' +
             '<div id="recetaMenos72" class="triage-resultado" style="display:none;">' +
-              '<p style="color:#64748B; font-style:italic;">Instrucción: Solicita la reactivación de la receta al supervisor si tiene menos de 72hrs vencida.</p>' +
+              '<p class="instruccion-interna">Instrucción: Solicita la reactivación de la receta al supervisor si tiene menos de 72hrs vencida.</p>' +
               '<p>Gracias por su amable espera en línea.</p>' +
               '<p>Le comento que hemos realizado el cambio de estado de la receta de "Expirada" a "Pendiente", para que pueda retirar sus medicamentos.</p>' +
               '<p>Le pedimos, por favor, que verifique en la aplicación en la sección de Recetas.</p>' +
@@ -2516,7 +2519,7 @@
               '<p>Gracias por su amable espera en línea.</p>' +
               '<p>Hemos revisado el estado de su receta en nuestro sistema y aparece como "Expirada". En este caso, realizaremos un reporte al área correspondiente con el ticket XXXX.</p>' +
               '<p>Le pedimos estar pendiente, ya que se pondrán en contacto con usted para darle seguimiento a su caso a la brevedad posible.</p>' +
-              '<p style="color:#64748B; font-style:italic;">Instrucción: Crear ticket y enviar a MED Critico (si fue emitida por un médico general) o MED ESP Critico (si fue emitida por un médico especialista)</p>' +
+              '<p class="instruccion-interna">Instrucción: Crear ticket y enviar a MED Critico (si fue emitida por un médico general) o MED ESP Critico (si fue emitida por un médico especialista)</p>' +
             '</div>'
         },
         { label: 'Órdenes de laboratorio vencidas',
@@ -2524,13 +2527,13 @@
           texto:
             '<p>Entiendo lo que nos comenta. Por favor, Sr / Sra XXXXXXX. ¿Me indica el código de su orden de estudio para verificar en nuestro sistema?</p>' +
             '<p>Muchas gracias, por favor, permítame unos momentos en línea para verificar la información.</p>' +
-            '<p style="color:#64748B; font-style:italic;">Instrucción: Validar en TCA el estado de la orden de estudio. ¿Qué estado tiene?</p>' +
+            '<p class="instruccion-interna">Instrucción: Validar en TCA el estado de la orden de estudio. ¿Qué estado tiene?</p>' +
             '<div class="triage-acciones">' +
               '<button class="bib-btn" onclick="mostrarUno(\'ordenLabMenos72\', \'ordenLabMas72\')">Tiene menos de 15 días vencida</button>' +
               '<button class="bib-btn" onclick="mostrarUno(\'ordenLabMas72\', \'ordenLabMenos72\')">Tiene más de 15 días vencida</button>' +
             '</div>' +
             '<div id="ordenLabMenos72" class="triage-resultado" style="display:none;">' +
-              '<p style="color:#64748B; font-style:italic;">Instrucción: Solicita la reactivación de la orden de estudio al supervisor si tiene menos de 72hrs vencida.</p>' +
+              '<p class="instruccion-interna">Instrucción: Solicita la reactivación de la orden de estudio al supervisor si tiene menos de 72hrs vencida.</p>' +
               '<p>Gracias por su amable espera en línea.</p>' +
               '<p>Le comento que hemos realizado el cambio de estado de la orden de estudio de "Expirada" a "Pendiente", para que pueda realizar su estudio.</p>' +
               '<p>Le pedimos, por favor, que verifique en la aplicación en la sección de Estudios clínicos.</p>' +
@@ -2539,7 +2542,7 @@
               '<p>Gracias por su amable espera en línea.</p>' +
               '<p>Hemos revisado el estado de su orden de estudio en nuestro sistema y aparece como "Expirada". En este caso, realizaremos un reporte al área correspondiente con el ticket XXXX.</p>' +
               '<p>Le pedimos estar pendiente, ya que se pondrán en contacto con usted para darle seguimiento a su caso a la brevedad posible.</p>' +
-              '<p style="color:#64748B; font-style:italic;">Instrucción: Crear ticket y enviar a MED Critico (si fue emitida por un médico general) o MED ESP Critico (si fue emitida por un médico especialista)</p>' +
+              '<p class="instruccion-interna">Instrucción: Crear ticket y enviar a MED Critico (si fue emitida por un médico general) o MED ESP Critico (si fue emitida por un médico especialista)</p>' +
             '</div>'
         },
         { label: 'Órdenes de imágenes vencidas',
@@ -2547,13 +2550,13 @@
           texto:
             '<p>Entiendo lo que nos comenta. Por favor, Sr / Sra XXXXXXX. ¿Me indica el código de su orden de estudio para verificar en nuestro sistema?</p>' +
             '<p>Muchas gracias, por favor, permítame unos momentos en línea para verificar la información.</p>' +
-            '<p style="color:#64748B; font-style:italic;">Instrucción: Validar en TCA el estado de la orden de estudio. ¿Qué estado tiene?</p>' +
+            '<p class="instruccion-interna">Instrucción: Validar en TCA el estado de la orden de estudio. ¿Qué estado tiene?</p>' +
             '<div class="triage-acciones">' +
               '<button class="bib-btn" onclick="mostrarUno(\'ordenImgMenos72\', \'ordenImgMas72\')">Tiene menos de 10 días vencida</button>' +
               '<button class="bib-btn" onclick="mostrarUno(\'ordenImgMas72\', \'ordenImgMenos72\')">Tiene más de 10 días vencida</button>' +
             '</div>' +
             '<div id="ordenImgMenos72" class="triage-resultado" style="display:none;">' +
-              '<p style="color:#64748B; font-style:italic;">Instrucción: Solicita la reactivación de la orden de estudio al supervisor si tiene menos de 72hrs vencida.</p>' +
+              '<p class="instruccion-interna">Instrucción: Solicita la reactivación de la orden de estudio al supervisor si tiene menos de 72hrs vencida.</p>' +
               '<p>Gracias por su amable espera en línea.</p>' +
               '<p>Le comento que hemos realizado el cambio de estado de la orden de estudio de "Expirada" a "Pendiente", para que pueda realizar su estudio.</p>' +
               '<p>Le pedimos, por favor, que verifique en la aplicación en la sección de Estudios clínicos.</p>' +
@@ -2562,7 +2565,7 @@
               '<p>Gracias por su amable espera en línea.</p>' +
               '<p>Hemos revisado el estado de su orden de estudio en nuestro sistema y aparece como "Expirada". En este caso, realizaremos un reporte al área correspondiente con el ticket XXXX.</p>' +
               '<p>Le pedimos estar pendiente, ya que se pondrán en contacto con usted para darle seguimiento a su caso a la brevedad posible.</p>' +
-              '<p style="color:#64748B; font-style:italic;">Instrucción: Crear ticket y enviar a MED Critico (si fue emitida por un médico general) o MED ESP Critico (si fue emitida por un médico especialista)</p>' +
+              '<p class="instruccion-interna">Instrucción: Crear ticket y enviar a MED Critico (si fue emitida por un médico general) o MED ESP Critico (si fue emitida por un médico especialista)</p>' +
             '</div>'
         },
         { label: 'Órdenes de procedimientos presenciales vencidas',
@@ -2570,13 +2573,13 @@
           texto:
             '<p>Entiendo lo que nos comenta. Por favor, Sr / Sra XXXXXXX. ¿Me indica el código de su orden de estudio para verificar en nuestro sistema?</p>' +
             '<p>Muchas gracias, por favor, permítame unos momentos en línea para verificar la información.</p>' +
-            '<p style="color:#64748B; font-style:italic;">Instrucción: Validar en TCA el estado de la orden de estudio. ¿Qué estado tiene?</p>' +
+            '<p class="instruccion-interna">Instrucción: Validar en TCA el estado de la orden de estudio. ¿Qué estado tiene?</p>' +
             '<div class="triage-acciones">' +
               '<button class="bib-btn" onclick="mostrarUno(\'ordenProcMenos72\', \'ordenProcMas72\')">Tiene menos de 5 días vencida</button>' +
               '<button class="bib-btn" onclick="mostrarUno(\'ordenProcMas72\', \'ordenProcMenos72\')">Tiene más de 5 días vencida</button>' +
             '</div>' +
             '<div id="ordenProcMenos72" class="triage-resultado" style="display:none;">' +
-              '<p style="color:#64748B; font-style:italic;">Instrucción: Solicita la reactivación de la orden de estudio al supervisor si tiene menos de 72hrs vencida.</p>' +
+              '<p class="instruccion-interna">Instrucción: Solicita la reactivación de la orden de estudio al supervisor si tiene menos de 72hrs vencida.</p>' +
               '<p>Gracias por su amable espera en línea.</p>' +
               '<p>Le comento que hemos realizado el cambio de estado de la orden de estudio de "Expirada" a "Pendiente", para que pueda realizar su estudio.</p>' +
               '<p>Le pedimos, por favor, que verifique en la aplicación en la sección de Estudios clínicos.</p>' +
@@ -2585,7 +2588,7 @@
               '<p>Gracias por su amable espera en línea.</p>' +
               '<p>Hemos revisado el estado de su orden de estudio en nuestro sistema y aparece como "Expirada". En este caso, realizaremos un reporte al área correspondiente con el ticket XXXX.</p>' +
               '<p>Le pedimos estar pendiente, ya que se pondrán en contacto con usted para darle seguimiento a su caso a la brevedad posible.</p>' +
-              '<p style="color:#64748B; font-style:italic;">Instrucción: Crear ticket y enviar a MED Critico (si fue emitida por un médico general) o MED ESP Critico (si fue emitida por un médico especialista)</p>' +
+              '<p class="instruccion-interna">Instrucción: Crear ticket y enviar a MED Critico (si fue emitida por un médico general) o MED ESP Critico (si fue emitida por un médico especialista)</p>' +
             '</div>'
         },
         { label: 'Emisión de orden de procedimiento presencial',
@@ -2663,8 +2666,8 @@
                   '<p>¿Me podría indicar, por favor, el nombre y apellido del médico/a y la fecha y hora de la cita?</p>' +
                   '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
                 '</div>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* Especialidad</p>'
+                '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+                '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* Especialidad</p>'
             },
             { label: 'No se conectó el médico (especialista)',
               tipificacion: 'Incidencias calidad médica > No se conectó el médico',
@@ -2698,8 +2701,8 @@
                   '<p>¿Me podría indicar, por favor, el nombre y apellido del médico/a y la fecha y hora de la cita?</p>' +
                   '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
                 '</div>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* Especialidad</p>'
+                '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+                '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* Especialidad</p>'
             },
             { label: 'Otros temas de calidad de atención',
               tipificacion: 'Incidencias calidad médica > Según sea el caso',
@@ -2709,8 +2712,8 @@
                 '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
                 '<p>¿Me podría indicar, por favor, el <strong>nombre y apellido del médico/a</strong> y la <strong>fecha y hora de la cita</strong>?</p>' +
                 '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* Especialidad</p>'
+                '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+                '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* Especialidad</p>'
             }
           ]
         },
@@ -2729,8 +2732,8 @@
               '<p>¿Me podría confirmar si su cita fue con <strong>médico general</strong> o con un <strong>especialista</strong>? ¿Me podría indicar el nombre del medicamento que desea corregir?</p>' +
               '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
               '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
           },
           { label: 'Error en estudios de laboratorio',
             tipificacion: 'Incidencias calidad médica > Problemas con estudios de laboratorio > Error en estudios de laboratorio',
@@ -2742,8 +2745,8 @@
               '<p>¿Me podría confirmar si su estudio fue emitido por un <strong>médico general</strong> o por un <strong>especialista</strong>?</p>' +
               '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
               '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           },
           { label: 'Error en estudios de imágenes',
             tipificacion: 'Incidencias calidad médica > Problemas con estudios de imágenes > Error en estudios de imágenes',
@@ -2755,8 +2758,8 @@
               '<p>¿Me podría confirmar si su cita fue con <strong>médico general</strong> o con un <strong>especialista</strong>?</p>' +
               '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
               '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           },
           { label: 'Error en procedimientos presenciales',
             tipificacion: 'Incidencias calidad médica > Problemas con estudios de imágenes > Error en estudios de imágenes',
@@ -2768,8 +2771,8 @@
               '<p>¿Me podría confirmar si su cita fue con <strong>médico general</strong> o con un <strong>especialista</strong>?</p>' +
               '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
               '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           },
           { label: 'Error en referencia externa',
             tipificacion: 'Incidencias calidad médica > Problemas con referencia externa > Error en referencia externa',
@@ -2779,8 +2782,8 @@
               '<p>¿Me podría confirmar si su cita fue con <strong>médico general</strong> o con un <strong>especialista</strong>?</p>' +
               '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
               '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           },
           { label: 'Error en referencia interna',
             tipificacion: 'Incidencias calidad médica > Problemas con referencia interna > Error en referencia interna',
@@ -2790,8 +2793,8 @@
               '<p>¿Me podría confirmar si su cita fue con <strong>médico general</strong> o con un <strong>especialista</strong>?</p>' +
               '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
               '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           },
           { label: 'Error en datos de constancia médica',
             tipificacion: 'Incidencias calidad médica > Problemas con constancia médica > Error en datos de constancia médica',
@@ -2801,8 +2804,8 @@
               '<p>¿Me podría confirmar si su cita fue con <strong>médico general</strong> o con un <strong>especialista</strong>?</p>' +
               '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
               '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           }
         ] },
         { label: 'No generó productos', hijos: [
@@ -2815,8 +2818,8 @@
             '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
             '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
             '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+            '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
         },
         { label: 'No generó cita de seguimiento',
           tituloModal: 'No generó cita de seguimiento',
@@ -2827,8 +2830,8 @@
             '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
             '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
             '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+            '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
         },
         { label: 'No generó referencia externa',
           tituloModal: 'No generó referencia externa',
@@ -2839,8 +2842,8 @@
             '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
             '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
             '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+            '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
         },
         { label: 'No generó referencia interna',
           tituloModal: 'No generó referencia interna',
@@ -2851,8 +2854,8 @@
             '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
             '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
             '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+            '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
         },
         { label: 'No generó procedimientos presenciales',
           tituloModal: 'No generó procedimientos presenciales',
@@ -2863,8 +2866,8 @@
             '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
             '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
             '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+            '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
         },
         { label: 'No generó estudios de imágenes',
           tituloModal: 'No generó estudios de imágenes',
@@ -2875,8 +2878,8 @@
             '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
             '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
             '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+            '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
         },
         { label: 'No generó estudios de laboratorio',
           tituloModal: 'No generó estudios de laboratorio',
@@ -2887,8 +2890,8 @@
             '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
             '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
             '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+            '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
         }
         ] },
         { label: 'Calidez de la atención',
@@ -2898,8 +2901,8 @@
             '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
             '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
             '<p>Muchas gracias. Agregaré toda la información descrita por usted.</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+            '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
         }
       ] },
       { label: 'Tercerías', tooltip: 'El inconveniente está relacionado a una empresa que presta servicio a DoctorSV', pregunta: '¿Con quién tuvo el inconveniente el usuario?', hijos: [
@@ -2912,8 +2915,8 @@
               '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>?</p>' +
               '<p>Muchas gracias, ¿me podría confirmar el <strong>número de la receta</strong>?</p>' +
               '<p>Gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* ID de la receta</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Cadena.<br>* Sucursal.<br>* ID de la receta</p>'
           },
           { label: 'Error en dispensación',
             tipificacion: 'Incidencias con farmacias > Error en dispensación > Entrega errónea de medicamento',
@@ -2928,13 +2931,13 @@
                 '<p>En este caso, nos gustaría asegurarnos que no haya afectaciones a su salud.</p>' +
                 '<p>En este momento, si usted está de acuerdo, le transferiré la llamada con uno de nuestros médicos de apoyo para que evalúe su caso y le pueda brindar las recomendaciones necesarias.</p>' +
                 '<p>Voy a transferir la llamada, por favor no cuelgue.</p>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">Instrucción: Crear dos tickets.<br>1) Consultas &gt; Orientación de salud &gt; Sobre indicaciones medicas. Estado: MED Triage.<br>2) Incidencias con farmacias &gt; Error en dispensación &gt; Entrega errónea de medicamento</p>' +
+                '<p class="instruccion-interna">Instrucción: Crear dos tickets.<br>1) Consultas &gt; Orientación de salud &gt; Sobre indicaciones medicas. Estado: MED Triage.<br>2) Incidencias con farmacias &gt; Error en dispensación &gt; Entrega errónea de medicamento</p>' +
               '</div>' +
               '<div id="dispensacionNoConsumio" class="triage-resultado" style="display:none;">' +
                 '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de la receta</strong>?</p>' +
                 '<p>Muchas gracias. Agregaré toda la información a un reporte. Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-                '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* ID de la receta</p>' +
+                '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+                '<p class="instruccion-interna">* Cadena.<br>* Sucursal.<br>* ID de la receta</p>' +
               '</div>'
           },
           { label: 'Medicamento no disponible',
@@ -2965,8 +2968,8 @@
                   '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
                 '</div>' +
               '</div>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* ID de la receta<br>* Medicamento</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Cadena.<br>* Sucursal.<br>* ID de la receta<br>* Medicamento</p>'
           }
         ] },
         { label: 'Laboratorios', hijos: [
@@ -2976,8 +2979,8 @@
               '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
               '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
               '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>' +
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>' +
               '<p style="color:#64748B; font-style:italic;">Sólo si tiene aún el estudio pendiente:</p>' +
               '<p>¿Desea que le ofrezca otra opción de laboratorio para que se haga su estudio?</p>' +
               '<div class="triage-acciones">' +
@@ -2996,8 +2999,8 @@
               '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
               '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
               '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
           },
           { label: 'Error en resultados',
             tipificacion: 'Incidencias con laboratorios > Error en resultados de laboratorio',
@@ -3007,8 +3010,8 @@
               '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
               '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
               '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
           }
         ] },
         { label: 'Centros de imágenes', hijos: [
@@ -3018,8 +3021,8 @@
               '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
               '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
               '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
           },
           { label: 'Error en procesamiento de estudios',
             tipificacion: 'Incidencias con centros de imágenes > Error en procesamiento de estudios',
@@ -3029,8 +3032,8 @@
               '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
               '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
               '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
           },
           { label: 'Error en resultados',
             tipificacion: 'Incidencias con centros de imágenes > Error en resultados',
@@ -3040,8 +3043,8 @@
               '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
               '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
               '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
           }
         ] },
         { label: 'Centros de procedimientos presenciales', hijos: [
@@ -3051,8 +3054,8 @@
               '<p>Comprendo Sr/Sra. XXXX, su opinión con relación a nuestros servicios es <strong>muy importante para nosotros</strong>. En este momento agregaré la información que usted me ha mencionado a un reporte detallado para que pueda ser <strong>escalado al área correspondiente</strong> y se puedan tomar las acciones internas correspondientes.</p>' +
               '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
               '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
           },
           { label: 'Error en prod. presenciales',
             tipificacion: 'Incidencias con centros de procedimientos presenciales > Error en procesamiento de estudios',
@@ -3062,8 +3065,8 @@
               '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
               '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
               '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
           },
           { label: 'Error en resultados',
             tipificacion: 'Incidencias con centros de procedimientos presenciales > Error en resultados',
@@ -3073,8 +3076,8 @@
               '<p>¿Me podría confirmar el nombre de la <strong>cadena</strong> y la <strong>sucursal</strong>? ¿Me podría confirmar el <strong>número de orden de estudio</strong>?</p>' +
               '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
               '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-              '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
+              '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+              '<p class="instruccion-interna">* Cadena.<br>* Sucursal.<br>* Orden de estudio</p>'
           }
         ] }
       ] },
@@ -4319,7 +4322,7 @@
     if (resultadoDiv) resultadoDiv.innerHTML = '';
 
     document.getElementById('psPreguntas_' + prefix).innerHTML =
-      '<p style="color:#64748B; font-style:italic; margin-bottom:12px;">Instrucción: Validar las respuestas del usuario con información disponible en TCA.</p>' +
+      '<p class="instruccion-interna">Instrucción: Validar las respuestas del usuario con información disponible en TCA.</p>' +
       elegidas.map(function(idx, i) {
         return '<div class="pregunta-seguridad-caja">' +
           '<p>' + (i + 1) + ') ' + PREGUNTAS_SEGURIDAD[idx] + '</p>' +
@@ -4578,7 +4581,7 @@
             '<p><strong>En esta cita el médico se pondrá en contacto con usted llamándole a su número de teléfono. Sólo tenga en cuenta que las citas por esta vía pueden tener limitaciones en cuanto al diagnóstico que realice su médico.</strong></p>' +
             '<p>La cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
             '<p>Excelente, queda programada su cita el día XXXXXX XX a las XX de la tarde / de la mañana.</p>' +
-            '<p style="color:#64748B; font-size:0.82rem;"><em>Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</em></p>' +
+            '<p class="instruccion-interna">Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</p>' +
             '<div class="triage-acciones" style="margin-bottom:0;">' +
               '<button class="bib-btn" onclick="toggleBloque(\'rec' + idNoPuedeNota + '\')">Recomendaciones para cita vía telefónica</button>' +
             '</div>' +
