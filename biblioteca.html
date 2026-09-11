@@ -1555,6 +1555,17 @@
           '<div class="triage-acciones">' +
             '<button class="bib-btn" onclick="abrirUbicacionFarmacias()">Ir a Ubicación de farmacias / laboratorios</button>' +
           '</div>'
+      },
+      { label: 'Notificaciones de autoridades',
+        texto:
+          '<p>Comprendo su inquietud. Le indico que en DoctorSV nos enfocamos estrictamente en brindar la atención que el paciente necesita y en resguardar la confidencialidad del expediente de acuerdo con la ley.</p>' +
+          '<p>Nosotros no manejamos información sobre los seguimientos o actuaciones que realizan las autoridades públicas. Para conocer el motivo específico de la llamada que recibió, le sugerimos comunicarse directamente con la entidad de la que le contactaron, donde podrán brindarle los detalles correspondientes.</p>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn" onclick="toggleBloque(\'notifAutoridadesInsiste\')">Si el usuario insiste</button>' +
+          '</div>' +
+          '<div id="notifAutoridadesInsiste" class="triage-resultado" style="display:none;">' +
+            '<p>Entiendo su molestia. Como le comento, por políticas de privacidad y seguridad, nuestras atenciones se registran bajo estrictos protocolos y marcos legales vigentes. No tenemos conocimiento sobre las investigaciones o procesos externos que realizan las autoridades judiciales. Le reitero que cualquier consulta sobre trámites o denuncias debe verla directamente con la institución correspondiente.</p>' +
+          '</div>'
       }
     ] },
     { label: 'Dudas sobre secciones de la aplicación', vistaTarjetas: true, hijos: [
@@ -2686,8 +2697,80 @@
               '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           }
         ] },
-        { label: 'Faltaron productos',
-          tituloModal: 'Faltaron productos en la consulta',
+        { label: 'No generó receta',
+          tituloModal: 'No generó receta',
+          tipificacion: 'Incidencias calidad médica > Según sea el caso > Según sea el caso',
+          texto:
+            '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+            '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
+            '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
+            '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+            '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+        },
+        { label: 'No generó cita de seguimiento',
+          tituloModal: 'No generó cita de seguimiento',
+          tipificacion: 'Incidencias calidad médica > Según sea el caso > Según sea el caso',
+          texto:
+            '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+            '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
+            '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
+            '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+            '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+        },
+        { label: 'No generó referencia externa',
+          tituloModal: 'No generó referencia externa',
+          tipificacion: 'Incidencias calidad médica > Según sea el caso > Según sea el caso',
+          texto:
+            '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+            '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
+            '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
+            '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+            '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+        },
+        { label: 'No generó referencia interna',
+          tituloModal: 'No generó referencia interna',
+          tipificacion: 'Incidencias calidad médica > Según sea el caso > Según sea el caso',
+          texto:
+            '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+            '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
+            '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
+            '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+            '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+        },
+        { label: 'No generó procedimientos presenciales',
+          tituloModal: 'No generó procedimientos presenciales',
+          tipificacion: 'Incidencias calidad médica > Según sea el caso > Según sea el caso',
+          texto:
+            '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+            '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
+            '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
+            '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+            '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+        },
+        { label: 'No generó estudios de imágenes',
+          tituloModal: 'No generó estudios de imágenes',
+          tipificacion: 'Incidencias calidad médica > Según sea el caso > Según sea el caso',
+          texto:
+            '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
+            '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
+            '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
+            '<p>Muchas gracias. Agregaré toda la información a un reporte.</p>' +
+            '<p>Por favor, le solicitamos que se mantenga atento a su teléfono de contacto para que le podamos brindar la resolución del caso.</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:6px;">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
+            '<p style="color:#64748B; font-style:italic; margin-bottom:0;">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+        },
+        { label: 'No generó estudios de laboratorio',
+          tituloModal: 'No generó estudios de laboratorio',
           tipificacion: 'Incidencias calidad médica > Según sea el caso > Según sea el caso',
           texto:
             '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
