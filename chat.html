@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script src="mobile-guard.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/atu-360/">
+<title>ATU 360 — Chat</title>
+<link rel="stylesheet" href="sidebar.css">
+<link rel="stylesheet" href="base.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter','Segoe UI',sans-serif; background: #F8FAFC; display: flex; min-height: 100vh; color: #1E293B; }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { background: white; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; flex-shrink: 0; }
+  .topbar-left { display: flex; align-items: center; gap: 8px; }
+  .topbar-left h2 { font-size: 0.9rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.78rem; color: #94A3B8; }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .tb-clock { font-size: 1rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+
+  .chat-shell { flex: 1; display: flex; overflow: hidden; }
+
+  /* LISTA DE CONVERSACIONES */
+  .conv-col { width: 300px; flex-shrink: 0; background: white; border-right: 1px solid #E2E8F0; display: flex; flex-direction: column; }
+  .conv-head { padding: 16px 18px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; }
+  .conv-head-title { font-size: 0.85rem; font-weight: 700; color: #1E293B; }
+  .btn-nuevo-chat { width: 28px; height: 28px; border-radius: 7px; background: #1A3DAA; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .btn-nuevo-chat:hover { opacity: 0.88; }
+  .conv-list { flex: 1; overflow-y: auto; }
+  .conv-group-label { font-size: 0.62rem; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 1px; padding: 12px 18px 6px; }
+  .conv-item { display: flex; align-items: center; gap: 10px; padding: 11px 18px; cursor: pointer; border-bottom: 1px solid #F8FAFC; position: relative; }
+  .conv-item:hover { background: #F8FAFC; }
+  .conv-item.active { background: #EEF2FF; }
+  .conv-avatar { width: 36px; height: 36px; border-radius: 50%; background: #1A3DAA; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; }
+  .conv-avatar.grupal { background: #7C3AED; }
+  .conv-info { flex: 1; min-width: 0; }
+  .conv-nombre { font-size: 0.82rem; font-weight: 700; color: #1E293B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .conv-preview { font-size: 0.72rem; color: #94A3B8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+  .conv-item.unread .conv-nombre { color: #1A3DAA; }
+  .conv-item.unread .conv-preview { color: #374151; font-weight: 600; }
+  .conv-dot { width: 8px; height: 8px; border-radius: 50%; background: #1A3DAA; flex-shrink: 0; }
+  .conv-empty { padding: 40px 20px; text-align: center; color: #94A3B8; font-size: 0.8rem; }
+
+  /* PANEL DE MENSAJES */
+  .thread-col { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .thread-head { padding: 14px 24px; border-bottom: 1px solid #E2E8F0; background: white; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .thread-head-avatar { width: 34px; height: 34px; border-radius: 50%; background: #1A3DAA; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
+  .thread-head-avatar.grupal { background: #7C3AED; }
+  .thread-head-nombre { font-size: 0.88rem; font-weight: 700; color: #1E293B; }
+  .thread-head-sub { font-size: 0.72rem; color: #94A3B8; margin-top: 1px; }
+  .thread-body { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 10px; }
+  .msg-row { display: flex; }
+  .msg-row.mio { justify-content: flex-end; }
+  .msg-bubble { max-width: 60%; padding: 9px 14px; border-radius: 12px; font-size: 0.84rem; line-height: 1.5; word-wrap: break-word; }
+  .msg-row:not(.mio) .msg-bubble { background: white; border: 1px solid #E2E8F0; color: #1E293B; border-bottom-left-radius: 3px; }
+  .msg-row.mio .msg-bubble { background: #1A3DAA; color: white; border-bottom-right-radius: 3px; }
+  .msg-autor { font-size: 0.68rem; font-weight: 700; color: #7C3AED; margin-bottom: 2px; }
+  .msg-hora { font-size: 0.62rem; margin-top: 4px; opacity: 0.7; }
+  .thread-foot { padding: 14px 24px; border-top: 1px solid #E2E8F0; background: white; display: flex; gap: 10px; flex-shrink: 0; }
+  .thread-foot input { flex: 1; padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 20px; font-size: 0.85rem; font-family: inherit; outline: none; background: #F8FAFC; }
+  .thread-foot input:focus { border-color: #1A3DAA; background: white; }
+  .btn-enviar { width: 40px; height: 40px; border-radius: 50%; background: #1A3DAA; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .btn-enviar:hover { opacity: 0.88; }
+  .btn-enviar:disabled { opacity: 0.4; cursor: not-allowed; }
+  .readonly-banner { padding: 10px 24px; background: #FFFBEB; color: #B45309; font-size: 0.76rem; font-weight: 600; border-top: 1px solid #FDE68A; flex-shrink: 0; }
+  .empty-state { flex: 1; display: flex; align-items: center; justify-content: center; color: #94A3B8; font-size: 0.85rem; flex-direction: column; gap: 8px; }
+
+  /* MODAL NUEVO CHAT */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.4); z-index: 200; display: none; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 60px 20px; }
+  .modal-overlay.show { display: flex; }
+  .modal-box { background: white; border-radius: 12px; width: 420px; max-width: 96vw; box-shadow: 0 24px 48px rgba(0,0,0,0.15); }
+  .modal-head { padding: 18px 22px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; }
+  .modal-title { font-size: 0.92rem; font-weight: 700; }
+  .modal-body { padding: 8px 0; max-height: 60vh; overflow-y: auto; }
+  .btn-icon { width: 28px; height: 28px; border: 1px solid #E2E8F0; border-radius: 6px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #64748B; flex-shrink: 0; }
+  .agente-pick { display: flex; align-items: center; gap: 10px; padding: 11px 22px; cursor: pointer; }
+  .agente-pick:hover { background: #F8FAFC; }
+  .agente-pick .conv-avatar { width: 30px; height: 30px; font-size: 0.65rem; }
+  .loading { font-size: 0.82rem; color: #94A3B8; text-align: center; padding: 24px; }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="sidebar"></div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Chat</h2>
+      <span class="topbar-sep">/</span>
+      <p id="topbarSub">Cargando...</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="chat-shell">
+    <div class="conv-col">
+      <div class="conv-head">
+        <div class="conv-head-title">Conversaciones</div>
+        <button class="btn-nuevo-chat" id="btnNuevoChat" style="display:none" onclick="abrirModalNuevoChat()" title="Nuevo chat">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
+      <div class="conv-list" id="convList"><div class="loading">Cargando...</div></div>
+    </div>
+
+    <div class="thread-col" id="threadCol">
+      <div class="empty-state" id="threadEmpty">
+        <div style="font-size:2rem">💬</div>
+        <div>Selecciona una conversación</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal nuevo chat 1 a 1 -->
+<div class="modal-overlay" id="modalNuevoChat">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">Iniciar chat con un colaborador</div>
+      <button class="btn-icon" onclick="cerrarModalNuevoChat()">✕</button>
+    </div>
+    <div class="modal-body" id="listaAgentesModal"><div class="loading">Cargando...</div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  var BASE = 'https://atencionalusuario.github.io/atu-360/';
+  var ROLES_PERMITIDOS = ['supervisor', 'agente', 'agente-inmersion', 'superadmin'];
+
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var db   = firebase.firestore();
+  var auth = firebase.auth();
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  var currentUser = null, miRolG = '', miNombreG = '', miEmailG = '';
+  var soloLectura = false;
+  var chats = [];
+  var chatActivoId = null;
+  var unsubMensajes = null;
+  var agentesDeEquipo = [];
+
+  function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+  function iniciales(n){ return (n||'?').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase(); }
+
+  auth.onAuthStateChanged(function(user){
+    if(!user){ window.location.href = BASE + 'login.html'; return; }
+    db.collection('usuarios').doc(user.uid).get().then(function(doc){
+      if(!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)){
+        window.location.href = BASE + 'home.html'; return;
+      }
+      currentUser = user;
+      miRolG    = doc.data().rol || '';
+      miNombreG = doc.data().nombre || user.email.split('@')[0];
+      miEmailG  = user.email;
+      soloLectura = miRolG === 'superadmin';
+
+      if(miRolG === 'supervisor'){
+        document.getElementById('btnNuevoChat').style.display = 'flex';
+        asegurarChatGrupal();
+        cargarAgentesDeEquipo();
+      }
+      cargarChats();
+    });
+  });
+
+  // ── Asegurar / sincronizar el chat grupal del equipo del supervisor ─────────
+  function cargarAgentesDeEquipo(cb){
+    db.collection('usuarios').where('emailSupervisor','==',miEmailG).where('activo','==',true).get().then(function(snap){
+      agentesDeEquipo = [];
+      snap.forEach(function(d){
+        var x = d.data();
+        if(['agente','agente-inmersion'].indexOf(x.rol) < 0) return;
+        agentesDeEquipo.push({ uid: d.id, nombre: x.nombre || x.email, rol: x.rol });
+      });
+      if(cb) cb();
+    });
+  }
+
+  function asegurarChatGrupal(){
+    cargarAgentesDeEquipo(function(){
+      var id = 'grupal_' + currentUser.uid;
+      var participantes = [currentUser.uid].concat(agentesDeEquipo.map(function(a){ return a.uid; }));
+      var participantesInfo = {};
+      participantesInfo[currentUser.uid] = { nombre: miNombreG, rol: miRolG };
+      agentesDeEquipo.forEach(function(a){ participantesInfo[a.uid] = { nombre: a.nombre, rol: a.rol }; });
+
+      db.collection('chats').doc(id).get().then(function(doc){
+        var data = {
+          tipo: 'grupal', nombre: 'Equipo de ' + miNombreG,
+          supervisorUid: currentUser.uid, supervisorNombre: miNombreG,
+          participantes: participantes, participantesInfo: participantesInfo
+        };
+        if(!doc.exists) data.creadoEn = firebase.firestore.FieldValue.serverTimestamp();
+        db.collection('chats').doc(id).set(data, { merge: true }).catch(function(e){ console.error('chat grupal:', e); });
+      });
+    });
+  }
+
+  // ── Cargar lista de conversaciones ───────────────────────────────────────────
+  function cargarChats(){
+    var q = soloLectura
+      ? db.collection('chats')
+      : db.collection('chats').where('participantes', 'array-contains', currentUser.uid);
+    q.onSnapshot(function(snap){
+      chats = [];
+      snap.forEach(function(d){ chats.push(Object.assign({ id: d.id }, d.data())); });
+      chats.sort(function(a,b){
+        var ta = a.ultimoMensaje && a.ultimoMensaje.fecha ? a.ultimoMensaje.fecha.seconds : (a.creadoEn ? a.creadoEn.seconds : 0);
+        var tb = b.ultimoMensaje && b.ultimoMensaje.fecha ? b.ultimoMensaje.fecha.seconds : (b.creadoEn ? b.creadoEn.seconds : 0);
+        return tb - ta;
+      });
+      renderConvList();
+      if(chatActivoId){
+        var sigueExistiendo = chats.some(function(c){ return c.id === chatActivoId; });
+        if(!sigueExistiendo){ chatActivoId = null; mostrarVacio(); }
+      }
+    }, function(e){ console.error('chats:', e); showToast('Error al cargar tus conversaciones.'); });
+  }
+
+  function nombreDeChat(c){
+    if(c.tipo === 'grupal') return c.nombre || 'Chat de equipo';
+    var otro = Object.keys(c.participantesInfo || {}).find(function(uid){ return uid !== currentUser.uid; });
+    return otro && c.participantesInfo[otro] ? c.participantesInfo[otro].nombre : (c.nombre || 'Chat');
+  }
+
+  function subtituloDeChat(c){
+    if(c.tipo === 'grupal'){
+      var n = (c.participantes||[]).length;
+      return n + ' integrante' + (n!==1?'s':'');
+    }
+    var otro = Object.keys(c.participantesInfo || {}).find(function(uid){ return uid !== currentUser.uid; });
+    return otro && c.participantesInfo[otro] ? (c.participantesInfo[otro].rol==='supervisor'?'Supervisor':'Agente') : '';
+  }
+
+  function esNoLeido(c){
+    if(!c.ultimoMensaje) return false;
+    if(c.ultimoMensaje.autorUid === currentUser.uid) return false;
+    var leido = c.leidoHasta && c.leidoHasta[currentUser.uid];
+    if(!leido) return true;
+    var uMs = c.ultimoMensaje.fecha ? c.ultimoMensaje.fecha.toMillis() : 0;
+    var lMs = leido.toMillis ? leido.toMillis() : 0;
+    return uMs > lMs;
+  }
+
+  function renderConvList(){
+    var el = document.getElementById('convList');
+    if(chats.length === 0){
+      el.innerHTML = '<div class="conv-empty">' + (soloLectura ? 'Aún no hay conversaciones en el sistema.' : 'Sin conversaciones todavía.') + '</div>';
+      document.getElementById('topbarSub').textContent = 'Sin conversaciones';
+      return;
+    }
+    document.getElementById('topbarSub').textContent = chats.length + ' conversación' + (chats.length!==1?'es':'');
+    var grupales = chats.filter(function(c){ return c.tipo === 'grupal'; });
+    var directos  = chats.filter(function(c){ return c.tipo !== 'grupal'; });
+
+    function itemHtml(c){
+      var nombre = nombreDeChat(c);
+      var preview = c.ultimoMensaje ? (c.ultimoMensaje.autorUid===currentUser.uid?'Tú: ':'') + c.ultimoMensaje.texto : 'Sin mensajes aún';
+      var noLeido = !soloLectura && esNoLeido(c);
+      return '<div class="conv-item'+(c.id===chatActivoId?' active':'')+(noLeido?' unread':'')+'" onclick="abrirChat(\''+c.id+'\')">'
+        + '<div class="conv-avatar'+(c.tipo==='grupal'?' grupal':'')+'">'+(c.tipo==='grupal'?'👥':escHtml(iniciales(nombre)))+'</div>'
+        + '<div class="conv-info"><div class="conv-nombre">'+escHtml(nombre)+(soloLectura&&c.tipo!=='grupal'?'':'')+'</div><div class="conv-preview">'+escHtml(preview)+'</div></div>'
+        + (noLeido?'<div class="conv-dot"></div>':'')
+        + '</div>';
+    }
+
+    var html = '';
+    if(grupales.length){ html += '<div class="conv-group-label">Equipo</div>' + grupales.map(itemHtml).join(''); }
+    if(directos.length){ html += '<div class="conv-group-label">Directos</div>' + directos.map(itemHtml).join(''); }
+    el.innerHTML = html;
+  }
+
+  // ── Abrir un chat ────────────────────────────────────────────────────────────
+  window.abrirChat = function(id){
+    chatActivoId = id;
+    renderConvList();
+    var c = chats.find(function(x){ return x.id === id; });
+    if(!c) return;
+
+    if(!soloLectura){
+      var patch = {}; patch['leidoHasta.' + currentUser.uid] = firebase.firestore.FieldValue.serverTimestamp();
+      db.collection('chats').doc(id).update(patch).catch(function(){});
+    }
+
+    var nombre = nombreDeChat(c);
+    var sub = subtituloDeChat(c);
+    document.getElementById('threadCol').innerHTML =
+        '<div class="thread-head">'
+      + '<div class="thread-head-avatar'+(c.tipo==='grupal'?' grupal':'')+'">'+(c.tipo==='grupal'?'👥':escHtml(iniciales(nombre)))+'</div>'
+      + '<div><div class="thread-head-nombre">'+escHtml(nombre)+'</div><div class="thread-head-sub">'+escHtml(sub)+'</div></div>'
+      + '</div>'
+      + '<div class="thread-body" id="threadBody"><div class="loading">Cargando mensajes...</div></div>'
+      + (soloLectura
+          ? '<div class="readonly-banner">Estás viendo esta conversación en modo solo lectura.</div>'
+          : '<div class="thread-foot"><input type="text" id="mInput" placeholder="Escribe un mensaje..." onkeydown="if(event.key===\'Enter\')enviarMensaje()">'
+            + '<button class="btn-enviar" onclick="enviarMensaje()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div>');
+
+    if(unsubMensajes) unsubMensajes();
+    unsubMensajes = db.collection('chats').doc(id).collection('mensajes').orderBy('fecha')
+      .onSnapshot(function(snap){
+        var msgs = []; snap.forEach(function(d){ msgs.push(Object.assign({id:d.id}, d.data())); });
+        renderMensajes(msgs, c.tipo === 'grupal');
+      }, function(e){ console.error('mensajes:', e); });
+  };
+
+  function mostrarVacio(){
+    document.getElementById('threadCol').innerHTML = '<div class="empty-state" id="threadEmpty"><div style="font-size:2rem">💬</div><div>Selecciona una conversación</div></div>';
+  }
+
+  function renderMensajes(msgs, mostrarAutor){
+    var body = document.getElementById('threadBody');
+    if(!body) return;
+    if(msgs.length === 0){
+      body.innerHTML = '<div class="loading">Aún no hay mensajes. ¡Escribe el primero!</div>';
+      return;
+    }
+    body.innerHTML = msgs.map(function(m){
+      var mio = m.autorUid === currentUser.uid;
+      var hora = m.fecha ? m.fecha.toDate().toLocaleTimeString('es-SV', {hour:'2-digit', minute:'2-digit'}) : '';
+      return '<div class="msg-row'+(mio?' mio':'')+'"><div class="msg-bubble">'
+        + (mostrarAutor && !mio ? '<div class="msg-autor">'+escHtml(m.autorNombre)+'</div>' : '')
+        + escHtml(m.texto)
+        + '<div class="msg-hora">'+hora+'</div>'
+        + '</div></div>';
+    }).join('');
+    body.scrollTop = body.scrollHeight;
+  }
+
+  window.enviarMensaje = function(){
+    if(soloLectura || !chatActivoId) return;
+    var input = document.getElementById('mInput');
+    var texto = (input.value || '').trim();
+    if(!texto) return;
+    input.value = '';
+    var chatRef = db.collection('chats').doc(chatActivoId);
+    chatRef.collection('mensajes').add({
+      autorUid: currentUser.uid, autorNombre: miNombreG, texto: texto,
+      fecha: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(){
+      var patch = {
+        ultimoMensaje: { texto: texto, autorUid: currentUser.uid, autorNombre: miNombreG, fecha: firebase.firestore.FieldValue.serverTimestamp() }
+      };
+      patch['leidoHasta.' + currentUser.uid] = firebase.firestore.FieldValue.serverTimestamp();
+      return chatRef.update(patch);
+    }).catch(function(e){ console.error(e); showToast('No se pudo enviar el mensaje.'); });
+  };
+
+  // ── Nuevo chat 1 a 1 (solo supervisor) ───────────────────────────────────────
+  window.abrirModalNuevoChat = function(){
+    cargarAgentesDeEquipo(function(){
+      var el = document.getElementById('listaAgentesModal');
+      if(agentesDeEquipo.length === 0){
+        el.innerHTML = '<div class="loading">No tienes agentes asignados.</div>';
+      } else {
+        el.innerHTML = agentesDeEquipo.map(function(a){
+          return '<div class="agente-pick" onclick="iniciarChatDirecto(\''+a.uid+'\')">'
+            + '<div class="conv-avatar">'+escHtml(iniciales(a.nombre))+'</div>'
+            + '<div>'+escHtml(a.nombre)+'</div></div>';
+        }).join('');
+      }
+      document.getElementById('modalNuevoChat').classList.add('show');
+    });
+  };
+  function cerrarModalNuevoChat(){ document.getElementById('modalNuevoChat').classList.remove('show'); }
+
+  window.iniciarChatDirecto = function(agenteUid){
+    var agente = agentesDeEquipo.find(function(a){ return a.uid === agenteUid; });
+    if(!agente) return;
+    var id = 'directo_' + currentUser.uid + '_' + agenteUid;
+    var participantesInfo = {};
+    participantesInfo[currentUser.uid] = { nombre: miNombreG, rol: miRolG };
+    participantesInfo[agenteUid] = { nombre: agente.nombre, rol: agente.rol };
+    db.collection('chats').doc(id).get().then(function(doc){
+      var data = {
+        tipo: 'directo', supervisorUid: currentUser.uid, supervisorNombre: miNombreG,
+        participantes: [currentUser.uid, agenteUid], participantesInfo: participantesInfo
+      };
+      if(!doc.exists) data.creadoEn = firebase.firestore.FieldValue.serverTimestamp();
+      return db.collection('chats').doc(id).set(data, { merge: true });
+    }).then(function(){
+      cerrarModalNuevoChat();
+      abrirChat(id);
+    }).catch(function(e){ console.error(e); showToast('No se pudo iniciar el chat.'); });
+  };
+
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3500);
+  }
+</script>
+<script src="notif.js"></script>
+<script src="sidebar.js"></script>
+<script>
+  initSidebar();
+  initNotif(db, auth);
+</script>
+</body>
+</html>
