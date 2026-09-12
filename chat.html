@@ -272,7 +272,7 @@
       document.getElementById('topbarSub').textContent = 'Sin conversaciones';
       return;
     }
-    document.getElementById('topbarSub').textContent = chats.length + ' conversación' + (chats.length!==1?'es':'');
+    document.getElementById('topbarSub').textContent = chats.length + ' ' + (chats.length!==1 ? 'conversaciones' : 'conversación');
     var grupales = chats.filter(function(c){ return c.tipo === 'grupal'; });
     var directos  = chats.filter(function(c){ return c.tipo !== 'grupal'; });
 
