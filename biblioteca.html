@@ -228,6 +228,8 @@
   .tiene-tooltip::after { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: white; color: #1E293B; padding: 10px 14px; border-radius: 8px; box-shadow: 0 6px 20px rgba(15,32,112,0.18); font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 500; line-height: 1.4; white-space: normal; width: 220px; text-align: left; opacity: 0; visibility: hidden; transition: opacity 0.15s, visibility 0.15s; z-index: 30; pointer-events: none; }
   .tiene-tooltip::before { content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); border: 7px solid transparent; border-top-color: white; opacity: 0; visibility: hidden; transition: opacity 0.15s, visibility 0.15s; z-index: 30; pointer-events: none; }
   .tiene-tooltip:hover::after, .tiene-tooltip:hover::before { opacity: 1; visibility: visible; }
+  .cintillo-btn.tiene-tooltip::after { left: auto; right: calc(100% + 12px); bottom: auto; top: 50%; transform: translateY(-50%); font-size: 0.86rem; padding: 9px 14px; width: max-content; max-width: 230px; transition: opacity 0.05s, visibility 0.05s; }
+  .cintillo-btn.tiene-tooltip::before { left: auto; right: 100%; bottom: auto; top: 50%; transform: translateY(-50%); border-top-color: transparent; border-left-color: white; transition: opacity 0.05s, visibility 0.05s; }
   .triage-alerta p { font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
   .triage-alerta p:last-child { margin-bottom: 0; }
   .triage-criterios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
@@ -620,37 +622,37 @@
 </div>
 
 <div class="cintillo-lateral">
-  <button class="cintillo-btn" title="Ir a Inicio" onclick="irACrumb(0)">
+  <button class="cintillo-btn tiene-tooltip" data-tooltip="Ir a Inicio" aria-label="Ir a Inicio" onclick="irACrumb(0)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg>
   </button>
-  <button class="cintillo-btn cintillo-busqueda" title="Buscar en toda la biblioteca" onclick="abrirModalBusquedaGlobal()">
+  <button class="cintillo-btn cintillo-busqueda tiene-tooltip" data-tooltip="Buscar en toda la biblioteca" aria-label="Buscar en toda la biblioteca" onclick="abrirModalBusquedaGlobal()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
   </button>
 
   <div class="cintillo-separador"></div>
 
-  <button class="cintillo-btn cintillo-cat" title="Ir a Consulta" onclick="mostrarCategoria('consulta')">
+  <button class="cintillo-btn cintillo-cat tiene-tooltip" data-tooltip="Ir a Consulta" aria-label="Ir a Consulta" onclick="mostrarCategoria('consulta')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
   </button>
-  <button class="cintillo-btn cintillo-cat" title="Ir a Gestión" onclick="mostrarCategoria('gestion')">
+  <button class="cintillo-btn cintillo-cat tiene-tooltip" data-tooltip="Ir a Gestión" aria-label="Ir a Gestión" onclick="mostrarCategoria('gestion')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
   </button>
-  <button class="cintillo-btn cintillo-cat" title="Ir a Incidencia" onclick="mostrarCategoria('incidencia')">
+  <button class="cintillo-btn cintillo-cat tiene-tooltip" data-tooltip="Ir a Incidencia" aria-label="Ir a Incidencia" onclick="mostrarCategoria('incidencia')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
   </button>
 
   <div class="cintillo-separador"></div>
 
-  <button class="cintillo-btn cintillo-ayuda" title="¿Cómo tipificar?" onclick="abrirModalAyuda()">
+  <button class="cintillo-btn cintillo-ayuda tiene-tooltip" data-tooltip="¿Cómo tipificar?" aria-label="¿Cómo tipificar?" onclick="abrirModalAyuda()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 17v-5"/><circle cx="12" cy="8.2" r="0.1" fill="currentColor" stroke-width="1.5"/></svg>
   </button>
-  <button class="cintillo-btn cintillo-matriz" title="Recursos" onclick="abrirModalRecursos()">
+  <button class="cintillo-btn cintillo-matriz tiene-tooltip" data-tooltip="Recursos" aria-label="Recursos" onclick="abrirModalRecursos()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
   </button>
-  <button class="cintillo-btn cintillo-temporizador" title="Temporizador" onclick="toggleTemporizador()">
+  <button class="cintillo-btn cintillo-temporizador tiene-tooltip" data-tooltip="Temporizador" aria-label="Temporizador" onclick="toggleTemporizador()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>
   </button>
-  <button class="cintillo-btn cintillo-despedida" title="Script de despedida" onclick="abrirModalDespedida()">
+  <button class="cintillo-btn cintillo-despedida tiene-tooltip" data-tooltip="Script de despedida" aria-label="Script de despedida" onclick="abrirModalDespedida()">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12"/>
       <path d="M11 11.5V4.5a1.5 1.5 0 0 1 3 0V12"/>
@@ -660,7 +662,7 @@
       <path d="M2.5 8c1.3-.4 2.7-.4 4 .2" opacity="0.6"/>
     </svg>
   </button>
-  <button class="cintillo-btn cintillo-gem" title="Asistente Gemini" onclick="window.open('https://gemini.google.com/u/1/gem/54309f25a04c', '_blank')">
+  <button class="cintillo-btn cintillo-gem tiene-tooltip" data-tooltip="Asistente Gemini" aria-label="Asistente Gemini" onclick="window.open('https://gemini.google.com/u/1/gem/54309f25a04c', '_blank')">
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.6 4.6 3.4 7.4 8 8-4.6.6-7.4 3.4-8 8-.6-4.6-3.4-7.4-8-8 4.6-.6 7.4-3.4 8-8Z"/></svg>
   </button>
 </div>
@@ -2680,7 +2682,7 @@
               texto:
                 '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para escalar su caso y, además, le asistiré en el agendamiento de una nueva cita.</p>' +
                 '<p>¿La cita agendada correspondía a <strong>usted</strong> o a un <strong>tercero</strong> asociado a su perfil? (En caso de ser un tercero, le solicitamos indicarnos el nombre).</p>' +
-                '<p>¿Me podría confirmar el <strong>nombre y apellido del médico</strong>, y la <strong>fecha y hora de su cita</strong>?</p>' +
+                '<p>¿Me podría confirmar la <strong>fecha y hora original</strong> de su cita?</p>' +
                 '<p>¿Desea que le asista para agendar una nueva cita? En este mismo momento crearemos un reporte para que lo que nos comenta sea evaluado por el área correspondiente.</p>' +
                 '<div class="triage-acciones">' +
                   '<button class="bib-btn" onclick="mostrarUno(\'calidadNoConectoGeneralSi\', \'calidadNoConectoGeneralNo\')">Agendar cita nueva</button>' +
@@ -2698,7 +2700,7 @@
                   '<p>Muchas gracias por la información. Le agradecemos cordialmente por haberse tomado el tiempo para reportarnos lo sucedido.</p>' +
                 '</div>' +
                 '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
-                '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* Especialidad</p>'
+                '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Fecha y hora de la cita<br>* Especialidad</p>'
             },
             { label: 'No se conectó el médico (especialista)',
               tipificacion: 'Incidencias calidad médica > No se conectó el médico',
