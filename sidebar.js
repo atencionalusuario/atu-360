@@ -63,6 +63,7 @@ var ITEMS_NAV = {
   'super-chat':       { id: 'super-chat',       label: 'Chats (monitoreo)',  url: BASE+'chat.html',           icon: '<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>' },
   'jefe-bases':       { id: 'jefe-bases',       label: 'Bases',              url: BASE+'bases.html',          icon: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>' },
   'jefe-actce':       { id: 'jefe-actce',       label: 'Actividades CE',     url: BASE+'actividadesce.html',  icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>' },
+  'jefe-chat':        { id: 'jefe-chat',        label: 'Chat',               url: BASE+'chat.html',           icon: '<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>', badge: true, badgeId: 'chatNavBadge' },
   // Supervisor items — páginas standalone
   'sup-notif':        { id: 'sup-notif',        label: 'Notificaciones',     url: BASE+'notificaciones.html', icon: '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>', badge: true, badgeId: 'notifNavBadge' },
   'sup-badges':       { id: 'sup-badges',       label: 'Badges',             url: BASE+'badges.html',         icon: '<circle cx="12" cy="8" r="6"/><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/>' },
@@ -105,7 +106,7 @@ var NAV_POR_ROL = {
     reportes:  []
   },
   jefe: {
-    principal: ['jefe-usuarios','jefe-bases','jefe-actce','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
+    principal: ['jefe-usuarios','jefe-bases','jefe-actce','jefe-chat','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','jefe-transporte','jefe-perfil'],
     reportes:  []
   },
   supervisor: {
@@ -401,7 +402,7 @@ function initSidebar() {
         if (conBadges) cargarBadges(user.uid, db);
         cargarFlashBadge(user.uid, db);
         cargarNotifBadge(user.uid, rol, db);
-        if (['agente', 'agente-inmersion', 'supervisor'].indexOf(rol) > -1) cargarChatBadge(user.uid, db);
+        if (['agente', 'agente-inmersion', 'supervisor', 'jefe'].indexOf(rol) > -1) cargarChatBadge(user.uid, db);
       };
 
       if (ROLES_RESTRINGIDOS_TEMP.indexOf(rol) > -1) {

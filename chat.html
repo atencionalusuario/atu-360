@@ -139,7 +139,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
   var BASE = 'https://atencionalusuario.github.io/atu-360/';
-  var ROLES_PERMITIDOS = ['supervisor', 'agente', 'agente-inmersion', 'superadmin'];
+  var ROLES_PERMITIDOS = ['supervisor', 'jefe', 'agente', 'agente-inmersion', 'superadmin'];
 
   firebase.initializeApp({
     apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
@@ -155,7 +155,8 @@
   setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
   document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
 
-  var currentUser = null, miRolG = '', miNombreG = '', miEmailG = '';
+  var currentUser = null, miRolG = '', miNombreG = '', miEmailG = '', miProyectoG = '';
+  var contactosJefe = []; // supervisores + agentes del proyecto del jefe, para iniciar chats
   var soloLectura = false;
   var chats = [];
   var chatActivoId = null;
@@ -172,15 +173,18 @@
         window.location.href = BASE + 'home.html'; return;
       }
       currentUser = user;
-      miRolG    = doc.data().rol || '';
-      miNombreG = doc.data().nombre || user.email.split('@')[0];
-      miEmailG  = user.email;
+      miRolG      = doc.data().rol || '';
+      miNombreG   = doc.data().nombre || user.email.split('@')[0];
+      miEmailG    = user.email;
+      miProyectoG = doc.data().proyecto || '';
       soloLectura = miRolG === 'superadmin';
 
       if(miRolG === 'supervisor'){
         document.getElementById('btnNuevoChat').style.display = 'flex';
         asegurarChatGrupal();
         cargarAgentesDeEquipo();
+      } else if(miRolG === 'jefe'){
+        document.getElementById('btnNuevoChat').style.display = 'flex';
       }
       cargarChats();
     });
@@ -368,35 +372,66 @@
     }).catch(function(e){ console.error(e); showToast('No se pudo enviar el mensaje.'); });
   };
 
-  // ── Nuevo chat 1 a 1 (solo supervisor) ───────────────────────────────────────
+  // ── Nuevo chat 1 a 1 (supervisor → sus agentes; jefe → supervisores y agentes de su proyecto) ──
+  var LABEL_ROL_CONTACTO = { supervisor: 'Supervisor', agente: 'Agente', 'agente-inmersion': 'Agente Inmersión' };
+
+  function cargarContactosJefe(cb){
+    db.collection('usuarios')
+      .where('rol', 'in', ['agente', 'agente-inmersion', 'supervisor'])
+      .where('proyecto', '==', miProyectoG)
+      .where('activo', '==', true)
+      .get().then(function(snap){
+        contactosJefe = [];
+        snap.forEach(function(d){
+          var x = d.data();
+          contactosJefe.push({ uid: d.id, nombre: x.nombre || x.email, rol: x.rol });
+        });
+        contactosJefe.sort(function(a,b){
+          if(a.rol !== b.rol) return a.rol === 'supervisor' ? -1 : 1;
+          return (a.nombre||'').localeCompare(b.nombre||'','es');
+        });
+        if(cb) cb();
+      }).catch(function(e){ console.error('contactos jefe:', e); if(cb) cb(); });
+  }
+
   window.abrirModalNuevoChat = function(){
-    cargarAgentesDeEquipo(function(){
+    var fuente = miRolG === 'jefe' ? cargarContactosJefe : cargarAgentesDeEquipo;
+    fuente(function(){
+      var lista = miRolG === 'jefe' ? contactosJefe : agentesDeEquipo;
       var el = document.getElementById('listaAgentesModal');
-      if(agentesDeEquipo.length === 0){
-        el.innerHTML = '<div class="loading">No tienes agentes asignados.</div>';
+      if(lista.length === 0){
+        el.innerHTML = '<div class="loading">'+(miRolG==='jefe'?'No hay supervisores o agentes en tu proyecto.':'No tienes agentes asignados.')+'</div>';
       } else {
-        el.innerHTML = agentesDeEquipo.map(function(a){
+        var supervisores = lista.filter(function(a){ return a.rol === 'supervisor'; });
+        var agentes = lista.filter(function(a){ return a.rol !== 'supervisor'; });
+        function pickHtml(a){
           return '<div class="agente-pick" onclick="iniciarChatDirecto(\''+a.uid+'\')">'
             + '<div class="conv-avatar">'+escHtml(iniciales(a.nombre))+'</div>'
-            + '<div>'+escHtml(a.nombre)+'</div></div>';
-        }).join('');
+            + '<div><div>'+escHtml(a.nombre)+'</div><div class="conv-preview">'+(LABEL_ROL_CONTACTO[a.rol]||a.rol)+'</div></div></div>';
+        }
+        var html = '';
+        if(miRolG === 'jefe' && supervisores.length) html += '<div class="conv-group-label">Supervisores</div>' + supervisores.map(pickHtml).join('');
+        if(miRolG === 'jefe' && agentes.length)      html += '<div class="conv-group-label">Agentes</div>' + agentes.map(pickHtml).join('');
+        if(miRolG !== 'jefe') html = lista.map(pickHtml).join('');
+        el.innerHTML = html;
       }
       document.getElementById('modalNuevoChat').classList.add('show');
     });
   };
   function cerrarModalNuevoChat(){ document.getElementById('modalNuevoChat').classList.remove('show'); }
 
-  window.iniciarChatDirecto = function(agenteUid){
-    var agente = agentesDeEquipo.find(function(a){ return a.uid === agenteUid; });
-    if(!agente) return;
-    var id = 'directo_' + currentUser.uid + '_' + agenteUid;
+  window.iniciarChatDirecto = function(otroUid){
+    var lista = miRolG === 'jefe' ? contactosJefe : agentesDeEquipo;
+    var otro = lista.find(function(a){ return a.uid === otroUid; });
+    if(!otro) return;
+    var id = 'directo_' + currentUser.uid + '_' + otroUid;
     var participantesInfo = {};
     participantesInfo[currentUser.uid] = { nombre: miNombreG, rol: miRolG };
-    participantesInfo[agenteUid] = { nombre: agente.nombre, rol: agente.rol };
+    participantesInfo[otroUid] = { nombre: otro.nombre, rol: otro.rol };
     db.collection('chats').doc(id).get().then(function(doc){
       var data = {
-        tipo: 'directo', supervisorUid: currentUser.uid, supervisorNombre: miNombreG,
-        participantes: [currentUser.uid, agenteUid], participantesInfo: participantesInfo
+        tipo: 'directo', iniciadoPorUid: currentUser.uid, iniciadoPorNombre: miNombreG,
+        participantes: [currentUser.uid, otroUid], participantesInfo: participantesInfo
       };
       if(!doc.exists) data.creadoEn = firebase.firestore.FieldValue.serverTimestamp();
       return db.collection('chats').doc(id).set(data, { merge: true });
