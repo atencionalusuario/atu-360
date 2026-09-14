@@ -60,12 +60,18 @@
   .msg-row.mio .msg-bubble { background: #1A3DAA; color: white; border-bottom-right-radius: 3px; }
   .msg-autor { font-size: 0.68rem; font-weight: 700; color: #7C3AED; margin-bottom: 2px; }
   .msg-hora { font-size: 0.62rem; margin-top: 4px; opacity: 0.7; }
-  .thread-foot { padding: 14px 24px; border-top: 1px solid #E2E8F0; background: white; display: flex; gap: 10px; flex-shrink: 0; }
+  .thread-foot { position: relative; padding: 14px 24px; border-top: 1px solid #E2E8F0; background: white; display: flex; gap: 10px; flex-shrink: 0; }
   .thread-foot input { flex: 1; padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 20px; font-size: 0.85rem; font-family: inherit; outline: none; background: #F8FAFC; }
   .thread-foot input:focus { border-color: #1A3DAA; background: white; }
   .btn-enviar { width: 40px; height: 40px; border-radius: 50%; background: #1A3DAA; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .btn-enviar:hover { opacity: 0.88; }
   .btn-enviar:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-emoji { width: 40px; height: 40px; border-radius: 50%; background: #F1F5F9; color: #64748B; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.15rem; }
+  .btn-emoji:hover { background: #E2E8F0; }
+  .emoji-panel { position: absolute; bottom: 64px; left: 24px; background: white; border: 1px solid #E2E8F0; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.18); padding: 10px; display: none; grid-template-columns: repeat(8, 1fr); gap: 2px; width: 296px; max-height: 200px; overflow-y: auto; z-index: 50; }
+  .emoji-panel.show { display: grid; }
+  .emoji-panel button { border: none; background: none; font-size: 1.25rem; line-height: 1; cursor: pointer; padding: 6px 0; border-radius: 6px; }
+  .emoji-panel button:hover { background: #F1F5F9; }
   .readonly-banner { padding: 10px 24px; background: #FFFBEB; color: #B45309; font-size: 0.76rem; font-weight: 600; border-top: 1px solid #FDE68A; flex-shrink: 0; }
   .empty-state { flex: 1; display: flex; align-items: center; justify-content: center; color: #94A3B8; font-size: 0.85rem; flex-direction: column; gap: 8px; }
 
@@ -165,6 +171,25 @@
 
   function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
   function iniciales(n){ return (n||'?').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase(); }
+
+  // ── Selector de emojis ───────────────────────────────────────────────────────
+  var EMOJIS = ['😀','😂','😅','😊','🙂','😉','😍','😘','😎','🤔','😐','😢','😭','😡','😱','😴',
+                '👍','👎','👏','🙏','💪','🤝','👋','✌️','❤️','🔥','🎉','⭐','✅','❌','⚠️','❓',
+                '📌','📞','📅','⏰','☕','🍽️','🚻','💬'];
+  window.toggleEmojiPanel = function(){
+    var panel = document.getElementById('emojiPanel');
+    if(panel) panel.classList.toggle('show');
+  };
+  window.insertarEmoji = function(e){
+    var input = document.getElementById('mInput');
+    if(input){ input.value += e; input.focus(); }
+  };
+  document.addEventListener('click', function(ev){
+    var panel = document.getElementById('emojiPanel'), btn = document.getElementById('btnEmoji');
+    if(!panel || !panel.classList.contains('show')) return;
+    if(panel.contains(ev.target) || ev.target === btn) return;
+    panel.classList.remove('show');
+  });
 
   auth.onAuthStateChanged(function(user){
     if(!user){ window.location.href = BASE + 'login.html'; return; }
@@ -319,7 +344,10 @@
       + '<div class="thread-body" id="threadBody"><div class="loading">Cargando mensajes...</div></div>'
       + (soloLectura
           ? '<div class="readonly-banner">Estás viendo esta conversación en modo solo lectura.</div>'
-          : '<div class="thread-foot"><input type="text" id="mInput" placeholder="Escribe un mensaje..." onkeydown="if(event.key===\'Enter\')enviarMensaje()">'
+          : '<div class="thread-foot">'
+            + '<div class="emoji-panel" id="emojiPanel">' + EMOJIS.map(function(e){ return '<button type="button" onclick="insertarEmoji(\''+e+'\')">'+e+'</button>'; }).join('') + '</div>'
+            + '<button type="button" class="btn-emoji" id="btnEmoji" onclick="toggleEmojiPanel()">😊</button>'
+            + '<input type="text" id="mInput" placeholder="Escribe un mensaje..." onkeydown="if(event.key===\'Enter\')enviarMensaje()">'
             + '<button class="btn-enviar" onclick="enviarMensaje()"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div>');
 
     if(unsubMensajes) unsubMensajes();
