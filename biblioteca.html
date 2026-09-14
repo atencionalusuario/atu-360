@@ -1826,8 +1826,32 @@
                 '</div>' +
                 '<div id="triageFamiliarNo" class="triage-resultado" style="display:none;">' +
                   '<p>Comprendo. En ese caso, primero debemos registrar a su familiar en su cuenta.</p>' +
+                  '<p>¿Su familiar es menor de edad?</p>' +
                   '<div class="triage-acciones">' +
-                    '<button class="bib-btn" onclick="abrirScriptPerfiles(\'Registrar familiar nuevo\')">Registrar familiar nuevo</button>' +
+                    '<button class="bib-btn" onclick="mostrarUno(\'familiarMenorEdadTF\', \'familiarAdultoTF\'); document.getElementById(\'familiarConfirmacionTF\').style.display=\'block\';">Es menor de edad</button>' +
+                    '<button class="bib-btn" onclick="mostrarUno(\'familiarAdultoTF\', \'familiarMenorEdadTF\'); document.getElementById(\'familiarConfirmacionTF\').style.display=\'block\';">Es adulto</button>' +
+                  '</div>' +
+                  '<div id="familiarMenorEdadTF" class="triage-resultado" style="display:none;">' +
+                    '<p>De acuerdo, ¿me indica, por favor, la siguiente información?</p>' +
+                    '<ul>' +
+                      '<li>Fecha de nacimiento</li>' +
+                      '<li>Primer nombre</li>' +
+                      '<li>Segundo nombre</li>' +
+                      '<li>Apellido paterno</li>' +
+                      '<li>Apellido materno</li>' +
+                      '<li>Sexo</li>' +
+                    '</ul>' +
+                  '</div>' +
+                  '<div id="familiarAdultoTF" class="triage-resultado" style="display:none;">' +
+                    '<p>De acuerdo, ¿me indica, por favor, la siguiente información?</p>' +
+                    '<ul>' +
+                      '<li>El tipo y número de documento de su familiar</li>' +
+                      '<li>Motivo de su registro</li>' +
+                      '<li>Tipo de parentesco</li>' +
+                    '</ul>' +
+                  '</div>' +
+                  '<div id="familiarConfirmacionTF" class="triage-resultado" style="display:none;">' +
+                    '<p>Le confirmo que su familiar ya ha sido registrado como beneficiario en su perfil de <strong>DoctorSV</strong>. Es decir, podrá hacer uso del servicio a través de su aplicación.</p>' +
                   '</div>' +
                 '</div>' +
                 '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
