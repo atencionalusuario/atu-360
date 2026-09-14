@@ -235,7 +235,7 @@
   .triage-criterios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
   .triage-criterio-caja { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
   .triage-criterio-titulo { font-size: 0.78rem; color: #64748B; margin: 0; }
-  .triage-criterio-caja .bib-btn { align-self: center; }
+  .triage-criterio-caja .bib-btn { align-self: center; margin-top: auto; }
   .triage-criterio-texto p { font-size: 0.82rem; line-height: 1.55; color: #374151; margin: 0; }
   .triage-acciones { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 16px; margin-bottom: 18px; }
   .instruccion-interna { font-family: ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', monospace !important; font-style: normal; font-size: 0.68rem !important; line-height: 1.55; color: #334155; background: rgba(15,32,112,0.06); border-left: 3px solid #0F2070; border-radius: 0 6px 6px 0; padding: 8px 10px 8px 14px; margin: 10px 0; }
@@ -1393,7 +1393,10 @@
             texto:
               '<p>De acuerdo, muchas gracias. ¿Me podría indicar, por favor, en qué municipio o distrito se encuentra?</p>' +
               '<p>Muchas gracias. Por favor permítame un momento en línea mientras ubico la información para guiarle.</p>' +
-              '<p>Como información adicional, le comento que también puede ubicar la farmacia o laboratorio más cercano utilizando la aplicación <strong>DoctorSV</strong>, en la opción <strong>"Ver farmacias cercanas"</strong>.</p>'
+              '<p>Como información adicional, le comento que también puede ubicar la farmacia o laboratorio más cercano utilizando la aplicación <strong>DoctorSV</strong>, en la opción <strong>"Ver farmacias cercanas"</strong>.</p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn" onclick="window.open(\'https://docs.google.com/spreadsheets/d/1S4HQ0oKIieVa9jSYlukzCLJ3Z0UeYMt6/edit?gid=1995540795#gid=1995540795&fvid=939997235\', \'_blank\')">Directorio de farmacias y laboratorios</button>' +
+              '</div>'
           },
           { label: 'El usuario lo va a buscar en la app',
             texto:
@@ -4553,7 +4556,7 @@
       '<p>Muchas gracias por la información. Voy a transferir la llamada, por favor no cuelgue.</p>';
     var criterioNinos = esFamiliar ?
       '<div class="triage-criterio-caja">' +
-          '<p class="triage-criterio-titulo"><em>Si la cita es para un niño (0 a 12 años) ADEMÁS preguntar:</em></p>' +
+          '<p class="instruccion-interna">Si la cita es para un niño (0 a 12 años) ADEMÁS preguntar:</p>' +
           '<button class="bib-btn" onclick="toggleBloque(\'' + idNinos + '\')">Criterios niños</button>' +
           '<div id="' + idNinos + '" class="triage-criterio-texto" style="display:none;">' +
             '<p>¿Tiene dolor abdominal fuerte, convulsiones, traumas o golpes fuertes, diarrea o vómito severo con el niño inconsolable o con poca respuesta a estímulos (está muy apagado)?</p>' +
@@ -4568,7 +4571,7 @@
       '<div class="triage-criterios-grid"' + (esFamiliar ? '' : ' style="grid-template-columns:1fr;"') + '>' +
         criterioNinos +
         '<div class="triage-criterio-caja">' +
-          '<p class="triage-criterio-titulo"><em>Si la cita es para una mujer que pudiera estar en edad reproductiva (15 a 49 años), ADEMÁS preguntar:</em></p>' +
+          '<p class="instruccion-interna">Si la cita es para una mujer que pudiera estar en edad reproductiva (15 a 49 años), ADEMÁS preguntar:</p>' +
           '<button class="bib-btn" onclick="toggleBloque(\'' + idEmbarazadas + '\')">Criterios embarazadas</button>' +
           '<div id="' + idEmbarazadas + '" class="triage-criterio-texto" style="display:none;">' +
             '<p>¿Podría confirmarme si se encuentra embarazada?</p>' +
