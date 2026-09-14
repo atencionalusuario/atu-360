@@ -1931,6 +1931,72 @@
                       '<p>Por protocolo, nos gustaría hacerle unas preguntas de sondeo para <strong>descartar</strong> que su familiar tenga una emergencia.</p>' +
                       '<p>¿Podría confirmarme si presenta dificultad severa para respirar, dolor o presión intensa en el pecho, fractura, fiebre de más de 40 grados, pérdida repentina de conciencia o sangrado abundante?</p>' +
                     '</div>' +
+                    '<div class="triage-criterios-grid" style="grid-template-columns:1fr;">' +
+                      '<div class="triage-criterio-caja">' +
+                        '<p class="instruccion-interna instruccion-alerta">Si la cita es para una mujer que pudiera estar en edad reproductiva (15 a 49 años), ADEMÁS preguntar:</p>' +
+                        '<button class="bib-btn" onclick="toggleBloque(\'criteriosEmbarazadasFamAdultoTF\')">Criterios embarazadas</button>' +
+                        '<div id="criteriosEmbarazadasFamAdultoTF" class="triage-criterio-texto" style="display:none;">' +
+                          '<p>¿Podría confirmarme si se encuentra embarazada?</p>' +
+                          '<p>Si responde que no, seguir flujo.</p>' +
+                          '<p>Si responde que sí: ¿Tiene dolor de cabeza intenso, visión borrosa, dolor en la boca del estómago, sangrado vaginal, hinchazón de miembros inferiores, salida de líquido vaginal?</p>' +
+                        '</div>' +
+                      '</div>' +
+                    '</div>' +
+                    '<div class="triage-acciones">' +
+                      '<button class="bib-btn triage-btn-si" onclick="mostrarUno(\'familiarAdultoRojoSiTF\', \'familiarAdultoRojoNoTF\'); actualizarTipificacionCita(\'Familiar\', \'Emergencias &gt; Evaluación urgente\', true)">Responde que sí a algún criterio</button>' +
+                      '<button class="bib-btn" onclick="mostrarUno(\'familiarAdultoRojoNoTF\', \'familiarAdultoRojoSiTF\'); actualizarTipificacionCita(\'Familiar\', \'\', false)">No, continuar</button>' +
+                    '</div>' +
+                    '<div id="familiarAdultoRojoSiTF" class="triage-resultado triage-resultado-rojo" style="display:none;">' +
+                      '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
+                      '<p>Me podría brindar por favor:</p>' +
+                      '<ul><li>Su edad</li><li>El distrito (municipio) donde se ubica</li><li>Dirección exacta</li><li>Punto de referencia</li><li>Teléfono de referencia</li></ul>' +
+                      '<p>Muchas gracias por la información. Voy a transferir la llamada, por favor no cuelgue.</p>' +
+                    '</div>' +
+                    '<div id="familiarAdultoRojoNoTF" class="triage-resultado" style="display:none;">' +
+                      '<div class="triage-alerta triage-alerta-amarilla">' +
+                        '<p>Comprendo. Una última confirmación:</p>' +
+                        '<p>¿Ha sido operado <strong>en el último mes</strong> del abdomen, tórax, cabeza o zona pélvica?</p>' +
+                        '<p>¿Ha sido ingresado en un hospital en <strong>la última semana</strong>?</p>' +
+                      '</div>' +
+                      '<div class="triage-acciones">' +
+                        '<button class="bib-btn triage-btn-si" onclick="mostrarUno(\'familiarAdultoAmarilloSiTF\', \'familiarAdultoAmarilloNoTF\'); actualizarTipificacionCita(\'Familiar\', \'Emergencias &gt; Evaluación urgente\', true)">Responde que sí a algún criterio</button>' +
+                        '<button class="bib-btn" onclick="mostrarUno(\'familiarAdultoAmarilloNoTF\', \'familiarAdultoAmarilloSiTF\'); actualizarTipificacionCita(\'Familiar\', \'\', false)">No, continuar</button>' +
+                      '</div>' +
+                      '<div id="familiarAdultoAmarilloSiTF" class="triage-resultado triage-resultado-rojo" style="display:none;">' +
+                        '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
+                        '<p>Me podría brindar por favor:</p>' +
+                        '<ul><li>Su edad</li><li>El distrito (municipio) donde se ubica</li><li>Dirección exacta</li><li>Punto de referencia</li><li>Teléfono de referencia</li></ul>' +
+                        '<p>Muchas gracias por la información. Voy a transferir la llamada, por favor no cuelgue.</p>' +
+                      '</div>' +
+                      '<div id="familiarAdultoAmarilloNoTF" class="triage-resultado" style="display:none;">' +
+                        '<div class="triage-video-caja">' +
+                          '<p>De acuerdo, ¿puede conectarse a una <strong>videollamada</strong>?</p>' +
+                        '</div>' +
+                        '<div class="triage-acciones">' +
+                          '<button class="bib-btn" onclick="mostrarUno(\'familiarAdultoVideoSiTF\', \'familiarAdultoNoPuedeTF\'); actualizarTipificacionCita(\'Familiar\', \'Gestión de perfiles &gt; Registro de familiar\', true)">Sí puede</button>' +
+                          '<button class="bib-btn" onclick="mostrarUno(\'familiarAdultoNoPuedeTF\', \'familiarAdultoVideoSiTF\'); actualizarTipificacionCita(\'Familiar\', \'Gestión de perfiles &gt; Registro de familiar\', true)">No puede</button>' +
+                        '</div>' +
+                        '<div id="familiarAdultoVideoSiTF" class="triage-resultado" style="display:none;">' +
+                          '<p>Muchas gracias. Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
+                          '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                          '<div class="triage-acciones" style="margin-bottom:0;">' +
+                            '<button class="bib-btn" onclick="toggleBloque(\'recFamiliarAdultoVideoSiTF\')">Recomendaciones para conectarse a videollamada</button>' +
+                          '</div>' +
+                          '<div id="recFamiliarAdultoVideoSiTF" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_VIDEO + '</div>' +
+                        '</div>' +
+                        '<div id="familiarAdultoNoPuedeTF" class="triage-resultado" style="display:none;">' +
+                          '<p>Entiendo lo que nos comenta, con gusto le puedo ayudar a tener una cita por llamada telefónica.</p>' +
+                          '<p><strong>En esta cita el médico se pondrá en contacto con usted llamándole a su número de teléfono. Sólo tenga en cuenta que las citas por esta vía pueden tener limitaciones en cuanto al diagnóstico que realice su médico.</strong></p>' +
+                          '<p>La cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
+                          '<p>Excelente, queda programada su cita el día XXXXXX XX a las XX de la tarde / de la mañana.</p>' +
+                          '<p class="instruccion-interna">Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</p>' +
+                          '<div class="triage-acciones" style="margin-bottom:0;">' +
+                            '<button class="bib-btn" onclick="toggleBloque(\'recFamiliarAdultoNoPuedeTF\')">Recomendaciones para cita vía telefónica</button>' +
+                          '</div>' +
+                          '<div id="recFamiliarAdultoNoPuedeTF" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_TEL + '</div>' +
+                        '</div>' +
+                      '</div>' +
+                    '</div>' +
                   '</div>' +
                 '</div>' +
                 '<p class="modal-tipificacion" style="display:none;"><strong>Tipificación sugerida:</strong> <span id="tipificacionCitaFamiliar">Gestión de citas &gt; Agendamiento de cita</span></p>'
