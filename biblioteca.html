@@ -241,6 +241,7 @@
   .instruccion-interna { font-family: ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', monospace !important; font-style: normal; font-size: 0.68rem !important; line-height: 1.55; color: #334155; background: rgba(15,32,112,0.06); border-left: 3px solid #0F2070; border-radius: 0 6px 6px 0; padding: 8px 10px 8px 14px; margin: 10px 0; }
   .instruccion-interna:last-child { margin-bottom: 0; }
   .instruccion-interna + .instruccion-interna { margin-top: 0; border-top-left-radius: 0; }
+  .instruccion-interna.instruccion-alerta { background: rgba(220,38,38,0.08); border-left-color: #DC2626; color: #7F1D1D; }
   .triage-btn-si { background: #C2410C; }
   .btn-si-verde { background: #16A34A; }
   .btn-si-verde:hover { background: #15803D; }
@@ -4556,7 +4557,7 @@
       '<p>Muchas gracias por la información. Voy a transferir la llamada, por favor no cuelgue.</p>';
     var criterioNinos = esFamiliar ?
       '<div class="triage-criterio-caja">' +
-          '<p class="instruccion-interna">Si la cita es para un niño (0 a 12 años) ADEMÁS preguntar:</p>' +
+          '<p class="instruccion-interna instruccion-alerta">Si la cita es para un niño (0 a 12 años) ADEMÁS preguntar:</p>' +
           '<button class="bib-btn" onclick="toggleBloque(\'' + idNinos + '\')">Criterios niños</button>' +
           '<div id="' + idNinos + '" class="triage-criterio-texto" style="display:none;">' +
             '<p>¿Tiene dolor abdominal fuerte, convulsiones, traumas o golpes fuertes, diarrea o vómito severo con el niño inconsolable o con poca respuesta a estímulos (está muy apagado)?</p>' +
@@ -4571,7 +4572,7 @@
       '<div class="triage-criterios-grid"' + (esFamiliar ? '' : ' style="grid-template-columns:1fr;"') + '>' +
         criterioNinos +
         '<div class="triage-criterio-caja">' +
-          '<p class="instruccion-interna">Si la cita es para una mujer que pudiera estar en edad reproductiva (15 a 49 años), ADEMÁS preguntar:</p>' +
+          '<p class="instruccion-interna instruccion-alerta">Si la cita es para una mujer que pudiera estar en edad reproductiva (15 a 49 años), ADEMÁS preguntar:</p>' +
           '<button class="bib-btn" onclick="toggleBloque(\'' + idEmbarazadas + '\')">Criterios embarazadas</button>' +
           '<div id="' + idEmbarazadas + '" class="triage-criterio-texto" style="display:none;">' +
             '<p>¿Podría confirmarme si se encuentra embarazada?</p>' +
