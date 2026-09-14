@@ -1811,7 +1811,7 @@
           subBotones: [
             { label: 'Es para el propio usuario',
               texto: bloqueTriageCita('Propio', 'propio') +
-                '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
+                '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> <span id="tipificacionCitaPropio">Gestión de citas &gt; Agendamiento de cita</span></p>'
             },
             { label: 'Es para un familiar',
               texto:
@@ -1852,8 +1852,7 @@
                     '</ul>' +
                     '<p>Le confirmo que su familiar ya ha sido registrado como beneficiario en su perfil de <strong>DoctorSV</strong>. Es decir, podrá hacer uso del servicio a través de su aplicación.</p>' +
                   '</div>' +
-                '</div>' +
-                '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> Gestión de citas &gt; Agendamiento de cita</p>'
+                '</div>'
             },
             { label: 'Cita sin triage',
               tooltip: 'Esta sección es para agendar cita a un usuario transferido desde el área de TRIAGE.',
@@ -4562,6 +4561,11 @@
     );
   }
 
+  function actualizarTipificacionCita(prefix, valor) {
+    var el = document.getElementById('tipificacionCita' + prefix);
+    if (el) el.innerHTML = valor;
+  }
+
   function bloqueTriageCita(prefix, tipo) {
     var idNinos = 'criteriosNinos' + prefix;
     var idEmbarazadas = 'criteriosEmbarazadas' + prefix;
@@ -4604,8 +4608,8 @@
         '</div>' +
       '</div>' +
       '<div class="triage-acciones">' +
-        '<button class="bib-btn triage-btn-si" onclick="mostrarUno(\'' + idRojoSi + '\', \'' + idRojoNo + '\')">Responde que sí a algún criterio</button>' +
-        '<button class="bib-btn" onclick="mostrarUno(\'' + idRojoNo + '\', \'' + idRojoSi + '\')">No, continuar</button>' +
+        '<button class="bib-btn triage-btn-si" onclick="mostrarUno(\'' + idRojoSi + '\', \'' + idRojoNo + '\'); actualizarTipificacionCita(\'' + prefix + '\', \'Emergencias &gt; Evaluación urgente\')">Responde que sí a algún criterio</button>' +
+        '<button class="bib-btn" onclick="mostrarUno(\'' + idRojoNo + '\', \'' + idRojoSi + '\'); actualizarTipificacionCita(\'' + prefix + '\', \'Gestión de citas &gt; Agendamiento de cita\')">No, continuar</button>' +
       '</div>' +
       '<div id="' + idRojoSi + '" class="triage-resultado triage-resultado-rojo" style="display:none;">' + transferencia + '</div>' +
       '<div id="' + idRojoNo + '" class="triage-resultado" style="display:none;">' +
@@ -4619,8 +4623,8 @@
           '<p style="font-weight:700; color:#0F2070; margin:0;">¿Su hijo o hija es menor a un año?</p>' +
         '</div>' +
         '<div class="triage-acciones">' +
-          '<button class="bib-btn triage-btn-si" onclick="mostrarUno(\'' + idAmarilloSi + '\', \'' + idAmarilloNo + '\')">Responde que sí a algún criterio</button>' +
-          '<button class="bib-btn tiene-tooltip" data-tooltip="Al pasar este punto debe quedarle claro que la persona sí puede esperar a ser atendido por una cita." onclick="mostrarUno(\'' + idAmarilloNo + '\', \'' + idAmarilloSi + '\')">No, continuar</button>' +
+          '<button class="bib-btn triage-btn-si" onclick="mostrarUno(\'' + idAmarilloSi + '\', \'' + idAmarilloNo + '\'); actualizarTipificacionCita(\'' + prefix + '\', \'Emergencias &gt; Evaluación urgente\')">Responde que sí a algún criterio</button>' +
+          '<button class="bib-btn tiene-tooltip" data-tooltip="Al pasar este punto debe quedarle claro que la persona sí puede esperar a ser atendido por una cita." onclick="mostrarUno(\'' + idAmarilloNo + '\', \'' + idAmarilloSi + '\'); actualizarTipificacionCita(\'' + prefix + '\', \'Gestión de citas &gt; Agendamiento de cita\')">No, continuar</button>' +
         '</div>' +
         '<div id="' + idAmarilloSi + '" class="triage-resultado triage-resultado-rojo" style="display:none;">' + transferencia + '</div>' +
         '<div id="' + idAmarilloNo + '" class="triage-resultado" style="display:none;">' +
@@ -4628,8 +4632,8 @@
             '<p>De acuerdo, ¿puede conectarse a una <strong>videollamada</strong>?</p>' +
           '</div>' +
           '<div class="triage-acciones">' +
-            '<button class="bib-btn" onclick="mostrarUno(\'' + idVideoSi + '\', \'' + idNoPuedeNota + '\')">Sí puede</button>' +
-            '<button class="bib-btn" onclick="mostrarUno(\'' + idNoPuedeNota + '\', \'' + idVideoSi + '\')">No puede</button>' +
+            '<button class="bib-btn" onclick="mostrarUno(\'' + idVideoSi + '\', \'' + idNoPuedeNota + '\'); actualizarTipificacionCita(\'' + prefix + '\', \'Gestión de citas &gt; Agendamiento de cita\')">Sí puede</button>' +
+            '<button class="bib-btn" onclick="mostrarUno(\'' + idNoPuedeNota + '\', \'' + idVideoSi + '\'); actualizarTipificacionCita(\'' + prefix + '\', \'Gestión de citas &gt; Agendamiento de cita\')">No puede</button>' +
           '</div>' +
           '<div id="' + idVideoSi + '" class="triage-resultado" style="display:none;">' +
             '<p>Muchas gracias. Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
