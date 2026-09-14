@@ -239,7 +239,7 @@
   document.addEventListener('click', function(ev){
     var panel = document.getElementById('emojiPanel'), btn = document.getElementById('btnEmoji');
     if(!panel || !panel.classList.contains('show')) return;
-    if(panel.contains(ev.target) || ev.target === btn) return;
+    if(panel.contains(ev.target) || (btn && btn.contains(ev.target))) return;
     panel.classList.remove('show');
   });
 
