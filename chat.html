@@ -96,6 +96,8 @@
   .btn-icon { width: 28px; height: 28px; border: 1px solid #E2E8F0; border-radius: 6px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #64748B; flex-shrink: 0; }
   .agente-pick { display: flex; align-items: center; gap: 10px; padding: 11px 22px; cursor: pointer; }
   .agente-pick:hover { background: #F8FAFC; }
+  .avatar-pick { width: 44px; height: 44px; border-radius: 50%; border: 2.5px solid transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+  .avatar-pick.sel { border-color: #1E293B; }
   .agente-pick .conv-avatar { width: 30px; height: 30px; font-size: 0.65rem; }
   .loading { font-size: 0.82rem; color: #94A3B8; text-align: center; padding: 24px; }
   .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
@@ -146,6 +148,30 @@
       <button class="btn-icon" onclick="cerrarModalNuevoChat()">✕</button>
     </div>
     <div class="modal-body" id="listaAgentesModal"><div class="loading">Cargando...</div></div>
+  </div>
+</div>
+
+<!-- Modal editar grupo -->
+<div class="modal-overlay" id="modalEditarGrupo">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">Editar grupo</div>
+      <button class="btn-icon" onclick="cerrarModalEditarGrupo()">✕</button>
+    </div>
+    <div class="modal-body" style="padding:18px 22px;display:flex;flex-direction:column;gap:16px">
+      <div>
+        <label style="font-size:0.78rem;font-weight:600;color:#374151;margin-bottom:6px;display:block">Nombre del grupo</label>
+        <input type="text" id="egNombre" placeholder="Ej. Equipo de Turno AM" style="width:100%;padding:9px 12px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:0.85rem;font-family:inherit;outline:none;background:#F8FAFC">
+      </div>
+      <div>
+        <label style="font-size:0.78rem;font-weight:600;color:#374151;margin-bottom:8px;display:block">Ícono del grupo</label>
+        <div id="egAvatares" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px"></div>
+      </div>
+    </div>
+    <div style="padding:14px 22px;border-top:1px solid #F1F5F9;display:flex;justify-content:flex-end;gap:8px">
+      <button class="btn-icon" style="width:auto;padding:8px 16px;font-size:0.8rem;font-weight:600;color:#374151" onclick="cerrarModalEditarGrupo()">Cancelar</button>
+      <button class="btn-enviar" style="width:auto;border-radius:8px;padding:8px 18px;font-size:0.8rem;font-weight:700" onclick="guardarGrupo()">Guardar</button>
+    </div>
   </div>
 </div>
 
@@ -250,11 +276,15 @@
 
       db.collection('chats').doc(id).get().then(function(doc){
         var data = {
-          tipo: 'grupal', nombre: 'Equipo de ' + miNombreG,
+          tipo: 'grupal',
           supervisorUid: currentUser.uid, supervisorNombre: miNombreG,
           participantes: participantes, participantesInfo: participantesInfo
         };
-        if(!doc.exists) data.creadoEn = firebase.firestore.FieldValue.serverTimestamp();
+        // Solo poner nombre/ícono por defecto la primera vez — no pisar lo que el supervisor ya personalizó.
+        if(!doc.exists){
+          data.nombre = 'Equipo de ' + miNombreG;
+          data.creadoEn = firebase.firestore.FieldValue.serverTimestamp();
+        }
         db.collection('chats').doc(id).set(data, { merge: true }).catch(function(e){ console.error('chat grupal:', e); });
       });
     });
@@ -296,6 +326,18 @@
     return otro && c.participantesInfo[otro] ? (c.participantesInfo[otro].rol==='supervisor'?'Supervisor':'Agente') : '';
   }
 
+  var GROUP_AVATARS = [
+    { emoji:'👥', color:'#7C3AED' }, { emoji:'💼', color:'#1A3DAA' }, { emoji:'🚀', color:'#DC2626' },
+    { emoji:'⭐', color:'#B45309' }, { emoji:'🔥', color:'#EA580C' }, { emoji:'🎯', color:'#0EA5E9' },
+    { emoji:'🛡️', color:'#16A34A' }, { emoji:'💡', color:'#CA8A04' }, { emoji:'🌟', color:'#9333EA' },
+    { emoji:'📣', color:'#0891B2' }
+  ];
+
+  function avatarDeChat(c){
+    if(c.tipo !== 'grupal') return null;
+    return { emoji: c.avatarEmoji || '👥', color: c.avatarColor || '#7C3AED' };
+  }
+
   function esNoLeido(c){
     if(!c.ultimoMensaje) return false;
     if(c.ultimoMensaje.autorUid === currentUser.uid) return false;
@@ -319,10 +361,11 @@
 
     function itemHtml(c){
       var nombre = nombreDeChat(c);
+      var av = avatarDeChat(c);
       var preview = c.ultimoMensaje ? (c.ultimoMensaje.autorUid===currentUser.uid?'Tú: ':'') + c.ultimoMensaje.texto : 'Sin mensajes aún';
       var noLeido = !soloLectura && esNoLeido(c);
       return '<div class="conv-item'+(c.id===chatActivoId?' active':'')+(noLeido?' unread':'')+'" onclick="abrirChat(\''+c.id+'\')">'
-        + '<div class="conv-avatar'+(c.tipo==='grupal'?' grupal':'')+'">'+(c.tipo==='grupal'?'👥':escHtml(iniciales(nombre)))+'</div>'
+        + '<div class="conv-avatar'+(av?' grupal':'')+'"'+(av?' style="background:'+av.color+'"':'')+'>'+(av?av.emoji:escHtml(iniciales(nombre)))+'</div>'
         + '<div class="conv-info"><div class="conv-nombre">'+escHtml(nombre)+(soloLectura&&c.tipo!=='grupal'?'':'')+'</div><div class="conv-preview">'+escHtml(preview)+'</div></div>'
         + (noLeido?'<div class="conv-dot"></div>':'')
         + '</div>';
@@ -348,10 +391,13 @@
 
     var nombre = nombreDeChat(c);
     var sub = subtituloDeChat(c);
+    var av = avatarDeChat(c);
+    var puedeEditarGrupo = !soloLectura && c.tipo === 'grupal' && c.supervisorUid === currentUser.uid;
     document.getElementById('threadCol').innerHTML =
         '<div class="thread-head">'
-      + '<div class="thread-head-avatar'+(c.tipo==='grupal'?' grupal':'')+'">'+(c.tipo==='grupal'?'👥':escHtml(iniciales(nombre)))+'</div>'
-      + '<div><div class="thread-head-nombre">'+escHtml(nombre)+'</div><div class="thread-head-sub">'+escHtml(sub)+'</div></div>'
+      + '<div class="thread-head-avatar'+(av?' grupal':'')+'"'+(av?' style="background:'+av.color+'"':'')+'>'+(av?av.emoji:escHtml(iniciales(nombre)))+'</div>'
+      + '<div style="flex:1;min-width:0"><div class="thread-head-nombre">'+escHtml(nombre)+'</div><div class="thread-head-sub">'+escHtml(sub)+'</div></div>'
+      + (puedeEditarGrupo ? '<button class="btn-icon" onclick="abrirModalEditarGrupo(\''+c.id+'\')" title="Editar grupo">✏️</button>' : '')
       + '</div>'
       + '<div class="thread-body" id="threadBody"><div class="loading">Cargando mensajes...</div></div>'
       + (soloLectura
@@ -499,6 +545,46 @@
     });
   };
   function cerrarModalNuevoChat(){ document.getElementById('modalNuevoChat').classList.remove('show'); }
+
+  // ── Editar grupo (nombre + ícono) ────────────────────────────────────────────
+  var grupoEditandoId = null, avatarSeleccionado = null;
+
+  window.abrirModalEditarGrupo = function(chatId){
+    var c = chats.find(function(x){ return x.id === chatId; });
+    if(!c) return;
+    grupoEditandoId = chatId;
+    avatarSeleccionado = { emoji: c.avatarEmoji || '👥', color: c.avatarColor || '#7C3AED' };
+    document.getElementById('egNombre').value = c.nombre || '';
+    renderAvatarPicker();
+    document.getElementById('modalEditarGrupo').classList.add('show');
+  };
+
+  function renderAvatarPicker(){
+    document.getElementById('egAvatares').innerHTML = GROUP_AVATARS.map(function(a, i){
+      var sel = avatarSeleccionado && avatarSeleccionado.emoji === a.emoji && avatarSeleccionado.color === a.color;
+      return '<button type="button" class="avatar-pick'+(sel?' sel':'')+'" style="background:'+a.color+'" onclick="seleccionarAvatar('+i+')">'+a.emoji+'</button>';
+    }).join('');
+  }
+
+  window.seleccionarAvatar = function(i){
+    avatarSeleccionado = GROUP_AVATARS[i];
+    renderAvatarPicker();
+  };
+
+  function cerrarModalEditarGrupo(){ document.getElementById('modalEditarGrupo').classList.remove('show'); grupoEditandoId = null; }
+
+  window.guardarGrupo = function(){
+    if(!grupoEditandoId) return;
+    var nombre = (document.getElementById('egNombre').value || '').trim();
+    if(!nombre){ showToast('Escribe un nombre para el grupo.'); return; }
+    db.collection('chats').doc(grupoEditandoId).update({
+      nombre: nombre, avatarEmoji: avatarSeleccionado.emoji, avatarColor: avatarSeleccionado.color
+    }).then(function(){
+      showToast('Grupo actualizado.');
+      cerrarModalEditarGrupo();
+      if(chatActivoId === grupoEditandoId) abrirChat(grupoEditandoId);
+    }).catch(function(e){ console.error(e); showToast('No se pudo actualizar el grupo.'); });
+  };
 
   window.iniciarChatDirecto = function(otroUid){
     var lista = miRolG === 'jefe' ? contactosJefe : agentesDeEquipo;
