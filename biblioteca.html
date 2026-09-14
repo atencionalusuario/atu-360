@@ -1859,7 +1859,7 @@
                     '</div>' +
                     '<div class="triage-acciones">' +
                       '<button class="bib-btn triage-btn-si" onclick="mostrarUno(\'familiarMenorRojoSiTF\', \'familiarMenorRojoNoTF\'); actualizarTipificacionCita(\'Familiar\', \'Emergencias &gt; Evaluación urgente\', true)">Responde que sí a algún criterio</button>' +
-                      '<button class="bib-btn" onclick="mostrarUno(\'familiarMenorRojoNoTF\', \'familiarMenorRojoSiTF\')">No, continuar</button>' +
+                      '<button class="bib-btn" onclick="mostrarUno(\'familiarMenorRojoNoTF\', \'familiarMenorRojoSiTF\'); actualizarTipificacionCita(\'Familiar\', \'\', false)">No, continuar</button>' +
                     '</div>' +
                     '<div id="familiarMenorRojoSiTF" class="triage-resultado triage-resultado-rojo" style="display:none;">' +
                       '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
@@ -1879,7 +1879,7 @@
                       '</div>' +
                       '<div class="triage-acciones">' +
                         '<button class="bib-btn triage-btn-si" onclick="mostrarUno(\'familiarMenorAmarilloSiTF\', \'familiarMenorAmarilloNoTF\'); actualizarTipificacionCita(\'Familiar\', \'Emergencias &gt; Evaluación urgente\', true)">Responde que sí a algún criterio</button>' +
-                        '<button class="bib-btn" onclick="mostrarUno(\'familiarMenorAmarilloNoTF\', \'familiarMenorAmarilloSiTF\')">No, continuar</button>' +
+                        '<button class="bib-btn" onclick="mostrarUno(\'familiarMenorAmarilloNoTF\', \'familiarMenorAmarilloSiTF\'); actualizarTipificacionCita(\'Familiar\', \'\', false)">No, continuar</button>' +
                       '</div>' +
                       '<div id="familiarMenorAmarilloSiTF" class="triage-resultado triage-resultado-rojo" style="display:none;">' +
                         '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
