@@ -98,6 +98,16 @@
   .agente-pick:hover { background: #F8FAFC; }
   .avatar-pick { width: 44px; height: 44px; border-radius: 50%; border: 2.5px solid transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
   .avatar-pick.sel { border-color: #1E293B; }
+  .nc-tabs { display: flex; gap: 0; border-bottom: 1px solid #F1F5F9; padding: 0 22px; }
+  .nc-tab { padding: 10px 4px; margin-right: 20px; font-size: 0.8rem; font-weight: 600; color: #94A3B8; border: none; background: none; cursor: pointer; font-family: inherit; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .nc-tab.active { color: #1A3DAA; border-bottom-color: #1A3DAA; }
+  .grupo-nombre-field { padding: 16px 22px 4px; }
+  .grupo-nombre-field input { width: 100%; padding: 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.85rem; font-family: inherit; outline: none; background: #F8FAFC; }
+  .grupo-pick { display: flex; align-items: center; gap: 10px; padding: 10px 22px; cursor: pointer; }
+  .grupo-pick:hover { background: #F8FAFC; }
+  .grupo-pick input { width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
+  .btn-crear-grupo { margin: 12px 22px 18px; padding: 10px; border: none; border-radius: 8px; background: #1A3DAA; color: white; font-size: 0.82rem; font-weight: 700; cursor: pointer; font-family: inherit; width: calc(100% - 44px); }
+  .btn-crear-grupo:hover { opacity: 0.88; }
   .agente-pick .conv-avatar { width: 30px; height: 30px; font-size: 0.65rem; }
   .loading { font-size: 0.82rem; color: #94A3B8; text-align: center; padding: 24px; }
   .toast { position: fixed; bottom: 24px; right: 24px; background: #1E293B; color: white; padding: 12px 18px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 999; }
@@ -140,12 +150,16 @@
   </div>
 </div>
 
-<!-- Modal nuevo chat 1 a 1 -->
+<!-- Modal nuevo chat 1 a 1 / nuevo grupo -->
 <div class="modal-overlay" id="modalNuevoChat">
   <div class="modal-box">
     <div class="modal-head">
-      <div class="modal-title">Iniciar chat con un colaborador</div>
+      <div class="modal-title" id="modalNuevoChatTitulo">Iniciar chat con un colaborador</div>
       <button class="btn-icon" onclick="cerrarModalNuevoChat()">✕</button>
+    </div>
+    <div class="nc-tabs" id="ncTabs" style="display:none">
+      <button type="button" class="nc-tab active" onclick="cambiarModoNuevoChat('directo')">Chat directo</button>
+      <button type="button" class="nc-tab" onclick="cambiarModoNuevoChat('grupo')">Crear grupo</button>
     </div>
     <div class="modal-body" id="listaAgentesModal"><div class="loading">Cargando...</div></div>
   </div>
@@ -529,30 +543,102 @@
       }).catch(function(e){ console.error('contactos jefe:', e); if(cb) cb(); });
   }
 
+  var modoNuevoChat = 'directo';
+  var miembrosGrupoNuevo = {};
+
   window.abrirModalNuevoChat = function(){
+    modoNuevoChat = 'directo';
+    miembrosGrupoNuevo = {};
     var fuente = miRolG === 'jefe' ? cargarContactosJefe : cargarAgentesDeEquipo;
     fuente(function(){
-      var lista = miRolG === 'jefe' ? contactosJefe : agentesDeEquipo;
-      var el = document.getElementById('listaAgentesModal');
-      if(lista.length === 0){
-        el.innerHTML = '<div class="loading">'+(miRolG==='jefe'?'No hay supervisores o agentes en tu proyecto.':'No tienes agentes asignados.')+'</div>';
-      } else {
-        var supervisores = lista.filter(function(a){ return a.rol === 'supervisor'; });
-        var agentes = lista.filter(function(a){ return a.rol !== 'supervisor'; });
-        function pickHtml(a){
-          return '<div class="agente-pick" onclick="iniciarChatDirecto(\''+a.uid+'\')">'
-            + '<div class="conv-avatar">'+escHtml(iniciales(a.nombre))+'</div>'
-            + '<div><div>'+escHtml(a.nombre)+'</div><div class="conv-preview">'+(LABEL_ROL_CONTACTO[a.rol]||a.rol)+'</div></div></div>';
-        }
-        var html = '';
-        if(miRolG === 'jefe' && supervisores.length) html += '<div class="conv-group-label">Supervisores</div>' + supervisores.map(pickHtml).join('');
-        if(miRolG === 'jefe' && agentes.length)      html += '<div class="conv-group-label">Agentes</div>' + agentes.map(pickHtml).join('');
-        if(miRolG !== 'jefe') html = lista.map(pickHtml).join('');
-        el.innerHTML = html;
-      }
+      document.getElementById('ncTabs').style.display = miRolG === 'jefe' ? 'flex' : 'none';
+      renderModoNuevoChat();
       document.getElementById('modalNuevoChat').classList.add('show');
     });
   };
+
+  window.cambiarModoNuevoChat = function(modo){
+    modoNuevoChat = modo;
+    document.querySelectorAll('.nc-tab').forEach(function(b, i){ b.classList.toggle('active', (i===0)===(modo==='directo')); });
+    renderModoNuevoChat();
+  };
+
+  function listaContactosActual(){
+    return miRolG === 'jefe' ? contactosJefe : agentesDeEquipo;
+  }
+
+  function renderModoNuevoChat(){
+    var lista = listaContactosActual();
+    var el = document.getElementById('listaAgentesModal');
+    document.getElementById('modalNuevoChatTitulo').textContent = modoNuevoChat === 'grupo' ? 'Crear grupo' : 'Iniciar chat con un colaborador';
+
+    if(lista.length === 0){
+      el.innerHTML = '<div class="loading">'+(miRolG==='jefe'?'No hay supervisores o agentes en tu proyecto.':'No tienes agentes asignados.')+'</div>';
+      return;
+    }
+    var supervisores = lista.filter(function(a){ return a.rol === 'supervisor'; });
+    var agentes = lista.filter(function(a){ return a.rol !== 'supervisor'; });
+
+    if(modoNuevoChat === 'grupo'){
+      function checkHtml(a){
+        var marcado = !!miembrosGrupoNuevo[a.uid];
+        return '<label class="grupo-pick"><input type="checkbox" '+(marcado?'checked':'')+' onchange="toggleMiembroGrupo(\''+a.uid+'\')">'
+          + '<div class="conv-avatar">'+escHtml(iniciales(a.nombre))+'</div>'
+          + '<div><div>'+escHtml(a.nombre)+'</div><div class="conv-preview">'+(LABEL_ROL_CONTACTO[a.rol]||a.rol)+'</div></div></label>';
+      }
+      var html = '<div class="grupo-nombre-field"><input type="text" id="ngNombre" placeholder="Nombre del grupo"></div>';
+      if(supervisores.length) html += '<div class="conv-group-label">Supervisores</div>' + supervisores.map(checkHtml).join('');
+      if(agentes.length)      html += '<div class="conv-group-label">Agentes</div>' + agentes.map(checkHtml).join('');
+      html += '<button type="button" class="btn-crear-grupo" onclick="crearGrupoNuevo()">Crear grupo</button>';
+      el.innerHTML = html;
+    } else {
+      function pickHtml(a){
+        return '<div class="agente-pick" onclick="iniciarChatDirecto(\''+a.uid+'\')">'
+          + '<div class="conv-avatar">'+escHtml(iniciales(a.nombre))+'</div>'
+          + '<div><div>'+escHtml(a.nombre)+'</div><div class="conv-preview">'+(LABEL_ROL_CONTACTO[a.rol]||a.rol)+'</div></div></div>';
+      }
+      var html2 = '';
+      if(miRolG === 'jefe' && supervisores.length) html2 += '<div class="conv-group-label">Supervisores</div>' + supervisores.map(pickHtml).join('');
+      if(miRolG === 'jefe' && agentes.length)      html2 += '<div class="conv-group-label">Agentes</div>' + agentes.map(pickHtml).join('');
+      if(miRolG !== 'jefe') html2 = lista.map(pickHtml).join('');
+      el.innerHTML = html2;
+    }
+  }
+
+  window.toggleMiembroGrupo = function(uid){
+    if(miembrosGrupoNuevo[uid]) delete miembrosGrupoNuevo[uid]; else miembrosGrupoNuevo[uid] = true;
+  };
+
+  window.crearGrupoNuevo = function(){
+    var nombre = (document.getElementById('ngNombre').value || '').trim();
+    var miembros = Object.keys(miembrosGrupoNuevo);
+    if(!nombre){ showToast('Escribe un nombre para el grupo.'); return; }
+    if(miembros.length === 0){ showToast('Selecciona al menos un integrante.'); return; }
+
+    var lista = listaContactosActual();
+    var participantesInfo = {};
+    participantesInfo[currentUser.uid] = { nombre: miNombreG, rol: miRolG };
+    miembros.forEach(function(uid){
+      var c = lista.find(function(x){ return x.uid === uid; });
+      if(c) participantesInfo[uid] = { nombre: c.nombre, rol: c.rol };
+    });
+
+    db.collection('chats').add({
+      tipo: 'grupal', nombre: nombre,
+      supervisorUid: currentUser.uid, supervisorNombre: miNombreG,
+      participantes: [currentUser.uid].concat(miembros), participantesInfo: participantesInfo,
+      creadoEn: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(function(ref){
+      return ref.get().then(function(doc){
+        if(!chats.some(function(x){ return x.id === ref.id; })){
+          chats.push(Object.assign({ id: ref.id }, doc.data()));
+        }
+        cerrarModalNuevoChat();
+        abrirChat(ref.id);
+      });
+    }).catch(function(e){ console.error(e); showToast('No se pudo crear el grupo.'); });
+  };
+
   function cerrarModalNuevoChat(){ document.getElementById('modalNuevoChat').classList.remove('show'); }
 
   // ── Editar grupo (nombre + ícono) ────────────────────────────────────────────
