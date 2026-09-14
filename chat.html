@@ -398,6 +398,7 @@
       + '<div class="thread-head-avatar'+(av?' grupal':'')+'"'+(av?' style="background:'+av.color+'"':'')+'>'+(av?av.emoji:escHtml(iniciales(nombre)))+'</div>'
       + '<div style="flex:1;min-width:0"><div class="thread-head-nombre">'+escHtml(nombre)+'</div><div class="thread-head-sub">'+escHtml(sub)+'</div></div>'
       + (puedeEditarGrupo ? '<button class="btn-icon" onclick="abrirModalEditarGrupo(\''+c.id+'\')" title="Editar grupo"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' : '')
+      + '<button class="btn-icon" onclick="cerrarChatActivo()" title="Cerrar conversación"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
       + '</div>'
       + '<div class="thread-body" id="threadBody"><div class="loading">Cargando mensajes...</div></div>'
       + (soloLectura
@@ -420,6 +421,14 @@
   function mostrarVacio(){
     document.getElementById('threadCol').innerHTML = '<div class="empty-state" id="threadEmpty"><svg width="44" height="44" fill="none" stroke="#CBD5E1" stroke-width="1.6" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><div>Selecciona una conversación</div></div>';
   }
+
+  window.cerrarChatActivo = function(){
+    if(unsubMensajes){ unsubMensajes(); unsubMensajes = null; }
+    chatActivoId = null;
+    mensajesActuales = [];
+    mostrarVacio();
+    renderConvList();
+  };
 
   var QUICK_REACTS = ['👍','❤️','😂','😮','😢','🙏'];
 
