@@ -1845,8 +1845,8 @@
                     '<p class="instruccion-interna">Instrucción: Poner en hold al usuario.<br>Agregar al familiar en la sección Familiares de TCA.<br>Una vez esté agregado retomar la llamada.</p>' +
                     '<p>Muchas gracias por su espera en línea Sr / Sra XXXX, le confirmo que su familiar ya ha sido registrado como beneficiario en su perfil de <strong>DoctorSV</strong>. Es decir, podrá hacer uso del servicio a través de su aplicación. Ahora continuaremos con el agendamiento de la cita. ¿Puede conectarse a una <strong>videollamada</strong>?</p>' +
                     '<div class="triage-acciones">' +
-                      '<button class="bib-btn" onclick="mostrarUno(\'familiarMenorVideoSiTF\', \'familiarMenorNoPuedeTF\')">Sí puede</button>' +
-                      '<button class="bib-btn" onclick="mostrarUno(\'familiarMenorNoPuedeTF\', \'familiarMenorVideoSiTF\')">No puede</button>' +
+                      '<button class="bib-btn" onclick="mostrarUno(\'familiarMenorVideoSiTF\', \'familiarMenorNoPuedeTF\'); actualizarTipificacionCita(\'Familiar\', \'Gestión de perfiles &gt; Registro de familiar\', true)">Sí puede</button>' +
+                      '<button class="bib-btn" onclick="mostrarUno(\'familiarMenorNoPuedeTF\', \'familiarMenorVideoSiTF\'); actualizarTipificacionCita(\'Familiar\', \'Gestión de perfiles &gt; Registro de familiar\', true)">No puede</button>' +
                     '</div>' +
                     '<div id="familiarMenorVideoSiTF" class="triage-resultado" style="display:none;">' +
                       '<p>Muchas gracias. Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
@@ -1871,11 +1871,36 @@
                   '<div id="familiarAdultoTF" class="triage-resultado" style="display:none;">' +
                     '<p>De acuerdo, ¿me indica, por favor, la siguiente información?</p>' +
                     '<ul>' +
-                      '<li>El tipo y número de documento de su familiar</li>' +
-                      '<li>Motivo de su registro</li>' +
-                      '<li>Tipo de parentesco</li>' +
+                      '<li>El tipo y número de documento de su familiar. Le confirmo, el número de documento es XXXXXXX.</li>' +
+                      '<li>Motivo de su registro.</li>' +
+                      '<li>Tipo de parentesco.</li>' +
                     '</ul>' +
-                    '<p>Le confirmo que su familiar ya ha sido registrado como beneficiario en su perfil de <strong>DoctorSV</strong>. Es decir, podrá hacer uso del servicio a través de su aplicación.</p>' +
+                    '<p>Muchas gracias, permítame un momento en línea Sr / Sra XXXXX.</p>' +
+                    '<p class="instruccion-interna">Instrucción: Poner en hold al usuario.<br>Agregar al familiar en la sección Familiares de TCA.<br>Una vez esté agregado retomar la llamada.</p>' +
+                    '<p>Muchas gracias por su espera en línea Sr / Sra XXXX, le confirmo que su familiar ya ha sido registrado como beneficiario en su perfil de <strong>DoctorSV</strong>. Es decir, podrá hacer uso del servicio a través de su aplicación. Ahora continuaremos con el agendamiento de la cita. ¿Puede conectarse a una <strong>videollamada</strong>?</p>' +
+                    '<div class="triage-acciones">' +
+                      '<button class="bib-btn" onclick="mostrarUno(\'familiarAdultoVideoSiTF\', \'familiarAdultoNoPuedeTF\')">Sí puede</button>' +
+                      '<button class="bib-btn" onclick="mostrarUno(\'familiarAdultoNoPuedeTF\', \'familiarAdultoVideoSiTF\')">No puede</button>' +
+                    '</div>' +
+                    '<div id="familiarAdultoVideoSiTF" class="triage-resultado" style="display:none;">' +
+                      '<p>Muchas gracias. Le comento, la cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
+                      '<p>Excelente, queda programada su cita el día XXX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
+                      '<div class="triage-acciones" style="margin-bottom:0;">' +
+                        '<button class="bib-btn" onclick="toggleBloque(\'recFamiliarAdultoVideoSiTF\')">Recomendaciones para conectarse a videollamada</button>' +
+                      '</div>' +
+                      '<div id="recFamiliarAdultoVideoSiTF" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_VIDEO + '</div>' +
+                    '</div>' +
+                    '<div id="familiarAdultoNoPuedeTF" class="triage-resultado" style="display:none;">' +
+                      '<p>Entiendo lo que nos comenta, con gusto le puedo ayudar a tener una cita por llamada telefónica.</p>' +
+                      '<p><strong>En esta cita el médico se pondrá en contacto con usted llamándole a su número de teléfono. Sólo tenga en cuenta que las citas por esta vía pueden tener limitaciones en cuanto al diagnóstico que realice su médico.</strong></p>' +
+                      '<p>La cita más próxima es el día XX a las XX:XX AM / PM. <strong>¿Desea hacer su cita?</strong></p>' +
+                      '<p>Excelente, queda programada su cita el día XXXXXX XX a las XX de la tarde / de la mañana.</p>' +
+                      '<p class="instruccion-interna">Instrucción: Seleccionar el canal de atención "Llamada telefónica". Escribir en el comentario de la cita en TCA: PACIENTE REQUIERE LLAMADA TELEFONICA AL NUMERO XXXXXXXXX</p>' +
+                      '<div class="triage-acciones" style="margin-bottom:0;">' +
+                        '<button class="bib-btn" onclick="toggleBloque(\'recFamiliarAdultoNoPuedeTF\')">Recomendaciones para cita vía telefónica</button>' +
+                      '</div>' +
+                      '<div id="recFamiliarAdultoNoPuedeTF" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_TEL + '</div>' +
+                    '</div>' +
                   '</div>' +
                 '</div>' +
                 '<p class="modal-tipificacion" style="display:none;"><strong>Tipificación sugerida:</strong> <span id="tipificacionCitaFamiliar">Gestión de citas &gt; Agendamiento de cita</span></p>'
