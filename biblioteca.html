@@ -3105,6 +3105,21 @@
             '<p>Muchas gracias. Agregaré toda la información descrita por usted.</p>' +
             '<p class="instruccion-interna">Instrucción: crear ticket y llenar los siguientes campos obligatorios con información disponible en TCA:</p>' +
             '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
+        },
+        { label: 'Efectos secundarios',
+          texto:
+            '<p>Comprendo y agradecemos que se haya puesto en contacto con nosotros. Los efectos secundarios que menciona, ¿los presenta usted o un tercero?</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" onclick="mostrarUno(\'efSecUsted\', \'efSecTercero\')">Es usted</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'efSecTercero\', \'efSecUsted\')">Es un tercero</button>' +
+            '</div>' +
+            '<div id="efSecUsted" class="triage-resultado" style="display:none;">' +
+              continuacionEfectosSecundarios('Usted') +
+            '</div>' +
+            '<div id="efSecTercero" class="triage-resultado" style="display:none;">' +
+              '<p>Gracias por su confirmación. ¿El tercero es un <strong>menor de edad</strong>? Si la respuesta es afirmativa, ¿podría confirmarme la edad del menor?</p>' +
+              continuacionEfectosSecundarios('Tercero') +
+            '</div>'
         }
       ] },
       { label: 'Tercerías', tooltip: 'El inconveniente está relacionado a una empresa que presta servicio a DoctorSV', pregunta: '¿Con quién tuvo el inconveniente el usuario?', hijos: [
@@ -4711,6 +4726,59 @@
     el.innerHTML = valor;
     var contenedor = el.closest('.modal-tipificacion');
     if (contenedor) contenedor.style.display = mostrar ? 'block' : 'none';
+  }
+
+  function continuacionEfectosSecundarios(prefix) {
+    var idNinos = 'criteriosNinosEfSec' + prefix;
+    var idEmbarazadas = 'criteriosEmbarazadasEfSec' + prefix;
+    var idEmergenciaSi = 'efSecEmergenciaSi' + prefix;
+    var idEmergenciaNo = 'efSecEmergenciaNo' + prefix;
+    return (
+      '<p>Gracias por la confirmación. Antes de continuar nos gustaría descartar que no cuente con una emergencia.</p>' +
+      '<p>¿Podría confirmarme si presenta dificultad severa para respirar, dolor o presión intensa en el pecho, fractura, fiebre de más de 40 grados, pérdida repentina de conciencia o sangrado abundante?</p>' +
+      '<div class="triage-criterios-grid">' +
+        '<div class="triage-criterio-caja">' +
+          '<p class="instruccion-interna instruccion-alerta">Si cumple la edad de 0 a 12 años, ADEMÁS preguntar:</p>' +
+          '<button class="bib-btn" onclick="toggleBloque(\'' + idNinos + '\')">Criterios niños</button>' +
+          '<div id="' + idNinos + '" class="triage-criterio-texto" style="display:none;">' +
+            '<p>¿Tiene dolor abdominal fuerte, convulsiones, traumas o golpes fuertes, diarrea o vómito severo con el niño inconsolable o con poca respuesta a estímulos (está muy apagado)?</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="triage-criterio-caja">' +
+          '<p class="instruccion-interna instruccion-alerta">Si está en edad reproductiva (15 a 49 años), ADEMÁS preguntar:</p>' +
+          '<button class="bib-btn" onclick="toggleBloque(\'' + idEmbarazadas + '\')">Criterios embarazadas</button>' +
+          '<div id="' + idEmbarazadas + '" class="triage-criterio-texto" style="display:none;">' +
+            '<p>¿Podría confirmarme si se encuentra embarazada?</p>' +
+            '<p>Si responde que no, seguir flujo.</p>' +
+            '<p>Si responde que sí: ¿Tiene dolor de cabeza intenso, visión borrosa, dolor en la boca del estómago, sangrado vaginal, hinchazón de miembros inferiores, salida de líquido vaginal?</p>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="triage-acciones">' +
+        '<button class="bib-btn triage-btn-si" onclick="mostrarUno(\'' + idEmergenciaSi + '\', \'' + idEmergenciaNo + '\')">Es una emergencia</button>' +
+        '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'' + idEmergenciaNo + '\', \'' + idEmergenciaSi + '\')">No es una emergencia</button>' +
+      '</div>' +
+      '<div id="' + idEmergenciaSi + '" class="triage-resultado triage-resultado-rojo" style="display:none;">' +
+        '<p>Por las características de su caso, en este momento voy a transferir la llamada a uno de nuestros <strong>médicos de apoyo</strong> para que evalúe su caso y le pueda brindar las recomendaciones necesarias. Le voy a solicitar unos datos adicionales:</p>' +
+        '<p>Me podría brindar por favor:</p>' +
+        '<ul><li>Su edad</li><li>El distrito (municipio) donde se ubica</li><li>Dirección exacta</li><li>Punto de referencia</li><li>Teléfono de referencia</li></ul>' +
+        '<p>Muchas gracias por la información proporcionada. Hemos generado el caso número <strong>XXX</strong>, mediante el cual se dará seguimiento al tratamiento indicado.</p>' +
+        '<p>A continuación, transferiré su llamada al área correspondiente. Por favor, no cuelgue.</p>' +
+        '<p class="instruccion-interna">Recuerda que debes de realizar 2 tickets:<br>* Un ticket por la emergencia reportada.<br>* Un ticket por la inconformidad relacionada con el tratamiento o medicamento.</p>' +
+      '</div>' +
+      '<div id="' + idEmergenciaNo + '" class="triage-resultado" style="display:none;">' +
+        '<p>Gracias, XXXX. Lamentamos los inconvenientes que haya podido experimentar con su tratamiento.</p>' +
+        '<p>Para brindarle el seguimiento adecuado, por favor compártanos la siguiente información:</p>' +
+        '<ul>' +
+          '<li>Día y hora en que realizó su cita.</li>' +
+          '<li>¿Qué medicamento le ha generado el inconveniente?</li>' +
+          '<li>¿Ha presentado algún efecto secundario o alguna complicación en su salud? (En caso de que aún no lo haya mencionado).</li>' +
+          '<li>Por favor, indíquenos el nombre del medicamento que le fue recetado.</li>' +
+        '</ul>' +
+        '<p>Muchas gracias por la información. Hemos registrado su caso bajo el número de <strong>ticket XXX</strong>, el cual será enviado al área correspondiente para su debida revisión.</p>' +
+        '<p>Como medida preventiva, le solicitamos suspender temporalmente la toma o aplicación del medicamento hasta recibir el seguimiento y las indicaciones correspondientes.</p>' +
+      '</div>'
+    );
   }
 
   function bloqueTriageCita(prefix, tipo) {
