@@ -28,12 +28,19 @@
 
 var NOMBRE_HOJA_REGISTROS  = 'Registros';
 var NOMBRE_HOJA_MEDICIONES = 'Mediciones';
+var NOMBRE_HOJA_MUESTRA    = 'MuestraChecks';
+var COLUMNAS_MUESTRA       = { metodo1: 2, metodo2: 3, mixtos: 4 };
 
 function doPost(e) {
   try {
     var datos = JSON.parse(e.postData.contents);
-    var hoja = obtenerHojaRegistros();
 
+    if (datos.accion === 'check_muestra') {
+      actualizarCheckMuestra(datos);
+      return respuesta({ ok: true });
+    }
+
+    var hoja = obtenerHojaRegistros();
     hoja.appendRow([
       new Date(),                 // marca de tiempo del servidor
       datos.fecha || '',
@@ -55,6 +62,7 @@ function doGet(e) {
     var libro   = SpreadsheetApp.getActiveSpreadsheet();
     var hojaMed = libro.getSheetByName(NOMBRE_HOJA_MEDICIONES);
     var hojaReg = libro.getSheetByName(NOMBRE_HOJA_REGISTROS);
+    var hojaMst = libro.getSheetByName(NOMBRE_HOJA_MUESTRA);
 
     var cupos   = leerCupos(hojaMed);
     var conteos = contarRegistros(hojaReg);
@@ -74,10 +82,56 @@ function doGet(e) {
       };
     });
 
-    return respuesta({ ok: true, grados: grados });
+    return respuesta({ ok: true, grados: grados, muestraChecks: leerMuestraChecks(hojaMst) });
   } catch (err) {
     return respuesta({ ok: false, error: String(err) });
   }
+}
+
+function leerMuestraChecks(hoja) {
+  var out = {};
+  if (!hoja) return out;
+  var datos = hoja.getDataRange().getValues();
+  for (var r = 1; r < datos.length; r++) {
+    var fila = datos[r];
+    var grado = String(fila[0] || '').trim();
+    if (!grado) continue;
+    out[grado] = {
+      metodo1: !!fila[COLUMNAS_MUESTRA.metodo1 - 1],
+      metodo2: !!fila[COLUMNAS_MUESTRA.metodo2 - 1],
+      mixtos:  !!fila[COLUMNAS_MUESTRA.mixtos - 1]
+    };
+  }
+  return out;
+}
+
+function actualizarCheckMuestra(datos) {
+  var grado    = String(datos.grado || '').trim();
+  var colIndex = COLUMNAS_MUESTRA[datos.columna];
+  if (!grado || !colIndex) throw new Error('Datos inválidos para check de muestra');
+
+  var hoja = obtenerHojaMuestra();
+  var valores = hoja.getDataRange().getValues();
+  var filaIdx = -1;
+  for (var r = 1; r < valores.length; r++) {
+    if (String(valores[r][0] || '').trim() === grado) { filaIdx = r + 1; break; }
+  }
+  if (filaIdx === -1) {
+    hoja.appendRow([grado, false, false, false]);
+    filaIdx = hoja.getLastRow();
+  }
+  hoja.getRange(filaIdx, colIndex).setValue(!!datos.valor);
+}
+
+function obtenerHojaMuestra() {
+  var libro = SpreadsheetApp.getActiveSpreadsheet();
+  var hoja = libro.getSheetByName(NOMBRE_HOJA_MUESTRA);
+  if (!hoja) {
+    hoja = libro.insertSheet(NOMBRE_HOJA_MUESTRA);
+    hoja.appendRow(['Grado', 'Metodo1', 'Metodo2', 'Mixtos']);
+    hoja.setFrozenRows(1);
+  }
+  return hoja;
 }
 
 function leerCupos(hoja) {

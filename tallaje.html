@@ -138,6 +138,10 @@
   table.tabla-muestra .th-sub { font-size: 0.6rem; font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--gris); }
   table.tabla-muestra td:first-child { font-weight: 600; color: var(--texto); }
   table.tabla-muestra td:not(:first-child) { font-weight: 700; color: var(--azul); font-variant-numeric: tabular-nums; }
+  table.tabla-muestra td.celda-muestra { padding-top: 0; padding-bottom: 0; }
+  table.tabla-muestra .celda-muestra-int { display: flex; align-items: center; justify-content: flex-end; gap: 7px; padding: 8px 0; }
+  table.tabla-muestra .chk-muestra { width: 18px; height: 18px; accent-color: var(--verde); cursor: pointer; flex-shrink: 0; }
+  table.tabla-muestra td.celda-muestra.marcado { color: var(--verde); }
   .check {
     display: inline-flex; align-items: center; justify-content: center;
     width: 16px; height: 16px; border-radius: 50%; background: var(--verde); color: white;
@@ -171,36 +175,17 @@
     <p>Selecciona grado y método — envía cada registro a Google Sheets</p>
   </header>
 
-  <!-- GRADO Y CUPOS -->
+  <!-- GRADO -->
   <div class="card">
     <div class="toolbar">
       <h3>Control</h3>
-      <button class="link-btn" id="btnActualizarCupos">↻ Actualizar cupos</button>
+      <button class="link-btn" id="btnActualizarCupos">↻ Actualizar grados</button>
     </div>
     <div class="campo" style="margin-top:10px">
       <label>Grado</label>
       <select id="gradoSel">
         <option value="">Cargando grados…</option>
       </select>
-    </div>
-    <div class="total-alumnos-box" id="totalAlumnosBox" style="display:none">
-      <div class="total-lbl">Total de alumnos</div>
-      <div class="total-val" id="totalAlumnosVal">—</div>
-    </div>
-    <div class="cupos-box" id="cuposBox" style="display:none"></div>
-  </div>
-
-  <!-- SELECCIÓN DE MÉTODO -->
-  <div class="card">
-    <div class="campo">
-      <label>Método de tallaje</label>
-      <div class="metodos" id="metodosBox">
-        <button type="button" class="metodo-btn" data-m="1" disabled><div class="num">1</div><div><b>Método 1</b><span>Prueba individual de uniforme</span></div></button>
-        <button type="button" class="metodo-btn" data-m="2" disabled><div class="num">2</div><div><b>Método 2</b><span>Medición corporal en centímetros</span></div></button>
-      </div>
-      <div class="grado-completo-banner" id="gradoCompletoBanner" style="display:none">
-        <span class="check">✓</span> Ya las mediciones para este grado están completas, registra otro grado
-      </div>
     </div>
   </div>
 
@@ -270,14 +255,7 @@
             <th>Mixtos</th>
           </tr>
         </thead>
-        <tbody>
-          <tr><td>Inicial 3</td><td>14</td><td>5</td><td>5</td><td>4</td></tr>
-          <tr><td>Parvularia 4</td><td>37</td><td>13</td><td>12</td><td>12</td></tr>
-          <tr><td>Primer Grado</td><td>51</td><td>17</td><td>17</td><td>17</td></tr>
-          <tr><td>Cuarto Grado</td><td>77</td><td>26</td><td>25</td><td>26</td></tr>
-          <tr><td>Séptimo Grado</td><td>103</td><td>35</td><td>34</td><td>34</td></tr>
-          <tr><td>Primer Año</td><td>40</td><td>14</td><td>13</td><td>13</td></tr>
-        </tbody>
+        <tbody id="muestraBody"></tbody>
       </table>
     </div>
   </div>
@@ -297,8 +275,7 @@
   var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxn3CqQtLiWFNsF2mOasnr99v8jzlIxHZ24bMCCPcpcE02VBbdQCt7AtgHWnxnwISETSw/exec";
 
   var METODOS = {
-    '1': 'Método 1 — Prueba individual de uniforme',
-    '2': 'Método 2 — Medición corporal en centímetros'
+    '4': 'Método 4 — Plantilla de uniforme'
   };
 
   var metodoActual = null;
@@ -321,10 +298,6 @@
   var btnStop   = document.getElementById('btnStop');
   var btnReset  = document.getElementById('btnReset');
   var gradoSel  = document.getElementById('gradoSel');
-  var cuposBox  = document.getElementById('cuposBox');
-  var totalAlumnosBox = document.getElementById('totalAlumnosBox');
-  var btnM1     = document.querySelector('.metodo-btn[data-m="1"]');
-  var btnM2     = document.querySelector('.metodo-btn[data-m="2"]');
 
   document.getElementById('urlEstado').textContent =
     (SCRIPT_URL.indexOf('PEGA_AQUI') === 0 ? 'no configurado (revisa SCRIPT_URL en el código)' : 'Google Sheets');
@@ -347,8 +320,8 @@
           gradoSel.appendChild(op);
         });
         if (opcionPrevia && cuposPorGrado[opcionPrevia]) gradoSel.value = opcionPrevia;
-        actualizarCuposBox();
         renderResumenGrados(data.grados);
+        renderMuestra(data.muestraChecks);
       })
       .catch(function(){
         if (reintentosRestantes > 0){
@@ -420,40 +393,9 @@
   });
 
   gradoSel.addEventListener('change', function(){
-    metodoActual = null;
-    document.querySelectorAll('.metodo-btn').forEach(function(x){ x.classList.remove('activo'); });
-    actualizarCuposBox();
-    actualizarBotonesMetodo();
+    metodoActual = gradoSel.value ? '4' : null;
     actualizarSub();
   });
-
-  function actualizarCuposBox(){
-    var g = cuposPorGrado[gradoSel.value];
-    if (!g){
-      cuposBox.style.display = 'none'; cuposBox.innerHTML = '';
-      totalAlumnosBox.style.display = 'none';
-      return;
-    }
-    function tarjeta(medidos, cupo, nombre){
-      var completo = medidos >= cupo;
-      var porCronometrar = Math.max(cupo - medidos, 0);
-      return '<div class="cupo-card'+(completo?' completo':'')+'">'
-        + '<div class="cupo-lbl">'+nombre+(completo?' <span class="check">✓</span>':'')+'</div>'
-        + '<div class="cupo-stat"><div class="cupo-stat-val">'+medidos+'</div><div class="cupo-stat-lbl">Cronometrados</div></div>'
-        + '<div class="cupo-stat pendiente"><div class="cupo-stat-val">'+porCronometrar+'</div><div class="cupo-stat-lbl">Por cronometrar</div></div>'
-        + '</div>';
-    }
-    document.getElementById('totalAlumnosVal').textContent = g.total;
-    totalAlumnosBox.style.display = 'block';
-
-    var tarjetas = [];
-    if (g.cupo1 > 0) tarjetas.push(tarjeta(g.medidos1, g.cupo1, 'Método 1'));
-    if (g.cupo2 > 0) tarjetas.push(tarjeta(g.medidos2, g.cupo2, 'Método 2'));
-
-    cuposBox.innerHTML = tarjetas.join('');
-    cuposBox.classList.toggle('un-solo-metodo', tarjetas.length === 1);
-    cuposBox.style.display = tarjetas.length > 0 ? 'grid' : 'none';
-  }
 
   function gradoCompleto(g){
     if (!g) return false;
@@ -461,30 +403,6 @@
     var m2ok = g.cupo2 <= 0 || g.medidos2 >= g.cupo2;
     return (g.cupo1 > 0 || g.cupo2 > 0) && m1ok && m2ok;
   }
-
-  function actualizarBotonesMetodo(){
-    var g = cuposPorGrado[gradoSel.value];
-    var completo = gradoCompleto(g);
-    var m1 = !completo && !!(g && g.cupo1 > 0);
-    var m2 = !completo && !!(g && g.cupo2 > 0);
-    btnM1.disabled = !m1;
-    btnM2.disabled = !m2;
-    btnM1.style.display = m1 ? '' : 'none';
-    btnM2.style.display = m2 ? '' : 'none';
-    document.getElementById('metodosBox').style.display = completo ? 'none' : '';
-    document.getElementById('gradoCompletoBanner').style.display = completo ? 'flex' : 'none';
-  }
-
-  // ── Selección de método ──────────────────────────────────────────────────────
-  document.querySelectorAll('.metodo-btn').forEach(function(b){
-    b.addEventListener('click', function(){
-      if (startTs || b.disabled) return; // no cambiar método con cronómetro corriendo
-      document.querySelectorAll('.metodo-btn').forEach(function(x){ x.classList.remove('activo'); });
-      b.classList.add('activo');
-      metodoActual = b.getAttribute('data-m');
-      actualizarSub();
-    });
-  });
 
   function gradoActual(){ return gradoSel.value; }
 
@@ -640,6 +558,61 @@
     window._toastT = setTimeout(function(){ t.classList.remove('show'); }, 3000);
   }
 
+  // ── Tabla "Muestra de referencia" — checks guardados en Google Sheets ───────
+  var MUESTRA_REF = [
+    { grado: 'Inicial 3',     total: 14,  metodo1: 5,  metodo2: 5,  mixtos: 4  },
+    { grado: 'Parvularia 4',  total: 37,  metodo1: 13, metodo2: 12, mixtos: 12 },
+    { grado: 'Primer Grado',  total: 51,  metodo1: 17, metodo2: 17, mixtos: 17 },
+    { grado: 'Cuarto Grado',  total: 77,  metodo1: 26, metodo2: 25, mixtos: 26 },
+    { grado: 'Séptimo Grado', total: 103, metodo1: 35, metodo2: 34, mixtos: 34 },
+    { grado: 'Primer Año',    total: 40,  metodo1: 14, metodo2: 13, mixtos: 13 }
+  ];
+
+  function renderMuestra(checksData){
+    checksData = checksData || {};
+    var celda = function(grado, columna, valor){
+      var check = checksData[grado] || {};
+      var marcado = !!check[columna];
+      return '<td class="celda-muestra'+(marcado?' marcado':'')+'"><div class="celda-muestra-int"><span>'+valor+'</span>'
+        + '<input type="checkbox" class="chk-muestra" data-grado="'+escHtml(grado)+'" data-columna="'+columna+'"'+(marcado?' checked':'')+'></div></td>';
+    };
+    document.getElementById('muestraBody').innerHTML = MUESTRA_REF.map(function(g){
+      return '<tr>'
+        + '<td>'+escHtml(g.grado)+'</td>'
+        + '<td>'+g.total+'</td>'
+        + celda(g.grado, 'metodo1', g.metodo1)
+        + celda(g.grado, 'metodo2', g.metodo2)
+        + celda(g.grado, 'mixtos', g.mixtos)
+        + '</tr>';
+    }).join('');
+
+    document.querySelectorAll('#muestraBody .chk-muestra').forEach(function(chk){
+      chk.addEventListener('change', function(){
+        var celdaEl = chk.closest('td');
+        celdaEl.classList.toggle('marcado', chk.checked);
+        enviarCheckMuestra(chk.getAttribute('data-grado'), chk.getAttribute('data-columna'), chk.checked, chk);
+      });
+    });
+  }
+
+  function enviarCheckMuestra(grado, columna, valor, chk){
+    if (SCRIPT_URL.indexOf('PEGA_AQUI') === 0){
+      showToast('Configura SCRIPT_URL para guardar este check en Sheets.');
+      return;
+    }
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ accion: 'check_muestra', grado: grado, columna: columna, valor: valor })
+    }).catch(function(){
+      showToast('No se pudo guardar el check. Revisa tu conexión e inténtalo de nuevo.');
+      chk.checked = !valor;
+      chk.closest('td').classList.toggle('marcado', chk.checked);
+    });
+  }
+
+  renderMuestra();
   renderHistorial();
   cargarCupos();
 </script>
