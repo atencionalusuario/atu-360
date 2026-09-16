@@ -1029,6 +1029,23 @@
     if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
   }
 
+  function abrirNodoOrientacion(label) {
+    var dudas = ARBOL_CONSULTA.find(function(x) { return x.label === 'Dudas generales del servicio'; });
+    var orientacion = dudas.hijos.find(function(x) { return x.label === 'Orientación sobre todo el servicio'; });
+    var item = orientacion.hijos.find(function(x) { return x && x.label === label; });
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+  }
+
+  function abrirDescargaApp() {
+    abrirModalTexto('Cómo descargar la app',
+      '<p>¿En qué sistema operativo desea instalar la aplicación?</p>' +
+      '<div class="triage-acciones">' +
+        '<button class="bib-btn" onclick="abrirNodoOrientacion(\'Descarga Android\')">Android</button>' +
+        '<button class="bib-btn" onclick="abrirNodoOrientacion(\'Descarga iOS\')">iOS</button>' +
+      '</div>'
+    );
+  }
+
   function abrirScriptPerfiles(label) {
     var perfiles = OPCIONES_CATEGORIA.gestion.find(function(x) { return x.label === 'Gestión de perfiles'; });
     var item = perfiles.hijos.find(function(x) { return x && x.label === label; });
@@ -1599,6 +1616,18 @@
           '<p>Debajo de la constancia correspondiente a la última consulta del menor, encontrará la opción <strong>"Ver su constancia por cuidados pediátricos"</strong>. Selecciónela para acceder al documento.</p>' +
           '<p>Presione el ícono de la flecha de descarga para descargar la constancia y consultar su información completa.</p>' +
           '<p>Una vez descargada, verifique que la constancia muestre correctamente los datos del menor, del representante y el período de cuidados indicado por el médico.</p>'
+      },
+      { label: 'Requisitos para registrarse',
+        tipificacion: 'Consultas > Información general del servicio > Requisitos para registrarse',
+        texto:
+          '<p>Con gusto le brindo la información.</p>' +
+          '<p>Para registrarse en la aplicación DoctorSV, es necesario que sea <strong>mayor de 18 años</strong>, cuente con un <strong>documento de identidad vigente</strong> (DUI, pasaporte salvadoreño o carné de residente), tenga un <strong>número de teléfono celular nacional activo</strong> y disponga de un <strong>correo electrónico</strong>.</p>' +
+          '<p>¿Me podría confirmar, por favor, si cumple con estos requisitos para continuar con el proceso de registro?</p>' +
+          '<p>Muchas gracias por su confirmación. ¿Le parece bien que iniciemos con la descarga de la aplicación?</p>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn" onclick="abrirDescargaApp()">Cómo descargar la app</button>' +
+            '<button class="bib-btn" onclick="abrirScriptPerfiles(\'Registrar a usuario nuevo\')">Registrar a usuario nuevo</button>' +
+          '</div>'
       }
     ] },
     { label: 'Dudas sobre secciones de la aplicación', vistaTarjetas: true, hijos: [
