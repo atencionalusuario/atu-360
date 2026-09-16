@@ -362,6 +362,11 @@ function idsCompletosDeRol(rol) {
   return (c.principal || []).concat(c.reportes || []);
 }
 
+// ── Exclusión de Biblioteca por canal ────────────────────────────────────────
+// Los usuarios con este canal no deben ver ni abrir Biblioteca, sin importar su rol.
+var CANALES_SIN_BIBLIOTECA = ['Tercería dispensa'];
+var IDS_BIBLIOTECA         = ['biblioteca', 'jefe-biblioteca', 'sup-biblioteca'];
+
 function initSidebar() {
   var paginaActiva = detectarPagina();
   firebase.auth().onAuthStateChanged(function(user) {
@@ -371,6 +376,19 @@ function initSidebar() {
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
       var rol    = doc.exists ? (doc.data().rol || 'agente') : 'agente';
       var nombre = (doc.exists && doc.data().nombre) ? doc.data().nombre : user.email.split('@')[0];
+      var canal  = doc.exists ? (doc.data().canal || '') : '';
+
+      if (CANALES_SIN_BIBLIOTECA.indexOf(canal) > -1 && NAV_POR_ROL[rol]) {
+        NAV_POR_ROL[rol] = {
+          principal: (NAV_POR_ROL[rol].principal || []).filter(function(id) { return IDS_BIBLIOTECA.indexOf(id) < 0; }),
+          reportes:  (NAV_POR_ROL[rol].reportes  || []).filter(function(id) { return IDS_BIBLIOTECA.indexOf(id) < 0; })
+        };
+        var archivoActual = window.location.pathname.split('/').pop() || '';
+        if (archivoActual === 'biblioteca.html') {
+          window.location.href = BASE + 'home.html';
+          return;
+        }
+      }
 
       var restringir = function(habilitados) {
         var permitidos = idsCompletosDeRol(rol).filter(function(id) { return habilitados.indexOf(id) > -1; });
