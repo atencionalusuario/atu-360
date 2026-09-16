@@ -129,19 +129,6 @@
   table.hist tr.fila-completa td:first-child { color: var(--verde); font-weight: 700; }
   table.hist tr.fila-total td { font-weight: 800; color: var(--texto); background: #F8FAFC; border-top: 1.5px solid var(--borde); border-bottom: none; }
 
-  /* MUESTRA DE REFERENCIA */
-  table.tabla-muestra th { white-space: normal; text-transform: none; vertical-align: bottom; }
-  table.tabla-muestra th:not(:first-child),
-  table.tabla-muestra td:not(:first-child) { text-align: right; }
-  table.tabla-muestra th b, table.tabla-muestra .th-sub { display: block; }
-  table.tabla-muestra th { line-height: 1.4; }
-  table.tabla-muestra .th-sub { font-size: 0.6rem; font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--gris); }
-  table.tabla-muestra td:first-child { font-weight: 600; color: var(--texto); }
-  table.tabla-muestra td:not(:first-child) { font-weight: 700; color: var(--azul); font-variant-numeric: tabular-nums; }
-  table.tabla-muestra td.celda-muestra { padding-top: 0; padding-bottom: 0; }
-  table.tabla-muestra .celda-muestra-int { display: flex; align-items: center; justify-content: flex-end; gap: 7px; padding: 8px 0; }
-  table.tabla-muestra .chk-muestra { width: 18px; height: 18px; accent-color: var(--verde); cursor: pointer; flex-shrink: 0; }
-  table.tabla-muestra td.celda-muestra.marcado { color: var(--verde); }
   .check {
     display: inline-flex; align-items: center; justify-content: center;
     width: 16px; height: 16px; border-radius: 50%; background: var(--verde); color: white;
@@ -241,25 +228,6 @@
     </div>
   </div>
 
-  <!-- MUESTRA DE REFERENCIA -->
-  <div class="card">
-    <h3 style="margin:0 0 10px">Muestra de referencia por grado</h3>
-    <div class="hist-tbl-wrap">
-      <table class="hist tabla-muestra">
-        <thead>
-          <tr>
-            <th>Grado</th>
-            <th>Total por grado</th>
-            <th>Método 1<br><span class="th-sub">Prueba individual de uniforme</span></th>
-            <th>Método 2<br><span class="th-sub">Medición corporal en centímetros</span></th>
-            <th>Mixtos</th>
-          </tr>
-        </thead>
-        <tbody id="muestraBody"></tbody>
-      </table>
-    </div>
-  </div>
-
   <p class="config-note">Destino de guardado: <span id="urlEstado">configurando…</span></p>
 </div>
 
@@ -321,7 +289,6 @@
         });
         if (opcionPrevia && cuposPorGrado[opcionPrevia]) gradoSel.value = opcionPrevia;
         renderResumenGrados(data.grados);
-        renderMuestra(data.muestraChecks);
       })
       .catch(function(){
         if (reintentosRestantes > 0){
@@ -558,61 +525,6 @@
     window._toastT = setTimeout(function(){ t.classList.remove('show'); }, 3000);
   }
 
-  // ── Tabla "Muestra de referencia" — checks guardados en Google Sheets ───────
-  var MUESTRA_REF = [
-    { grado: 'Inicial 3',     total: 14,  metodo1: 5,  metodo2: 5,  mixtos: 4  },
-    { grado: 'Parvularia 4',  total: 37,  metodo1: 13, metodo2: 12, mixtos: 12 },
-    { grado: 'Primer Grado',  total: 51,  metodo1: 17, metodo2: 17, mixtos: 17 },
-    { grado: 'Cuarto Grado',  total: 77,  metodo1: 26, metodo2: 25, mixtos: 26 },
-    { grado: 'Séptimo Grado', total: 103, metodo1: 35, metodo2: 34, mixtos: 34 },
-    { grado: 'Primer Año',    total: 40,  metodo1: 14, metodo2: 13, mixtos: 13 }
-  ];
-
-  function renderMuestra(checksData){
-    checksData = checksData || {};
-    var celda = function(grado, columna, valor){
-      var check = checksData[grado] || {};
-      var marcado = !!check[columna];
-      return '<td class="celda-muestra'+(marcado?' marcado':'')+'"><div class="celda-muestra-int"><span>'+valor+'</span>'
-        + '<input type="checkbox" class="chk-muestra" data-grado="'+escHtml(grado)+'" data-columna="'+columna+'"'+(marcado?' checked':'')+'></div></td>';
-    };
-    document.getElementById('muestraBody').innerHTML = MUESTRA_REF.map(function(g){
-      return '<tr>'
-        + '<td>'+escHtml(g.grado)+'</td>'
-        + '<td>'+g.total+'</td>'
-        + celda(g.grado, 'metodo1', g.metodo1)
-        + celda(g.grado, 'metodo2', g.metodo2)
-        + celda(g.grado, 'mixtos', g.mixtos)
-        + '</tr>';
-    }).join('');
-
-    document.querySelectorAll('#muestraBody .chk-muestra').forEach(function(chk){
-      chk.addEventListener('change', function(){
-        var celdaEl = chk.closest('td');
-        celdaEl.classList.toggle('marcado', chk.checked);
-        enviarCheckMuestra(chk.getAttribute('data-grado'), chk.getAttribute('data-columna'), chk.checked, chk);
-      });
-    });
-  }
-
-  function enviarCheckMuestra(grado, columna, valor, chk){
-    if (SCRIPT_URL.indexOf('PEGA_AQUI') === 0){
-      showToast('Configura SCRIPT_URL para guardar este check en Sheets.');
-      return;
-    }
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ accion: 'check_muestra', grado: grado, columna: columna, valor: valor })
-    }).catch(function(){
-      showToast('No se pudo guardar el check. Revisa tu conexión e inténtalo de nuevo.');
-      chk.checked = !valor;
-      chk.closest('td').classList.toggle('marcado', chk.checked);
-    });
-  }
-
-  renderMuestra();
   renderHistorial();
   cargarCupos();
 </script>
