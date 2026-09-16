@@ -319,9 +319,9 @@
     var hayDatosPromedio = false;
 
     var filas = grados.map(function(g){
-      var totalMed         = g.cupo1 + g.cupo2;
-      var cronometrados    = g.medidos1 + g.medidos2;
-      var porCronometrar   = Math.max(g.cupo1 - g.medidos1, 0) + Math.max(g.cupo2 - g.medidos2, 0);
+      var totalMed         = g.cupo1 + g.cupo2 + g.cupo4;
+      var cronometrados    = g.medidos1 + g.medidos2 + g.medidos4;
+      var porCronometrar   = Math.max(g.cupo1 - g.medidos1, 0) + Math.max(g.cupo2 - g.medidos2, 0) + Math.max(g.cupo4 - g.medidos4, 0);
       totalMediciones      += totalMed;
       totalCronometrados   += cronometrados;
       totalPorCronometrar  += porCronometrar;
@@ -368,7 +368,8 @@
     if (!g) return false;
     var m1ok = g.cupo1 <= 0 || g.medidos1 >= g.cupo1;
     var m2ok = g.cupo2 <= 0 || g.medidos2 >= g.cupo2;
-    return (g.cupo1 > 0 || g.cupo2 > 0) && m1ok && m2ok;
+    var m4ok = g.cupo4 <= 0 || g.medidos4 >= g.cupo4;
+    return (g.cupo1 > 0 || g.cupo2 > 0 || g.cupo4 > 0) && m1ok && m2ok && m4ok;
   }
 
   function gradoActual(){ return gradoSel.value; }

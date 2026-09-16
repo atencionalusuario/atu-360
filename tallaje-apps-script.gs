@@ -22,8 +22,9 @@
  * contengan (en cualquier orden, el texto puede variar un poco):
  *   - "Grado"
  *   - "Total" (total de alumnos)
- *   - "Método 1" (cupo a medir con el método 1)
- *   - "Método 2" (cupo a medir con el método 2)
+ *   - "Método 1" (cupo a medir con el método 1) — opcional
+ *   - "Método 2" (cupo a medir con el método 2) — opcional
+ *   - "Método 4" (cupo a medir con el método 4) — opcional
  */
 
 var NOMBRE_HOJA_REGISTROS  = 'Registros';
@@ -69,15 +70,17 @@ function doGet(e) {
 
     var grados = cupos.map(function(c) {
       var m = conteos[c.grado] || {};
-      var conteoTotal = (m['1'] || 0) + (m['2'] || 0);
+      var conteoTotal = (m['1'] || 0) + (m['2'] || 0) + (m['4'] || 0);
       var sumaDuracion = m.sumaDuracion || 0;
       return {
         grado:       c.grado,
         total:       c.total,
         cupo1:       c.cupo1,
         cupo2:       c.cupo2,
+        cupo4:       c.cupo4,
         medidos1:    m['1'] || 0,
         medidos2:    m['2'] || 0,
+        medidos4:    m['4'] || 0,
         promedioSeg: conteoTotal > 0 ? Math.round(sumaDuracion / conteoTotal) : null
       };
     });
@@ -153,6 +156,7 @@ function leerCupos(hoja) {
   var iTotal = idxContiene(['total']);
   var iM1    = idxContiene(['método 1', 'metodo 1']);
   var iM2    = idxContiene(['método 2', 'metodo 2']);
+  var iM4    = idxContiene(['método 4', 'metodo 4']);
 
   var out = [];
   for (var r = 1; r < datos.length; r++) {
@@ -162,7 +166,8 @@ function leerCupos(hoja) {
       grado: String(fila[iGrado]).trim(),
       total: iTotal >= 0 ? (Number(fila[iTotal]) || 0) : 0,
       cupo1: iM1 >= 0 ? (Number(fila[iM1]) || 0) : 0,
-      cupo2: iM2 >= 0 ? (Number(fila[iM2]) || 0) : 0
+      cupo2: iM2 >= 0 ? (Number(fila[iM2]) || 0) : 0,
+      cupo4: iM4 >= 0 ? (Number(fila[iM4]) || 0) : 0
     });
   }
   return out;
