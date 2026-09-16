@@ -100,7 +100,7 @@
   .tarjeta-script-cuerpo p.tipificacion-rama strong { color: #64748B; }
   .modal-cuerpo p:last-child { margin-bottom: 0; }
   .modal-cuerpo ol { margin: 0 0 10px 20px; }
-  .modal-cuerpo li { font-size: 0.85rem; line-height: 1.65; color: #374151; margin-bottom: 6px; font-family: 'Montserrat', sans-serif; }
+  .modal-cuerpo li { font-size: 0.95rem; line-height: 1.65; color: #374151; margin-bottom: 6px; font-family: 'Montserrat', sans-serif; }
   .modal-cuerpo li:last-child { margin-bottom: 0; }
   .modal-subtitulo { font-size: 0.88rem; font-weight: 700; color: #0F2070; font-family: 'Montserrat', sans-serif; margin: 18px 0 8px; }
   .modal-subtitulo:first-child { margin-top: 0; }
@@ -115,11 +115,11 @@
   #tarjetasScripts.vista-tarjetas { display: flex; flex-direction: column; align-items: stretch; gap: 18px; width: 100%; max-width: 1040px; margin: 6px auto 0; }
   .tarjeta-script { background: white; border: 1px solid #E2E8F0; border-radius: 10px; padding: 22px 40px; width: 100%; box-sizing: border-box; }
   .tarjeta-script h4 { font-family: 'Montserrat', sans-serif; color: #0F2070; font-size: 1.05rem; margin: 0 0 12px; }
-  .tarjeta-script-cuerpo p { font-size: 0.9rem; line-height: 1.6; color: #374151; margin-bottom: 10px; }
+  .tarjeta-script-cuerpo p { font-size: 0.95rem; line-height: 1.6; color: #374151; margin-bottom: 10px; }
   .tarjeta-script-cuerpo p:last-child { margin-bottom: 0; }
   .tarjeta-script-cuerpo strong { color: #0F2070; }
   .tarjeta-script-cuerpo .modal-tipificacion strong { color: #64748B; }
-  .tarjeta-script-cuerpo ol { padding-left: 20px; font-size: 0.9rem; line-height: 1.6; color: #374151; }
+  .tarjeta-script-cuerpo ol { padding-left: 20px; font-size: 0.95rem; line-height: 1.6; color: #374151; }
   .tarjeta-script-cuerpo li { margin-bottom: 8px; }
   .tarjeta-script-imagen, .modal-cuerpo img { max-width: 100%; border-radius: 8px; border: 1px solid #E2E8F0; margin-top: 6px; display: block; }
   .tarjeta-script .modal-tipificacion { margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9; font-size: 0.78rem; }
@@ -256,7 +256,7 @@
   .triage-resultado:empty { display: none !important; padding: 0; border: none; margin-bottom: 0; }
   .triage-resultado:last-child { margin-bottom: 0; }
   .triage-resultado p { font-size: 0.95rem; line-height: 1.6; color: #374151; margin-bottom: 8px; font-family: 'Montserrat', sans-serif; }
-  .triage-resultado ul, .triage-resultado ol { padding-left: 20px; font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; font-family: 'Montserrat', sans-serif; }
+  .triage-resultado ul, .triage-resultado ol { padding-left: 20px; font-size: 0.95rem; line-height: 1.6; color: #374151; margin-bottom: 8px; font-family: 'Montserrat', sans-serif; }
   .triage-resultado p:last-child, .triage-resultado ul:last-child { margin-bottom: 0; }
   .triage-resultado-rojo { background: #FEF2F2; border-color: #FCA5A5; }
   .triage-resultado-rojo p, .triage-resultado-rojo ul, .triage-resultado-rojo li { color: #B91C1C; }
@@ -374,6 +374,9 @@
         <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; text-align:center;">Menores de edad</h4>
         <p>Comprendo su consulta. Sin embargo, le informo que para utilizar los servicios de <strong>DoctorSV</strong> es necesario ser <strong>mayor de 18 años</strong> y contar con un <strong>documento de identidad</strong>. En caso de ser menor de edad, será necesario que un adulto responsable se comunique con nosotros para proporcionarnos la información necesaria y gestionar la atención que usted requiere.</p>
         <p>En este momento, ¿podría confirmarme si presenta alguna situación de emergencia?</p>
+        <div class="triage-acciones">
+          <button class="bib-btn triage-btn-si" onclick="abrirEmergenciaCasosEspeciales()">Es una emergencia</button>
+        </div>
       </div>
       <div id="casoSinDocumento" class="triage-resultado" style="display:none;">
         <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; text-align:center;">Usuario sin DUI, Carnet de residente o Pasaporte salvadoreño</h4>
@@ -1027,6 +1030,11 @@
     var farmacias = tercerias.hijos.find(function(x) { return x.label === 'Farmacias'; });
     var item = farmacias.hijos.find(function(x) { return x && x.label === 'Medicamento no disponible'; });
     if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+  }
+
+  function abrirEmergenciaCasosEspeciales() {
+    var item = OPCIONES_CATEGORIA.emergencia[0];
+    abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, true, item.subBotonesVertical);
   }
 
   function abrirNodoOrientacion(label) {
@@ -3527,6 +3535,7 @@
     emergencia: [
       { label: 'Emergencia',
         tipificacion: 'Emergencias > Evaluación urgente',
+        ocultarFooter: true,
         texto:
           '<div class="triage-alerta">' +
             '<p>Entiendo lo que me comenta. Para poder brindarle la atención correspondiente, le solicitare datos personales. Podría proporcionarme, por favor, la siguiente información:</p>' +
@@ -3921,7 +3930,7 @@
       contBotones.innerHTML = '';
     }
 
-    document.querySelector('#modalTexto > .modal-tipificacion').style.display = (ocultarFooter || !tipificacion) ? 'none' : 'block';
+    document.querySelector('#modalTexto > .modal-tipificacion').style.display = tipificacion ? 'block' : 'none';
     document.querySelector('#modalTexto .modal-footer').style.display = ocultarFooter ? 'none' : 'flex';
     document.getElementById('modalTipificacion').textContent = tipificacion || '';
     var panel = document.getElementById('modalTexto');
