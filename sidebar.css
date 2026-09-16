@@ -28,3 +28,15 @@
 .sb-user-role { font-size: 0.62rem; color: rgba(255,255,255,0.4); margin-top: 1px; }
 .btn-logout { width: 100%; padding: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: rgba(255,255,255,0.5); font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; }
 .btn-logout:hover { background: rgba(255,255,255,0.1); color: white; }
+
+/* Ocultar/mostrar la barra lateral (todas las páginas) */
+.sidebar { transition: width 0.18s ease, opacity 0.12s ease; }
+body.sb-oculta .sidebar { width: 0; min-width: 0; opacity: 0; pointer-events: none; overflow: hidden; }
+#btnToggleSidebarGlobal {
+  position: fixed; top: 50%; left: 204px; transform: translateY(-50%);
+  z-index: 500; width: 32px; height: 32px; border-radius: 8px;
+  background: #1A3DAA; color: white; border: 2px solid white; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); transition: left 0.18s ease, opacity 0.15s;
+}
+body.sb-oculta #btnToggleSidebarGlobal { left: 6px; }
+#btnToggleSidebarGlobal:hover { opacity: 0.85; }

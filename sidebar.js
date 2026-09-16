@@ -367,7 +367,35 @@ function idsCompletosDeRol(rol) {
 var CANALES_SIN_BIBLIOTECA = ['Tercería dispensa'];
 var IDS_MODULOS_EXCLUIDOS_POR_CANAL = ['biblioteca', 'jefe-biblioteca', 'sup-biblioteca', 'flash', 'jefe-flash', 'sup-flash'];
 
+// ── Ocultar/mostrar la barra lateral (todas las páginas) ─────────────────────
+var SB_OCULTA_KEY = 'atu360_sidebar_oculta';
+
+function aplicarEstadoSidebarGlobal(oculta) {
+  document.body.classList.toggle('sb-oculta', oculta);
+  var icon = document.getElementById('iconToggleSidebarGlobal');
+  if (icon) icon.innerHTML = oculta ? '<polyline points="9 18 15 12 9 6"/>' : '<polyline points="15 18 9 12 15 6"/>';
+}
+
+function toggleSidebarGlobal() {
+  var oculta = !document.body.classList.contains('sb-oculta');
+  localStorage.setItem(SB_OCULTA_KEY, oculta ? '1' : '0');
+  aplicarEstadoSidebarGlobal(oculta);
+}
+
+function crearBotonToggleSidebar() {
+  if (document.getElementById('btnToggleSidebarGlobal')) return;
+  var btn = document.createElement('button');
+  btn.id = 'btnToggleSidebarGlobal';
+  btn.type = 'button';
+  btn.title = 'Mostrar/ocultar menú';
+  btn.innerHTML = '<svg id="iconToggleSidebarGlobal" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>';
+  btn.addEventListener('click', toggleSidebarGlobal);
+  document.body.appendChild(btn);
+  aplicarEstadoSidebarGlobal(localStorage.getItem(SB_OCULTA_KEY) === '1');
+}
+
 function initSidebar() {
+  crearBotonToggleSidebar();
   var paginaActiva = detectarPagina();
   firebase.auth().onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
