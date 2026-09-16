@@ -4569,7 +4569,7 @@
     var correctas = Object.values(respuestasSeguridad).filter(Boolean).length;
     var pasa = correctas >= 2;
     contenedor.innerHTML = '<div class="resultado-seguridad ' + (pasa ? 'pasa' : 'no-pasa') + '">' +
-      (pasa ? '✔ Validación superada (' + correctas + ' de 3 correctas). Puede continuar con la gestión.' : '✘ Validación no superada (' + correctas + ' de 3 correctas). No se debe continuar con la gestión.') +
+      (pasa ? '✔ Validación superada (' + correctas + ' de 3 correctas). Puede continuar con la gestión.' : '✘ Validación no superada (' + correctas + ' de 3 correctas). Se debe hacer validación de identidad') +
     '</div>';
   }
 
@@ -4627,7 +4627,7 @@
     var resultadoDiv = document.getElementById('psResultado_' + prefix);
     if (resultadoDiv) {
       resultadoDiv.innerHTML = '<div class="resultado-seguridad ' + (pasa ? 'pasa' : 'no-pasa') + '">' +
-        (pasa ? '✔ Validación superada (' + correctas + ' de 3 correctas). Puede continuar con la gestión.' : '✘ Validación no superada (' + correctas + ' de 3 correctas). No se debe continuar con la gestión.') +
+        (pasa ? '✔ Validación superada (' + correctas + ' de 3 correctas). Puede continuar con la gestión.' : '✘ Validación no superada (' + correctas + ' de 3 correctas). Se debe hacer validación de identidad') +
       '</div>';
     }
   }
