@@ -362,10 +362,10 @@ function idsCompletosDeRol(rol) {
   return (c.principal || []).concat(c.reportes || []);
 }
 
-// ── Exclusión de Biblioteca por canal ────────────────────────────────────────
-// Los usuarios con este canal no deben ver ni abrir Biblioteca, sin importar su rol.
+// ── Exclusión de módulos por canal ───────────────────────────────────────────
+// Los usuarios con este canal no deben ver ni abrir estos módulos, sin importar su rol.
 var CANALES_SIN_BIBLIOTECA = ['Tercería dispensa'];
-var IDS_BIBLIOTECA         = ['biblioteca', 'jefe-biblioteca', 'sup-biblioteca'];
+var IDS_MODULOS_EXCLUIDOS_POR_CANAL = ['biblioteca', 'jefe-biblioteca', 'sup-biblioteca', 'flash', 'jefe-flash', 'sup-flash'];
 
 function initSidebar() {
   var paginaActiva = detectarPagina();
@@ -380,11 +380,11 @@ function initSidebar() {
 
       if (CANALES_SIN_BIBLIOTECA.indexOf(canal) > -1 && NAV_POR_ROL[rol]) {
         NAV_POR_ROL[rol] = {
-          principal: (NAV_POR_ROL[rol].principal || []).filter(function(id) { return IDS_BIBLIOTECA.indexOf(id) < 0; }),
-          reportes:  (NAV_POR_ROL[rol].reportes  || []).filter(function(id) { return IDS_BIBLIOTECA.indexOf(id) < 0; })
+          principal: (NAV_POR_ROL[rol].principal || []).filter(function(id) { return IDS_MODULOS_EXCLUIDOS_POR_CANAL.indexOf(id) < 0; }),
+          reportes:  (NAV_POR_ROL[rol].reportes  || []).filter(function(id) { return IDS_MODULOS_EXCLUIDOS_POR_CANAL.indexOf(id) < 0; })
         };
         var archivoActual = window.location.pathname.split('/').pop() || '';
-        if (archivoActual === 'biblioteca.html') {
+        if (archivoActual === 'biblioteca.html' || archivoActual === 'flash.html') {
           window.location.href = BASE + 'home.html';
           return;
         }
