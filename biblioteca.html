@@ -336,7 +336,7 @@
       <p>Le confirmo, su número de documento es XXXXXXX-X.</p>
     </div>
 
-    <p class="instruccion">Buscar el número de documento en la sección Solicitante del SDP</p>
+    <p class="instruccion-interna">Buscar el número de documento en la sección Solicitante del SDP</p>
 
     <div class="sdp-botones">
       <button class="bib-btn" id="btnSdpSi" onclick="mostrarSDP('si')">Ya está registrado en el SDP</button>
@@ -422,7 +422,7 @@
       <div id="textoSDP"></div>
     </div>
 
-    <p class="instruccion" id="instConfirmacion" style="display:none;">Confirma con el usuario su número registrado en el SDP.</p>
+    <p class="instruccion-interna" id="instConfirmacion" style="display:none;">Confirma con el usuario su número registrado en el SDP.</p>
 
     <div class="sdp-botones" id="botonesConfirmacion" style="display:none;">
       <button class="bib-btn" id="btnConfSi" onclick="mostrarConfirmacion('si')">Sí, sigue siendo su número</button>
@@ -433,9 +433,9 @@
       <div id="textoConfirmacion"></div>
     </div>
 
-    <p class="instruccion" id="instHold" style="display:none;">Poner el hold al usuario.</p>
+    <p class="instruccion-interna" id="instHold" style="display:none;">Poner el hold al usuario.</p>
 
-    <p class="instruccion" id="instTCARegistro" style="display:none;">Ingresar a TCA en la sección de Registro y digitar el documento y la fecha de nacimiento para obtener el nombre completo del usuario. ¿Está registrado en TCA?</p>
+    <p class="instruccion-interna" id="instTCARegistro" style="display:none;">Ingresar a TCA en la sección de Registro y digitar el documento y la fecha de nacimiento para obtener el nombre completo del usuario. ¿Está registrado en TCA?</p>
 
     <div class="triage-acciones" id="botonesTCARegistro" style="display:none;">
       <button class="bib-btn btn-si-verde" id="btnTcaRegistradoSi" onclick="mostrarUno('tcaRegistradoSi', 'tcaRegistradoNo'); ocultarRegistroSDPCompleto();">Está registrado en TCA</button>
@@ -515,16 +515,16 @@
     </div>
     <div id="tcaRegistradoNo" class="triage-resultado" style="display:none;"></div>
 
-    <p class="instruccion" id="instRegistro" style="display:none;">Agregar al usuario como Solicitante en el SDP con los datos solicitados.</p>
+    <p class="instruccion-interna" id="instRegistro" style="display:none;">Agregar al usuario como Solicitante en el SDP con los datos solicitados.</p>
 
-    <p class="instruccion" id="instRetomar" style="display:none;">Retomar la llamada:</p>
+    <p class="instruccion-interna" id="instRetomar" style="display:none;">Retomar la llamada:</p>
 
     <div class="bib-saludo" id="cajaRegistro" style="display:none;">
       <p>Muchas gracias por su espera en línea, SR / SRA XXX, dígame, <strong>¿cómo puedo ayudarle?</strong></p>
     </div>
 
-    <p class="instruccion" id="instMenu" style="display:none;">¿Qué necesita el usuario?</p>
-    <p class="instruccion" id="instMenuDetalle" style="display:none; color:#64748B; font-style:italic;">Escucha atentamente al usuario e identifica el motivo de su contacto.</p>
+    <p class="instruccion-interna" id="instMenu" style="display:none;">¿Qué necesita el usuario?</p>
+    <p class="instruccion-interna" id="instMenuDetalle" style="display:none;">Escucha atentamente al usuario e identifica el motivo de su contacto.</p>
 
     <div class="busqueda-input-wrap" id="accesoBusquedaMenu" style="display:none; margin-bottom:14px;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
