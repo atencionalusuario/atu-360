@@ -478,7 +478,7 @@
     }
     body.innerHTML = msgs.map(function(m){
       var mio = m.autorUid === currentUser.uid;
-      var hora = m.fecha ? m.fecha.toDate().toLocaleTimeString('es-SV', {hour:'2-digit', minute:'2-digit'}) : '';
+      var hora = m.fecha ? m.fecha.toDate().toLocaleString('es-SV', {day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
       return '<div class="msg-row'+(mio?' mio':'')+'"><div class="msg-wrap">'
         + reactsBarHtml(m.id)
         + '<div class="msg-bubble">'
