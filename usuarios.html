@@ -59,30 +59,28 @@
 
   /* TABLA */
   .tabla-wrap  { flex: 1; overflow: auto; background: white; border-radius: 10px; border: 1px solid #E2E8F0; }
-  table        { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  table        { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
   thead        { position: sticky; top: 0; z-index: 2; }
   thead tr     { background: #F8FAFC; }
-  th           { padding: 10px 14px; text-align: left; font-size: 0.65rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.8px; border-bottom: 1px solid #E2E8F0; white-space: nowrap; }
+  th           { padding: 8px 12px; text-align: left; font-size: 0.62rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.8px; border-bottom: 1px solid #E2E8F0; white-space: nowrap; }
   th.sortable  { cursor: pointer; user-select: none; }
   th.sortable:hover   { color: #1A3DAA; }
   th.sort-asc::after  { content: ' ↑'; color: #1A3DAA; }
   th.sort-desc::after { content: ' ↓'; color: #1A3DAA; }
   th.sort-sec-asc::after  { content: ' ↑'; color: #94A3B8; font-size: 0.6rem; }
   th.sort-sec-desc::after { content: ' ↓'; color: #94A3B8; font-size: 0.6rem; }
-  .filter-row th  { padding: 6px 8px; background: #F1F5F9; }
-  .cf-select      { width: 100%; padding: 5px 8px; border: 1.5px solid #E2E8F0; border-radius: 5px; font-size: 0.72rem; font-family: inherit; color: #1E293B; background: white; outline: none; }
+  .filter-row th  { padding: 5px 7px; background: #F1F5F9; }
+  .cf-select      { width: 100%; padding: 4px 7px; border: 1.5px solid #E2E8F0; border-radius: 5px; font-size: 0.68rem; font-family: inherit; color: #1E293B; background: white; outline: none; }
   .cf-select:focus { border-color: #1A3DAA; }
   tbody tr        { border-bottom: 1px solid #F1F5F9; transition: background 0.1s; cursor: pointer; }
   tbody tr:last-child  { border-bottom: none; }
   tbody tr:hover       { background: #F8FAFC; }
   tbody tr.selected    { background: #EEF2FF; }
   tbody tr.inactivo td { opacity: 1; }
-  td              { padding: 10px 14px; color: #374151; vertical-align: middle; }
-  .td-user        { display: flex; align-items: center; gap: 9px; }
-  .td-avatar      { width: 28px; height: 28px; border-radius: 50%; background: #1A3DAA; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; color: white; font-weight: 700; flex-shrink: 0; }
+  td              { padding: 7px 12px; color: #374151; vertical-align: middle; }
   .td-nombre      { font-weight: 600; color: #1E293B; white-space: nowrap; }
-  .td-email       { font-size: 0.7rem; color: #94A3B8; }
-  .tag            { font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 3px; text-transform: uppercase; white-space: nowrap; }
+  .td-email       { font-size: 0.66rem; color: #94A3B8; }
+  .tag            { font-size: 0.58rem; font-weight: 700; padding: 2px 7px; border-radius: 3px; text-transform: uppercase; white-space: nowrap; }
   .tag.agente     { background: #EEF2FF; color: #1A3DAA; }
   .tag.supervisor { background: #F0FDF4; color: #16A34A; }
   .tag.formacion  { background: #F5F3FF; color: #7C3AED; }
@@ -96,7 +94,6 @@
   .tag.inactivo   { background: #FEF2F2; color: #DC2626; }
   .tag.si         { background: #F0F9FF; color: #0284C7; }
   .tag.no         { background: #F1F5F9; color: #94A3B8; }
-  .td-mono        { font-variant-numeric: tabular-nums; font-size: 0.75rem; }
   .no-resultados  { text-align: center; padding: 48px; color: #94A3B8; font-size: 0.82rem; }
 
   /* PANEL DETALLE */
@@ -243,13 +240,10 @@
           <select id="sort1" onchange="aplicarFiltros()">
             <option value="">— Sin criterio —</option>
             <option value="nombre" selected>Nombre</option>
-            <option value="cargo">Cargo</option>
             <option value="proyecto">Proyecto</option>
             <option value="rol">Rol</option>
             <option value="supervisor">Supervisor</option>
             <option value="estado">Estado</option>
-            <option value="fechaIngreso">Fecha de ingreso</option>
-            <option value="antiguedad">Antigüedad</option>
           </select>
           <button id="btnDir1" class="btn-dir asc" onclick="toggleDir(1)" title="Cambiar dirección"></button>
         </div>
@@ -258,13 +252,10 @@
           <select id="sort2" onchange="aplicarFiltros()">
             <option value="">— Sin criterio —</option>
             <option value="nombre">Nombre</option>
-            <option value="cargo">Cargo</option>
             <option value="proyecto">Proyecto</option>
             <option value="rol">Rol</option>
             <option value="supervisor">Supervisor</option>
             <option value="estado">Estado</option>
-            <option value="fechaIngreso">Fecha de ingreso</option>
-            <option value="antiguedad">Antigüedad</option>
           </select>
           <button id="btnDir2" class="btn-dir asc" onclick="toggleDir(2)" title="Cambiar dirección"></button>
         </div>
@@ -276,25 +267,18 @@
           <thead>
             <tr>
               <th class="sortable" data-col="nombre"       onclick="sortByCol('nombre')">Usuario</th>
-              <th class="sortable" data-col="cargo"        onclick="sortByCol('cargo')">Cargo</th>
               <th class="sortable" data-col="proyecto"     onclick="sortByCol('proyecto')">Proyecto</th>
               <th class="sortable" data-col="rol"          onclick="sortByCol('rol')">Rol</th>
               <th>Canal</th>
               <th class="sortable" data-col="supervisor"   onclick="sortByCol('supervisor')">Supervisor</th>
-              <th class="sortable" data-col="fechaIngreso" onclick="sortByCol('fechaIngreso')">Ingreso</th>
-              <th class="sortable" data-col="antiguedad"   onclick="sortByCol('antiguedad')">Antigüedad</th>
-              <th>Vehículo</th>
               <th class="sortable" data-col="estado"       onclick="sortByCol('estado')">Estado</th>
             </tr>
             <tr class="filter-row">
               <th><select class="cf-select" id="cfNombre"     onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
-              <th><select class="cf-select" id="cfCargo"      onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
               <th><select class="cf-select" id="cfProyecto"   onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
               <th><select class="cf-select" id="cfRol"        onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
               <th><select class="cf-select" id="cfCanal"      onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
               <th><select class="cf-select" id="cfSupervisor" onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
-              <th></th><th></th>
-              <th><select class="cf-select" id="cfVehiculo"   onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
               <th><select class="cf-select" id="cfEstado"     onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
             </tr>
           </thead>
@@ -521,12 +505,10 @@
   function poblarFiltrosColumna() {
     var uniq = function(arr){ var s={}; arr.forEach(function(v){ if(v) s[v]=1; }); return Object.keys(s); };
     poblarDropdownColumna('cfNombre',     uniq(usuarios.map(function(u){ return u.nombre; })));
-    poblarDropdownColumna('cfCargo',      uniq(usuarios.map(function(u){ return u.cargo||''; })));
     poblarDropdownColumna('cfProyecto',   uniq(usuarios.map(function(u){ return u.proyecto; })), function(v){ return LABELS_PROY[v]||v; });
     poblarDropdownColumna('cfRol',        uniq(usuarios.map(function(u){ return u.rol; })),      function(v){ return LABELS_ROL[v]||v; });
     poblarDropdownColumna('cfCanal',      uniq(usuarios.map(function(u){ return u.canal||''; })));
     poblarDropdownColumna('cfSupervisor', uniq(usuarios.map(function(u){ return u.supervisor||''; })));
-    poblarDropdownColumna('cfVehiculo',   ['si','no'], function(v){ return v==='si'?'Sí':'No'; });
     poblarDropdownColumna('cfEstado',     ['activo','inactivo'], function(v){ return v==='activo'?'Activo':'Inactivo'; });
   }
 
@@ -570,7 +552,7 @@
     var c1   = document.getElementById('sort1').value;
     var c2   = document.getElementById('sort2').value;
     var cf   = {};
-    ['cfNombre','cfCargo','cfProyecto','cfRol','cfCanal','cfSupervisor','cfVehiculo','cfEstado'].forEach(function(id){
+    ['cfNombre','cfProyecto','cfRol','cfCanal','cfSupervisor','cfEstado'].forEach(function(id){
       cf[id] = (document.getElementById(id)||{value:''}).value;
     });
 
@@ -580,12 +562,10 @@
       if(rol  && u.rol!==rol)       return false;
       if(est  && (est==='activo'?!u.activo:u.activo)) return false;
       if(cf.cfNombre     && u.nombre!==cf.cfNombre) return false;
-      if(cf.cfCargo      && (u.cargo||'')!==cf.cfCargo) return false;
       if(cf.cfProyecto   && u.proyecto!==cf.cfProyecto) return false;
       if(cf.cfRol        && u.rol!==cf.cfRol) return false;
       if(cf.cfCanal      && (u.canal||'')!==cf.cfCanal) return false;
       if(cf.cfSupervisor && (u.supervisor||'')!==cf.cfSupervisor) return false;
-      if(cf.cfVehiculo   && (cf.cfVehiculo==='si'?!u.vehiculo:u.vehiculo)) return false;
       if(cf.cfEstado     && (cf.cfEstado==='activo'?!u.activo:u.activo)) return false;
       return true;
     });
@@ -623,23 +603,17 @@
     document.getElementById('totalLabel').textContent   = lista.length+' de '+total+' usuarios';
 
     if(lista.length===0){
-      document.getElementById('tbodyUsuarios').innerHTML='<tr><td colspan="10" class="no-resultados">Sin resultados para los filtros aplicados</td></tr>';
+      document.getElementById('tbodyUsuarios').innerHTML='<tr><td colspan="6" class="no-resultados">Sin resultados para los filtros aplicados</td></tr>';
       return;
     }
     var html='';
     lista.forEach(function(u){
-      var dias=diasDesde(u.fechaIngreso);
       html+='<tr class="'+(u.activo?'':'inactivo')+(usuarioSeleccionado===u.id?' selected':'')+'" onclick="seleccionarUsuario(\''+u.id+'\')">'
-        +'<td><div class="td-user"><div class="td-avatar">'+escHtml(iniciales(u.nombre))+'</div>'
-        +'<div><div class="td-nombre">'+escHtml(u.nombre)+'</div><div class="td-email">'+escHtml(u.email)+'</div></div></div></td>'
-        +'<td>'+escHtml(u.cargo||'—')+'</td>'
+        +'<td><div class="td-nombre">'+escHtml(u.nombre)+'</div><div class="td-email">'+escHtml(u.email)+'</div></td>'
         +'<td><span class="tag '+u.proyecto+'">'+( LABELS_PROY[u.proyecto]||u.proyecto)+'</span></td>'
         +'<td><span class="tag '+u.rol+'">'+( LABELS_ROL[u.rol]||u.rol)+'</span></td>'
         +'<td>'+escHtml(u.canal||'—')+'</td>'
         +'<td>'+escHtml(u.supervisor||'—')+'</td>'
-        +'<td class="td-mono">'+fmtFecha(u.fechaIngreso)+'</td>'
-        +'<td class="td-mono">'+fmtAntiguedad(dias)+'</td>'
-        +'<td><span class="tag '+(u.vehiculo?'si':'no')+'">'+(u.vehiculo?'Sí':'No')+'</span></td>'
         +'<td><span class="tag '+(u.activo?'activo':'inactivo')+'">'+(u.activo?'Activo':'Inactivo')+'</span></td>'
         +'</tr>';
     });
