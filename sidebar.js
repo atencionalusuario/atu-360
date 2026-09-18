@@ -362,9 +362,15 @@ function idsCompletosDeRol(rol) {
   return (c.principal || []).concat(c.reportes || []);
 }
 
-// ── Exclusión de módulos por canal ───────────────────────────────────────────
-// Los usuarios con este canal no deben ver ni abrir estos módulos, sin importar su rol.
-var CANALES_SIN_BIBLIOTECA = ['Tercería dispensa'];
+// ── Biblioteca y Flash: exclusivos del canal telefónico de DoctorSV ──────────
+// Ambos módulos contienen guiones/contenido específico del canal telefónico del
+// proyecto DoctorSV. Solo los usuarios con proyecto='doctorsv' y canal='Telefónico'
+// deben verlos; el resto (otro proyecto, u otro canal dentro de DoctorSV) no.
+// No aplica a superadmin/admin/wfm: esos roles administran el sistema completo
+// y deben conservar acceso para poder mantener el contenido de esos módulos.
+var ROLES_CON_RESTRICCION_CANAL = ['agente', 'agente-inmersion', 'formacion', 'jefe', 'supervisor'];
+var PROYECTO_CON_BIBLIOTECA = 'doctorsv';
+var CANAL_CON_BIBLIOTECA    = 'Telefónico';
 var IDS_MODULOS_EXCLUIDOS_POR_CANAL = ['biblioteca', 'jefe-biblioteca', 'sup-biblioteca', 'flash', 'jefe-flash', 'sup-flash'];
 
 // ── Ocultar/mostrar la barra lateral (todas las páginas) ─────────────────────
@@ -402,11 +408,13 @@ function initSidebar() {
     verificarSesion();
     var db = firebase.firestore();
     db.collection('usuarios').doc(user.uid).get().then(function(doc) {
-      var rol    = doc.exists ? (doc.data().rol || 'agente') : 'agente';
-      var nombre = (doc.exists && doc.data().nombre) ? doc.data().nombre : user.email.split('@')[0];
-      var canal  = doc.exists ? (doc.data().canal || '') : '';
+      var rol      = doc.exists ? (doc.data().rol || 'agente') : 'agente';
+      var nombre   = (doc.exists && doc.data().nombre) ? doc.data().nombre : user.email.split('@')[0];
+      var canal    = doc.exists ? (doc.data().canal || '') : '';
+      var proyecto = doc.exists ? (doc.data().proyecto || '') : '';
 
-      if (CANALES_SIN_BIBLIOTECA.indexOf(canal) > -1 && NAV_POR_ROL[rol]) {
+      var tieneBiblioteca = proyecto === PROYECTO_CON_BIBLIOTECA && canal === CANAL_CON_BIBLIOTECA;
+      if (ROLES_CON_RESTRICCION_CANAL.indexOf(rol) > -1 && !tieneBiblioteca && NAV_POR_ROL[rol]) {
         NAV_POR_ROL[rol] = {
           principal: (NAV_POR_ROL[rol].principal || []).filter(function(id) { return IDS_MODULOS_EXCLUIDOS_POR_CANAL.indexOf(id) < 0; }),
           reportes:  (NAV_POR_ROL[rol].reportes  || []).filter(function(id) { return IDS_MODULOS_EXCLUIDOS_POR_CANAL.indexOf(id) < 0; })
