@@ -1037,6 +1037,18 @@
     abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, true, item.subBotonesVertical);
   }
 
+  function abrirUbicacionFarmacias() {
+    var dudas = ARBOL_CONSULTA.find(function(x) { return x.label === 'Dudas generales del servicio'; });
+    var item = dudas.hijos.find(function(x) { return x.label === 'Ubicación de farmacias / laboratorios'; });
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+  }
+
+  function abrirIncidenciaOperativa(label) {
+    var operativas = OPCIONES_CATEGORIA.incidencia.find(function(x) { return x.label === 'Operativas de todo el servicio'; });
+    var item = operativas.hijos.find(function(x) { return x && x.label === label; });
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+  }
+
   function abrirNodoOrientacion(label) {
     var dudas = ARBOL_CONSULTA.find(function(x) { return x.label === 'Dudas generales del servicio'; });
     var orientacion = dudas.hijos.find(function(x) { return x.label === 'Orientación sobre todo el servicio'; });
@@ -1644,6 +1656,41 @@
           '<p>Usted puede presentar la constancia médica en la institución de la que es beneficiario para que pueda ser homologada o validada.</p>' +
           '<p>Es importante mencionarle que el proceso de homologación o validación de la constancia médica depende de la política interna de la institución donde usted la presente.</p>' +
           '<p>La constancia médica la puede descargar en su aplicación <strong>DoctorSV</strong> y compartirla en su teléfono.</p>'
+      },
+      { label: 'Uso de referencia externa en otro establecimiento',
+        tipificacion: 'Consultas > Información de cita médica > Vigencia de la referencia',
+        texto:
+          '<p>Comprendo su consulta.</p>' +
+          '<p>Le confirmo que sí es posible visitar otro establecimiento utilizando la misma referencia externa.</p>' +
+          '<p>Le recordamos que la referencia externa tiene una vigencia de <strong>un año</strong> a partir de su emisión. Al presentarse en el establecimiento de salud indicado, el personal le brindará la orientación necesaria para continuar con su proceso de atención.</p>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn" onclick="abrirIncidenciaOperativa(\'Inconformidad con referencia externa\')">No se la aceptan en ningún establecimiento</button>' +
+          '</div>'
+      },
+      { label: 'Cómo hacerse sus estudios médicos',
+        texto:
+          '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">Estudios de laboratorio</h4>' +
+          '<p style="color:#64748B; font-style:italic;">Son estudios donde se analizan muestras biológicas.</p>' +
+          '<p>Para que usted tome su estudio de laboratorio, el primer paso es elegir el laboratorio más conveniente para usted. Puede ver la lista de laboratorios disponibles en la aplicación, o ¿prefiere que le ayude?</p>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn" onclick="abrirUbicacionFarmacias()">Ubicación de laboratorios</button>' +
+            '<button class="bib-btn" onclick="toggleBloque(\'estudioLabYaTiene\')">Ya tiene el laboratorio ubicado</button>' +
+          '</div>' +
+          '<div id="estudioLabYaTiene" class="triage-resultado" style="display:none;">' +
+            '<p>De acuerdo, lo siguiente es que usted se comunique con el laboratorio para que pueda conocer la preparación previa necesaria y el procedimiento para la entrega de la muestra.</p>' +
+            '<p>Una vez ya los conozca, puede acercarse personalmente al laboratorio, llevando el número de orden de estudio o el código QR en su aplicación DoctorSV, para que puedan procesar la muestra. No olvide llevar su documento de identidad (puede ser en digital y estar vencido).</p>' +
+          '</div>' +
+          '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070; margin-top:16px;">Estudios de imágenes</h4>' +
+          '<p style="color:#64748B; font-style:italic;">Implica la captura de imágenes del cuerpo para tomar decisiones médicas.</p>' +
+          '<p>En el caso de estudios de imágenes, el primer paso es elegir el centro de imágenes más conveniente para usted. Puede ver la lista de centros disponibles en la aplicación, o ¿prefiere que le ayude?</p>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn" onclick="abrirUbicacionFarmacias()">Ubicación de centros</button>' +
+            '<button class="bib-btn" onclick="toggleBloque(\'estudioImgYaTiene\')">Ya tiene el centro ubicado</button>' +
+          '</div>' +
+          '<div id="estudioImgYaTiene" class="triage-resultado" style="display:none;">' +
+            '<p>De acuerdo, lo siguiente es que usted se comunique con el centro para agendar una cita para la realización del estudio. Así mismo, en esa llamada, usted puede aclarar la preparación previa necesaria.</p>' +
+            '<p>El centro de imágenes le pedirá el número de orden del estudio o le pedirá mostrar el código QR en su aplicación DoctorSV. No olvide llevar su documento de identidad (puede ser en digital y estar vencido).</p>' +
+          '</div>'
       }
     ] },
     { label: 'Dudas sobre secciones de la aplicación', vistaTarjetas: true, hijos: [
