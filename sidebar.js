@@ -364,13 +364,13 @@ function idsCompletosDeRol(rol) {
 
 // ── Biblioteca y Flash: exclusivos del canal telefónico de DoctorSV ──────────
 // Ambos módulos contienen guiones/contenido específico del canal telefónico del
-// proyecto DoctorSV. Solo los usuarios con proyecto='doctorsv' y canal='Telefónico'
+// proyecto DoctorSV. Solo los usuarios con proyecto='doctorsv' y canal='Telefonico'
 // deben verlos; el resto (otro proyecto, u otro canal dentro de DoctorSV) no.
 // No aplica a superadmin/admin/wfm: esos roles administran el sistema completo
 // y deben conservar acceso para poder mantener el contenido de esos módulos.
 var ROLES_CON_RESTRICCION_CANAL = ['agente', 'agente-inmersion', 'formacion', 'jefe', 'supervisor'];
 var PROYECTO_CON_BIBLIOTECA = 'doctorsv';
-var CANAL_CON_BIBLIOTECA    = 'Telefónico';
+var CANAL_CON_BIBLIOTECA    = 'Telefonico';
 var IDS_MODULOS_EXCLUIDOS_POR_CANAL = ['biblioteca', 'jefe-biblioteca', 'sup-biblioteca', 'flash', 'jefe-flash', 'sup-flash'];
 
 // ── Ocultar/mostrar la barra lateral (todas las páginas) ─────────────────────

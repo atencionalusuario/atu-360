@@ -705,7 +705,7 @@
       +'<div><div class="form-section-title">Información operativa</div><div class="form-grid">'
       +'<div class="field"><label>Cargo <span class="field-req">*</span></label><input type="text" id="fCargo" value="'+escHtml(u?u.cargo||'':'')+'" placeholder="Cargo"></div>'
       +'<div class="field"><label>Canal</label><select id="fCanal"><option value="">— Selecciona —</option>'
-      +opt('Telefónico',u&&u.canal)+opt('Chat',u&&u.canal)+opt('Email',u&&u.canal)+opt('Presencial',u&&u.canal)+opt('Tercería dispensa',u&&u.canal)+opt('Otro',u&&u.canal)
+      +opt('Telefonico',u&&u.canal)+opt('Chat',u&&u.canal)+opt('Email',u&&u.canal)+opt('Presencial',u&&u.canal)+opt('Tercería dispensa',u&&u.canal)+opt('Otro',u&&u.canal)
       +'</select></div>'
       +'<div class="field"><label>Proyecto <span class="field-req">*</span></label><select id="fProyecto"'+(ROLES_PROYECTO_RESTRINGIDO.includes(miRolG)?' disabled':'')+'>'
       +(ROLES_PROYECTO_RESTRINGIDO.includes(miRolG)
@@ -936,7 +936,7 @@
 
   function descargarPlantilla(){
     var csv=COLS_CSV.join(',')+'\n'
-      +['María Alvarado','04567890-1','maria@doctorsv.gob.sv','Agente de atención','doctorsv','agente','2025-01-15','juan.perez@doctorsv.gob.sv','ana.garcia@doctorsv.gob.sv','7890-1234','Telefónico','false','','','',''].join(',');
+      +['María Alvarado','04567890-1','maria@doctorsv.gob.sv','Agente de atención','doctorsv','agente','2025-01-15','juan.perez@doctorsv.gob.sv','ana.garcia@doctorsv.gob.sv','7890-1234','Telefonico','false','','','',''].join(',');
     var a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
     a.download='plantilla_usuarios_ATU360.csv'; a.click();
