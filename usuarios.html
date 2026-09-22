@@ -491,10 +491,13 @@
   }
 
   // ── Filtros columna ──────────────────────────────────────────────────────────
-  function poblarDropdownColumna(id, valores, labelFn) {
+  var CF_VACIO = '__vacio__';
+  function poblarDropdownColumna(id, valores, labelFn, incluirVacio) {
     var sel = document.getElementById(id); if (!sel) return;
     var actual = sel.value;
-    sel.innerHTML = '<option value="">Todos</option>';
+    var html = '<option value="">Todos</option>';
+    if (incluirVacio) html += '<option value="'+CF_VACIO+'">— (sin asignar)</option>';
+    sel.innerHTML = html;
     valores.sort(function(a,b){ return (a+'').localeCompare(b+'','es'); }).forEach(function(v){
       var opt = document.createElement('option');
       opt.value = v; opt.textContent = labelFn ? labelFn(v) : v;
@@ -508,8 +511,8 @@
     poblarDropdownColumna('cfNombre',     uniq(usuarios.map(function(u){ return u.nombre; })));
     poblarDropdownColumna('cfProyecto',   uniq(usuarios.map(function(u){ return u.proyecto; })), function(v){ return LABELS_PROY[v]||v; });
     poblarDropdownColumna('cfRol',        uniq(usuarios.map(function(u){ return u.rol; })),      function(v){ return LABELS_ROL[v]||v; });
-    poblarDropdownColumna('cfCanal',      uniq(usuarios.map(function(u){ return u.canal||''; })));
-    poblarDropdownColumna('cfSupervisor', uniq(usuarios.map(function(u){ return u.supervisor||''; })));
+    poblarDropdownColumna('cfCanal',      uniq(usuarios.map(function(u){ return u.canal||''; })), null, usuarios.some(function(u){ return !u.canal; }));
+    poblarDropdownColumna('cfSupervisor', uniq(usuarios.map(function(u){ return u.supervisor||''; })), null, usuarios.some(function(u){ return !u.supervisor; }));
     poblarDropdownColumna('cfEstado',     ['activo','inactivo'], function(v){ return v==='activo'?'Activo':'Inactivo'; });
   }
 
@@ -565,8 +568,8 @@
       if(cf.cfNombre     && u.nombre!==cf.cfNombre) return false;
       if(cf.cfProyecto   && u.proyecto!==cf.cfProyecto) return false;
       if(cf.cfRol        && u.rol!==cf.cfRol) return false;
-      if(cf.cfCanal      && (u.canal||'')!==cf.cfCanal) return false;
-      if(cf.cfSupervisor && (u.supervisor||'')!==cf.cfSupervisor) return false;
+      if(cf.cfCanal      && (cf.cfCanal===CF_VACIO ? !!u.canal : (u.canal||'')!==cf.cfCanal)) return false;
+      if(cf.cfSupervisor && (cf.cfSupervisor===CF_VACIO ? !!u.supervisor : (u.supervisor||'')!==cf.cfSupervisor)) return false;
       if(cf.cfEstado     && (cf.cfEstado==='activo'?!u.activo:u.activo)) return false;
       return true;
     });
