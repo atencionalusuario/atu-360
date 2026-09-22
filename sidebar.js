@@ -130,7 +130,7 @@ var NAV_POR_ROL = {
 
 var LABELS_ROL = {
   agente: 'Agente', 'agente-inmersion': 'Agente Inmersion',
-  supervisor: 'Supervisor', formacion: 'Formación',
+  supervisor: 'Supervisor', formacion: 'Formacion',
   admin: 'Admin', wfm: 'WFM', jefe: 'Jefe', superadmin: 'Superadmin'
 };
 
