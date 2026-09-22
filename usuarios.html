@@ -58,8 +58,16 @@
   .btn-dir.asc::after  { content: '↑'; }
   .btn-dir.desc::after { content: '↓'; }
 
+  /* BARRA ACCIONES MASIVAS */
+  .bulk-bar        { display: flex; align-items: center; gap: 8px; flex-shrink: 0; background: #EEF2FF; border: 1.5px solid #C7D2FE; border-radius: 8px; padding: 8px 12px; }
+  .bulk-count      { font-size: 0.78rem; font-weight: 700; color: #1A3DAA; white-space: nowrap; }
+  .bulk-bar .ctrl-select { background: white; }
+  #btnBulkEliminar { color: #DC2626; border-color: #FCA5A5; }
+  #btnBulkEliminar:hover { border-color: #DC2626; background: #FEF2F2; }
+
   /* TABLA */
   .tabla-wrap  { flex: 1; min-height: 0; overflow: auto; background: white; border-radius: 10px; border: 1px solid #E2E8F0; }
+  th.th-chk, td.td-chk { width: 32px; padding-left: 12px; padding-right: 0; }
   table        { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
   thead        { position: sticky; top: 0; z-index: 2; }
   thead tr     { background: #F8FAFC; }
@@ -262,11 +270,26 @@
         </div>
       </div>
 
+      <!-- BARRA DE ACCIONES MASIVAS -->
+      <div class="bulk-bar" id="bulkBar" style="display:none;">
+        <span class="bulk-count" id="bulkCount">0 seleccionados</span>
+        <div class="ctrl-sep"></div>
+        <select class="ctrl-select" id="bulkCampo" onchange="renderBulkValorInput()">
+          <option value="">Editar campo…</option>
+        </select>
+        <span id="bulkValorWrap"></span>
+        <button class="btn-accion primary" id="btnBulkAplicar" disabled onclick="aplicarEdicionMasiva()">Aplicar</button>
+        <div class="ctrl-sep"></div>
+        <button class="btn-accion" id="btnBulkEliminar" onclick="pedirEliminarMasivo()">Eliminar seleccionados</button>
+        <button class="btn-accion" style="margin-left:auto" onclick="limpiarSeleccion()">Cancelar</button>
+      </div>
+
       <!-- TABLA -->
       <div class="tabla-wrap">
         <table id="tablaUsuarios">
           <thead>
             <tr>
+              <th class="th-chk"><input type="checkbox" id="chkSelAll" onclick="toggleSeleccionarTodos(this.checked)"></th>
               <th class="sortable" data-col="nombre"       onclick="sortByCol('nombre')">Usuario</th>
               <th class="sortable" data-col="proyecto"     onclick="sortByCol('proyecto')">Proyecto</th>
               <th class="sortable" data-col="rol"          onclick="sortByCol('rol')">Rol</th>
@@ -275,6 +298,7 @@
               <th class="sortable" data-col="estado"       onclick="sortByCol('estado')">Estado</th>
             </tr>
             <tr class="filter-row">
+              <th></th>
               <th><select class="cf-select" id="cfNombre"     onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
               <th><select class="cf-select" id="cfProyecto"   onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
               <th><select class="cf-select" id="cfRol"        onchange="aplicarFiltros()"><option value="">Todos</option></select></th>
@@ -434,6 +458,7 @@
       currentUser = user;
       miRolG      = doc.data().rol || '';
       miProyectoG = doc.data().proyecto || '';
+      construirBulkCampoSelect();
       cargarUsuarios();
     });
   });
@@ -443,6 +468,7 @@
   var usuarioSeleccionado = null;
   var modoForm          = null;
   var dir1 = 'asc', dir2 = 'asc';
+  var seleccionMasiva   = new Set();
 
   // ── Persistir orden de columnas ────────────────────────────────────────────────
   var CLAVE_ORDEN_USUARIOS = 'atu360_usuarios_orden';
@@ -607,12 +633,14 @@
     document.getElementById('totalLabel').textContent   = lista.length+' de '+total+' usuarios';
 
     if(lista.length===0){
-      document.getElementById('tbodyUsuarios').innerHTML='<tr><td colspan="6" class="no-resultados">Sin resultados para los filtros aplicados</td></tr>';
+      document.getElementById('tbodyUsuarios').innerHTML='<tr><td colspan="7" class="no-resultados">Sin resultados para los filtros aplicados</td></tr>';
+      actualizarBulkBar();
       return;
     }
     var html='';
     lista.forEach(function(u){
-      html+='<tr class="'+(u.activo?'':'inactivo')+(usuarioSeleccionado===u.id?' selected':'')+'" onclick="seleccionarUsuario(\''+u.id+'\')">'
+      html+='<tr class="'+(u.activo?'':'inactivo')+(usuarioSeleccionado===u.id?' selected':'')+'" data-id="'+u.id+'" onclick="seleccionarUsuario(\''+u.id+'\')">'
+        +'<td class="td-chk" onclick="event.stopPropagation()"><input type="checkbox" '+(seleccionMasiva.has(u.id)?'checked':'')+' onchange="toggleSeleccion(\''+u.id+'\',this.checked)"></td>'
         +'<td><div class="td-nombre">'+escHtml(u.nombre)+'</div><div class="td-email">'+escHtml(u.email)+'</div></td>'
         +'<td><span class="tag '+u.proyecto+'">'+( LABELS_PROY[u.proyecto]||u.proyecto)+'</span></td>'
         +'<td><span class="tag '+u.rol+'">'+( LABELS_ROL[u.rol]||u.rol)+'</span></td>'
@@ -622,6 +650,153 @@
         +'</tr>';
     });
     document.getElementById('tbodyUsuarios').innerHTML=html;
+    actualizarBulkBar();
+  }
+
+  // ── Selección masiva ─────────────────────────────────────────────────────────
+  function toggleSeleccion(id, checked){
+    if(checked) seleccionMasiva.add(id); else seleccionMasiva.delete(id);
+    actualizarBulkBar();
+  }
+  function toggleSeleccionarTodos(checked){
+    document.querySelectorAll('#tbodyUsuarios tr[data-id]').forEach(function(tr){
+      var id = tr.getAttribute('data-id');
+      if(checked) seleccionMasiva.add(id); else seleccionMasiva.delete(id);
+      var cb = tr.querySelector('input[type=checkbox]'); if(cb) cb.checked = checked;
+    });
+    actualizarBulkBar();
+  }
+  function limpiarSeleccion(){
+    seleccionMasiva.clear();
+    document.getElementById('bulkCampo').value = '';
+    renderBulkValorInput();
+    aplicarFiltros();
+  }
+  function actualizarBulkBar(){
+    var n = seleccionMasiva.size;
+    document.getElementById('bulkBar').style.display = n>0 ? 'flex' : 'none';
+    document.getElementById('bulkCount').textContent  = n+' seleccionado'+(n===1?'':'s');
+    var filas = document.querySelectorAll('#tbodyUsuarios tr[data-id]');
+    var visibles = filas.length;
+    var visiblesSel = Array.from(filas).filter(function(tr){ return seleccionMasiva.has(tr.getAttribute('data-id')); }).length;
+    var chkAll = document.getElementById('chkSelAll');
+    chkAll.checked = visibles>0 && visiblesSel===visibles;
+    chkAll.indeterminate = visiblesSel>0 && visiblesSel<visibles;
+  }
+  function idsSeleccionValidos(){
+    return Array.from(seleccionMasiva).filter(function(id){ return usuarios.some(function(u){ return u.id===id; }); });
+  }
+
+  // ── Edición masiva ───────────────────────────────────────────────────────────
+  function construirBulkCampoSelect(){
+    var html = '<option value="">Editar campo…</option>';
+    if(!ROLES_PROYECTO_RESTRINGIDO.includes(miRolG)) html += '<option value="proyecto">Proyecto</option>';
+    html += '<option value="rol">Rol</option>'
+      +'<option value="canal">Canal</option>'
+      +'<option value="supervisor">Supervisor</option>'
+      +'<option value="estado">Estado</option>';
+    document.getElementById('bulkCampo').innerHTML = html;
+  }
+  function renderBulkValorInput(){
+    var campo = document.getElementById('bulkCampo').value;
+    var wrap  = document.getElementById('bulkValorWrap');
+    var btn   = document.getElementById('btnBulkAplicar');
+    if(!campo){ wrap.innerHTML=''; btn.disabled=true; return; }
+    var html = '<select class="ctrl-select" id="bulkValor" onchange="document.getElementById(\'btnBulkAplicar\').disabled=false">';
+    if(campo==='proyecto'){
+      html += '<option value="">— Selecciona —</option>'
+        +'<option value="doctorsv">DoctorSV</option>'
+        +'<option value="educacion">Educacion</option>'
+        +'<option value="marn">MARN</option>'
+        +'<option value="global">Global</option>';
+    } else if(campo==='rol'){
+      html += '<option value="">— Selecciona —</option>'
+        +'<option value="agente">Agente</option>'
+        +'<option value="agente-inmersion">Agente Inmersion</option>'
+        +'<option value="supervisor">Supervisor</option>'
+        +'<option value="formacion">Formacion</option>'
+        +'<option value="admin">Admin</option>'
+        +'<option value="jefe">Jefe</option>'
+        +'<option value="wfm">WFM</option>';
+    } else if(campo==='canal'){
+      html += '<option value="">— (sin canal) —</option>'
+        +'<option value="Telefonico">Telefonico</option>'
+        +'<option value="Chat">Chat</option>'
+        +'<option value="Email">Email</option>'
+        +'<option value="Presencial">Presencial</option>'
+        +'<option value="Terceria dispensa">Terceria dispensa</option>'
+        +'<option value="Otro">Otro</option>';
+    } else if(campo==='supervisor'){
+      html += '<option value="ninguno">Sin supervisor</option>'
+        +supervisores().map(function(s){ return '<option value="'+s.id+'">'+escHtml(s.nombre)+' ('+escHtml(s.email)+')</option>'; }).join('');
+    } else if(campo==='estado'){
+      html += '<option value="activo">Activo</option><option value="inactivo">Inactivo</option>';
+    }
+    html += '</select>';
+    wrap.innerHTML = html;
+    btn.disabled = (campo==='proyecto' || campo==='rol'); // requieren selección explícita
+  }
+  function aplicarEdicionMasiva(){
+    var campo = document.getElementById('bulkCampo').value;
+    var valEl = document.getElementById('bulkValor');
+    var ids   = idsSeleccionValidos();
+    if(!campo || !valEl || ids.length===0) return;
+    var v = valEl.value;
+    var datos = {};
+    if(campo==='proyecto'){
+      if(!v){ showToast('Selecciona un proyecto.'); return; }
+      datos.proyecto = v;
+    } else if(campo==='rol'){
+      if(!v){ showToast('Selecciona un rol.'); return; }
+      datos.rol = v;
+    } else if(campo==='canal'){
+      datos.canal = v;
+    } else if(campo==='supervisor'){
+      if(v==='ninguno' || !v){ datos.supervisor=''; datos.emailSupervisor=''; }
+      else {
+        var s = usuarios.find(function(x){ return x.id===v; });
+        if(!s){ showToast('Supervisor inválido.'); return; }
+        datos.supervisor = s.nombre||''; datos.emailSupervisor = s.email||'';
+      }
+    } else if(campo==='estado'){
+      datos.activo = v==='activo';
+    } else return;
+
+    var btn = document.getElementById('btnBulkAplicar');
+    btn.disabled = true; var txtOrig = btn.textContent; btn.textContent = 'Aplicando...';
+    var batch = db.batch();
+    ids.forEach(function(id){ batch.update(db.collection('usuarios').doc(id), datos); });
+    batch.commit().then(function(){
+      showToast(ids.length+' usuario(s) actualizado(s).');
+      limpiarSeleccion();
+    }).catch(function(err){
+      showToast('Error al actualizar: '+err.message); console.error(err);
+    }).finally(function(){
+      btn.disabled = false; btn.textContent = txtOrig;
+    });
+  }
+
+  // ── Eliminación masiva ───────────────────────────────────────────────────────
+  function pedirEliminarMasivo(){
+    var ids = idsSeleccionValidos();
+    if(ids.length===0) return;
+    document.getElementById('confirmTitle').textContent = 'Eliminar usuarios';
+    document.getElementById('confirmSub').textContent   = '¿Eliminar permanentemente '+ids.length+' usuario(s) seleccionado(s)? Esta acción no se puede deshacer.';
+    document.getElementById('confirmBtn').onclick = function(){ eliminarUsuariosMasivo(); cerrarConfirm(); };
+    document.getElementById('modalConfirm').classList.add('show');
+  }
+  function eliminarUsuariosMasivo(){
+    var ids = idsSeleccionValidos();
+    if(ids.length===0) return;
+    var batch = db.batch();
+    ids.forEach(function(id){ batch.delete(db.collection('usuarios').doc(id)); });
+    batch.commit().then(function(){
+      showToast(ids.length+' usuario(s) eliminado(s) del sistema.');
+      if(usuarioSeleccionado && ids.indexOf(usuarioSeleccionado)>-1) cerrarPanel();
+      limpiarSeleccion();
+    }).catch(function(err){
+      showToast('Error al eliminar: '+err.message); console.error(err);
+    });
   }
 
   // ── Panel detalle ─────────────────────────────────────────────────────────────
