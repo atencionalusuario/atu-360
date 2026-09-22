@@ -467,7 +467,7 @@
   restaurarOrden();
 
   var LABELS_ROL  = { agente:'Agente', 'agente-inmersion':'Agente Inmersión', supervisor:'Supervisor', formacion:'Formación', admin:'Admin', wfm:'WFM', jefe:'Jefe', superadmin:'Superadmin' };
-  var LABELS_PROY = { doctorsv:'DoctorSV', educacion:'Educación', marn:'MARN', global:'Global' };
+  var LABELS_PROY = { doctorsv:'DoctorSV', educacion:'Educacion', marn:'MARN', global:'Global' };
 
   // ── Carga ────────────────────────────────────────────────────────────────────
   function cargarUsuarios() {
@@ -712,7 +712,7 @@
         ? '<option value="'+miProyectoG+'" selected>'+(LABELS_PROY[miProyectoG]||miProyectoG)+'</option>'
         : '<option value="">— Selecciona —</option>'
           +'<option value="doctorsv"'+(u&&u.proyecto==='doctorsv'?' selected':'')+'>DoctorSV</option>'
-          +'<option value="educacion"'+(u&&u.proyecto==='educacion'?' selected':'')+'>Educación</option>'
+          +'<option value="educacion"'+(u&&u.proyecto==='educacion'?' selected':'')+'>Educacion</option>'
           +'<option value="marn"'+(u&&u.proyecto==='marn'?' selected':'')+'>MARN</option>'
           +'<option value="global"'+(u&&u.proyecto==='global'?' selected':'')+'>Global</option>')
       +'</select></div>'
