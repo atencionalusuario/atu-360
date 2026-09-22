@@ -1150,14 +1150,15 @@
       var cols=linea.split(sep).map(function(c){return c.trim();}),fila={};
       headers.forEach(function(h,j){fila[h]=cols[j]||'';});
       if (ROLES_PROYECTO_RESTRINGIDO.includes(miRolG)) fila.proyecto = miProyectoG; // fuerza el proyecto propio, ignora la columna del CSV
-      var fecha=normalizarFecha(fila.fechaingreso||'');
+      var fechaProvista=(fila.fechaingreso||'').trim();
+      var fecha=normalizarFecha(fechaProvista);
       var errs=[];
       if(!fila.nombre) errs.push('Nombre');
       if(!fila.email||!fila.email.includes('@')) errs.push('Email');
       if(!fila.documento) errs.push('Documento');
       if(!PROYECTOS_OK.includes(fila.proyecto)) errs.push('Proyecto');
       if(!ROLES_OK.includes(fila.rol)) errs.push('Rol');
-      if(!fecha) errs.push('Fecha');
+      if(fechaProvista && !fecha) errs.push('Fecha'); // vacía se permite (se completa después); solo error si viene con formato inválido
       if(errs.length){ err++;
         html+='<tr class="error-row"><td>'+(i+1)+'</td><td>'+escHtml(fila.nombre)+'</td><td>'+escHtml(fila.email)+'</td><td>'+escHtml(fila.proyecto)+'</td><td>'+escHtml(fila.rol)+'</td><td><span class="badge-err">'+escHtml(errs.join(', '))+'</span></td></tr>';
       } else { ok++;
