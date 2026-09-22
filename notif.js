@@ -224,7 +224,7 @@
         var rol = data.rol || 'agente';
         var targets = [user.uid, 'todos', rol];
 
-        // Agente inmersión: solo ver notificaciones creadas a partir de su primer inicio de sesión.
+        // Agente inmersion: solo ver notificaciones creadas a partir de su primer inicio de sesión.
         _notifDesdeMs = 0;
         if (rol === 'agente-inmersion') {
           if (data.notifDesde && data.notifDesde.seconds) {
@@ -243,7 +243,7 @@
             _notifs = [];
             snap.forEach(function(d) {
               var n = Object.assign({ id: d.id }, d.data());
-              // Ocultar notificaciones anteriores al umbral (agente-inmersión)
+              // Ocultar notificaciones anteriores al umbral (agente-inmersion)
               if (_notifDesdeMs && n.timestamp && n.timestamp.seconds * 1000 < _notifDesdeMs) return;
               _notifs.push(n);
             });

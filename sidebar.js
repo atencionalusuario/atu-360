@@ -129,7 +129,7 @@ var NAV_POR_ROL = {
 };
 
 var LABELS_ROL = {
-  agente: 'Agente', 'agente-inmersion': 'Agente Inmersión',
+  agente: 'Agente', 'agente-inmersion': 'Agente Inmersion',
   supervisor: 'Supervisor', formacion: 'Formación',
   admin: 'Admin', wfm: 'WFM', jefe: 'Jefe', superadmin: 'Superadmin'
 };
