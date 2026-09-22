@@ -1176,16 +1176,32 @@
   function confirmarCarga(){
     if(!pendientesCSV.length) return;
     var btn=document.getElementById('btnConfirmarCsv');
-    btn.disabled=true; btn.textContent='Creando...';
+    btn.disabled=true;
     var creados=0,errores=0;
+    var total=pendientesCSV.length;
+    var DELAY_MS=600, TIMEOUT_MS=15000; // ritmo pausado + limite de espera por usuario:
+    // Firebase corta/cuelga las creaciones de cuenta si se disparan muchas muy seguido
+    // (protección anti-abuso); sin esto, la promesa puede quedarse colgada para siempre
+    // sin ningun error visible, dejando el boton en "Creando..." indefinidamente.
+
+    function conTimeout(promesa, ms){
+      return new Promise(function(resolve, reject){
+        var listo=false;
+        var timer=setTimeout(function(){ if(!listo){ listo=true; reject(new Error('timeout: sin respuesta de Firebase')); } }, ms);
+        promesa.then(function(v){ if(!listo){ listo=true; clearTimeout(timer); resolve(v); } },
+                      function(e){ if(!listo){ listo=true; clearTimeout(timer); reject(e); } });
+      });
+    }
+
     function siguiente(i){
       if(i>=pendientesCSV.length){
         cerrarModalCsv();
         showToast(creados+' usuarios creados'+(errores?', '+errores+' errores.':'. Contraseña: ATU360*'));
         btn.disabled=false; btn.textContent='Crear usuarios'; return;
       }
+      btn.textContent='Creando... ('+(i+1)+'/'+total+')';
       var u=pendientesCSV[i];
-      authSecondary.createUserWithEmailAndPassword(u.email,'ATU360*')
+      conTimeout(authSecondary.createUserWithEmailAndPassword(u.email,'ATU360*'), TIMEOUT_MS)
         .then(function(cred){
           var uid=cred.user.uid; authSecondary.signOut();
           var datos=Object.assign({},u); delete datos.id;
@@ -1194,8 +1210,9 @@
           datos.creadoPor=currentUser.uid;
           return db.collection('usuarios').doc(uid).set(datos).then(function(){ return uid; });
         })
-        .then(function(uid){ marcarFlashesHistoricosLeidos(uid,u.email,u.nombre); creados++; siguiente(i+1); })
-        .catch(function(err){ errores++; console.error('Error con '+u.email+':',err.message); siguiente(i+1); });
+        .then(function(uid){ marcarFlashesHistoricosLeidos(uid,u.email,u.nombre); creados++; })
+        .catch(function(err){ errores++; console.error('Error con '+u.email+':',(err&&err.message)||err); })
+        .then(function(){ setTimeout(function(){ siguiente(i+1); }, DELAY_MS); });
     }
     siguiente(0);
   }
