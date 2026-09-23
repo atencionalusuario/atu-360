@@ -194,6 +194,10 @@
     </div>
     <div class="topbar-right">
       <div class="tb-clock" id="clock">--:--:--</div>
+      <button class="btn-accion" onclick="exportarUsuarios()">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Exportar
+      </button>
       <button class="btn-accion" onclick="descargarPlantilla()">
         <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Plantilla CSV
@@ -469,6 +473,7 @@
   var modoForm          = null;
   var dir1 = 'asc', dir2 = 'asc';
   var seleccionMasiva   = new Set();
+  var listaFiltradaActual = [];
 
   // ── Persistir orden de columnas ────────────────────────────────────────────────
   var CLAVE_ORDEN_USUARIOS = 'atu360_usuarios_orden';
@@ -622,6 +627,7 @@
       else if(c2&&th.dataset.col===c2) th.className+=(dir2==='asc'?' sort-sec-asc':' sort-sec-desc');
     });
     guardarOrden();
+    listaFiltradaActual = lista;
     renderTabla(lista);
   }
 
@@ -1119,6 +1125,37 @@
     var a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
     a.download='plantilla_usuarios_ATU360.csv'; a.click();
+  }
+
+  // ── Exportar ─────────────────────────────────────────────────────────────────
+  var COLS_EXPORT = ['nombre','documento','email','telefono','cargo','proyecto','rol','canal','supervisor','emailSupervisor','emailJefe','fechaIngreso','antiguedad','estado','vehiculo','tipoVehiculo','marca','modelo','placa'];
+  var LABELS_EXPORT = { nombre:'Nombre', documento:'Documento', email:'Correo', telefono:'Teléfono', cargo:'Cargo', proyecto:'Proyecto', rol:'Rol', canal:'Canal', supervisor:'Supervisor', emailSupervisor:'Email supervisor', emailJefe:'Email jefe', fechaIngreso:'Fecha ingreso', antiguedad:'Antigüedad', estado:'Estado', vehiculo:'Tiene vehículo', tipoVehiculo:'Tipo vehículo', marca:'Marca', modelo:'Modelo', placa:'Placa' };
+  function csvCampo(v){
+    v = v==null ? '' : String(v);
+    return /[",\n;]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v;
+  }
+  function exportarUsuarios(){
+    var lista = listaFiltradaActual.length ? listaFiltradaActual : usuarios;
+    if(!lista.length){ showToast('No hay usuarios para exportar.'); return; }
+    var filas = [COLS_EXPORT.map(function(c){ return csvCampo(LABELS_EXPORT[c]); }).join(',')];
+    lista.forEach(function(u){
+      var dias = diasDesde(u.fechaIngreso);
+      var fila = {
+        nombre:u.nombre, documento:u.documento||'', email:u.email||'', telefono:u.telefono||'',
+        cargo:u.cargo||'', proyecto:LABELS_PROY[u.proyecto]||u.proyecto||'', rol:LABELS_ROL[u.rol]||u.rol||'',
+        canal:u.canal||'', supervisor:u.supervisor||'', emailSupervisor:u.emailSupervisor||'', emailJefe:u.emailJefe||'',
+        fechaIngreso:fmtFecha(u.fechaIngreso), antiguedad:u.fechaIngreso?fmtAntiguedad(dias):'',
+        estado:u.activo?'Activo':'Inactivo', vehiculo:u.vehiculo?'Sí':'No',
+        tipoVehiculo:u.tipoVehiculo||'', marca:u.marca||'', modelo:u.modelo||'', placa:u.placa||''
+      };
+      filas.push(COLS_EXPORT.map(function(c){ return csvCampo(fila[c]); }).join(','));
+    });
+    var csv = '﻿'+filas.join('\n');
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+    var fecha = new Date().toISOString().slice(0,10);
+    a.download='usuarios_ATU360_'+fecha+'.csv'; a.click();
+    showToast(lista.length+' usuario(s) exportado(s).');
   }
 
   document.getElementById('csvInput').addEventListener('change',function(e){
