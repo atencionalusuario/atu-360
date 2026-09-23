@@ -382,6 +382,9 @@
         <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; text-align:center;">Usuario sin DUI, Carnet de residente o Pasaporte salvadoreño</h4>
         <p>Comprendo su consulta Sr./Sra. xxx. Sin embargo, le informo que para utilizar los servicios de <strong>DoctorSV</strong> es necesario contar con un documento de identidad vigente. Los documentos válidos son: DUI, carné de residente o pasaporte salvadoreño. Si actualmente no dispone de alguno de estos documentos, no será posible completar el proceso de registro y brindarle la atención a través de la plataforma hasta que cuente con uno de ellos.</p>
         <p>En este momento, ¿podría confirmarme si presenta alguna situación de emergencia?</p>
+        <div class="triage-acciones">
+          <button class="bib-btn triage-btn-si" onclick="abrirEmergenciaCasosEspeciales()">Es una emergencia</button>
+        </div>
       </div>
       <div id="casoTercero" class="triage-resultado" style="display:none;">
         <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; text-align:center;">Contacto de tercero en nombre de un usuario</h4>
@@ -2899,12 +2902,23 @@
         { label: 'Reiniciar el formulario',
           tipificacion: 'Gestiones programa crónicos > Reiniciar el formulario',
           texto:
-            '<p>Con gusto le asistimos con su solicitud. Procederé a reiniciar el formulario para que pueda llenarlo nuevamente.</p>' +
-            '<p>En breve recibirá un código de verificación por mensaje de texto. Cuando lo reciba, ¿me lo puede compartir, por favor?</p>' +
-            '<p style="color:#64748B; font-style:italic;">Usuario comparte código de verificación</p>' +
-            '<p>Permítame un momento en línea mientras realizo la gestión.</p>' +
-            '<p>Muchas gracias por su amable espera en línea. Le confirmo que el reinicio del formulario se ha realizado correctamente. Ahora puede ingresar a la aplicación <strong>DoctorSV</strong> y verificar que el apartado de "Programa de Crónicos" se encuentra disponible para que pueda completar el formulario nuevamente.</p>' +
-            '<p>¿Le gustaría que le asista con el paso a paso para llenar el formulario?</p>'
+            '<p>Entiendo su solicitud. Es importante que tenga en cuenta que, al realizar la desvinculación del Programa de Crónicos, perderá el seguimiento que ha llevado hasta el momento. Asimismo, las órdenes de estudios y recetas que tenga pendientes serán canceladas y ya no podrán ser utilizadas.</p>' +
+            '<p><strong>¿Desea continuar con el proceso de desvinculación?</strong></p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" onclick="mostrarUno(\'reiniciarFormularioSi\', \'reiniciarFormularioNo\')">Confirma que sí.</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'reiniciarFormularioNo\', \'reiniciarFormularioSi\')">Confirma que no.</button>' +
+            '</div>' +
+            '<div id="reiniciarFormularioSi" class="triage-resultado" style="display:none;">' +
+              '<p>Con gusto le asistimos con su solicitud. Procederé a reiniciar el formulario para que pueda llenarlo nuevamente.</p>' +
+              '<p>En breve recibirá un código de verificación por mensaje de texto. Cuando lo reciba, ¿me lo puede compartir, por favor?</p>' +
+              '<p style="color:#64748B; font-style:italic;">Usuario comparte código de verificación</p>' +
+              '<p>Permítame un momento en línea mientras realizo la gestión.</p>' +
+              '<p>Muchas gracias por su amable espera en línea. Le confirmo que el reinicio del formulario se ha realizado correctamente. Ahora puede ingresar a la aplicación <strong>DoctorSV</strong> y verificar que el apartado de "Programa de Crónicos" se encuentra disponible para que pueda completar el formulario nuevamente.</p>' +
+              '<p>¿Le gustaría que le asista con el paso a paso para llenar el formulario?</p>' +
+            '</div>' +
+            '<div id="reiniciarFormularioNo" class="triage-resultado" style="display:none;">' +
+              '<p>Gracias por su confirmación. Comentarle que sus seguimientos, citas, órdenes de estudio y recetas continuarán activos dentro del Programa de Crónicos y podrá consultarlos directamente desde la aplicación <strong>DoctorSV</strong>.</p>' +
+            '</div>'
         }
       ] }
     ],
@@ -3770,6 +3784,11 @@
       if (item && item.hijos) {
         resultado = resultado.concat(aplanarArbol(item.hijos, ancestros.concat([{ label: label, opciones: item.hijos, tarjetas: !!item.vistaTarjetas }])));
       }
+      if (item && item.subBotones) {
+        item.subBotones.forEach(function(sb, j) {
+          resultado.push({ label: sb.label, ancestros: ancestros.concat([{ label: label }]), item: sb, index: i, padre: item, subBotonIndex: j });
+        });
+      }
     });
     return resultado;
   }
@@ -3779,6 +3798,16 @@
     historial = historial.slice(0, historialBaseCategoria + 1);
     renderRuta();
     renderVistaActual();
+
+    if (nodo.padre) {
+      nodo.ancestros.slice(0, -1).forEach(function(paso) {
+        pushVistaOpciones(paso.label, paso.opciones, paso.tarjetas);
+      });
+      var padre = nodo.padre;
+      abrirModalTexto(padre.tituloModal || padre.label, padre.texto, padre.tipificacion, padre.subBotones, padre.ocultarFooter, padre.subBotonesVertical);
+      mostrarSubBotonModal(nodo.subBotonIndex);
+      return;
+    }
 
     nodo.ancestros.forEach(function(paso) {
       pushVistaOpciones(paso.label, paso.opciones, paso.tarjetas);
@@ -4642,7 +4671,7 @@
           }
         }
         if (palabras.every(function(p) { return haystack.includes(p); })) {
-          resultadosBusquedaGlobal.push({ label: n.label, cat: cat, ancestros: n.ancestros, item: n.item, index: n.index });
+          resultadosBusquedaGlobal.push({ label: n.label, cat: cat, ancestros: n.ancestros, item: n.item, index: n.index, padre: n.padre, subBotonIndex: n.subBotonIndex });
         }
       });
     });
