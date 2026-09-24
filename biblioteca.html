@@ -4440,10 +4440,6 @@
     });
   });
 
-  function quitarHTML(html) {
-    return html.replace(/<[^>]*>/g, ' ');
-  }
-
   function buscarGlobal(q) {
     q = normalizarBusqueda(q.trim());
     var contenedor = document.getElementById('resultadosBusquedaGlobal');
@@ -4458,17 +4454,7 @@
     resultadosBusquedaGlobal = [];
     Object.keys(OPCIONES_CATEGORIA).forEach(function(cat) {
       aplanarArbol(OPCIONES_CATEGORIA[cat], []).forEach(function(n) {
-        var item = n.item;
         var haystack = normalizarBusqueda(n.label);
-        if (item && typeof item === 'object') {
-          if (item.texto) haystack += ' ' + normalizarBusqueda(quitarHTML(item.texto));
-          if (item.pregunta) haystack += ' ' + normalizarBusqueda(item.pregunta);
-          if (item.subBotones) {
-            haystack += ' ' + normalizarBusqueda(item.subBotones.map(function(b) {
-              return b.label + ' ' + (b.texto ? quitarHTML(b.texto) : '');
-            }).join(' '));
-          }
-        }
         if (palabras.every(function(p) { return haystack.includes(p); })) {
           resultadosBusquedaGlobal.push({ label: n.label, cat: cat, ancestros: n.ancestros, item: n.item, index: n.index, padre: n.padre, subBotonIndex: n.subBotonIndex });
         }
