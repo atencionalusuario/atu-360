@@ -400,8 +400,285 @@ function crearBotonToggleSidebar() {
   aplicarEstadoSidebarGlobal(localStorage.getItem(SB_OCULTA_KEY) === '1');
 }
 
+// ── Temporizador flotante (compartido en todas las páginas) ─────────────────
+// Vive en sidebar.js (no en biblioteca.html) para que se mantenga visible y
+// siga corriendo aunque el agente navegue a otra página. Su estado (corriendo,
+// segundos restantes, si el panel estaba abierto) se guarda en localStorage y
+// se restaura en cada carga de página.
+var TEMPORIZADOR_INICIAL = 90;
+var TEMPORIZADOR_KEY     = 'atu360_temporizador_estado';
+var temporizadorSegundos = TEMPORIZADOR_INICIAL;
+var temporizadorIntervalo = null;
+var temporizadorFinTs     = null; // timestamp (ms) al que debe llegar a 0, si está corriendo
+
+function leerEstadoTemporizador() {
+  try { return JSON.parse(localStorage.getItem(TEMPORIZADOR_KEY) || 'null'); } catch (e) { return null; }
+}
+function guardarEstadoTemporizador() {
+  try {
+    var p = document.getElementById('panelTemporizador');
+    localStorage.setItem(TEMPORIZADOR_KEY, JSON.stringify({
+      corriendo: !!temporizadorIntervalo,
+      finTs: temporizadorFinTs,
+      segundos: temporizadorSegundos,
+      abierto: p ? p.classList.contains('open') : false
+    }));
+  } catch (e) {}
+}
+
+function actualizarDisplayTemporizador() {
+  var el = document.getElementById('temporizadorDisplay');
+  if (!el) return;
+  var min = Math.floor(temporizadorSegundos / 60);
+  var seg = temporizadorSegundos % 60;
+  el.textContent = (min < 10 ? '0' : '') + min + ':' + (seg < 10 ? '0' : '') + seg;
+  el.classList.toggle('alerta', temporizadorSegundos <= 10);
+}
+
+function toggleTemporizador() {
+  var p = document.getElementById('panelTemporizador');
+  if (!p) return;
+  p.classList.toggle('open');
+  guardarEstadoTemporizador();
+}
+
+function cerrarTemporizador() {
+  detenerAlarmaTemporizador();
+  var p = document.getElementById('panelTemporizador');
+  if (p) p.classList.remove('sacudiendo', 'open');
+  guardarEstadoTemporizador();
+}
+
+var alarmaTemporizadorCtx = null;
+var alarmaTemporizadorIntervalo = null;
+
+function reproducirCicloAlarmaTemporizador() {
+  try {
+    if (!alarmaTemporizadorCtx) alarmaTemporizadorCtx = new (window.AudioContext || window.webkitAudioContext)();
+    var ctx = alarmaTemporizadorCtx;
+    [0, 0.22, 0.44, 0.66].forEach(function(delay, i) {
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = i % 2 === 0 ? 1046 : 784;
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay);
+      gain.gain.exponentialRampToValueAtTime(0.5, ctx.currentTime + delay + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + 0.2);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + 0.21);
+    });
+  } catch (e) { /* audio no disponible en este navegador */ }
+}
+
+function iniciarAlarmaTemporizador() {
+  detenerAlarmaTemporizador();
+  reproducirCicloAlarmaTemporizador();
+  alarmaTemporizadorIntervalo = setInterval(reproducirCicloAlarmaTemporizador, 1000);
+}
+
+function detenerAlarmaTemporizador() {
+  if (alarmaTemporizadorIntervalo) { clearInterval(alarmaTemporizadorIntervalo); alarmaTemporizadorIntervalo = null; }
+}
+
+function temporizadorTerminado() {
+  clearInterval(temporizadorIntervalo);
+  temporizadorIntervalo = null;
+  temporizadorFinTs = null;
+  var btn = document.getElementById('btnTemporizadorIniciar');
+  if (btn) { btn.textContent = 'Iniciar'; btn.onclick = iniciarTemporizador; }
+  var d = document.getElementById('temporizadorDisplay');
+  if (d) d.classList.add('terminado');
+  var p = document.getElementById('panelTemporizador');
+  if (p) {
+    p.classList.add('sacudiendo');
+    if (!p.classList.contains('open')) toggleTemporizador();
+  }
+  iniciarAlarmaTemporizador();
+  guardarEstadoTemporizador();
+}
+
+function tickTemporizador() {
+  temporizadorSegundos = temporizadorFinTs != null
+    ? Math.max(0, Math.round((temporizadorFinTs - Date.now()) / 1000))
+    : Math.max(0, temporizadorSegundos - 1);
+  actualizarDisplayTemporizador();
+  guardarEstadoTemporizador();
+  if (temporizadorSegundos <= 0) temporizadorTerminado();
+}
+
+function iniciarTemporizador() {
+  if (temporizadorIntervalo) return;
+  detenerAlarmaTemporizador();
+  var p = document.getElementById('panelTemporizador');
+  if (p) p.classList.remove('sacudiendo');
+  var d = document.getElementById('temporizadorDisplay');
+  if (d) d.classList.remove('terminado');
+  var btn = document.getElementById('btnTemporizadorIniciar');
+  if (btn) { btn.textContent = 'Pausar'; btn.onclick = pausarTemporizador; }
+  temporizadorFinTs = Date.now() + temporizadorSegundos * 1000;
+  guardarEstadoTemporizador();
+  temporizadorIntervalo = setInterval(tickTemporizador, 1000);
+}
+
+function pausarTemporizador() {
+  clearInterval(temporizadorIntervalo);
+  temporizadorIntervalo = null;
+  temporizadorFinTs = null;
+  var btn = document.getElementById('btnTemporizadorIniciar');
+  if (btn) { btn.textContent = 'Reanudar'; btn.onclick = iniciarTemporizador; }
+  guardarEstadoTemporizador();
+}
+
+function reiniciarTemporizador() {
+  clearInterval(temporizadorIntervalo);
+  temporizadorIntervalo = null;
+  temporizadorFinTs = null;
+  detenerAlarmaTemporizador();
+  var p = document.getElementById('panelTemporizador');
+  if (p) p.classList.remove('sacudiendo');
+  temporizadorSegundos = TEMPORIZADOR_INICIAL;
+  actualizarDisplayTemporizador();
+  var d = document.getElementById('temporizadorDisplay');
+  if (d) d.classList.remove('terminado');
+  var btn = document.getElementById('btnTemporizadorIniciar');
+  if (btn) { btn.textContent = 'Iniciar'; btn.onclick = iniciarTemporizador; }
+  guardarEstadoTemporizador();
+}
+
+function restaurarEstadoTemporizador() {
+  var est = leerEstadoTemporizador();
+  if (!est) { actualizarDisplayTemporizador(); return; }
+  if (est.abierto) {
+    var p = document.getElementById('panelTemporizador');
+    if (p) p.classList.add('open');
+  }
+  if (est.corriendo && est.finTs) {
+    var restante = Math.max(0, Math.round((est.finTs - Date.now()) / 1000));
+    if (restante <= 0) {
+      temporizadorSegundos = 0;
+      actualizarDisplayTemporizador();
+      temporizadorTerminado();
+    } else {
+      temporizadorSegundos = restante;
+      temporizadorFinTs = est.finTs;
+      actualizarDisplayTemporizador();
+      var btn = document.getElementById('btnTemporizadorIniciar');
+      if (btn) { btn.textContent = 'Pausar'; btn.onclick = pausarTemporizador; }
+      temporizadorIntervalo = setInterval(tickTemporizador, 1000);
+    }
+  } else if (typeof est.segundos === 'number') {
+    temporizadorSegundos = est.segundos;
+    actualizarDisplayTemporizador();
+    if (est.segundos > 0 && est.segundos < TEMPORIZADOR_INICIAL) {
+      var btn2 = document.getElementById('btnTemporizadorIniciar');
+      if (btn2) { btn2.textContent = 'Reanudar'; btn2.onclick = iniciarTemporizador; }
+    }
+  } else {
+    actualizarDisplayTemporizador();
+  }
+}
+
+function initArrastreTemporizador() {
+  var panel = document.getElementById('panelTemporizador');
+  var asa = document.getElementById('panelTemporizadorDrag');
+  if (!panel || !asa) return;
+
+  function posicionPorDefecto() {
+    var rect = panel.getBoundingClientRect();
+    var w = rect.width || 160;
+    var h = rect.height || 150;
+    panel.style.left = (window.innerWidth - 74 - w) + 'px';
+    panel.style.top = ((window.innerHeight - h) / 2) + 'px';
+  }
+
+  try {
+    var guardada = JSON.parse(localStorage.getItem('atu360_temporizador_pos') || 'null');
+    if (guardada && typeof guardada.left === 'number' && typeof guardada.top === 'number') {
+      panel.style.left = guardada.left + 'px';
+      panel.style.top = guardada.top + 'px';
+    } else {
+      posicionPorDefecto();
+    }
+  } catch (e) {
+    posicionPorDefecto();
+  }
+
+  var arrastrando = false;
+  var offsetX = 0, offsetY = 0;
+
+  asa.addEventListener('pointerdown', function(e) {
+    arrastrando = true;
+    asa.setPointerCapture(e.pointerId);
+    var rect = panel.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+  });
+
+  asa.addEventListener('pointermove', function(e) {
+    if (!arrastrando) return;
+    var w = panel.offsetWidth, h = panel.offsetHeight;
+    var left = Math.min(Math.max(0, e.clientX - offsetX), window.innerWidth - w);
+    var top = Math.min(Math.max(0, e.clientY - offsetY), window.innerHeight - h);
+    panel.style.left = left + 'px';
+    panel.style.top = top + 'px';
+  });
+
+  function soltar() {
+    if (!arrastrando) return;
+    arrastrando = false;
+    try {
+      localStorage.setItem('atu360_temporizador_pos', JSON.stringify({ left: parseFloat(panel.style.left), top: parseFloat(panel.style.top) }));
+    } catch (e2) {}
+  }
+  asa.addEventListener('pointerup', soltar);
+  asa.addEventListener('pointercancel', soltar);
+
+  window.addEventListener('resize', function() {
+    var rect = panel.getBoundingClientRect();
+    var left = Math.min(rect.left, window.innerWidth - panel.offsetWidth);
+    var top = Math.min(rect.top, window.innerHeight - panel.offsetHeight);
+    panel.style.left = Math.max(0, left) + 'px';
+    panel.style.top = Math.max(0, top) + 'px';
+  });
+}
+
+function crearPanelTemporizadorGlobal() {
+  if (document.getElementById('panelTemporizador')) return;
+  var div = document.createElement('div');
+  div.className = 'panel-temporizador';
+  div.id = 'panelTemporizador';
+  div.innerHTML =
+    '<button class="panel-temporizador-cerrar" title="Cerrar cronómetro" onclick="cerrarTemporizador()">&times;</button>'
+    + '<div class="panel-temporizador-drag" id="panelTemporizadorDrag" title="Arrastrar para mover">'
+    + '<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="8" cy="6" r="1.4"/><circle cx="16" cy="6" r="1.4"/><circle cx="8" cy="12" r="1.4"/><circle cx="16" cy="12" r="1.4"/><circle cx="8" cy="18" r="1.4"/><circle cx="16" cy="18" r="1.4"/></svg>'
+    + '</div>'
+    + '<div class="panel-temporizador-display" id="temporizadorDisplay">01:30</div>'
+    + '<div class="panel-temporizador-botones">'
+    + '<button onclick="iniciarTemporizador()" id="btnTemporizadorIniciar">Iniciar</button>'
+    + '<button class="reiniciar" onclick="reiniciarTemporizador()">Reiniciar</button>'
+    + '</div>';
+  document.body.appendChild(div);
+
+  // En páginas sin el botón propio de biblioteca (cintillo-temporizador), agrega uno flotante.
+  if (!document.querySelector('.cintillo-temporizador') && !document.getElementById('btnToggleTemporizadorGlobal')) {
+    var btn = document.createElement('button');
+    btn.id = 'btnToggleTemporizadorGlobal';
+    btn.type = 'button';
+    btn.title = 'Temporizador';
+    btn.innerHTML = '<svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>';
+    btn.addEventListener('click', toggleTemporizador);
+    document.body.appendChild(btn);
+  }
+
+  restaurarEstadoTemporizador();
+  initArrastreTemporizador();
+}
+
 function initSidebar() {
   crearBotonToggleSidebar();
+  crearPanelTemporizadorGlobal();
   var paginaActiva = detectarPagina();
   firebase.auth().onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }

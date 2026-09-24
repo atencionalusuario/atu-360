@@ -40,3 +40,35 @@ body.sb-oculta .sidebar { width: 0; min-width: 0; opacity: 0; pointer-events: no
 }
 body.sb-oculta #btnToggleSidebarGlobal { left: 6px; }
 #btnToggleSidebarGlobal:hover { opacity: 0.85; }
+
+/* Temporizador flotante (todas las páginas, siempre por encima de cualquier modal) */
+#btnToggleTemporizadorGlobal {
+  position: fixed; right: 20px; bottom: 20px; z-index: 9000; width: 40px; height: 40px;
+  border-radius: 50%; background: #0F2070; color: white; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(15,32,112,0.3);
+}
+#btnToggleTemporizadorGlobal:hover { background: #1A3DAA; }
+.panel-temporizador { position: fixed; background: white; border: 1px solid #E2E8F0; border-radius: 14px; box-shadow: -3px 0 16px rgba(15,32,112,0.14); padding: 10px 20px 18px; z-index: 9000; display: none; flex-direction: column; align-items: center; gap: 10px; width: 160px; }
+.panel-temporizador.open { display: flex; }
+.panel-temporizador-drag { width: 100%; display: flex; justify-content: center; align-items: center; height: 16px; cursor: move; color: #CBD5E1; touch-action: none; }
+.panel-temporizador-cerrar { position: absolute; top: 6px; right: 8px; border: none; background: none; color: #94A3B8; font-size: 1.1rem; line-height: 1; cursor: pointer; padding: 4px; }
+.panel-temporizador-cerrar:hover { color: #334155; }
+.panel-temporizador-drag svg { width: 22px; height: 16px; }
+.panel-temporizador-drag:hover { color: #94A3B8; }
+.panel-temporizador-display { font-family: 'Montserrat', 'Inter', sans-serif; font-size: 2rem; font-weight: 700; color: #0F2070; letter-spacing: 1px; }
+.panel-temporizador-display.alerta { color: #DC2626; }
+.panel-temporizador-display.terminado { animation: parpadearTemporizador 0.6s ease-in-out infinite; }
+@keyframes parpadearTemporizador { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+.panel-temporizador.sacudiendo { animation: sacudirPanelTemporizador 0.5s ease-in-out infinite; }
+@keyframes sacudirPanelTemporizador {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  20% { transform: translateX(-5px) rotate(-1.5deg); }
+  40% { transform: translateX(5px) rotate(1.5deg); }
+  60% { transform: translateX(-4px) rotate(-1deg); }
+  80% { transform: translateX(4px) rotate(1deg); }
+}
+.panel-temporizador-botones { display: flex; gap: 8px; }
+.panel-temporizador-botones button { border: none; border-radius: 8px; padding: 8px 12px; font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; background: #0F2070; color: white; }
+.panel-temporizador-botones button:hover { background: #1A3DAA; }
+.panel-temporizador-botones button.reiniciar { background: #E2E8F0; color: #334155; }
+.panel-temporizador-botones button.reiniciar:hover { background: #CBD5E1; }
