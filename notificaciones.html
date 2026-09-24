@@ -366,7 +366,7 @@
   function marcarLeida(id) {
     db.collection('notificaciones').doc(id).update({
       leidaPor: firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
-    });
+    }).then(function(){ if (typeof invalidarCacheBadge === 'function') invalidarCacheBadge('notif', currentUser.uid); });
   }
 
   function marcarTodasLeidas() {
@@ -378,7 +378,10 @@
         leidaPor: firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
       });
     });
-    batch.commit().then(function(){ showToast('Todas marcadas como leídas.'); });
+    batch.commit().then(function(){
+      if (typeof invalidarCacheBadge === 'function') invalidarCacheBadge('notif', currentUser.uid);
+      showToast('Todas marcadas como leídas.');
+    });
   }
 
   function eliminarNotif(id) {

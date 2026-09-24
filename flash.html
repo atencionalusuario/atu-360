@@ -539,6 +539,7 @@
     }).then(function() {
       misLecturas[id] = true;
       renderPosts();
+      if (typeof invalidarCacheBadge === 'function') invalidarCacheBadge('flash', currentUser.uid);
     }).catch(function(e){ console.error('Error guardando lectura:', e); });
   }
 </script>

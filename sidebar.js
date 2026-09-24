@@ -199,6 +199,35 @@ function renderSidebar(paginaActiva, rol) {
   });
 }
 
+// ── Caché con expiración para los badges de la barra lateral ────────────────────
+// Evita re-consultar Firestore en cada navegación entre páginas dentro de la
+// misma sesión de trabajo (causa principal de picos de lecturas en horas pico).
+var BADGE_CACHE_TTL_MS = 4 * 60 * 1000; // 4 minutos
+
+function claveCacheBadge(tipo, uid) { return 'atu360_badge_' + tipo + '_' + uid; }
+
+function leerCacheBadge(tipo, uid) {
+  try {
+    var raw = localStorage.getItem(claveCacheBadge(tipo, uid));
+    if (!raw) return null;
+    var obj = JSON.parse(raw);
+    if (!obj || typeof obj.ts !== 'number' || (Date.now() - obj.ts) > BADGE_CACHE_TTL_MS) return null;
+    return obj.valor;
+  } catch (e) { return null; }
+}
+
+function guardarCacheBadge(tipo, uid, valor) {
+  try { localStorage.setItem(claveCacheBadge(tipo, uid), JSON.stringify({ ts: Date.now(), valor: valor })); }
+  catch (e) { /* localStorage lleno o no disponible: se ignora, simplemente no habrá caché */ }
+}
+
+// Expuesta globalmente para que otras páginas (notificaciones.html, chat.html,
+// flash.html) invaliden el badge correspondiente justo cuando el propio usuario
+// lee/marca algo, así no queda desactualizado hasta que expire el TTL.
+function invalidarCacheBadge(tipo, uid) {
+  try { localStorage.removeItem(claveCacheBadge(tipo, uid)); } catch (e) {}
+}
+
 function renderBadges(ids) {
   var grid = document.getElementById('badgesGrid');
   if (!grid) return;
@@ -222,6 +251,8 @@ function renderBadges(ids) {
 }
 
 function cargarBadges(uid, db) {
+  var cache = leerCacheBadge('badges', uid);
+  if (cache !== null) { renderBadges(cache); return; }
   db.collection('badges')
     .where('uid', '==', uid)
     .where('activo', '==', true)
@@ -229,29 +260,44 @@ function cargarBadges(uid, db) {
     .then(function(snap) {
       var ids = [];
       snap.forEach(function(doc) { ids.push(doc.data().badgeId); });
+      guardarCacheBadge('badges', uid, ids);
       renderBadges(ids);
     })
     .catch(function(e) { console.error('Error badges:', e); });
 }
 
+function renderFlashBadge(sinLeer) {
+  var badge = document.getElementById('flashBadge');
+  if (badge && sinLeer > 0) { badge.textContent = sinLeer; badge.style.display = 'inline'; }
+}
+
 function cargarFlashBadge(uid, db) {
+  var cache = leerCacheBadge('flash', uid);
+  if (cache !== null) { renderFlashBadge(cache); return; }
   db.collection('flash_posts').where('estado', '==', 'publicado').get()
     .then(function(snapPosts) {
       var ids = [];
       snapPosts.forEach(function(d) { ids.push(d.id); });
-      if (ids.length === 0) return;
+      if (ids.length === 0) { guardarCacheBadge('flash', uid, 0); return; }
       db.collection('flash_lecturas').where('uid', '==', uid).get()
         .then(function(snapLect) {
           var leidos = {};
           snapLect.forEach(function(d) { leidos[d.data().postId] = true; });
           var sinLeer = ids.filter(function(id) { return !leidos[id]; }).length;
-          var badge = document.getElementById('flashBadge');
-          if (badge && sinLeer > 0) { badge.textContent = sinLeer; badge.style.display = 'inline'; }
+          guardarCacheBadge('flash', uid, sinLeer);
+          renderFlashBadge(sinLeer);
         });
     });
 }
 
+function renderNotifBadge(sinLeer) {
+  var badge = document.getElementById('notifNavBadge');
+  if (badge && sinLeer > 0) { badge.textContent = sinLeer > 9 ? '9+' : sinLeer; badge.style.display = 'inline'; }
+}
+
 function cargarNotifBadge(uid, rol, db) {
+  var cache = leerCacheBadge('notif', uid);
+  if (cache !== null) { renderNotifBadge(cache); return; }
   var targets = [uid, 'todos', rol];
   db.collection('notificaciones').where('uid', 'in', targets).get()
     .then(function(snap) {
@@ -260,13 +306,20 @@ function cargarNotifBadge(uid, rol, db) {
         var data = d.data();
         if (!(data.leidaPor || []).includes(uid)) sinLeer++;
       });
-      var badge = document.getElementById('notifNavBadge');
-      if (badge && sinLeer > 0) { badge.textContent = sinLeer > 9 ? '9+' : sinLeer; badge.style.display = 'inline'; }
+      guardarCacheBadge('notif', uid, sinLeer);
+      renderNotifBadge(sinLeer);
     })
     .catch(function(e) { console.warn('notif badge:', e.message); });
 }
 
+function renderChatBadge(sinLeer) {
+  var badge = document.getElementById('chatNavBadge');
+  if (badge && sinLeer > 0) { badge.textContent = sinLeer > 9 ? '9+' : sinLeer; badge.style.display = 'inline'; }
+}
+
 function cargarChatBadge(uid, db) {
+  var cache = leerCacheBadge('chat', uid);
+  if (cache !== null) { renderChatBadge(cache); return; }
   db.collection('chats').where('participantes', 'array-contains', uid).get()
     .then(function(snap) {
       var sinLeer = 0;
@@ -278,8 +331,8 @@ function cargarChatBadge(uid, db) {
         var lMs = leido && leido.toMillis ? leido.toMillis() : 0;
         if (!leido || uMs > lMs) sinLeer++;
       });
-      var badge = document.getElementById('chatNavBadge');
-      if (badge && sinLeer > 0) { badge.textContent = sinLeer > 9 ? '9+' : sinLeer; badge.style.display = 'inline'; }
+      guardarCacheBadge('chat', uid, sinLeer);
+      renderChatBadge(sinLeer);
     })
     .catch(function(e) { console.warn('chat badge:', e.message); });
 }
