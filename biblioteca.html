@@ -1520,6 +1520,15 @@
             '<div id="cronicosSiRealizo" class="triage-resultado" style="display:none;">' +
               '<p>Muchas gracias por su confirmación.</p>' +
               '<p>Para continuar, le solicito que coloque su celular en altavoz, ya que realizaremos juntos el proceso de agendamiento de la cita desde la aplicación. ¿Me confirma si está listo para iniciar?</p>' +
+              '<div class="triage-acciones">' +
+                '<button class="bib-btn" onclick="toggleBloque(\'cronicosNoQuiereProceso\')">¿Por qué no me realiza usted el proceso?</button>' +
+              '</div>' +
+              '<div id="cronicosNoQuiereProceso" class="triage-resultado" style="display:none;">' +
+                '<p>Comprendo su consulta.</p>' +
+                '<p>En este momento, el proceso de agendamiento de cita del programa de crónicos está habilitado desde la aplicación, por lo que se debe de realizar directamente por este medio.</p>' +
+                '<p>Sin embargo, con mucho gusto le acompañaré durante todo el proceso y le iré indicando cada paso para que podamos completarlo juntos de forma rápida y sencilla.</p>' +
+                '<p>¿Le parece bien que continuemos con el proceso de agendamiento?</p>' +
+              '</div>' +
               '<p>Ingrese a la aplicación DoctorSV (el logo azul con letras blancas). Allí encontrará un recuadro celeste con el mensaje: <strong>"Podrás programar tu cita médica cuando hayas completado los estudios indicados"</strong>. Seleccione la opción <strong>"Agendar ahora"</strong>.</p>' +
               '<p>A continuación, seleccione al paciente para quien programará la cita y pulse <strong>"Siguiente"</strong>. Luego, acepte los términos y condiciones, seleccione <strong>"Continuar"</strong> y elija la fecha y la hora de su preferencia. Una vez seleccionada, de clic en <strong>"Confirmar fecha y hora"</strong>.</p>' +
               '<p>¡Listo! Su cita quedará agendada. ¿Me confirma, por favor, si logró agendar su cita correctamente?</p>' +
