@@ -734,6 +734,7 @@
       <button class="bib-btn" onclick="window.open('https://docs.google.com/presentation/d/12K0ZEoxTFIK6PTb0ge9ctWGAF1oniXQwc2mEzKWwFTk/edit', '_blank')">Pantallas de la aplicación</button>
       <button class="bib-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/1S4HQ0oKIieVa9jSYlukzCLJ3Z0UeYMt6/edit?gid=1995540795#gid=1995540795&fvid=939997235', '_blank')">Directorio de farmacias y laboratorios</button>
       <button class="bib-btn" onclick="window.open('https://docs.google.com/document/d/1Ih5EC89oCXJ45lHJs7St9q8JtXZrival-lAA58hsyqs/edit?tab=t.0', '_blank')">Manejo de objeciones</button>
+      <button class="bib-btn" onclick="cerrarModalRecursos(); abrirCanalesOficiales();">Canales oficiales</button>
       <button class="bib-btn" onclick="window.open('https://telemed.telesalud.gob.sv/', '_blank')">TCA</button>
       <button class="bib-btn" onclick="window.open('https://app.nerds.ai/login', '_blank')">Nerds</button>
       <button class="bib-btn" onclick="window.open('https://atencion.telesalud.gob.sv/HomePage.do', '_blank')">SDP</button>
@@ -1003,6 +1004,12 @@
   function abrirIncidenciaOperativa(label) {
     var operativas = OPCIONES_CATEGORIA.incidencia.find(function(x) { return x.label === 'Operativas de todo el servicio'; });
     var item = operativas.hijos.find(function(x) { return x && x.label === label; });
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+  }
+
+  function abrirCanalesOficiales() {
+    var dudas = ARBOL_CONSULTA.find(function(x) { return x.label === 'Dudas generales del servicio'; });
+    var item = dudas.hijos.find(function(x) { return x.label === 'Canales oficiales'; });
     if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
   }
 
