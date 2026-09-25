@@ -79,6 +79,20 @@
   .modal-body input[type="text"], .modal-body select, .modal-body textarea { width: 100%; padding: 10px 13px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.85rem; font-family: inherit; color: #1E293B; background: #F8FAFC; outline: none; transition: border 0.2s; }
   .modal-body input[type="text"]:focus, .modal-body select:focus, .modal-body textarea:focus { border-color: #1A3DAA; background: white; }
   .modal-body textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+  .modal-body { max-height: 72vh; overflow-y: auto; }
+  .btn-img-add { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border: 1.5px dashed #CBD5E1; border-radius: 7px; background: #F8FAFC; color: #475569; font-size: 0.78rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-img-add:hover { border-color: #1A3DAA; color: #1A3DAA; }
+  .btn-img-add:disabled { opacity: 0.5; cursor: not-allowed; }
+  .img-thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .img-thumb { position: relative; width: 70px; height: 70px; border-radius: 8px; overflow: hidden; border: 1px solid #E2E8F0; }
+  .img-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .img-thumb-del { position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; border-radius: 50%; border: none; background: rgba(0,0,0,0.55); color: white; font-size: 0.72rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .img-thumb-del:hover { background: #DC2626; }
+  .entry-images { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  .entry-images img { max-width: 100%; max-height: 380px; border-radius: 8px; border: 1px solid #E2E8F0; cursor: zoom-in; }
+  .lightbox-flash { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.85); z-index: 300; align-items: center; justify-content: center; padding: 30px; cursor: zoom-out; }
+  .lightbox-flash.show { display: flex; }
+  .lightbox-flash img { max-width: 100%; max-height: 100%; border-radius: 6px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); }
   .modal-foot { padding: 16px 28px; border-top: 1px solid #F1F5F9; display: flex; justify-content: flex-end; gap: 10px; }
   .btn-cancel { padding: 9px 18px; background: #F1F5F9; color: #64748B; border: none; border-radius: 7px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: inherit; }
   .btn-cancel:hover { background: #E2E8F0; }
@@ -145,6 +159,15 @@
         <textarea id="mContenido" placeholder="Escribe el contenido..."></textarea>
         <div style="font-size:0.68rem;color:#94A3B8;margin-top:4px">Formato: <strong>**negrita**</strong>, <em>_cursiva_</em>, <s>~~tachado~~</s></div>
       </div>
+      <div>
+        <label>Imágenes (opcional, máx. <span id="mMaxImg">4</span>)</label>
+        <input type="file" id="mImagenInput" accept="image/*" multiple style="display:none" onchange="manejarSeleccionImagenFlash(this)">
+        <button type="button" class="btn-img-add" id="btnAgregarImgFlash" onclick="document.getElementById('mImagenInput').click()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          Agregar imagen
+        </button>
+        <div class="img-thumbs" id="mImagenesThumbs"></div>
+      </div>
     </div>
     <div class="modal-foot">
       <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
@@ -152,6 +175,9 @@
       <button class="btn-pub" id="btnPublicar" onclick="publicar()">Publicar ahora</button>
     </div>
   </div>
+</div>
+<div class="lightbox-flash" id="lightboxFlash" onclick="cerrarLightboxFlash()">
+  <img id="lightboxFlashImg" src="" alt="Imagen ampliada">
 </div>
 <div class="toast" id="toast"></div>
 
@@ -205,12 +231,20 @@
   var _editId = null;
   var borradores = [];
 
+  // ── Imágenes de la publicación (se comprimen y se guardan como data URL) ────
+  var MAX_IMAGENES_FLASH = 4;
+  var MAX_LADO_IMG_FLASH = 1000;   // px, lado mayor
+  var CALIDAD_IMG_FLASH  = 0.72;   // jpeg
+  var _imagenesModal = [];
+
   function abrirModal(id) {
     _editId = (typeof id === 'string') ? id : null;
     var p = _editId ? borradores.find(function(x){ return x.id === _editId; }) : null;
     document.getElementById('mTitulo').value    = p ? (p.titulo || '') : '';
     document.getElementById('mCat').value       = p ? (p.categoria || 'actualizacion') : 'actualizacion';
     document.getElementById('mContenido').value = p ? (p.contenido || '') : '';
+    _imagenesModal = (p && Array.isArray(p.imagenes)) ? p.imagenes.slice() : [];
+    renderThumbsFlash();
     document.querySelector('#modalOverlay h3').textContent = _editId ? 'Editar borrador' : 'Nueva publicación';
     document.getElementById('modalOverlay').classList.add('show');
     document.getElementById('mTitulo').focus();
@@ -219,6 +253,57 @@
   function cerrarModal() {
     document.getElementById('modalOverlay').classList.remove('show');
     _editId = null;
+    _imagenesModal = [];
+  }
+
+  function manejarSeleccionImagenFlash(input) {
+    var files = Array.prototype.slice.call(input.files || []);
+    input.value = '';
+    if (!files.length) return;
+    files.forEach(function(file) {
+      if (_imagenesModal.length >= MAX_IMAGENES_FLASH) { showToast('Máximo '+MAX_IMAGENES_FLASH+' imágenes por publicación.'); return; }
+      if (!/^image\//.test(file.type)) { showToast('Solo se permiten archivos de imagen.'); return; }
+      comprimirImagenFlash(file, function(dataUrl) {
+        _imagenesModal.push(dataUrl);
+        renderThumbsFlash();
+      });
+    });
+  }
+
+  function comprimirImagenFlash(file, cb) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var w = img.width, h = img.height;
+        if (w > MAX_LADO_IMG_FLASH || h > MAX_LADO_IMG_FLASH) {
+          var ratio = Math.min(MAX_LADO_IMG_FLASH / w, MAX_LADO_IMG_FLASH / h);
+          w = Math.round(w * ratio); h = Math.round(h * ratio);
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        cb(canvas.toDataURL('image/jpeg', CALIDAD_IMG_FLASH));
+      };
+      img.onerror = function() { showToast('No se pudo leer la imagen.'); };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function renderThumbsFlash() {
+    var box = document.getElementById('mImagenesThumbs');
+    if (!box) return;
+    box.innerHTML = _imagenesModal.map(function(src, i) {
+      return '<div class="img-thumb"><img src="'+src+'" alt="imagen"><button type="button" class="img-thumb-del" onclick="quitarImagenFlash('+i+')" title="Quitar">&times;</button></div>';
+    }).join('');
+    var btn = document.getElementById('btnAgregarImgFlash');
+    if (btn) btn.disabled = _imagenesModal.length >= MAX_IMAGENES_FLASH;
+  }
+
+  function quitarImagenFlash(i) {
+    _imagenesModal.splice(i, 1);
+    renderThumbsFlash();
   }
 
   // Inserta marcadores de formato alrededor de la selección del textarea
@@ -243,6 +328,7 @@
     btn.disabled = true; btn.textContent = 'Guardando...';
     var data = {
       titulo: titulo, categoria: cat, contenido: contenido, estado: 'borrador',
+      imagenes: _imagenesModal.slice(),
       autorUid: currentUser.uid, autorNombre: currentUser.email.split('@')[0],
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
     };
@@ -263,6 +349,7 @@
     btn.disabled = true; btn.textContent = 'Publicando...';
     var data = {
       titulo: titulo, categoria: cat, contenido: contenido, estado: 'publicado',
+      imagenes: _imagenesModal.slice(),
       autorUid: currentUser.uid, autorNombre: currentUser.email.split('@')[0],
       fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
@@ -347,6 +434,24 @@
     t = t.replace(/~~([^~\n]+)~~/g, '<s>$1</s>');
     t = t.replace(/_([^_\n]+)_/g, '<em>$1</em>');
     return t;
+  }
+
+  function galeriaFlash(imagenes) {
+    if (!Array.isArray(imagenes) || imagenes.length === 0) return '';
+    return '<div class="entry-images">'
+      + imagenes.map(function(src) {
+          return '<img src="'+src+'" alt="Imagen adjunta" onclick="abrirLightboxFlash(this.src)">';
+        }).join('')
+      + '</div>';
+  }
+
+  function abrirLightboxFlash(src) {
+    document.getElementById('lightboxFlashImg').src = src;
+    document.getElementById('lightboxFlash').classList.add('show');
+  }
+  function cerrarLightboxFlash() {
+    document.getElementById('lightboxFlash').classList.remove('show');
+    document.getElementById('lightboxFlashImg').src = '';
   }
 
   // ── Estadísticas de lectura (jefe / formación) ──────────────────────────────
@@ -508,7 +613,7 @@
         +'</div>'
         +'<div class="entry-title">'+escHtml(p.titulo)+'</div>'
         +'<div class="entry-date"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'+fecha+'</div>'
-        +'<div class="entry-body">'+formatFlash(p.contenido)+'</div>'
+        +'<div class="entry-body">'+formatFlash(p.contenido)+galeriaFlash(p.imagenes)+'</div>'
         + statsBar(p)
         +'<div class="entry-footer">'
         +'<div class="leido-status'+(leido?' done':'')+'">'
