@@ -908,6 +908,18 @@
     renderRuta();
   }
 
+  var TEXTOS_PASO_FARMACIAS = {
+    1: '<p>En la pantalla principal de DoctorSV, seleccione la sección XXXXX [dependiendo del caso].</p>',
+    2: '<p>Una vez allí, pulse sobre el botón <strong>"Ver detalle de estudio"</strong> o <strong>"Ver detalle de receta"</strong>.</p>',
+    3: '<p>Si es una orden de laboratorio, le mostrará una advertencia.</p>',
+    4: '<p>La aplicación DoctorSV le pedirá permiso para utilizar la localización del teléfono.</p>',
+    5: '<p>Usted podrá utilizar la función <strong>"Ir ahora"</strong> para que el mapa lo lleve.</p>',
+    6: '<p>Seleccione su opción de mapa preferida.</p>',
+    7: '<p>Podrá ver las indicaciones para llegar en su mapa.</p>'
+  };
+
+  var TEXTOS_PASO = { imgPasoFarmacias: TEXTOS_PASO_FARMACIAS };
+
   var TEXTO_RECOMENDACIONES_TEL =
     '<p>1) Busque un lugar con buena señal móvil y que esté apartado del ruido, donde usted se pueda sentir <strong>cómodo y en confianza</strong> con el médico.</p>' +
     '<p>2) El médico <strong>le llamará puntualmente al número de teléfono registrado</strong>. Si no recibe la llamada, por favor póngase en contacto con nosotros al <strong>136</strong>.</p>' +
@@ -1338,10 +1350,11 @@
             texto:
               '<p>Con mucho gusto le digo el paso a paso:</p>' +
               '<img id="imgPasoFarmacias" data-paso="1" data-total="7" data-patron="img/farmacias-paso-{n}.png" src="img/farmacias-paso-1.png" alt="Paso 1 de 7 para ubicar farmacias y laboratorios en la app" class="tarjeta-script-imagen" style="max-height:320px; width:auto; margin-left:auto; margin-right:auto;">' +
+              '<div id="textoPasoFarmacias" class="tarjeta-script-cuerpo" style="margin-top:10px;">' + TEXTOS_PASO_FARMACIAS[1] + '</div>' +
               '<div class="triage-acciones" style="justify-content:center; align-items:center; gap:14px; margin-top:12px;">' +
-                '<button class="bib-btn" onclick="cambiarPasoImagen(\'imgPasoFarmacias\', \'contadorPasoFarmacias\', -1)">&larr; Anterior</button>' +
+                '<button class="bib-btn" onclick="cambiarPasoImagen(\'imgPasoFarmacias\', \'contadorPasoFarmacias\', -1, \'textoPasoFarmacias\')">&larr; Anterior</button>' +
                 '<span id="contadorPasoFarmacias" style="font-weight:600; color:#64748B; min-width:50px; text-align:center;">1 / 7</span>' +
-                '<button class="bib-btn" onclick="cambiarPasoImagen(\'imgPasoFarmacias\', \'contadorPasoFarmacias\', 1)">Siguiente &rarr;</button>' +
+                '<button class="bib-btn" onclick="cambiarPasoImagen(\'imgPasoFarmacias\', \'contadorPasoFarmacias\', 1, \'textoPasoFarmacias\')">Siguiente &rarr;</button>' +
               '</div>'
           },
           { label: 'Quiere la información en llamada',
@@ -4499,7 +4512,7 @@
     contSubTexto.innerHTML = b.texto;
   }
 
-  function cambiarPasoImagen(imgId, contadorId, delta) {
+  function cambiarPasoImagen(imgId, contadorId, delta, textId) {
     var img = document.getElementById(imgId);
     if (!img) return;
     var total = parseInt(img.getAttribute('data-total'), 10);
@@ -4509,6 +4522,11 @@
     img.src = img.getAttribute('data-patron').replace('{n}', actual);
     var contador = document.getElementById(contadorId);
     if (contador) contador.textContent = actual + ' / ' + total;
+    if (textId) {
+      var textoEl = document.getElementById(textId);
+      var textos = TEXTOS_PASO[imgId];
+      if (textoEl && textos) textoEl.innerHTML = textos[actual] || '';
+    }
   }
 
   function toggleBloque(id) {
