@@ -194,6 +194,10 @@
     </div>
     <div class="topbar-right">
       <div class="tb-clock" id="clock">--:--:--</div>
+      <button class="btn-accion" onclick="cargarUsuarios()" title="Volver a consultar la lista de usuarios">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+        Actualizar
+      </button>
       <button class="btn-accion" onclick="exportarUsuarios()">
         <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Exportar
@@ -505,7 +509,7 @@
   function cargarUsuarios() {
     var q = db.collection('usuarios');
     if (ROLES_PROYECTO_RESTRINGIDO.includes(miRolG)) q = q.where('proyecto', '==', miProyectoG);
-    q.orderBy('nombre','asc').onSnapshot(function(snap) {
+    q.orderBy('nombre','asc').get().then(function(snap) {
       usuarios = [];
       snap.forEach(function(doc) {
         var d = doc.data();
@@ -518,7 +522,7 @@
         var u = usuarios.find(function(x){ return x.id === usuarioSeleccionado; });
         if (u) abrirPanel(u);
       }
-    }, function(err){ console.error(err); showToast('Error al cargar usuarios.'); });
+    }).catch(function(err){ console.error(err); showToast('Error al cargar usuarios.'); });
   }
 
   // ── Filtros columna ──────────────────────────────────────────────────────────
@@ -775,6 +779,7 @@
     batch.commit().then(function(){
       showToast(ids.length+' usuario(s) actualizado(s).');
       limpiarSeleccion();
+      cargarUsuarios();
     }).catch(function(err){
       showToast('Error al actualizar: '+err.message); console.error(err);
     }).finally(function(){
@@ -800,6 +805,7 @@
       showToast(ids.length+' usuario(s) eliminado(s) del sistema.');
       if(usuarioSeleccionado && ids.indexOf(usuarioSeleccionado)>-1) cerrarPanel();
       limpiarSeleccion();
+      cargarUsuarios();
     }).catch(function(err){
       showToast('Error al eliminar: '+err.message); console.error(err);
     });
@@ -988,7 +994,7 @@
     }
     datos.fechaActualizacion=firebase.firestore.FieldValue.serverTimestamp();
     db.collection('usuarios').doc(usuarioSeleccionado).update(datos)
-      .then(function(){ cerrarModalForm(); showToast('Cambios guardados.'); })
+      .then(function(){ cerrarModalForm(); showToast('Cambios guardados.'); cargarUsuarios(); })
       .catch(function(e){ btnG.disabled=false; btnG.textContent='Guardar cambios'; showToast('Error: '+e.message); console.error(e); });
   }
 
@@ -1034,6 +1040,7 @@
         marcarFlashesHistoricosLeidos(uid,datos.email,datos.nombre);
         usuarioSeleccionado=uid; cerrarModalForm();
         showToast('Usuario creado. Contraseña inicial: ATU360*');
+        cargarUsuarios();
       })
       .catch(function(err){
         btnG.disabled=false; btnG.textContent='Crear usuario';
@@ -1077,6 +1084,7 @@
     }).then(function(){
       cerrarDesact();
       showToast('Usuario desactivado.');
+      cargarUsuarios();
     }).catch(function(err){
       showToast('Error al desactivar.');
       console.error(err);
@@ -1086,7 +1094,7 @@
   }
   function cambiarEstado(id, activo) {
     db.collection('usuarios').doc(id).update({ activo: activo })
-      .then(function(){ showToast(activo ? 'Usuario activado.' : 'Usuario desactivado.'); })
+      .then(function(){ showToast(activo ? 'Usuario activado.' : 'Usuario desactivado.'); cargarUsuarios(); })
       .catch(function(err){ showToast('Error al actualizar.'); console.error(err); });
   }
   function cerrarConfirm(){ document.getElementById('modalConfirm').classList.remove('show'); }
@@ -1109,7 +1117,7 @@
   }
   function eliminarUsuario(id){
     db.collection('usuarios').doc(id).delete()
-      .then(function(){ cerrarPanel(); showToast('Usuario eliminado del sistema.'); })
+      .then(function(){ cerrarPanel(); showToast('Usuario eliminado del sistema.'); cargarUsuarios(); })
       .catch(function(err){ showToast('Error al eliminar: '+err.message); console.error(err); });
   }
 
@@ -1234,7 +1242,9 @@
       if(i>=pendientesCSV.length){
         cerrarModalCsv();
         showToast(creados+' usuarios creados'+(errores?', '+errores+' errores.':'. Contraseña: ATU360*'));
-        btn.disabled=false; btn.textContent='Crear usuarios'; return;
+        btn.disabled=false; btn.textContent='Crear usuarios';
+        cargarUsuarios();
+        return;
       }
       btn.textContent='Creando... ('+(i+1)+'/'+total+')';
       var u=pendientesCSV[i];
