@@ -4009,7 +4009,9 @@
     document.querySelectorAll('#opcionesCategoria .bib-btn').forEach(function(btn) { btn.classList.remove('active'); });
     if (panelHistorialStack.length) {
       panelHistorialStack = [];
+      var destino = historial[historialBasePanel - 1];
       historial = historial.slice(0, historialBasePanel);
+      if (destino && destino.restaurar) destino.restaurar();
       renderRuta();
     }
   }
