@@ -43,7 +43,7 @@ body.sb-oculta #btnToggleSidebarGlobal { left: 6px; }
 
 /* Temporizador flotante (todas las páginas, siempre por encima de cualquier modal) */
 #btnToggleTemporizadorGlobal {
-  position: fixed; right: 20px; bottom: 20px; z-index: 9000; width: 40px; height: 40px;
+  position: fixed; right: 20px; bottom: 96px; z-index: 9000; width: 40px; height: 40px;
   border-radius: 50%; background: #0F2070; color: white; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(15,32,112,0.3);
 }
