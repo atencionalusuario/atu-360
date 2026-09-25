@@ -1718,18 +1718,23 @@
       { label: 'Cómo modificar cita',
         tipificacion: 'Consultas > Funciones de la aplicación > Cómo modificar cita',
         texto:
-          '<p>De acuerdo, le ayudaremos en el proceso para modificar su cita.</p>' +
-          '<p>Veo en sistema que usted tiene una cita pautada para el día XX-XX-XXXX a las XX:XX am/pm, ¿esta es la cita que desea modificar?</p>' +
-          '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM/PM. ¿Le parece bien?</p>' +
-          '<p><strong>Sí:</strong> Excelente, queda programada su cita el día XXXXXX XX a las XX de la tarde / de la mañana. Esta información también podrá encontrarla disponible dentro de la sección "Citas" en su aplicación.</p>' +
-          '<p><strong>No:</strong> ¿Le gustaría un día diferente o una hora diferente? Excelente, queda programada su cita con el/la médico XXXXXXXX XXXXXXX, el día XXXXXX XX a las XX de la tarde / de la mañana.</p>'
+          '<p>Con gusto le explico cómo modificar una cita desde la aplicación <strong>DoctorSV</strong>.</p>' +
+          '<p>Para realizarlo, ingrese a la aplicación y diríjase al apartado <strong>Mis citas</strong>. Luego, seleccione <strong>Modificar cita</strong> y posteriormente <strong>Reprogramar cita</strong>.</p>' +
+          '<p>Después, seleccione el motivo por el cual desea reprogramar su cita y presione nuevamente el botón <strong>Reprogramar cita</strong>. Al seleccionarlo, se abrirá una nueva pantalla donde podrá elegir el día y la hora que más le convenga para realizar la modificación.</p>' +
+          '<p>Una vez seleccionado el horario, presione el botón <strong>Hacer cita médica virtual</strong>. En la siguiente pantalla podrá visualizar la confirmación de su cita modificada, incluyendo la nueva fecha y hora.</p>' +
+          '<p>Pulse <strong>"Continuar"</strong> para regresar a la pantalla principal.</p>' +
+          '<div class="triage-acciones">' +
+            '<button class="bib-btn" onclick="toggleBloque(\'modificarCitaRecomendaciones\')">Recomendaciones generales</button>' +
+          '</div>' +
+          '<div id="modificarCitaRecomendaciones" class="triage-resultado" style="display:none;">' + TEXTO_RECOMENDACIONES_VIDEO + '</div>'
       },
       { label: 'Cómo cancelar cita',
         tipificacion: 'Consultas > Funciones de la aplicación > Cómo cancelar cita',
         texto:
-          '<p>De acuerdo, le ayudaremos en el proceso para cancelar su cita. ¿Me podría confirmar si su cita agendada es con un médico general o con un médico especialista?</p>' +
-          '<p><strong>Médico general:</strong> Muy bien, en este momento puedo confirmar en sistema que usted tiene una cita pautada para el día XX-XX-XXXX a las XX:XX am/pm, ¿esta es la cita que desea cancelar? De acuerdo, en este momento procederé a cancelar la cita que nos menciona.</p>' +
-          '<p><strong>Médico especialista:</strong> Antes de proceder, nos gustaría comentarle que al cancelar esta cita podría perderse la continuidad de su proceso médico. Si en un futuro desea consultar nuevamente con un especialista, tendría que comenzar el proceso desde el inicio, agendando primero una cita con un médico general. ¿Desea que cancelemos su cita con el especialista, o prefiere modificar el horario?</p>'
+          '<p>Con gusto le explico cómo cancelar una cita desde la aplicación <strong>DoctorSV</strong>.</p>' +
+          '<p>Para realizarlo, ingrese a la aplicación y diríjase al apartado <strong>Mis citas</strong>. Luego, seleccione <strong>Modificar cita</strong> y posteriormente <strong>Cancelar cita.</strong></p>' +
+          '<p>Justo después, deberá seleccionar el motivo por el cual desea cancelar su cita y, para finalizar, haga clic en <strong>Cancelar cita</strong>. En la siguiente pantalla podrá visualizar la confirmación de que su cita ha sido cancelada.</p>' +
+          '<p>Pulse <strong>Continuar</strong> para regresar a la pantalla principal.</p>'
       },
       { label: 'Cómo registrar a un familiar en la cuenta',
         tipificacion: 'Consultas > Funciones de la aplicación > Cómo registrar a un familiar en la cuenta',
