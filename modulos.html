@@ -63,7 +63,7 @@
 
   <div class="content">
     <div class="intro">
-      Aquí controlas qué módulos puede ver y abrir cada rol <b>mientras esté en modo restringido</b> (actualmente: Agente, Supervisor y Jefe).
+      Aquí controlas qué módulos puede ver y abrir cada rol <b>mientras esté en modo restringido</b> (actualmente: Agente, Supervisor, Jefe, Agente Inmersion, Formacion, Admin y WFM).
       Marca todos los módulos de un rol para devolverle acceso completo, o solo los que necesite por ahora. Los cambios aplican la próxima vez que esa persona cargue una página (puede requerir recargar o volver a iniciar sesión).
     </div>
     <div id="rolesBody"><div class="loading">Cargando...</div></div>
@@ -104,9 +104,13 @@
   });
 
   var ROLES_A_CONTROLAR = [
-    { rol: 'agente',     label: 'Agente' },
-    { rol: 'supervisor', label: 'Supervisor' },
-    { rol: 'jefe',       label: 'Jefe' }
+    { rol: 'agente',            label: 'Agente' },
+    { rol: 'agente-inmersion',  label: 'Agente Inmersion' },
+    { rol: 'supervisor',        label: 'Supervisor' },
+    { rol: 'formacion',         label: 'Formacion' },
+    { rol: 'jefe',              label: 'Jefe' },
+    { rol: 'admin',             label: 'Admin' },
+    { rol: 'wfm',               label: 'WFM' }
   ];
 
   var configActual = {};

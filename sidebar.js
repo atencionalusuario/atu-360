@@ -403,11 +403,18 @@ function verificarSesion() {
 // Si el documento no existe todavía, se usa DEFAULT_HABILITADOS_TEMP (Biblioteca + Flash).
 // Para quitar la restricción de un rol por completo: en modulos.html, marcar todos
 // sus módulos. Para eliminar el mecanismo entero: vaciar ROLES_RESTRINGIDOS_TEMP.
-var ROLES_RESTRINGIDOS_TEMP  = ['agente', 'supervisor', 'jefe'];
+var ROLES_RESTRINGIDOS_TEMP  = ['agente', 'supervisor', 'jefe', 'agente-inmersion', 'formacion', 'admin', 'wfm'];
 var DEFAULT_HABILITADOS_TEMP = {
   agente:     ['biblioteca', 'flash'],
   jefe:       ['jefe-biblioteca', 'jefe-flash'],
-  supervisor: ['sup-biblioteca', 'sup-flash']
+  supervisor: ['sup-biblioteca', 'sup-flash'],
+  // Los siguientes roles no tenían restricción hasta ahora: por defecto (si el
+  // superadmin todavía no guarda nada para ellos en Control de módulos) se les
+  // deja el acceso completo que ya tenían, para no romper el acceso de nadie.
+  'agente-inmersion': ['home', 'bandeja', 'actce', 'chat', 'flash', 'notificaciones', 'biblioteca', 'miturno', 'transporte', 'perfil'],
+  formacion:          ['home', 'flash', 'notificaciones', 'solicitudes', 'biblioteca', 'miturno', 'metricas', 'transporte', 'perfil'],
+  admin:              ['jefe-usuarios', 'jefe-notif', 'jefe-transporte', 'jefe-perfil'],
+  wfm:                ['wfm-jornada', 'jefe-usuarios', 'jefe-solicitudes', 'jefe-tiemporeal', 'jefe-metricas', 'jefe-turno', 'jefe-reportes', 'jefe-transporte', 'jefe-perfil']
 };
 
 function idsCompletosDeRol(rol) {
