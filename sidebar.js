@@ -714,15 +714,25 @@ function crearPanelTemporizadorGlobal() {
     + '</div>';
   document.body.appendChild(div);
 
-  // En páginas sin el botón propio de biblioteca (cintillo-temporizador), agrega uno flotante.
+  // En páginas sin el botón propio de biblioteca (cintillo-temporizador), agrega uno
+  // dentro de la barra superior (junto al reloj), en vez de flotar sobre el contenido.
   if (!document.querySelector('.cintillo-temporizador') && !document.getElementById('btnToggleTemporizadorGlobal')) {
     var btn = document.createElement('button');
     btn.id = 'btnToggleTemporizadorGlobal';
     btn.type = 'button';
     btn.title = 'Temporizador';
-    btn.innerHTML = '<svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>';
+    btn.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>';
     btn.addEventListener('click', toggleTemporizador);
-    document.body.appendChild(btn);
+    var reloj = document.querySelector('.tb-clock');
+    if (reloj && reloj.parentNode) {
+      // Páginas sin envoltorio .topbar-right (ej. perfil.html, modulos.html): el reloj
+      // queda como hijo directo de .topbar (justify-content:space-between), así que el
+      // botón necesita margin-left:auto para quedar pegado al reloj y no flotar suelto.
+      if (!reloj.closest('.topbar-right')) btn.classList.add('tb-temporizador-suelto');
+      reloj.parentNode.insertBefore(btn, reloj);
+    } else {
+      document.body.appendChild(btn);
+    }
   }
 
   restaurarEstadoTemporizador();

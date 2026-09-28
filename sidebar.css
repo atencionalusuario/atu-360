@@ -41,18 +41,19 @@ body.sb-oculta .sidebar { width: 0; min-width: 0; opacity: 0; pointer-events: no
 body.sb-oculta #btnToggleSidebarGlobal { left: 6px; }
 #btnToggleSidebarGlobal:hover { opacity: 0.85; }
 
-/* Temporizador flotante (todas las páginas, siempre por encima de cualquier modal).
-   Se ancla en la esquina superior izquierda, junto al borde del sidebar, para que
-   quede más visible y no se confunda con burbujas de chat, el botón de enviar o
-   los toasts, que ocupan la esquina inferior derecha. */
+/* Temporizador (todas las páginas): se inserta como un botón más dentro de la
+   barra superior, junto al reloj, en vez de flotar sobre el contenido — así no
+   se confunde con burbujas de chat, el botón de enviar, toasts, ni tapa el
+   título de la página. */
 #btnToggleTemporizadorGlobal {
-  position: fixed; left: 230px; top: 10px; z-index: 9000; width: 40px; height: 40px;
-  border-radius: 50%; background: #0F2070; color: white; border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(15,32,112,0.3);
-  transition: left 0.18s ease;
+  width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; background: #0F2070;
+  color: white; border: none; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; box-shadow: 0 2px 8px rgba(15,32,112,0.25);
 }
 #btnToggleTemporizadorGlobal:hover { background: #1A3DAA; }
-body.sb-oculta #btnToggleTemporizadorGlobal { left: 10px; }
+/* Solo cuando el reloj es hijo directo de .topbar (sin .topbar-right): pega el
+   botón al reloj en vez de dejar que space-between lo empuje al centro. */
+#btnToggleTemporizadorGlobal.tb-temporizador-suelto { margin-left: auto; margin-right: 12px; }
 .panel-temporizador { position: fixed; background: white; border: 1px solid #E2E8F0; border-radius: 14px; box-shadow: -3px 0 16px rgba(15,32,112,0.14); padding: 10px 20px 18px; z-index: 9000; display: none; flex-direction: column; align-items: center; gap: 10px; width: 160px; }
 .panel-temporizador.open { display: flex; }
 .panel-temporizador-drag { width: 100%; display: flex; justify-content: center; align-items: center; height: 16px; cursor: move; color: #CBD5E1; touch-action: none; }
