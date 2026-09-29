@@ -105,6 +105,10 @@
       <p id="topbarSub">Cargando...</p>
     </div>
     <div class="topbar-right">
+      <button class="btn-nueva" style="background:#F1F5F9;color:#475569" onclick="suscribirAcciones()" title="Volver a consultar las acciones">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+        Actualizar
+      </button>
       <button class="btn-nueva" onclick="mostrarFormulario(null)">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Nueva acción
@@ -168,7 +172,6 @@
   var equipoUsuarios = [];  // agentes/supervisores del equipo
   var acciones      = [];
   var accionActual  = null;
-  var _unsub        = null;
 
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
@@ -212,24 +215,15 @@
   var todasAcciones = [];
 
   function suscribirAcciones() {
-    if (_unsub) _unsub();
-    if (rolUsuario === 'supervisor') {
-      _unsub = db.collection('acciones_personal')
-        .where('emailSupervisor', '==', currentUser.email)
-        .onSnapshot(function(snap) {
-          todasAcciones = [];
-          snap.forEach(function(d){ todasAcciones.push(Object.assign({ id: d.id }, d.data())); });
-          recalcAcciones();
-        }, function(e){ console.error('acciones', e); });
-    } else {
+    var q = rolUsuario === 'supervisor'
+      ? db.collection('acciones_personal').where('emailSupervisor', '==', currentUser.email)
       // jefe/admin/wfm/superadmin: se acota luego por equipoUsuarios (proyecto propio o toda la org)
-      _unsub = db.collection('acciones_personal')
-        .onSnapshot(function(snap) {
-          todasAcciones = [];
-          snap.forEach(function(d){ todasAcciones.push(Object.assign({ id: d.id }, d.data())); });
-          recalcAcciones();
-        }, function(e){ console.error('acciones', e); });
-    }
+      : db.collection('acciones_personal');
+    q.get().then(function(snap) {
+      todasAcciones = [];
+      snap.forEach(function(d){ todasAcciones.push(Object.assign({ id: d.id }, d.data())); });
+      recalcAcciones();
+    }).catch(function(e){ console.error('acciones', e); });
   }
 
   function recalcAcciones() {
@@ -330,6 +324,7 @@
       accionActual = null;
       document.getElementById('detailCard').className = 'detail-card';
       document.getElementById('emptyState').style.display = '';
+      suscribirAcciones();
     });
   }
 
@@ -427,6 +422,7 @@
     db.collection('acciones_personal').add(data).then(function() {
       ocultarFormulario();
       document.getElementById('emptyState').style.display = '';
+      suscribirAcciones();
       // Notificar a la persona
       var labelTipo = tipoReg === 'ausencia' ? 'Ausencia injustificada' : ('Acción de Personal — ' + (tipoAP === 'escrita' ? 'Escrita' : 'Oral'));
       var titulo  = labelTipo + ' registrada';

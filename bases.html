@@ -121,6 +121,10 @@
       <p id="topbarSub">Cargando...</p>
     </div>
     <div class="topbar-right">
+      <button class="btn-nueva" id="btnActualizarBases" style="background:#F1F5F9;color:#475569" onclick="cargarBases()" title="Volver a consultar las bases">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+        Actualizar
+      </button>
       <button class="btn-nueva" id="btnNueva" style="display:none" onclick="abrirModalBase()">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Nueva base
@@ -297,12 +301,12 @@
     } else {
       q = db.collection('bases'); // superadmin: todas
     }
-    q.onSnapshot(function(snap){
+    q.get().then(function(snap){
       bases = [];
       snap.forEach(function(d){ bases.push(Object.assign({id:d.id}, d.data())); });
       bases.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0) - (a.fechaCreacion?a.fechaCreacion.seconds:0); });
       renderListaBases();
-    }, function(e){ console.error(e); showToast('Error al cargar las bases.'); });
+    }).catch(function(e){ console.error(e); showToast('Error al cargar las bases.'); });
   }
 
   function renderListaBases(){
@@ -341,7 +345,7 @@
   function toggleEstadoBase(id, estadoActual){
     var nuevo = estadoActual === 'finalizada' ? 'en-curso' : 'finalizada';
     db.collection('bases').doc(id).update({ estado: nuevo })
-      .then(function(){ showToast(nuevo === 'finalizada' ? 'Base finalizada.' : 'Base reactivada.'); })
+      .then(function(){ showToast(nuevo === 'finalizada' ? 'Base finalizada.' : 'Base reactivada.'); cargarBases(); })
       .catch(function(e){ console.error(e); showToast('No se pudo actualizar la base.'); });
   }
 
@@ -576,6 +580,7 @@
     }).then(function(){
       showToast('Base creada: ' + csvRegistros.length + ' registros entre ' + ags.length + ' agente(s).');
       cerrarModalBase();
+      cargarBases();
     }).catch(function(e){
       console.error(e); showToast('Error al crear la base: ' + e.message);
     }).finally(function(){
