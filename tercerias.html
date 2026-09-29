@@ -1,0 +1,2101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script src="mobile-guard.js"></script>
+<link rel="stylesheet" href="sidebar.css">
+<base href="/atu-360/">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATU 360 — Biblioteca Tercerías</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #E5E7EB; display: flex; color: #1E293B; overflow: hidden; }
+
+  /* SIDEBAR (sin tocar) */
+  .sidebar { width: 220px; flex-shrink: 0; background: #0F2070; display: flex; flex-direction: column; min-height: 100vh; }
+  .sb-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .sb-name { font-size: 1.25rem; font-weight: 800; color: white; }
+  .sb-name span { color: #29ABE2; }
+  .sb-tagline { font-size: 0.62rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 2px; margin-top: 3px; }
+  .sb-nav { padding: 20px 12px; flex: 1; }
+  .nav-section-label { font-size: 0.58rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; padding: 0 10px; margin: 16px 0 6px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 6px; font-size: 0.8rem; color: rgba(255,255,255,0.55); cursor: pointer; transition: all 0.15s; margin-bottom: 1px; }
+  .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+  .nav-item.active { background: rgba(41,171,226,0.15); color: white; font-weight: 600; border-left: 2px solid #29ABE2; }
+  .sb-bottom { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .sb-user-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .sb-avatar { width: 32px; height: 32px; border-radius: 50%; background: #1A3DAA; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; color: white; font-weight: 700; flex-shrink: 0; border: 1.5px solid rgba(41,171,226,0.4); }
+  .sb-user-name { font-size: 0.76rem; font-weight: 600; color: white; }
+  .sb-user-role { font-size: 0.62rem; color: rgba(255,255,255,0.4); margin-top: 1px; }
+  .btn-logout { width: 100%; padding: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: rgba(255,255,255,0.5); font-size: 0.75rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn-logout:hover { background: rgba(255,255,255,0.1); color: white; }
+
+  /* MAIN */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: auto; padding-bottom: 60px; }
+  .topbar { background: white; padding: 0 24px; height: 50px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; z-index: 10; }
+  .topbar-left { display: flex; align-items: center; gap: 7px; }
+  .topbar-left h2 { font-size: 0.85rem; font-weight: 600; }
+  .topbar-sep { color: #CBD5E1; }
+  .topbar-left p { font-size: 0.74rem; color: #94A3B8; }
+  .tb-clock { font-size: 0.92rem; font-weight: 700; color: #1A3DAA; font-variant-numeric: tabular-nums; }
+
+  /* RUTA DEL AGENTE */
+  .ruta-bar { background: white; padding: 9px 24px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #E2E8F0; font-family: 'Inter', sans-serif; position: sticky; top: 50px; z-index: 9; }
+  .ruta-item { font-size: 0.76rem; color: #94A3B8; }
+  .ruta-item.ruta-actual { color: #0F2070; font-weight: 700; }
+  .ruta-item.ruta-link { cursor: pointer; }
+  .ruta-item.ruta-link:hover { color: #1A3DAA; text-decoration: underline; }
+  .ruta-sep { color: #CBD5E1; font-size: 0.76rem; }
+
+  /* BIBLIOTECA CONTENT */
+  .bib-wrap { padding: 18px 22px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  #flujoSDP { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+  .bib-placeholder { background: white; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 40px 20px; text-align: center; color: #94A3B8; font-size: 0.85rem; }
+  .bib-saludo { background: white; border-radius: 8px; border: 1px solid #E2E8F0; padding: 16px 20px; font-family: 'Montserrat', sans-serif; width: 100%; max-width: 640px; }
+  .bib-saludo p { font-size: 0.84rem; line-height: 1.6; color: #374151; margin-bottom: 6px; }
+  .bib-saludo p:last-child { margin-bottom: 0; }
+  .bib-saludo strong { color: #0F2070; }
+  .instruccion { font-style: italic; color: #64748B; font-size: 0.86rem; font-family: 'Inter', sans-serif; }
+  .sdp-botones { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  #modalSubBotones { justify-content: center; margin-top: 18px; margin-bottom: 20px; }
+  #modalSubBotones.sdp-botones-columna { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  #modalSubBotones.sdp-botones-columna .bib-btn { width: 100%; min-width: 0; }
+  .btn-col { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .instruccion-btn { max-width: 210px; text-align: center; margin: 0; }
+  .bib-btn { background: #0F2070; color: white; padding: 8px 13px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; font-size: 0.73rem; font-family: 'Inter', sans-serif; transition: all 0.15s; min-width: 210px; text-align: center; }
+  .bib-btn:hover { background: #1A3DAA; transform: translateY(-1px); }
+  .bib-btn.active { background: #29ABE2; box-shadow: 0 0 0 3px rgba(41,171,226,0.35); }
+  .placeholder { color: #94A3B8; font-style: italic; }
+
+  #vistaCategoria { width: 100%; max-width: 1040px; margin: 0 auto; padding: 0 90px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .bib-btn-volver { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; background: #EEF2FF; color: #1A3DAA; border: none; border-radius: 999px; font-weight: 600; font-size: 0.78rem; cursor: pointer; font-family: 'Inter', sans-serif; padding: 8px 16px 8px 12px; transition: all 0.15s; }
+  .bib-btn-volver:hover { background: #DDE5FF; transform: translateX(-2px); }
+  .titulo-categoria { font-size: 0.95rem; font-weight: 700; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 10px; }
+  .caja-busqueda-cat { width: 100%; max-width: 640px; text-align: center; }
+  .pregunta-categoria { font-size: 1.1rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 6px; }
+  .caja-busqueda-cat .instruccion { display: block; margin-bottom: 14px; }
+  .busqueda-input-wrap { position: relative; max-width: 420px; margin: 0 auto; }
+  #accesoBusquedaMenu.busqueda-input-wrap { max-width: 640px; }
+  .busqueda-input-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #94A3B8; pointer-events: none; }
+  .busqueda-input-wrap input { width: 100%; padding: 10px 14px 10px 38px; border-radius: 999px; border: 1.5px solid #E2E8F0; background: #F8FAFC; font-size: 0.85rem; font-family: 'Inter', sans-serif; outline: none; color: #1E293B; }
+  .busqueda-input-wrap input:focus { border-color: #29ABE2; background: white; }
+
+  .modal-overlay { display: none; position: fixed; top: 0; left: 220px; right: 0; bottom: 0; background: rgba(15,32,112,0.45); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: white; border-radius: 10px; max-width: 920px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 30px 36px; position: relative; }
+  .panel-inline { display: none; background: white; border: 1px solid #E2E8F0; border-radius: 10px; max-width: 920px; width: 100%; margin-top: 24px; padding: 30px 36px; box-sizing: border-box; position: relative; box-shadow: 0 4px 16px rgba(15,32,112,0.08); }
+  .panel-inline.open { display: block; }
+  .modal-close { position: absolute; top: 14px; right: 16px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #F1F5F9; border: none; border-radius: 50%; font-size: 1.4rem; color: #64748B; cursor: pointer; line-height: 1; transition: all 0.15s; }
+  .modal-close:hover { background: #E2E8F0; color: #1E293B; }
+  .modal-titulo { font-size: 1rem; font-weight: 800; color: #0F2070; font-family: 'Montserrat', sans-serif; margin-bottom: 14px; padding-right: 20px; }
+  .modal-cuerpo p { font-size: 0.95rem; line-height: 1.65; color: #374151; margin-bottom: 10px; font-family: 'Montserrat', sans-serif; }
+  .modal-cuerpo p.modal-tipificacion { font-size: 0.76rem; color: #94A3B8; font-family: 'Inter', sans-serif; }
+  .tipificacion-rama { font-size: 0.76rem; color: #94A3B8; margin-top: 16px; padding-top: 12px; border-top: 1px solid #F1F5F9; font-family: 'Inter', sans-serif; }
+  .tipificacion-rama strong { color: #64748B; font-weight: 600; }
+  .modal-cuerpo p.tipificacion-rama, .tarjeta-script-cuerpo p.tipificacion-rama { font-size: 0.76rem; color: #94A3B8; font-family: 'Inter', sans-serif; }
+  .tarjeta-script-cuerpo p.tipificacion-rama strong { color: #64748B; }
+  .modal-cuerpo p:last-child { margin-bottom: 0; }
+  .modal-cuerpo ol { margin: 0 0 10px 20px; }
+  .modal-cuerpo li { font-size: 0.95rem; line-height: 1.65; color: #374151; margin-bottom: 6px; font-family: 'Montserrat', sans-serif; }
+  .modal-cuerpo li:last-child { margin-bottom: 0; }
+  .modal-subtitulo { font-size: 0.88rem; font-weight: 700; color: #0F2070; font-family: 'Montserrat', sans-serif; margin: 18px 0 8px; }
+  .modal-subtitulo:first-child { margin-top: 0; }
+  .modal-tipificacion { font-size: 0.76rem; color: #94A3B8; margin-top: 16px; padding-top: 12px; border-top: 1px solid #F1F5F9; font-family: 'Inter', sans-serif; }
+  .modal-tipificacion strong { color: #64748B; font-weight: 600; }
+  .modal-footer { display: flex; justify-content: flex-end; margin-top: 18px; }
+  .categoria-opciones { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .categoria-opciones .bib-btn { width: 380px; }
+  .categoria-opciones.dos-columnas { display: grid; grid-template-columns: 1fr 1fr; }
+  .categoria-opciones.dos-columnas .bib-btn { width: 100%; min-width: 0; text-align: left; }
+
+  #tarjetasScripts.vista-tarjetas { display: flex; flex-direction: column; align-items: stretch; gap: 18px; width: 100%; max-width: 1040px; margin: 6px auto 0; }
+  .tarjeta-script { background: white; border: 1px solid #E2E8F0; border-radius: 10px; padding: 22px 40px; width: 100%; box-sizing: border-box; }
+  .tarjeta-script h4 { font-family: 'Montserrat', sans-serif; color: #0F2070; font-size: 1.05rem; margin: 0 0 12px; }
+  .tarjeta-script-cuerpo p { font-size: 0.95rem; line-height: 1.6; color: #374151; margin-bottom: 10px; }
+  .tarjeta-script-cuerpo p:last-child { margin-bottom: 0; }
+  .tarjeta-script-cuerpo strong { color: #0F2070; }
+  .tarjeta-script-cuerpo .modal-tipificacion strong { color: #64748B; }
+  .tarjeta-script-cuerpo ol { padding-left: 20px; font-size: 0.95rem; line-height: 1.6; color: #374151; }
+  .tarjeta-script-cuerpo li { margin-bottom: 8px; }
+  .tarjeta-script-imagen, .modal-cuerpo img { max-width: 100%; border-radius: 8px; border: 1px solid #E2E8F0; margin-top: 6px; display: block; }
+  .tarjeta-script .modal-tipificacion { margin-top: 14px; padding-top: 12px; border-top: 1px solid #F1F5F9; font-size: 0.78rem; }
+
+  .cintillo-lateral { position: fixed; top: 50%; right: 0; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; background: white; padding: 10px 8px; border-radius: 14px 0 0 14px; box-shadow: -3px 0 16px rgba(15,32,112,0.14); border: 1px solid #E2E8F0; border-right: none; z-index: 50; }
+  .cintillo-btn { width: 42px; height: 42px; border-radius: 50%; background: #0F2070; color: white; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
+  .cintillo-btn:hover { background: #1A3DAA; transform: scale(1.07); }
+  .cintillo-btn svg { width: 20px; height: 20px; }
+  .cintillo-btn.cintillo-ayuda { background: #0F2070; }
+  .cintillo-btn.cintillo-ayuda:hover { background: #1A3DAA; }
+  .cintillo-btn.cintillo-gem { background: linear-gradient(135deg, #4285F4, #9B72CB, #D96570); }
+  .cintillo-btn.cintillo-seguridad { background: #EA580C; }
+  .cintillo-btn.cintillo-seguridad:hover { background: #C2410C; }
+  .pregunta-seguridad-caja { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px 18px; margin-bottom: 12px; }
+  .pregunta-seguridad-caja p { font-size: 0.88rem; color: #1E293B; margin-bottom: 10px; }
+  .pregunta-seguridad-caja .triage-acciones { margin-bottom: 0; }
+  .pregunta-seguridad-btn { min-width: 100px; }
+  .pregunta-seguridad-btn.correcta { background: #16A34A; }
+  .pregunta-seguridad-btn.correcta:hover { background: #15803D; }
+  .pregunta-seguridad-btn.incorrecta { background: #DC2626; }
+  .pregunta-seguridad-btn.incorrecta:hover { background: #B91C1C; }
+  .pregunta-seguridad-btn.active { box-shadow: 0 0 0 3px rgba(15,32,112,0.3); }
+  .resultado-seguridad { border-radius: 8px; padding: 14px 18px; font-weight: 700; text-align: center; margin-top: 4px; }
+  .resultado-seguridad.pasa { background: #DCFCE7; color: #166534; border: 1px solid #86EFAC; }
+  .resultado-seguridad.no-pasa { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
+  .cintillo-btn.cintillo-gem:hover { filter: brightness(1.08); }
+  .cintillo-btn.cintillo-busqueda { background: #0F2070; }
+  .cintillo-btn.cintillo-busqueda:hover { background: #1A3DAA; }
+  .btn-scroll-top { position: fixed; right: 100px; bottom: 26px; width: 42px; height: 42px; border-radius: 50%; background: #0F2070; color: white; border: none; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 14px rgba(15,32,112,0.3); z-index: 55; opacity: 0; transform: translateY(8px); transition: opacity 0.2s, transform 0.2s; }
+  .btn-scroll-top.visible { display: flex; opacity: 1; transform: translateY(0); }
+  .btn-scroll-top:hover { background: #1A3DAA; }
+  .btn-scroll-top svg { width: 20px; height: 20px; }
+  .cintillo-separador { width: 26px; height: 1px; background: #E2E8F0; margin: 2px auto; }
+  .cintillo-btn.cintillo-cat { background: #0F2070; }
+  .cintillo-btn.cintillo-cat:hover { background: #1A3DAA; }
+  .cintillo-btn.cintillo-despedida { background: #0F2070; }
+  .cintillo-btn.cintillo-despedida:hover { background: #1A3DAA; }
+  .cintillo-btn.cintillo-matriz { background: #0F2070; }
+  .cintillo-btn.cintillo-matriz:hover { background: #1A3DAA; }
+  .cintillo-btn.cintillo-temporizador { background: #0F2070; }
+  .cintillo-btn.cintillo-temporizador:hover { background: #1A3DAA; }
+  .matriz-calidad-grid { display: flex; flex-direction: column; gap: 3px; margin-top: 16px; }
+  .matriz-calidad-fila { display: grid; grid-template-columns: 1fr 110px; align-items: stretch; border-radius: 6px; overflow: hidden; min-height: 72px; }
+  .matriz-calidad-label { padding: 16px 18px; color: white; font-weight: 700; font-family: 'Montserrat', sans-serif; font-size: 0.92rem; display: flex; align-items: center; border-right: 1px solid rgba(255,255,255,0.25); }
+  .matriz-calidad-valor { padding: 16px 18px; color: white; font-weight: 700; font-family: 'Montserrat', sans-serif; font-size: 0.92rem; display: flex; align-items: center; justify-content: center; }
+  .matriz-detalle-layout { display: flex; align-items: stretch; gap: 18px; }
+  .matriz-detalle-resumen { flex-shrink: 0; width: 170px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .matriz-detalle-resumen .matriz-calidad-fila { grid-template-columns: 1fr; width: 100%; }
+  .matriz-detalle-resumen .matriz-calidad-label { border-right: none; text-align: center; justify-content: center; }
+  .matriz-detalle-resumen .matriz-calidad-valor { border-top: 1px solid rgba(255,255,255,0.25); }
+  .matriz-detalle-trofeo { font-size: 2.4rem; margin-top: auto; }
+  .matriz-detalle-items { flex: 1; display: flex; flex-direction: column; gap: 8px; border-left: 3px solid #1E293B; padding-left: 18px; }
+  .matriz-detalle-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #0A3D62; border-radius: 8px; padding: 10px 16px; color: white; font-weight: 700; font-family: 'Montserrat', sans-serif; font-size: 0.86rem; }
+  .matriz-detalle-item.rojo { background: #E53935; }
+  .matriz-detalle-item span:last-child { flex-shrink: 0; }
+
+  .modal-despedida-cuerpo .despedida-etiqueta { font-family: 'Montserrat', sans-serif; font-size: 0.78rem; font-weight: 600; font-style: italic; color: #64748B; margin: 0 0 8px; }
+  .modal-despedida-cuerpo .despedida-caja { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 18px 22px; margin-bottom: 20px; }
+  .modal-despedida-cuerpo .despedida-caja:last-child { margin-bottom: 0; }
+  .modal-despedida-cuerpo .despedida-caja p { font-size: 0.86rem; line-height: 1.65; color: #374151; margin-bottom: 10px; }
+  .modal-despedida-cuerpo .despedida-caja p:last-child { margin-bottom: 0; }
+  .modal-despedida-cuerpo .despedida-caja strong { color: #0F2070; }
+
+  .triage-alerta { background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px; }
+  .triage-alerta-amarilla { background: #FEFCE8; border-color: #FDE047; }
+  .triage-video-caja { background: #F0FDF4; border: 1px solid #86EFAC; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px; }
+  .triage-video-fila { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+  .triage-video-fila p { margin: 0; flex: 1; }
+  .triage-video-caja em { display: block; margin-top: 10px; color: #64748B; font-size: 0.8rem; }
+  .triage-btn-no-puede { background: #F87171; flex-shrink: 0; }
+  .triage-btn-no-puede:hover { background: #EF4444; }
+
+  .tiene-tooltip { position: relative; }
+  .tiene-tooltip::after { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: white; color: #1E293B; padding: 10px 14px; border-radius: 8px; box-shadow: 0 6px 20px rgba(15,32,112,0.18); font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 500; line-height: 1.4; white-space: normal; width: 220px; text-align: left; opacity: 0; visibility: hidden; transition: opacity 0.15s, visibility 0.15s; z-index: 30; pointer-events: none; }
+  .tiene-tooltip::before { content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); border: 7px solid transparent; border-top-color: white; opacity: 0; visibility: hidden; transition: opacity 0.15s, visibility 0.15s; z-index: 30; pointer-events: none; }
+  .tiene-tooltip:hover::after, .tiene-tooltip:hover::before { opacity: 1; visibility: visible; }
+  .cintillo-btn.tiene-tooltip::after { left: auto; right: calc(100% + 12px); bottom: auto; top: 50%; transform: translateY(-50%); font-size: 0.86rem; padding: 9px 14px; width: max-content; max-width: 230px; transition: opacity 0.05s, visibility 0.05s; }
+  .cintillo-btn.tiene-tooltip::before { left: auto; right: 100%; bottom: auto; top: 50%; transform: translateY(-50%); border-top-color: transparent; border-left-color: white; transition: opacity 0.05s, visibility 0.05s; }
+  .triage-alerta p { font-size: 0.85rem; line-height: 1.6; color: #374151; margin-bottom: 8px; }
+  .triage-alerta p:last-child { margin-bottom: 0; }
+  .triage-criterios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .triage-criterio-caja { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .triage-criterio-titulo { font-size: 0.78rem; color: #64748B; margin: 0; }
+  .triage-criterio-caja .bib-btn { align-self: center; margin-top: auto; }
+  .triage-criterio-texto p { font-size: 0.82rem; line-height: 1.55; color: #374151; margin: 0; }
+  .triage-acciones { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 16px; margin-bottom: 18px; }
+  .instruccion-interna { font-family: ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', monospace !important; font-style: normal; font-size: 0.68rem !important; line-height: 1.55; color: #334155; background: rgba(15,32,112,0.06); border-left: 3px solid #0F2070; border-radius: 0 6px 6px 0; padding: 8px 10px 8px 14px; margin: 10px 0; }
+  .instruccion-interna:last-child { margin-bottom: 0; }
+  .instruccion-interna + .instruccion-interna { margin-top: 0; border-top-left-radius: 0; }
+  .instruccion-interna.instruccion-alerta { background: rgba(220,38,38,0.08); border-left-color: #DC2626; color: #7F1D1D; }
+  .triage-btn-si { background: #C2410C; }
+  .btn-si-verde { background: #16A34A; }
+  .btn-si-verde:hover { background: #15803D; }
+  .btn-no-rojo { background: #DC2626; }
+  .btn-no-rojo:hover { background: #B91C1C; }
+  .btn-amarillo-cupo { background: #D97706; }
+  .btn-amarillo-cupo:hover { background: #B45309; }
+  .btn-naranja { background: #EA580C; }
+  .btn-naranja:hover { background: #C2410C; }
+  .triage-btn-si:hover { background: #9A3412; }
+  .triage-resultado { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 14px 18px; margin-bottom: 14px; }
+  .triage-resultado:empty { display: none !important; padding: 0; border: none; margin-bottom: 0; }
+  .triage-resultado:last-child { margin-bottom: 0; }
+  .triage-resultado p { font-size: 0.95rem; line-height: 1.6; color: #374151; margin-bottom: 8px; font-family: 'Montserrat', sans-serif; }
+  .triage-resultado ul, .triage-resultado ol { padding-left: 20px; font-size: 0.95rem; line-height: 1.6; color: #374151; margin-bottom: 8px; font-family: 'Montserrat', sans-serif; }
+  .triage-resultado p:last-child, .triage-resultado ul:last-child { margin-bottom: 0; }
+  .triage-resultado-rojo { background: #FEF2F2; border-color: #FCA5A5; }
+  .triage-resultado-rojo p, .triage-resultado-rojo ul, .triage-resultado-rojo li { color: #B91C1C; }
+  .triage-resultado-rojo strong { color: #991B1B; }
+
+  .busqueda-global-input-wrap { display: flex; align-items: center; gap: 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; }
+  .busqueda-global-input-wrap svg { width: 18px; height: 18px; color: #94A3B8; flex-shrink: 0; }
+  .busqueda-global-input-wrap input { border: none; background: none; outline: none; width: 100%; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: #374151; }
+  .busqueda-global-resultados { display: flex; flex-direction: column; gap: 8px; max-height: 50vh; overflow-y: auto; }
+  .busqueda-global-resultados .bib-btn { width: 100%; text-align: left; }
+  .busqueda-global-resultados .bib-btn small { display: block; font-weight: 400; opacity: 0.75; font-size: 0.7rem; margin-top: 2px; }
+
+  .modal-ayuda-cuerpo p { font-size: 0.85rem; line-height: 1.65; color: #374151; margin-bottom: 10px; font-family: 'Montserrat', sans-serif; }
+  .modal-ayuda-cuerpo p:last-child { margin-bottom: 0; }
+  .modal-ayuda-cuerpo strong { color: #0F2070; }
+  .modal-ayuda-ejemplo { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px 14px; font-size: 0.8rem; color: #0F2070; font-weight: 600; margin: 6px 0 14px; }
+  .tip-paso { margin-bottom: 22px; }
+  .tip-paso:last-child { margin-bottom: 0; }
+  .tip-paso-numero { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: #0F2070; color: #fff; font-size: 0.72rem; font-weight: 700; font-family: 'Montserrat', sans-serif; margin-right: 8px; flex-shrink: 0; }
+  .tip-paso-titulo { display: flex; align-items: center; font-family: 'Montserrat', sans-serif; font-weight: 700; color: #0F2070; font-size: 0.92rem; margin-bottom: 4px; }
+  .tip-paso-pregunta { font-size: 0.82rem; color: #64748B; font-style: italic; margin: 0 0 12px 30px; font-family: 'Montserrat', sans-serif; }
+  .tip-flujo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-left: 30px; }
+  @media (max-width: 560px) { .tip-flujo { grid-template-columns: 1fr; } }
+  .tip-flujo-col { background: #F1F5F9; border-radius: 10px; padding: 12px; }
+  .tip-flujo-col-titulo { font-family: 'Montserrat', sans-serif; font-weight: 700; color: #1E293B; font-size: 0.78rem; margin-bottom: 8px; line-height: 1.3; }
+  .tip-flujo-col-desc { font-size: 0.76rem; color: #475569; margin-bottom: 10px; line-height: 1.4; }
+  .tip-flujo-fila { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .tip-flujo-fila:last-child { margin-bottom: 0; }
+  .tip-flujo-caja { flex: 1; border-radius: 6px; padding: 8px 10px; font-size: 0.72rem; font-weight: 700; color: #fff; text-align: center; line-height: 1.25; }
+  .tip-flujo-caja.tip-c-claro { background: #38BDF8; }
+  .tip-flujo-caja.tip-c-oscuro { background: #0F2070; }
+  .tip-flujo-flecha { flex-shrink: 0; color: #334155; font-size: 1rem; }
+  .tip-arbol { margin-left: 30px; }
+  .tip-arbol-titulo { font-family: 'Montserrat', sans-serif; font-weight: 700; color: #1E293B; font-size: 0.92rem; text-align: center; }
+  .tip-arbol-svg { display: block; width: 100%; height: 30px; }
+  .tip-arbol-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  @media (max-width: 560px) { .tip-arbol-cols { grid-template-columns: 1fr 1fr; } }
+  .tip-arbol-col { border-radius: 8px; padding: 12px 8px; color: #fff; text-align: center; }
+  .tip-arbol-col.tip-navy { background: #0F2070; }
+  .tip-arbol-col.tip-blue { background: #2A7DB8; }
+  .tip-arbol-col-h { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.78rem; margin-bottom: 12px; line-height: 1.25; }
+  .tip-arbol-item { font-size: 0.7rem; margin-bottom: 8px; line-height: 1.3; }
+  .tip-arbol-item:last-child { margin-bottom: 0; }
+  .tip-relevancia-wrap { display: flex; gap: 12px; margin-left: 30px; }
+  .tip-relevancia-label { display: flex; flex-direction: column; justify-content: space-between; width: 62px; flex-shrink: 0; }
+  .tip-relevancia-label div { font-family: 'Montserrat', sans-serif; font-weight: 700; color: #1E293B; font-size: 0.76rem; text-align: center; line-height: 1.2; }
+  .tip-relevancia-bars { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+  .tip-relevancia-bar { padding: 7px 10px; border-radius: 16px; font-size: 0.68rem; font-weight: 700; text-align: center; font-family: 'Montserrat', sans-serif; line-height: 1.3; }
+
+
+  /* ── Extras de la biblioteca de Tercerías ── */
+  .bib-saludo ul { padding-left: 20px; font-size: 0.84rem; line-height: 1.6; color: #374151; margin-bottom: 6px; }
+  .bib-saludo ul li { margin-bottom: 2px; }
+  #bloqueNoRegistrado, #bloqueTicket, #bloqueMenu { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  #bloqueNoRegistrado > .instruccion-interna, #bloqueTicket > .instruccion-interna, #bloqueMenu > .instruccion-interna { width: 100%; max-width: 640px; margin: 0; }
+  .guia-menu { width: 100%; max-width: 640px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 700px) { .guia-menu { grid-template-columns: 1fr; } }
+  .guia-menu-caja { background: white; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px 14px; }
+  .guia-menu-titulo { font-family: 'Montserrat', sans-serif; font-weight: 700; color: #0F2070; font-size: 0.8rem; margin-bottom: 6px; }
+  .guia-menu-caja ul { padding-left: 18px; font-size: 0.78rem; line-height: 1.55; color: #374151; }
+  .guia-menu-caja p { font-size: 0.78rem; line-height: 1.5; color: #374151; margin-bottom: 6px; }
+  .guia-menu-caja p:last-child { margin-bottom: 0; }
+  .guia-estado { display: inline-block; font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem; font-weight: 700; padding: 1px 7px; border-radius: 4px; background: #EEF2FF; color: #1A3DAA; }
+  .guia-estado.critico { background: #FEE2E2; color: #991B1B; }
+  .tabla-guia { width: 100%; border-collapse: collapse; margin: 6px 0 14px; font-size: 0.8rem; font-family: 'Inter', sans-serif; }
+  .tabla-guia th, .tabla-guia td { border: 1px solid #E2E8F0; padding: 8px 10px; text-align: left; vertical-align: top; color: #374151; line-height: 1.45; }
+  .tabla-guia th { background: #F1F5F9; color: #0F2070; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="sidebar"></div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h2>Biblioteca Tercerías</h2>
+      <span class="topbar-sep">/</span>
+      <p>Farmacias, laboratorios y centros de imágenes</p>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-clock" id="clock">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="ruta-bar" id="rutaBar">
+    <span class="ruta-item ruta-actual">Inicio</span>
+  </div>
+
+  <div class="bib-wrap">
+  <div id="flujoSDP">
+    <div class="bib-saludo">
+      <p>Gracias por comunicarse con el <strong>Centro de Soporte de DoctorSV</strong>, le saluda el/la agente <strong id="nombreAgente">…</strong>, ¿con quién tengo el gusto?</p>
+      <p>Un placer, Sr. / Sra. XXXXXXX. ¿Me podría indicar desde qué <strong>farmacia, laboratorio o centro de imágenes</strong> se comunica?</p>
+    </div>
+
+    <p class="instruccion-interna">A la persona que se comunica desde la farmacia, laboratorio o centro de imágenes se le conoce como <strong>dependiente</strong>.</p>
+
+    <div class="bib-saludo">
+      <p>Muchas gracias. Para validar el registro del establecimiento, ¿me podría brindar, por favor, los siguientes datos?</p>
+      <ul>
+        <li>Nombre de la <strong>cadena</strong> o <strong>código de establecimiento</strong></li>
+        <li><strong>Ubicación de la sucursal</strong> (departamento y municipio)</li>
+        <li><strong>Teléfono de contacto</strong> de la sucursal</li>
+      </ul>
+      <p>Le confirmo: cadena XXXX, sucursal XXXX ubicada en XXXX, XXXX, teléfono XXXX-XXXX.</p>
+    </div>
+
+    <p class="instruccion-interna">Buscar al prestador de servicio en la sección Solicitante del SDP. ¿Está registrado?</p>
+
+    <div class="sdp-botones">
+      <button class="bib-btn" id="btnPrestSi" onclick="mostrarPrestador('si')">Prestador registrado en SDP</button>
+      <button class="bib-btn" id="btnPrestNo" onclick="mostrarPrestador('no')">Prestador no registrado en SDP</button>
+    </div>
+
+    <div class="sdp-botones" style="margin-top:8px;">
+      <button class="bib-btn" id="btnCasosEspeciales" onclick="toggleCasosEspeciales()">Casos especiales</button>
+    </div>
+
+    <div id="casosEspeciales" class="triage-resultado" style="display:none; width:100%; max-width:640px;">
+      <div class="triage-acciones" style="flex-direction:column; align-items:center;">
+        <button class="bib-btn" onclick="mostrarUno('terCasoPaciente', ['terCasoDigital','terCasoAfiliacion','terCasoAgresion'])">Paciente llamando a la línea de tercería</button>
+        <button class="bib-btn" onclick="mostrarUno('terCasoDigital', ['terCasoPaciente','terCasoAfiliacion','terCasoAgresion'])">Prestador escribe por canal digital</button>
+        <button class="bib-btn" onclick="mostrarUno('terCasoAfiliacion', ['terCasoPaciente','terCasoDigital','terCasoAgresion'])">Establecimiento quiere afiliarse</button>
+        <button class="bib-btn" onclick="mostrarUno('terCasoAgresion', ['terCasoPaciente','terCasoDigital','terCasoAfiliacion'])">Script agresión a agente</button>
+      </div>
+      <div id="terCasoPaciente" class="triage-resultado" style="display:none;">
+        <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; text-align:center; margin-bottom:10px;">Paciente llamando a la línea de tercería</h4>
+        <p style="color:#64748B; font-style:italic;">Aplica cuando quien llama es un paciente o usuario de DoctorSV y no un dependiente de farmacia, laboratorio o centro de imágenes.</p>
+        <p>Comprendo, Sr. / Sra. XXXX. Le comento que esta línea está dedicada a la atención de <strong>farmacias, laboratorios y centros de imágenes</strong> afiliados a DoctorSV.</p>
+        <p>Para atender su consulta como paciente, puede comunicarse con nosotros al <strong>136</strong>, donde con gusto uno de nuestros agentes le brindará la asistencia que necesita.</p>
+        <p class="instruccion-interna">Instrucción: si el paciente está en el establecimiento junto al dependiente, continuar la atención con el dependiente. En el SDP, a los pacientes se les registra con el tipo de usuario "Usuario" y no "Tercería".</p>
+      </div>
+      <div id="terCasoDigital" class="triage-resultado" style="display:none;">
+        <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; text-align:center; margin-bottom:10px;">Prestador de servicio que escribe por canal digital</h4>
+        <p style="color:#64748B; font-style:italic;">Los prestadores de servicio se atienden únicamente por el canal telefónico. Si escriben por WhatsApp o correo, se les orienta a llamar.</p>
+        <p>¡Hola! Gracias por comunicarse con <strong>DoctorSV</strong>. Le informamos que la atención a farmacias, laboratorios y centros de imágenes se brinda por la <strong>línea telefónica del Centro de Soporte: 136, opción 9</strong>.</p>
+        <p>Por favor, comuníquese a ese número y con gusto le atenderemos.</p>
+      </div>
+      <div id="terCasoAfiliacion" class="triage-resultado" style="display:none;">
+        <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; text-align:center; margin-bottom:10px;">Establecimiento que quiere afiliarse a DoctorSV</h4>
+        <p>Muchas gracias por su interés en formar parte de la red de servicios de <strong>DoctorSV</strong>.</p>
+        <p>Puede enviar su solicitud y la información de participación de su farmacia, laboratorio o centro de imágenes al correo <strong>redservicios@doctorsv.gob.sv</strong>. El equipo correspondiente revisará su solicitud y se pondrá en contacto con usted.</p>
+      </div>
+      <div id="terCasoAgresion" class="triage-resultado" style="display:none;">
+        <h4 style="font-family:'Montserrat', sans-serif; color:#0F2070; text-align:center;">Agresión a agente</h4>
+        <p><strong>1° Aviso:</strong> Sr./Srta. XXXXXXX, le solicito amablemente que mantengamos el respeto para que continuemos con su gestión.</p>
+        <p><strong>2° Aviso:</strong> Sr./Srta. XXXXXXX, comprendo su molestia y nos disculpamos por los inconvenientes, le solicito por favor expresarse manteniendo siempre un vocabulario respetuoso para que continuemos con su gestión, ya que de lo contrario tendré que finalizar la llamada.</p>
+        <p><strong>3° Aviso:</strong> Sr./Srta. XXXXXXX, debido a que le he solicitado mantener una actitud respetuosa en varias ocasiones sin obtener su colaboración, se procederá a finalizar la llamada. Le invitamos a contactarnos nuevamente cuando podamos comunicarnos de forma adecuada.</p>
+      </div>
+    </div>
+
+    <div id="bloqueNoRegistrado" style="display:none;">
+      <div class="bib-saludo">
+        <p>Muchas gracias, por favor permítame un momento en línea mientras registro la información del establecimiento en nuestro sistema.</p>
+      </div>
+      <p class="instruccion-interna">Poner el hold al dependiente.</p>
+      <p class="instruccion-interna">Agregar al prestador de servicio a la base de solicitantes del SDP completando los campos:<br>* Nombre y apellidos del usuario: <strong>nombre de la sucursal</strong><br>* Teléfono de contacto 1<br>* Tipo de usuario: <strong>Tercería</strong></p>
+      <p class="instruccion-interna">Retomar la llamada:</p>
+      <div class="bib-saludo">
+        <p>Muchas gracias por su espera en línea, Sr. / Sra. XXXX.</p>
+      </div>
+    </div>
+
+    <div id="bloqueTicket" style="display:none;">
+      <p class="instruccion-interna">Crear el ticket en el SDP. Al tener registrado al prestador, la sección "Información del solicitante" se completa automáticamente. Iniciar la descripción del ticket.</p>
+      <div class="bib-saludo">
+        <p>Para registrar su atención, ¿me podría indicar su <strong>nombre y apellido</strong>, y un <strong>número de teléfono</strong> donde podamos contactarle?</p>
+        <p>Le confirmo: XXXX XXXX, teléfono XXXX-XXXX.</p>
+        <p>Muchas gracias, Sr. / Sra. XXXX, dígame, <strong>¿cómo puedo ayudarle?</strong></p>
+      </div>
+      <p class="instruccion-interna">Ingresar el nombre y el teléfono del dependiente en la sección "Datos de la tercería" del ticket.</p>
+    </div>
+
+    <div id="bloqueMenu" style="display:none;">
+      <p class="instruccion-interna">¿Qué necesita el dependiente? Escucha atentamente e identifica el problema o solicitud y a qué se relaciona.</p>
+
+      <div class="guia-menu">
+        <div class="guia-menu-caja">
+          <div class="guia-menu-titulo">¿Te falta información? Pregunta:</div>
+          <ul>
+            <li>¿Cuál es el problema?</li>
+            <li>¿Qué pasó?</li>
+            <li>¿Cuándo pasó?</li>
+            <li>¿Dónde pasó?</li>
+            <li>Si es un problema técnico: ¿qué mensaje o error le aparece?</li>
+          </ul>
+        </div>
+        <div class="guia-menu-caja">
+          <div class="guia-menu-titulo">¿Dónde validar?</div>
+          <p><strong>Práctica Médica (TCA):</strong> citas médicas, especialidad y médico que atendió, productos de la consulta y su estado, citas de seguimiento.</p>
+          <p><strong>P2H:</strong> estado de recetas, exámenes clínicos y estudios de imágenes, y si los resultados ya fueron cargados.</p>
+        </div>
+      </div>
+
+      <div class="busqueda-input-wrap" id="accesoBusquedaMenu" style="width:100%; max-width:640px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" placeholder="Buscar en toda la biblioteca de Tercerías..." readonly onclick="abrirModalBusquedaGlobal()">
+      </div>
+
+      <div class="sdp-botones">
+        <div class="btn-col">
+          <p class="instruccion instruccion-btn">¿Me pide que le explique algo?</p>
+          <button class="bib-btn" onclick="mostrarCategoria('consulta')">Consultas</button>
+        </div>
+        <div class="btn-col">
+          <p class="instruccion instruccion-btn">¿Me pide hacer o cambiar algo?</p>
+          <button class="bib-btn" onclick="mostrarCategoria('gestion')">Gestiones</button>
+        </div>
+        <div class="btn-col">
+          <p class="instruccion instruccion-btn">¿Me reporta que algo falla?</p>
+          <button class="bib-btn" onclick="mostrarCategoria('incidencia'); abrirModalTip('<p>Busca al prestador en el SDP y revisa su historial de tickets. ¿Ya tiene un ticket creado por el mismo motivo?</p>')">Incidencias</button>
+        </div>
+      </div>
+
+      <div class="sdp-botones" style="margin-top:8px;">
+        <div class="btn-col">
+          <p class="instruccion instruccion-btn">¿Quiere sugerir o denunciar algo?</p>
+          <button class="bib-btn" onclick="mostrarCategoria('sugerencias')">Sugerencias y denuncias</button>
+        </div>
+        <div class="btn-col">
+          <p class="instruccion instruccion-btn">¿No relacionado al servicio?</p>
+          <button class="bib-btn" onclick="mostrarCategoria('norelacionado')">No relacionado</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="vistaCategoria" style="display:none;">
+    <button class="cintillo-btn" style="align-self:flex-start;" title="Volver a atrás" onclick="volverAtras()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+    </button>
+
+    <div class="caja-busqueda-cat" id="cajaBusquedaCategoria" style="display:none;">
+      <h2 class="pregunta-categoria" id="preguntaCategoria">¿Qué tipo de información necesita el dependiente?</h2>
+      <p class="instruccion">Puedes buscar por palabra clave o hacer clic en los botones.</p>
+      <div class="busqueda-input-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="buscadorCategoria" placeholder="Buscar..." oninput="buscarEnCategoria(this.value)">
+      </div>
+    </div>
+
+    <img id="imgReferenciaCategoria" src="" alt="" style="display:none; max-width:960px; width:100%; margin:4px auto 0; border-radius:8px; border:1px solid #E2E8F0;">
+
+    <div class="bib-saludo" id="cajaOpcionesCategoria">
+      <h3 id="tituloCategoria" class="titulo-categoria"></h3>
+      <div class="categoria-opciones" id="opcionesCategoria"></div>
+    </div>
+
+    <div id="tarjetasScripts"></div>
+
+    <div class="panel-inline" id="modalTexto">
+      <button class="modal-close" onclick="cerrarModalTexto()">&times;</button>
+      <h3 id="modalTituloTexto" class="modal-titulo"></h3>
+      <div id="modalCuerpoTexto" class="modal-cuerpo"></div>
+      <div class="sdp-botones" id="modalSubBotones" style="display:none;"></div>
+      <div id="modalSubTexto" class="modal-cuerpo" style="display:none;"></div>
+      <p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> <span id="modalTipificacion"></span></p>
+      <div class="modal-footer">
+        <button class="bib-btn" onclick="abrirModalDespedida()">Despedida</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cintillo-lateral">
+  <button class="cintillo-btn tiene-tooltip" data-tooltip="Ir a Inicio" aria-label="Ir a Inicio" onclick="irACrumb(0)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg>
+  </button>
+  <button class="cintillo-btn cintillo-busqueda tiene-tooltip" data-tooltip="Buscar en toda la biblioteca" aria-label="Buscar en toda la biblioteca" onclick="abrirModalBusquedaGlobal()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+  </button>
+
+  <div class="cintillo-separador"></div>
+
+  <button class="cintillo-btn cintillo-cat tiene-tooltip" data-tooltip="Ir a Consulta" aria-label="Ir a Consulta" onclick="mostrarCategoria('consulta')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+  </button>
+  <button class="cintillo-btn cintillo-cat tiene-tooltip" data-tooltip="Ir a Gestión" aria-label="Ir a Gestión" onclick="mostrarCategoria('gestion')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+  </button>
+  <button class="cintillo-btn cintillo-cat tiene-tooltip" data-tooltip="Ir a Incidencia" aria-label="Ir a Incidencia" onclick="mostrarCategoria('incidencia')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+  </button>
+
+  <div class="cintillo-separador"></div>
+
+  <button class="cintillo-btn cintillo-ayuda tiene-tooltip" data-tooltip="Estados y escalamiento" aria-label="Estados y escalamiento" onclick="abrirModalAyuda()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 17v-5"/><circle cx="12" cy="8.2" r="0.1" fill="currentColor" stroke-width="1.5"/></svg>
+  </button>
+  <button class="cintillo-btn cintillo-matriz tiene-tooltip" data-tooltip="Recursos" aria-label="Recursos" onclick="abrirModalRecursos()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+  </button>
+  <button class="cintillo-btn cintillo-temporizador tiene-tooltip" data-tooltip="Temporizador" aria-label="Temporizador" onclick="toggleTemporizador()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2"/><path d="M9 2h6"/></svg>
+  </button>
+  <button class="cintillo-btn cintillo-despedida tiene-tooltip" data-tooltip="Script de despedida" aria-label="Script de despedida" onclick="abrirModalDespedida()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12"/>
+      <path d="M11 11.5V4.5a1.5 1.5 0 0 1 3 0V12"/>
+      <path d="M14 12V6.5a1.5 1.5 0 0 1 3 0V13"/>
+      <path d="M17 13.5V9a1.5 1.5 0 0 1 3 0v5.5a6.5 6.5 0 0 1-6.5 6.5h-1a7 7 0 0 1-5.6-2.8L4 18.5c-.7-.9-.5-1.9.3-2.5.7-.5 1.7-.4 2.3.3L8 18"/>
+      <path d="M3 4.5c1.2-1 2.6-1.3 4-1" opacity="0.6"/>
+      <path d="M2.5 8c1.3-.4 2.7-.4 4 .2" opacity="0.6"/>
+    </svg>
+  </button>
+</div>
+
+<button class="btn-scroll-top" id="btnScrollTop" title="Ir arriba" onclick="irArriba()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>
+</button>
+
+<div class="modal-overlay" id="modalAyudaTipificacion" onclick="if(event.target===this) cerrarModalAyuda()">
+  <div class="modal-box" style="max-width:820px;">
+    <button class="modal-close" onclick="cerrarModalAyuda()">&times;</button>
+    <h3 class="modal-titulo">Estados y escalamiento de tickets de Tercería</h3>
+    <div class="modal-ayuda-cuerpo">
+      <p>Todo ticket del canal de tercería debe llevar los datos del prestador y del dependiente. Antes de enviarlo, revisa:</p>
+      <table class="tabla-guia">
+        <tr><th style="width:34%;">Sección del ticket</th><th>Qué completar</th></tr>
+        <tr><td>Información del solicitante</td><td>Se completa sola al seleccionar al prestador registrado en SDP (tipo de usuario: Tercería).</td></tr>
+        <tr><td>Datos de la tercería</td><td>Nombre y apellido del dependiente y su teléfono.</td></tr>
+        <tr><td>Datos relacionados al servicio</td><td>Cadena, sucursal, orden de estudio o ID de receta, y Agente ATU (nombre del agente que atendió).</td></tr>
+        <tr><td>Información general</td><td>ID de la interacción, canal de origen (Llamada entrante), tipificación 1, 2 y 3, y resumen del caso.</td></tr>
+      </table>
+      <p>Elige el estado inicial según la línea de escalamiento:</p>
+      <table class="tabla-guia">
+        <tr><th style="width:34%;">Estado inicial</th><th>Cuándo usarlo</th></tr>
+        <tr><td><span class="guia-estado critico">TER Crítico</span></td><td>Línea crítica: la incidencia <strong>afecta directamente la salud del paciente</strong>. También se usa para las gestiones de perfil que debe resolver otra área (cambio de perfil y registro de usuario).</td></tr>
+        <tr><td><span class="guia-estado">TER Análisis</span></td><td>Línea analítica: la incidencia no afecta directamente la salud del paciente y requiere revisión del área.</td></tr>
+        <tr><td><span class="guia-estado critico">IT CRITICO N1</span></td><td>Incidencia técnica crítica que persiste después del troubleshooting. Se escala con SP1.</td></tr>
+        <tr><td><span class="guia-estado">IT ANÁLISIS N1</span></td><td>Incidencia técnica no crítica que persiste después del troubleshooting. Se escala con SP1.</td></tr>
+      </table>
+      <p>Al terminar, <strong>brinda el número de ticket</strong> al dependiente, indícale que será contactado si el caso se escaló, y da la despedida con derivación a la encuesta de satisfacción.</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalRecursos" onclick="if(event.target===this) cerrarModalRecursos()">
+  <div class="modal-box" style="max-width:420px;">
+    <button class="modal-close" onclick="cerrarModalRecursos()">&times;</button>
+    <h3 class="modal-titulo">Recursos</h3>
+    <div class="sdp-botones" style="margin-top:16px;">
+      <button class="bib-btn" onclick="window.open('https://tercemed.com/#/login', '_blank')">P2H</button>
+      <button class="bib-btn" onclick="window.open('https://telemed.telesalud.gob.sv/', '_blank')">TCA</button>
+      <button class="bib-btn" onclick="window.open('https://atencion.telesalud.gob.sv/HomePage.do', '_blank')">SDP</button>
+      <button class="bib-btn" onclick="cerrarModalRecursos(); abrirModalMatrizCalidad();">Matriz de calidad</button>
+      <button class="bib-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/1xm8aO7uZ5cGHl8nhKJdSCr235spSumnleJhByHvrzvc/edit?gid=0#gid=0', '_blank')">Matriz de tipificaciones SDP</button>
+      <button class="bib-btn" onclick="window.open('https://drive.google.com/file/d/1pzqYm-wYs0FjeOpVNfE9y-4aKxSyJys7/view', '_blank')">Plantilla de notas SDP</button>
+      <button class="bib-btn" onclick="window.open('https://docs.google.com/spreadsheets/d/1S4HQ0oKIieVa9jSYlukzCLJ3Z0UeYMt6/edit?gid=1995540795#gid=1995540795&fvid=939997235', '_blank')">Directorio de farmacias y laboratorios</button>
+      <button class="bib-btn" onclick="cerrarModalRecursos(); abrirNodoTer('consulta', ['Canales oficiales']);">Canales oficiales</button>
+      <button class="bib-btn" style="background:#EA580C" onclick="toggleBloque('scriptEvacuacion')">Script evacuación</button>
+    </div>
+    <div id="scriptEvacuacion" class="triage-resultado" style="display:none;">
+      <p>Por motivos de seguridad, debemos finalizar la llamada de manera inmediata. Lamentamos cualquier inconveniente que esto pueda causar. Quedamos a su disposición para cualquier consulta en otro momento.</p>
+      <p class="instruccion-interna">Instrucción: Luego de dar el script:</p>
+      <p style="color:#64748B; font-style:italic;">Cambiar de auxiliar a Pausa administrativa</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalMatrizCalidad" onclick="if(event.target===this) cerrarModalMatrizCalidad()">
+  <div class="modal-box" style="max-width:640px;">
+    <button class="modal-close" onclick="cerrarModalMatrizCalidad()">&times;</button>
+    <div id="matrizVistaPrincipal">
+      <h3 class="modal-titulo">Matriz de calidad</h3>
+      <div class="matriz-calidad-grid">
+        <div class="matriz-calidad-fila" style="background:#0A3D62; cursor:pointer;" onclick="mostrarDetalleMatriz('expresion')">
+          <div class="matriz-calidad-label">Expresión y personalización de la llamada</div>
+          <div class="matriz-calidad-valor" style="background:#0A3D62;">30%</div>
+        </div>
+        <div class="matriz-calidad-fila" style="background:#1976A6; cursor:pointer;" onclick="mostrarDetalleMatriz('registro')">
+          <div class="matriz-calidad-label">Registro y complementación</div>
+          <div class="matriz-calidad-valor" style="background:#1976A6;">30%</div>
+        </div>
+        <div class="matriz-calidad-fila" style="background:#2196F3; cursor:pointer;" onclick="mostrarDetalleMatriz('gestionLlamada')">
+          <div class="matriz-calidad-label">Gestión de la llamada</div>
+          <div class="matriz-calidad-valor" style="background:#2196F3;">30%</div>
+        </div>
+        <div class="matriz-calidad-fila" style="background:#7EC8F0; cursor:pointer;" onclick="mostrarDetalleMatriz('gestionTiempo')">
+          <div class="matriz-calidad-label">Gestión del tiempo</div>
+          <div class="matriz-calidad-valor" style="background:#7EC8F0;">10%</div>
+        </div>
+        <div class="matriz-calidad-fila" style="background:#E53935; cursor:pointer;" onclick="mostrarDetalleMatriz('autofails')">
+          <div class="matriz-calidad-label">Autofails totales</div>
+          <div class="matriz-calidad-valor" style="background:#E53935;">100%</div>
+        </div>
+      </div>
+    </div>
+    <div id="matrizVistaDetalle" style="display:none;">
+      <button class="cintillo-btn" style="margin-bottom:18px;" onclick="mostrarMatrizPrincipal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+      </button>
+      <div class="matriz-detalle-layout">
+        <div class="matriz-detalle-resumen">
+          <div class="matriz-calidad-fila" id="matrizDetalleResumen" style="background:#0A3D62;">
+            <div class="matriz-calidad-label"></div>
+            <div class="matriz-calidad-valor" style="background:#0A3D62;"></div>
+          </div>
+          <div class="matriz-detalle-trofeo">🏆</div>
+        </div>
+        <div class="matriz-detalle-items" id="matrizDetalleItems"></div>
+      </div>
+    </div>
+    <div id="matrizVistaExplicacion" style="display:none;">
+      <button class="cintillo-btn" style="margin-bottom:18px;" onclick="mostrarDetalleMatriz(matrizKeyActual)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+      </button>
+      <h3 class="modal-titulo" id="matrizExplicacionTitulo"></h3>
+      <div class="modal-ayuda-cuerpo" id="matrizExplicacionCuerpo"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalTip" onclick="if(event.target===this) cerrarModalTip()">
+  <div class="modal-box" style="max-width:480px; text-align:center;">
+    <button class="modal-close" onclick="cerrarModalTip()">&times;</button>
+    <div style="font-size:2.6rem; margin-bottom:8px;">💡</div>
+    <h3 class="modal-titulo" style="text-align:center;">¡Recuerda!</h3>
+    <div id="modalTipCuerpo" class="modal-ayuda-cuerpo" style="text-align:left;"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalBusquedaGlobal" onclick="if(event.target===this) cerrarModalBusquedaGlobal()">
+  <div class="modal-box" style="max-width:560px;">
+    <button class="modal-close" onclick="cerrarModalBusquedaGlobal()">&times;</button>
+    <h3 class="modal-titulo">Buscar en toda la biblioteca</h3>
+    <div class="busqueda-global-input-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="text" id="inputBusquedaGlobal" placeholder="Buscar en Consulta, Gestión e Incidencia..." oninput="buscarGlobal(this.value)">
+    </div>
+    <div class="busqueda-global-resultados" id="resultadosBusquedaGlobal"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalDespedida" onclick="if(event.target===this) cerrarModalDespedida()">
+  <div class="modal-box" style="max-width:640px;">
+    <button class="modal-close" onclick="cerrarModalDespedida()">&times;</button>
+    <h3 class="modal-titulo">Script de despedida</h3>
+    <div class="modal-despedida-cuerpo">
+      <p class="despedida-etiqueta">Casos relacionados a DoctorSV</p>
+      <div class="despedida-caja">
+        <p>¿Le podemos asistir con alguna otra gestión relacionada con DoctorSV?</p>
+        <p>De acuerdo Sr./Sra. XXX, <strong>ha sido un gusto atenderle bajo el número de gestión XXXXXXX</strong>.</p>
+        <p>En este momento lo transferiré a un breve sondeo que le permitirá evaluar el servicio recibido en esta llamada. Le agradecemos su tiempo, por favor no cuelgue la llamada.</p>
+      </div>
+
+      <p class="despedida-etiqueta">Casos no relacionados al servicio (sin encuesta)</p>
+      <div class="despedida-caja">
+        <p>¿Le podemos asistir con alguna otra gestión relacionada con DoctorSV?</p>
+        <p>De acuerdo Sr./Sra. XXX, un placer atenderle, estamos a la orden para apoyarle.</p>
+        <p>¡Feliz día! / ¡Feliz tarde! / ¡Feliz noche!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey:            "AIzaSyD7QOy_Iv9-AxWmReQOfNCwLaFkEyZakM8",
+    authDomain:        "atu-360.firebaseapp.com",
+    projectId:         "atu-360",
+    storageBucket:     "atu-360.firebasestorage.app",
+    messagingSenderId: "820106715923",
+    appId:             "1:820106715923:web:9c58af48af1dce06ac30e6"
+  });
+  var auth = firebase.auth();
+  var db   = firebase.firestore();
+
+  setInterval(function(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV'); }, 1000);
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('es-SV');
+
+  function acortarNombreAgente(nombreCompleto) {
+    var partes = nombreCompleto.trim().split(/\s+/);
+    if (partes.length <= 2) return nombreCompleto;
+    return partes[0] + ' ' + partes[partes.length - 2];
+  }
+
+  auth.onAuthStateChanged(function(user) {
+    if (!user) return;
+    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      var nombre = (doc.exists && doc.data().nombre) ? doc.data().nombre : user.email.split('@')[0];
+      document.getElementById('nombreAgente').textContent = acortarNombreAgente(nombre);
+    });
+  });
+
+  // ── Flujo de inicio de Tercería (MO.03.01B) ─────────────────────────────────
+  // Saludo → validar prestador en SDP → (registrar si no existe) → crear ticket
+  // → datos del dependiente → menú de categorías.
+  var IDS_FLUJO_INICIO = ['bloqueNoRegistrado', 'bloqueTicket', 'bloqueMenu'];
+  var casosEspecialesEstadoPrevio = null;
+
+  function irAInicio() {
+    pilaVistas = [];
+    document.getElementById('vistaCategoria').style.display = 'none';
+    document.getElementById('flujoSDP').style.display = 'flex';
+    IDS_FLUJO_INICIO.concat(['casosEspeciales']).forEach(function(id) {
+      document.getElementById(id).style.display = 'none';
+    });
+    ['btnPrestSi', 'btnPrestNo', 'btnCasosEspeciales'].forEach(function(id) {
+      document.getElementById(id).classList.remove('active');
+    });
+    casosEspecialesEstadoPrevio = null;
+  }
+
+  var historial = [{ label: 'Inicio', restaurar: irAInicio }];
+  var historialBaseMenu = 1;
+
+  function renderRuta() {
+    document.getElementById('rutaBar').innerHTML = historial.map(function(c, i) {
+      var esActual = i === historial.length - 1;
+      var span = '<span class="ruta-item' + (esActual ? ' ruta-actual' : ' ruta-link') +
+        '"' + (esActual ? '' : ' onclick="irACrumb(' + i + ')"') + '>' + c.label + '</span>';
+      return i === 0 ? span : '<span class="ruta-sep">&gt;</span>' + span;
+    }).join('');
+  }
+
+  function irACrumb(indice) {
+    historial[indice].restaurar();
+    historial = historial.slice(0, indice + 1);
+    renderRuta();
+  }
+
+  function mostrarPrestador(tipo) {
+    document.getElementById('btnPrestSi').classList.toggle('active', tipo === 'si');
+    document.getElementById('btnPrestNo').classList.toggle('active', tipo === 'no');
+
+    // Casos especiales es independiente del flujo, se cierra siempre al elegir una opción
+    document.getElementById('casosEspeciales').style.display = 'none';
+    document.getElementById('btnCasosEspeciales').classList.remove('active');
+    casosEspecialesEstadoPrevio = null;
+
+    document.getElementById('bloqueNoRegistrado').style.display = tipo === 'no' ? 'flex' : 'none';
+    document.getElementById('bloqueTicket').style.display = 'flex';
+    document.getElementById('bloqueMenu').style.display = 'flex';
+
+    pilaVistas = [];
+    document.getElementById('vistaCategoria').style.display = 'none';
+    document.getElementById('flujoSDP').style.display = 'flex';
+
+    historial = [historial[0], { label: tipo === 'si' ? 'Registrado en SDP' : 'No registrado en SDP', restaurar: function() { mostrarPrestador(tipo); } }];
+    historialBaseMenu = historial.length;
+    historialBasePanel = historial.length;
+    historialBasePanelEpoch = panelEpoch;
+    panelHistorialStack = [];
+    renderRuta();
+    scrollBloqueAVista(document.getElementById(tipo === 'no' ? 'bloqueNoRegistrado' : 'bloqueTicket'));
+  }
+
+  function toggleCasosEspeciales() {
+    var panel = document.getElementById('casosEspeciales');
+    var btn = document.getElementById('btnCasosEspeciales');
+    var abriendo = panel.style.display !== 'block';
+    if (abriendo) {
+      casosEspecialesEstadoPrevio = {
+        historial: historial.slice(),
+        btnPrestSiActivo: document.getElementById('btnPrestSi').classList.contains('active'),
+        btnPrestNoActivo: document.getElementById('btnPrestNo').classList.contains('active')
+      };
+      IDS_FLUJO_INICIO.forEach(function(id) {
+        var el = document.getElementById(id);
+        casosEspecialesEstadoPrevio[id] = el.style.display;
+        el.style.display = 'none';
+      });
+      document.getElementById('btnPrestSi').classList.remove('active');
+      document.getElementById('btnPrestNo').classList.remove('active');
+      panel.style.display = 'block';
+      btn.classList.add('active');
+      historial = historial.concat([{ label: 'Casos especiales', restaurar: function() { toggleCasosEspeciales(); } }]);
+      renderRuta();
+      scrollBloqueAVista(panel);
+    } else {
+      panel.style.display = 'none';
+      btn.classList.remove('active');
+      if (casosEspecialesEstadoPrevio) {
+        IDS_FLUJO_INICIO.forEach(function(id) {
+          document.getElementById(id).style.display = casosEspecialesEstadoPrevio[id];
+        });
+        document.getElementById('btnPrestSi').classList.toggle('active', casosEspecialesEstadoPrevio.btnPrestSiActivo);
+        document.getElementById('btnPrestNo').classList.toggle('active', casosEspecialesEstadoPrevio.btnPrestNoActivo);
+        historial = casosEspecialesEstadoPrevio.historial;
+        renderRuta();
+        casosEspecialesEstadoPrevio = null;
+      }
+    }
+  }
+
+  // Abre un nodo del árbol por su ruta de etiquetas, ej: abrirNodoTer('gestion', ['Gestión de recetas / órdenes', 'Receta vencida'])
+  function abrirNodoTer(cat, ruta) {
+    var etiqueta = ruta[ruta.length - 1];
+    var padres = ruta.slice(0, -1).join(' > ');
+    var nodo = aplanarArbol(OPCIONES_CATEGORIA[cat], []).find(function(n) {
+      return n.label === etiqueta && n.ancestros.map(function(a) { return a.label; }).join(' > ') === padres;
+    });
+    if (!nodo) return;
+    cerrarModalTip();
+    mostrarCategoria(cat);
+    irANodoBusqueda(nodo);
+  }
+
+  // ── Helpers para armar los guiones ──────────────────────────────────────────
+  function inst(texto, alerta) {
+    return '<p class="instruccion-interna' + (alerta ? ' instruccion-alerta' : '') + '">' + texto + '</p>';
+  }
+  function acciones(html) {
+    return '<div class="triage-acciones">' + html + '</div>';
+  }
+  function btnUno(id, otros, label, clase) {
+    return '<button class="bib-btn' + (clase ? ' ' + clase : '') + '" onclick="mostrarUno(\'' + id + '\', [' +
+      otros.map(function(o) { return '\'' + o + '\''; }).join(',') + '])">' + label + '</button>';
+  }
+  function btnIr(cat, ruta, label, clase) {
+    return '<button class="bib-btn' + (clase ? ' ' + clase : '') + '" onclick="abrirNodoTer(\'' + cat + '\', [' +
+      ruta.map(function(r) { return '\'' + r + '\''; }).join(',') + '])">' + label + '</button>';
+  }
+  function bloque(id, html, clase) {
+    return '<div id="' + id + '" class="triage-resultado' + (clase ? ' ' + clase : '') + '" style="display:none;">' + html + '</div>';
+  }
+
+  var INST_TICKET_TER = inst('Instrucción: completar en el ticket:<br>' +
+    '* Datos relacionados al servicio: cadena, sucursal, orden de estudio o ID de receta y Agente ATU (nombre del agente que atendió).<br>' +
+    '* Información general: ID de la interacción, canal de origen (Llamada entrante), tipificación 1, 2 y 3 y resumen del caso.');
+
+  var CIERRE_ESCALADO =
+    '<p>Muchas gracias por la información, Sr. / Sra. XXXX. Hemos registrado el caso bajo el número de ticket <strong>XXXXXX</strong>, el cual será enviado al área correspondiente para su revisión.</p>' +
+    '<p>Le pedimos que se mantenga atento al teléfono que nos brindó, ya que <strong>nos comunicaremos con usted</strong> para darle seguimiento.</p>';
+
+  // Línea de escalamiento de incidencias de Tercería (MO.03.05B)
+  function bloqueEscalamiento(p) {
+    return inst('Instrucción: ¿La incidencia afecta directamente la salud del paciente?') +
+      acciones(
+        btnUno(p + 'Crit', [p + 'Anal'], 'Sí, afecta la salud del paciente', 'btn-no-rojo') +
+        btnUno(p + 'Anal', [p + 'Crit'], 'No afecta la salud del paciente', 'btn-si-verde')
+      ) +
+      bloque(p + 'Crit', inst('Línea de escalamiento: <strong>Crítica</strong>. Enviar el ticket en estado inicial "TER Crítico".', true) + CIERRE_ESCALADO) +
+      bloque(p + 'Anal', inst('Línea de escalamiento: <strong>Analítica</strong>. Enviar el ticket en estado inicial "TER Análisis".') + CIERRE_ESCALADO);
+  }
+
+  // Troubleshooting de la plataforma P2H + escalamiento técnico (MO.03.05C)
+  function bloqueTroubleshootingP2H(p) {
+    return '<p>Lamentamos los inconvenientes que presenta. En este momento le sugerimos realizar una serie de verificaciones para intentar solventarlo:</p>' +
+      '<ol>' +
+        '<li>Verifique que el equipo tenga conexión a internet. Si es posible, apague y encienda nuevamente el módem o la conexión.</li>' +
+        '<li>Cierre sesión en <strong>P2H</strong> e ingrese nuevamente.</li>' +
+        '<li>Cierre el navegador por completo y vuelva a abrir P2H. También puede intentarlo en una ventana de incógnito o en otro navegador.</li>' +
+        '<li>Reinicie el equipo.</li>' +
+        '<li>Si es posible, intente realizar el proceso desde otro equipo.</li>' +
+      '</ol>' +
+      '<p>Una vez concluidos estos pasos, ¿podría indicarnos si aún presenta el inconveniente?</p>' +
+      acciones(
+        btnUno(p + 'Resuelto', [p + 'Persiste'], 'Ya no presenta el inconveniente', 'btn-si-verde') +
+        btnUno(p + 'Persiste', [p + 'Resuelto'], 'El inconveniente persiste', 'btn-no-rojo')
+      ) +
+      bloque(p + 'Resuelto',
+        '<p>¡Excelente! Nos alegra que se haya solucionado. Estamos a la orden para ayudarle con cualquier inconveniente.</p>' +
+        inst('Instrucción: documentar en el ticket los pasos realizados.')
+      ) +
+      bloque(p + 'Persiste',
+        '<p>Le comento que procederé a reportar su caso para que nuestro equipo técnico realice las verificaciones y ajustes correspondientes.</p>' +
+        '<p>Por favor, manténgase a la espera de nuestro contacto, ya que nos comunicaremos con usted lo antes posible. Su número de ticket es <strong>XXXXXX</strong>.</p>' +
+        inst('Instrucción: ingresar el ticket con el detalle del caso (qué intentaba hacer, mensaje de error que aparece e ID de receta u orden si aplica). ¿Es crítico?') +
+        acciones(
+          btnUno(p + 'ItCrit', [p + 'ItAnal'], 'Es crítico', 'btn-no-rojo') +
+          btnUno(p + 'ItAnal', [p + 'ItCrit'], 'No es crítico')
+        ) +
+        bloque(p + 'ItCrit', inst('Escalar con SP1 en estado "IT CRITICO N1".', true)) +
+        bloque(p + 'ItAnal', inst('Escalar con SP1 en estado "IT ANÁLISIS N1".'))
+      );
+  }
+
+  // Incidencia de Práctica Médica reportada por el dependiente (error en el producto de la consulta)
+  function itemPracticaMedica(label, producto, tipificacion, p) {
+    return {
+      label: label,
+      tipificacion: tipificacion,
+      texto:
+        '<p>Comprendo, Sr. / Sra. XXXX, gracias por reportarlo. Para revisar el caso, ¿me podría indicar el <strong>' + producto + '</strong>?</p>' +
+        '<p>Muchas gracias, por favor permítame un momento en línea para verificar la información.</p>' +
+        inst('Instrucción: validar en Práctica Médica (TCA) y P2H el producto de la consulta, y tomar para el ticket:<br>' +
+          '* Nombre completo del médico<br>* Fecha y hora de la cita<br>* Especialidad<br>' +
+          '* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo y número de documento del paciente') +
+        '<p>Gracias por su espera. ¿Me podría describir cuál es el error que encontró?</p>' +
+        bloqueEscalamiento(p)
+    };
+  }
+
+  // Incidencia con farmacia, laboratorio o centro de imágenes reportada por el dependiente (MO.03.05B)
+  function itemIncidenciaTer(label, tipificacion, p, preguntaCaso) {
+    return {
+      label: label,
+      tipificacion: tipificacion,
+      texto:
+        '<p>Lamentamos los inconvenientes, Sr. / Sra. XXXX. En este momento registraremos un reporte para que se tomen las acciones correspondientes.</p>' +
+        preguntaCaso +
+        '<p>¿Me podría indicar el <strong>ID de la receta</strong> o el <strong>número de la orden de estudio</strong> relacionado?</p>' +
+        '<p>¿Me confirma la <strong>fecha y hora</strong> en que se presentó el inconveniente?</p>' +
+        inst('Instrucción: validar en el Portal de Operadores (TCA) y en P2H la información de la receta u orden de estudio.') +
+        INST_TICKET_TER +
+        bloqueEscalamiento(p)
+    };
+  }
+
+  function bloqueReactivacion(producto) {
+    return inst('Instrucción: poner el hold al dependiente y solicitar al supervisor la reactivación de la ' + producto + ' en TCA. Esperar su confirmación.') +
+      '<p>Muchas gracias por su amable espera en línea. Le confirmo que la ' + producto + ' <strong>XXXX</strong> ha sido <strong>reactivada</strong>. Ya puede consultarla nuevamente en <strong>P2H</strong> y continuar con la atención del paciente.</p>';
+  }
+
+  var TEXTO_CITA_NUEVA =
+    '<p>Le comento que, por el tiempo que tiene caducada, no es posible reactivarla. Para continuar con su atención, el paciente debe <strong>agendar una nueva cita</strong> desde la aplicación DoctorSV o llamando al <strong>136</strong>, para que el médico evalúe su caso y, de ser necesario, emita una nueva.</p>';
+
+  var TEXTOS_PASO = {};
+
+  var NOMBRES_CATEGORIA = { consulta: 'Consulta', gestion: 'Gestión', incidencia: 'Incidencia', sugerencias: 'Sugerencias y denuncias', norelacionado: 'No relacionado' };
+  var CATEGORIAS_CON_BUSQUEDA = {
+    consulta: '¿Qué información necesita el dependiente?',
+    gestion: '¿Qué gestión necesita el dependiente que hagamos?',
+    incidencia: '¿Con qué está relacionada la falla?'
+  };
+  var IMAGENES_REFERENCIA_CATEGORIA = {};
+
+  // ── Árbol de guiones de Tercería ────────────────────────────────────────────
+  var OPCIONES_CATEGORIA = {
+    consulta: [
+      { label: 'Información del servicio DoctorSV',
+        tipificacion: 'Consultas > Información general del servicio > Según sea el caso',
+        texto:
+          '<p>Con gusto le explico, Sr. / Sra. XXXX. <strong>DoctorSV</strong> es el servicio de telemedicina del Gobierno de El Salvador, en el que los pacientes pasan consulta con un médico por videollamada o llamada telefónica desde la aplicación.</p>' +
+          '<p>Cuando el médico lo indica, emite una <strong>receta</strong> u <strong>orden de estudio</strong> digital. El paciente la presenta en una farmacia, laboratorio o centro de imágenes afiliado, donde se valida y se registra la atención en la plataforma <strong>P2H</strong>.</p>' +
+          '<p>¿Hay algún punto del proceso sobre el que tenga dudas?</p>'
+      },
+      { label: 'Vigencia de recetas y órdenes',
+        tipificacion: 'Consultas > Información de cita médica > Vigencia de la receta / orden de estudio',
+        texto:
+          '<p>Con todo gusto le informo la vigencia de los productos de la consulta, a partir de su emisión:</p>' +
+          '<ul>' +
+            '<li>Receta: <strong>5 días (120 horas)</strong>.</li>' +
+            '<li>Órdenes de laboratorio: <strong>15 días</strong>.</li>' +
+            '<li>Procedimientos presenciales: <strong>30 días</strong>.</li>' +
+            '<li>Órdenes de imágenes: <strong>45 días</strong>.</li>' +
+          '</ul>' +
+          '<p>Si el paciente se presenta con una receta u orden vencida, podemos revisar si es posible reactivarla.</p>' +
+          acciones(btnIr('gestion', ['Gestión de recetas / órdenes'], 'Ir a Gestión de recetas / órdenes'))
+      },
+      { label: 'Estado de una receta u orden',
+        tipificacion: 'Consultas > Información de cita médica > Código / vigencia de receta',
+        texto:
+          '<p>Con gusto le ayudo a verificarlo. ¿Me podría indicar el <strong>ID de la receta</strong> o el <strong>número de la orden de estudio</strong>?</p>' +
+          '<p>Muchas gracias, por favor permítame un momento en línea.</p>' +
+          inst('Instrucción: validar en P2H el estado de la receta u orden. ¿Qué estado tiene?') +
+          acciones(
+            btnUno('terEstPendiente', ['terEstDispensada', 'terEstExpirada', 'terEstNoAparece'], 'Pendiente') +
+            btnUno('terEstDispensada', ['terEstPendiente', 'terEstExpirada', 'terEstNoAparece'], 'Ya dispensada / procesada') +
+            btnUno('terEstExpirada', ['terEstPendiente', 'terEstDispensada', 'terEstNoAparece'], 'Expirada') +
+            btnUno('terEstNoAparece', ['terEstPendiente', 'terEstDispensada', 'terEstExpirada'], 'No aparece en P2H')
+          ) +
+          bloque('terEstPendiente',
+            '<p>Muchas gracias por su espera. Le confirmo que la receta / orden <strong>XXXX</strong> se encuentra <strong>vigente y pendiente</strong>, por lo que puede continuar con la atención del paciente.</p>'
+          ) +
+          bloque('terEstDispensada',
+            '<p>Muchas gracias por su espera. Le comento que la receta / orden <strong>XXXX</strong> aparece como <strong>ya dispensada / procesada</strong> el día XX/XX/XXXX, por lo que no es posible atenderla nuevamente.</p>' +
+            '<p>Si el paciente indica que no recibió el medicamento o el estudio, con gusto registramos un reporte para que se revise el caso.</p>' +
+            acciones(btnIr('incidencia', ['Tercerías', 'Farmacias', 'Error en dispensación'], 'Registrar incidencia de dispensación'))
+          ) +
+          bloque('terEstExpirada',
+            '<p>Muchas gracias por su espera. Le comento que la receta / orden <strong>XXXX</strong> se encuentra <strong>expirada</strong>. Permítame revisar si es posible reactivarla.</p>' +
+            acciones(
+              btnIr('gestion', ['Gestión de recetas / órdenes', 'Receta vencida'], 'Receta vencida') +
+              btnIr('gestion', ['Gestión de recetas / órdenes', 'Orden de laboratorio o imágenes vencida'], 'Orden vencida')
+            )
+          ) +
+          bloque('terEstNoAparece',
+            inst('Instrucción: confirmar con el dependiente el código y buscarlo en Práctica Médica (TCA). Si existe en TCA pero no aparece en P2H, se trata de una incidencia técnica.') +
+            acciones(btnIr('incidencia', ['Técnicas (plataforma P2H)', 'Receta u orden no aparece en P2H'], 'Ir a incidencia técnica'))
+          )
+      },
+      { label: 'Requisitos para entregar medicamentos',
+        tipificacion: 'Consultas > Información general del servicio > Cómo retirar medicamento',
+        texto:
+          '<p>Con gusto le comento los requisitos. ¿Quién está retirando el medicamento: el paciente o un tercero? ¿El medicamento es para un menor de edad?</p>' +
+          acciones(
+            btnUno('terRetPaciente', ['terRetTerceroAdulto', 'terRetTerceroMenor'], 'Paciente') +
+            btnUno('terRetTerceroAdulto', ['terRetPaciente', 'terRetTerceroMenor'], 'Tercero para un adulto') +
+            btnUno('terRetTerceroMenor', ['terRetPaciente', 'terRetTerceroAdulto'], 'Tercero para un menor')
+          ) +
+          bloque('terRetPaciente',
+            '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">Retiro por parte del paciente</h4>' +
+            '<p>El paciente debe presentar:</p>' +
+            '<p>1. <strong>Uno</strong> de estos <strong>cuatro</strong> documentos oficiales: pasaporte salvadoreño, DUI, carnet de residente o licencia de conducir. Puede ser en físico, digital, copia o foto y no requiere estar vigente.</p>' +
+            '<p>2. Código QR de la receta, captura de pantalla o número de receta.</p>'
+          ) +
+          bloque('terRetTerceroAdulto',
+            '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">Retiro por un tercero para un paciente adulto</h4>' +
+            '<p>Se debe presentar:</p>' +
+            '<p>1. El tercero que retira debe presentar <strong>uno</strong> de estos <strong>cuatro</strong> documentos oficiales en físico y original: pasaporte salvadoreño, DUI, carnet de residente o licencia de conducir salvadoreña.</p>' +
+            '<p>2. Fotografía, copia o captura de pantalla de <strong>uno</strong> de los <strong>cuatro</strong> documentos oficiales del paciente: pasaporte salvadoreño, DUI, carnet de residente o licencia de conducir salvadoreña.</p>' +
+            '<p>3. El código QR de la receta (en la aplicación o en captura de pantalla) o el número de la receta.</p>' +
+            '<p style="color:#64748B; font-style:italic;">Nota: bajo ningún motivo se permite la entrega de medicamentos a menores de edad, aunque presenten la documentación de sus padres.</p>'
+          ) +
+          bloque('terRetTerceroMenor',
+            '<h4 style="font-family:\'Montserrat\', sans-serif; color:#0F2070;">Retiro por un tercero para un paciente menor de edad</h4>' +
+            '<p>Se debe presentar:</p>' +
+            '<p>1. El tercero que retira debe presentar <strong>uno</strong> de estos <strong>cuatro</strong> documentos en físico y original: pasaporte salvadoreño, DUI, carnet de residente o licencia de conducir salvadoreña.</p>' +
+            '<p>2. Fotografía, copia o captura de pantalla de <strong>uno</strong> de los <strong>cuatro</strong> documentos oficiales del responsable que tiene registrado al menor como familiar en la aplicación donde pasó consulta.</p>' +
+            '<p>3. El código QR de la receta (en la aplicación o en captura de pantalla) o el número de la receta.</p>' +
+            '<p style="color:#64748B; font-style:italic;">Nota: bajo ningún motivo se permite la entrega de medicamentos a menores de edad, aunque presenten la documentación de sus padres.</p>'
+          )
+      },
+      { label: 'Resultados cargados de un paciente',
+        tipificacion: 'Consultas > Información de cita médica > Código / vigencia de estudios médicos',
+        texto:
+          '<p>Con gusto le ayudo a verificarlo. ¿Me podría indicar el <strong>número de la orden de estudio</strong>?</p>' +
+          '<p>Muchas gracias, por favor permítame un momento en línea.</p>' +
+          inst('Instrucción: validar en P2H si los resultados de la orden ya fueron cargados.') +
+          acciones(
+            btnUno('terResCargados', ['terResNoCargados'], 'Resultados cargados', 'btn-si-verde') +
+            btnUno('terResNoCargados', ['terResCargados'], 'Resultados no cargados', 'btn-no-rojo')
+          ) +
+          bloque('terResCargados',
+            '<p>Muchas gracias por su espera. Le confirmo que los resultados de la orden <strong>XXXX</strong> aparecen <strong>cargados</strong> en la plataforma desde el día XX/XX/XXXX.</p>'
+          ) +
+          bloque('terResNoCargados',
+            '<p>Muchas gracias por su espera. Le comento que los resultados de la orden <strong>XXXX</strong> aún no aparecen cargados en la plataforma.</p>' +
+            '<p>¿Usted intentó cargarlos y la plataforma le presentó algún inconveniente?</p>' +
+            acciones(btnIr('incidencia', ['Técnicas (plataforma P2H)', 'Error al cargar resultados'], 'Sí, ir a incidencia técnica'))
+          )
+      },
+      { label: 'Datos de la consulta médica',
+        tipificacion: 'Consultas > Información de cita médica > Según sea el caso',
+        texto:
+          '<p>Con gusto le ayudo a verificarlo. ¿Me podría indicar el <strong>ID de la receta</strong> o el <strong>número de la orden de estudio</strong>?</p>' +
+          '<p>Muchas gracias, por favor permítame un momento en línea.</p>' +
+          inst('Instrucción: validar en Práctica Médica (TCA) el registro de la cita: médico que atendió, especialidad y fecha de la consulta.') +
+          '<p>Gracias por su espera. Le confirmo que la receta / orden fue emitida por el / la <strong>Dr. / Dra. XXXX</strong>, especialidad <strong>XXXX</strong>, en la consulta del día XX/XX/XXXX.</p>' +
+          inst('No compartir el diagnóstico ni otra información clínica del paciente con el dependiente.', true)
+      },
+      { label: 'Afiliación de un establecimiento',
+        texto:
+          '<p>Muchas gracias por su interés en formar parte de la red de servicios de <strong>DoctorSV</strong>.</p>' +
+          '<p>Puede enviar su solicitud y la información de participación de su farmacia, laboratorio o centro de imágenes al correo <strong>redservicios@doctorsv.gob.sv</strong>.</p>'
+      },
+      { label: 'Canales oficiales',
+        texto:
+          '<p>Canal telefónico de tercería: <strong>136, opción 9</strong></p>' +
+          '<p>Canal telefónico para pacientes: <strong>136</strong></p>' +
+          '<p>Correo: <strong>soporte@doctorsv.gob.sv</strong></p>' +
+          '<p>Afiliación a la red de servicios: <strong>redservicios@doctorsv.gob.sv</strong></p>' +
+          '<p>Whatsapp: <strong>2397-2600</strong></p>' +
+          inst('Los prestadores de servicio se atienden únicamente por el canal telefónico. Si escriben por canal digital, orientarlos a llamar al 136, opción 9.')
+      }
+    ],
+
+    gestion: [
+      { label: 'Gestión de perfiles de Tercería', pregunta: '¿Qué gestión de perfil necesita el dependiente?', hijos: [
+        { label: 'Desbloqueo de usuario',
+          tipificacion: 'Gestión de perfiles de Tercería > Desbloqueo de usuario',
+          texto:
+            '<p>Con gusto le ayudamos a desbloquear su usuario de <strong>P2H</strong>. ¿Me podría indicar el <strong>usuario o correo electrónico</strong> con el que ingresa a la plataforma?</p>' +
+            '<p>Muchas gracias, por favor permítame un momento en línea.</p>' +
+            inst('Instrucción: ingresar a P2H, buscar al usuario y desbloquearlo. Crear el ticket de la gestión.') +
+            '<p>Gracias por su espera. Le confirmo que su usuario ha sido <strong>desbloqueado</strong>. ¿Podría intentar ingresar nuevamente a P2H, por favor?</p>' +
+            acciones(
+              btnUno('terDesbOk', ['terDesbNo'], 'Pudo ingresar', 'btn-si-verde') +
+              btnUno('terDesbNo', ['terDesbOk'], 'No pudo ingresar', 'btn-no-rojo')
+            ) +
+            bloque('terDesbOk', '<p>¡Excelente! Ya puede continuar utilizando la plataforma con normalidad.</p>') +
+            bloque('terDesbNo',
+              '<p>Lamento que aún no pueda ingresar. Procederé a reportar su caso al área correspondiente para que realicen la revisión. Su número de ticket es <strong>XXXXXX</strong> y nos comunicaremos con usted lo antes posible.</p>' +
+              inst('Instrucción: enviar el ticket en estado inicial "TER Crítico".', true)
+            )
+        },
+        { label: 'Cambio de perfil',
+          tipificacion: 'Gestión de perfiles de Tercería > Cambio de perfil',
+          texto:
+            '<p>Con gusto le ayudamos con la solicitud de cambio de perfil. Para registrarla, ¿me podría indicar, por favor:</p>' +
+            '<ul>' +
+              '<li>El usuario o correo electrónico con el que ingresa a P2H.</li>' +
+              '<li>El cambio que necesita realizar (por ejemplo, cambio de sucursal o de tipo de perfil).</li>' +
+              '<li>El motivo del cambio.</li>' +
+            '</ul>' +
+            '<p>Muchas gracias. He registrado su solicitud bajo el número de ticket <strong>XXXXXX</strong>. El área correspondiente realizará el cambio y nos comunicaremos con usted al número que nos brindó.</p>' +
+            inst('Instrucción: crear el ticket y enviarlo en estado inicial "TER Crítico".', true)
+        },
+        { label: 'Registro de usuario nuevo',
+          tipificacion: 'Gestión de perfiles de Tercería > Registro de usuario',
+          texto:
+            '<p>Con gusto le ayudamos con el registro de un nuevo usuario en <strong>P2H</strong>. ¿Me podría brindar, por favor, los siguientes datos de la persona a registrar?</p>' +
+            '<ul>' +
+              '<li>Nombre completo.</li>' +
+              '<li>Tipo y número de documento.</li>' +
+              '<li>Correo electrónico.</li>' +
+              '<li>Cadena y sucursal donde labora.</li>' +
+              '<li>Cargo.</li>' +
+            '</ul>' +
+            '<p>Muchas gracias. He registrado su solicitud bajo el número de ticket <strong>XXXXXX</strong>. El área correspondiente creará el usuario y nos comunicaremos con usted al número que nos brindó.</p>' +
+            inst('Instrucción: crear el ticket y enviarlo en estado inicial "TER Crítico".', true)
+        }
+      ] },
+      { label: 'Gestión de recetas / órdenes', pregunta: '¿Qué producto de la consulta está vencido?', hijos: [
+        { label: 'Receta vencida',
+          tipificacion: 'Gestión de recetas / órdenes de estudio > Reactivación excepcional de receta caducada',
+          texto:
+            '<p>Entiendo, Sr. / Sra. XXXX. ¿Me podría indicar el <strong>ID de la receta</strong> para verificarla en nuestro sistema?</p>' +
+            '<p>Muchas gracias, por favor permítame un momento en línea.</p>' +
+            inst('Instrucción: ingresar en Práctica Médica (TCA) el ID de la receta. ¿Cuánto tiempo tiene caducada?') +
+            acciones(
+              btnUno('terRecMenos24', ['terRecMas24'], 'Menos de 24 horas caducada', 'btn-si-verde') +
+              btnUno('terRecMas24', ['terRecMenos24'], 'Más de 24 horas caducada', 'btn-no-rojo')
+            ) +
+            bloque('terRecMenos24', bloqueReactivacion('receta')) +
+            bloque('terRecMas24', TEXTO_CITA_NUEVA)
+        },
+        { label: 'Orden de laboratorio o imágenes vencida',
+          tipificacion: 'Gestión de recetas / órdenes de estudio > Reactivación excepcional de orden caducada',
+          texto:
+            '<p>Entiendo, Sr. / Sra. XXXX. ¿Me podría indicar el <strong>número de la orden de estudio</strong> para verificarla en nuestro sistema?</p>' +
+            '<p>Muchas gracias, por favor permítame un momento en línea.</p>' +
+            inst('Instrucción: ingresar en Práctica Médica (TCA) la orden de estudio. ¿Cuánto tiempo tiene caducada?') +
+            acciones(
+              btnUno('terOrdMenos24', ['terOrdMas24'], 'Menos de 24 horas caducada', 'btn-si-verde') +
+              btnUno('terOrdMas24', ['terOrdMenos24'], 'Más de 24 horas caducada', 'btn-no-rojo')
+            ) +
+            bloque('terOrdMenos24', bloqueReactivacion('orden')) +
+            bloque('terOrdMas24',
+              inst('Instrucción: ¿El paciente tiene una cita de seguimiento?') +
+              acciones(
+                btnUno('terOrdSegSi', ['terOrdSegNo'], 'Sí tiene cita de seguimiento') +
+                btnUno('terOrdSegNo', ['terOrdSegSi'], 'No tiene cita de seguimiento')
+              ) +
+              bloque('terOrdSegSi',
+                '<p>Le comento que el paciente tiene una cita de seguimiento programada para el día XX/XX/XXXX a las XX:XX. En esa cita el médico podrá revisar su caso y, de ser necesario, emitir una nueva orden.</p>'
+              ) +
+              bloque('terOrdSegNo',
+                inst('Instrucción: ¿La orden tiene menos de 3 meses caducada?') +
+                acciones(
+                  btnUno('terOrdMenos3m', ['terOrdMas3m'], 'Menos de 3 meses caducada', 'btn-si-verde') +
+                  btnUno('terOrdMas3m', ['terOrdMenos3m'], 'Más de 3 meses caducada', 'btn-no-rojo')
+                ) +
+                bloque('terOrdMenos3m', bloqueReactivacion('orden')) +
+                bloque('terOrdMas3m', TEXTO_CITA_NUEVA)
+              )
+            )
+        }
+      ] }
+    ],
+
+    incidencia: [
+      { label: 'Técnicas (plataforma P2H)', tooltip: 'La plataforma P2H falla al ingresar, dispensar, procesar o cargar resultados', pregunta: '¿Qué falla presenta la plataforma?', hijos: [
+        { label: 'No puede ingresar a P2H',
+          tipificacion: 'Incidencias técnicas > Según sea el caso',
+          texto:
+            '<p>Comprendo, Sr. / Sra. XXXX. ¿Me podría indicar qué <strong>mensaje o error</strong> le aparece al intentar ingresar?</p>' +
+            inst('Instrucción: si el mensaje indica que el usuario está bloqueado, realizar el desbloqueo.') +
+            acciones(btnIr('gestion', ['Gestión de perfiles de Tercería', 'Desbloqueo de usuario'], 'Usuario bloqueado: ir a Desbloqueo')) +
+            bloqueTroubleshootingP2H('terTsIngreso')
+        },
+        { label: 'Error al dispensar una receta',
+          tipificacion: 'Incidencias técnicas > Según sea el caso',
+          texto:
+            '<p>Comprendo, Sr. / Sra. XXXX. ¿Me podría indicar el <strong>ID de la receta</strong> y qué <strong>mensaje o error</strong> le aparece al intentar dispensarla?</p>' +
+            inst('Instrucción: validar en P2H y en TCA el estado de la receta. Si está expirada, no es una falla técnica: ir a Gestión de recetas.') +
+            acciones(btnIr('gestion', ['Gestión de recetas / órdenes', 'Receta vencida'], 'Receta expirada: ir a Receta vencida')) +
+            bloqueTroubleshootingP2H('terTsDispensa')
+        },
+        { label: 'Receta u orden no aparece en P2H',
+          tipificacion: 'Incidencias técnicas > Según sea el caso',
+          texto:
+            '<p>Comprendo, Sr. / Sra. XXXX. ¿Me podría confirmar el <strong>ID de la receta</strong> o el <strong>número de la orden</strong> que está buscando?</p>' +
+            inst('Instrucción: confirmar el código dígito por dígito y buscarlo en Práctica Médica (TCA). Si existe en TCA y está vigente, pero no aparece en P2H, continuar con el troubleshooting.') +
+            bloqueTroubleshootingP2H('terTsNoAparece')
+        },
+        { label: 'Error al cargar resultados',
+          tipificacion: 'Incidencias técnicas > Según sea el caso',
+          texto:
+            '<p>Comprendo, Sr. / Sra. XXXX. ¿Me podría indicar el <strong>número de la orden de estudio</strong> y qué <strong>mensaje o error</strong> le aparece al intentar cargar los resultados?</p>' +
+            bloqueTroubleshootingP2H('terTsResultados')
+        },
+        { label: 'Otra falla de la plataforma',
+          tipificacion: 'Incidencias técnicas > Según sea el caso',
+          texto:
+            '<p>Comprendo, Sr. / Sra. XXXX. ¿Me podría indicar qué estaba intentando hacer y qué <strong>mensaje o error</strong> le aparece?</p>' +
+            bloqueTroubleshootingP2H('terTsOtra')
+        }
+      ] },
+      { label: 'Práctica médica', tooltip: 'El dependiente encontró un error en la receta u orden emitida por el médico', pregunta: '¿En qué producto de la consulta está el error?', hijos: [
+        itemPracticaMedica('Error en receta', 'ID de la receta',
+          'Incidencias calidad médica > Problemas con prescripción médica > Error en receta', 'terPmReceta'),
+        itemPracticaMedica('Error en orden de laboratorio', 'número de la orden de laboratorio',
+          'Incidencias calidad médica > Problemas con estudios de laboratorio > Error en estudios de laboratorio', 'terPmLab'),
+        itemPracticaMedica('Error en orden de imágenes', 'número de la orden de imágenes',
+          'Incidencias calidad médica > Problemas con estudios de imágenes > Error en estudios de imágenes', 'terPmImg'),
+        itemPracticaMedica('Otro error del médico', 'ID de la receta o el número de la orden relacionada',
+          'Incidencias calidad médica > Según sea el caso', 'terPmOtro')
+      ] },
+      { label: 'Tercerías', tooltip: 'Inconveniente con la atención de una farmacia, laboratorio o centro de imágenes', pregunta: '¿Con qué tipo de prestador es la incidencia?', hijos: [
+        { label: 'Farmacias', hijos: [
+          itemIncidenciaTer('Calidad o rapidez del servicio',
+            'Incidencias con farmacias > Calidad del servicio farmacias > Según sea el caso', 'terIfCalidad',
+            '<p>¿Me podría contar qué sucedió durante la atención?</p>'),
+          itemIncidenciaTer('Error en dispensación',
+            'Incidencias con farmacias > Error en dispensación > Según sea el caso', 'terIfDispensa',
+            '<p>¿Me podría indicar qué sucedió con la dispensación? (por ejemplo, medicamento, cantidad o presentación entregada)</p>'),
+          itemIncidenciaTer('Disponibilidad de medicamento',
+            'Incidencias con farmacias > Medicamento no disponible', 'terIfDisponible',
+            '<p>¿Me podría indicar qué <strong>medicamento</strong> no está disponible?</p>')
+        ] },
+        { label: 'Laboratorios', hijos: [
+          itemIncidenciaTer('Calidad o rapidez del servicio',
+            'Incidencias con laboratorios > Calidad del servicio laboratorios > Según sea el caso', 'terIlCalidad',
+            '<p>¿Me podría contar qué sucedió durante la atención?</p>'),
+          itemIncidenciaTer('Error en procesamiento de estudios',
+            'Incidencias con laboratorios > Error en procesamiento de estudios', 'terIlProceso',
+            '<p>¿Me podría indicar qué error se presentó al procesar el estudio?</p>'),
+          itemIncidenciaTer('Error en resultados',
+            'Incidencias con laboratorios > Error en resultados de laboratorio', 'terIlResultados',
+            '<p>¿Me podría indicar qué error se presentó en los resultados?</p>')
+        ] },
+        { label: 'Centros de imágenes', hijos: [
+          itemIncidenciaTer('Calidad o rapidez del servicio',
+            'Incidencias con centros de imágenes > Calidad del servicio centros de imágenes > Según sea el caso', 'terIiCalidad',
+            '<p>¿Me podría contar qué sucedió durante la atención?</p>'),
+          itemIncidenciaTer('Error en procesamiento de estudios',
+            'Incidencias con centros de imágenes > Error en procesamiento de estudios', 'terIiProceso',
+            '<p>¿Me podría indicar qué error se presentó al procesar el estudio?</p>'),
+          itemIncidenciaTer('Error en resultados',
+            'Incidencias con centros de imágenes > Error en resultados', 'terIiResultados',
+            '<p>¿Me podría indicar qué error se presentó en los resultados?</p>')
+        ] }
+      ] }
+    ],
+
+    sugerencias: [
+      { label: 'Agradecimiento o felicitación',
+        tipificacion: 'Sugerencias > Según sea el caso',
+        texto:
+          '<p>¡Muchas gracias por sus palabras, Sr. / Sra. XXXX! Le agradecemos cordialmente por haberse tomado el tiempo para comentarnos su aporte. Con gusto lo trasladaremos al equipo.</p>' +
+          inst('Instrucción: tomar nota del mensaje y crear el ticket en el SDP.')
+      },
+      { label: 'Sugerencia sobre el centro de soporte',
+        tipificacion: 'Sugerencias > Según sea el caso',
+        texto:
+          '<p>Le agradecemos cordialmente por haberse tomado el tiempo para comentarnos su aporte, Sr. / Sra. XXXX. ¿Me podría contar su sugerencia con el mayor detalle posible?</p>' +
+          '<p>Muchas gracias. Hemos registrado su sugerencia para que sea tomada en cuenta por el área correspondiente.</p>' +
+          inst('Instrucción: tomar nota de la sugerencia brindada y crear el ticket en el SDP.')
+      },
+      { label: 'Sugerencia sobre el servicio o la plataforma P2H',
+        tipificacion: 'Sugerencias > Según sea el caso',
+        texto:
+          '<p>Le agradecemos cordialmente por haberse tomado el tiempo para comentarnos su aporte, Sr. / Sra. XXXX. ¿Me podría contar su sugerencia con el mayor detalle posible?</p>' +
+          '<p>Muchas gracias. Hemos registrado su sugerencia para que sea tomada en cuenta por el área correspondiente.</p>' +
+          inst('Instrucción: tomar nota de la sugerencia brindada y crear el ticket en el SDP.')
+      },
+      { label: 'Denuncia',
+        tipificacion: 'Denuncias > Según sea el caso',
+        texto:
+          '<p>Comprendo la importancia de lo que nos comenta, Sr. / Sra. XXXX. Para registrar su denuncia, ¿me podría indicar, por favor:</p>' +
+          '<ul>' +
+            '<li>¿Qué sucedió?</li>' +
+            '<li>¿Cuándo y dónde sucedió?</li>' +
+            '<li>¿Quiénes estuvieron involucrados, si los conoce?</li>' +
+          '</ul>' +
+          '<p>Muchas gracias por la información. Hemos registrado su denuncia bajo el número de ticket <strong>XXXXXX</strong>, la cual será trasladada al área correspondiente para su revisión.</p>' +
+          inst('Instrucción: documentar los hechos tal como los relata el dependiente, sin agregar opiniones, y crear el ticket en el SDP.')
+      }
+    ],
+
+    norelacionado: [
+      { label: 'Llamada no relacionada al servicio',
+        tipificacion: 'No relacionado al servicio > Llamada no relacionada al servicio de DoctorSV',
+        texto:
+          '<p>Comprendo, Sr. / Sra. XXXX. Le comento que esta línea atiende únicamente gestiones de farmacias, laboratorios y centros de imágenes relacionadas con el servicio de <strong>DoctorSV</strong>, por lo que no podemos ayudarle con esta solicitud.</p>' +
+          inst('Instrucción: dar la despedida de casos no relacionados al servicio (sin encuesta).')
+      }
+    ]
+  };
+
+  var pilaVistas = [];
+  var opcionesActuales = [];
+
+  var categoriaActualId = null;
+
+  var historialBaseCategoria = 0;
+
+  function mostrarCategoria(cat) {
+    categoriaActualId = cat;
+    pilaVistas = [];
+    var buscador = document.getElementById('buscadorCategoria');
+    if (buscador) buscador.value = '';
+    historial = historial.slice(0, historialBaseMenu);
+    historialBaseCategoria = historial.length;
+    pushVistaOpciones(NOMBRES_CATEGORIA[cat], OPCIONES_CATEGORIA[cat]);
+
+    var opciones = OPCIONES_CATEGORIA[cat];
+    if (cat !== 'salientes' && opciones && opciones.length === 1 && opciones[0] && opciones[0].texto && !opciones[0].hijos) {
+      var indiceCrumbCategoria = historial.length - 1;
+      clickOpcion(0);
+      document.getElementById('cajaOpcionesCategoria').style.display = 'none';
+      historial.splice(indiceCrumbCategoria, 1);
+      if (historialBasePanelEpoch === panelEpoch && historialBasePanel > indiceCrumbCategoria) {
+        historialBasePanel--;
+      }
+      renderRuta();
+    }
+  }
+
+  function aplanarArbol(items, ancestros) {
+    var resultado = [];
+    items.forEach(function(item, i) {
+      var label = typeof item === 'string' ? item : item.label;
+      resultado.push({ label: label, ancestros: ancestros, item: item, index: i });
+      if (item && item.hijos) {
+        resultado = resultado.concat(aplanarArbol(item.hijos, ancestros.concat([{ label: label, opciones: item.hijos, tarjetas: !!item.vistaTarjetas }])));
+      }
+      if (item && item.subBotones) {
+        item.subBotones.forEach(function(sb, j) {
+          resultado.push({ label: sb.label, ancestros: ancestros.concat([{ label: label }]), item: sb, index: i, padre: item, subBotonIndex: j });
+        });
+      }
+    });
+    return resultado;
+  }
+
+  function irANodoBusqueda(nodo) {
+    pilaVistas = pilaVistas.slice(0, 1);
+    historial = historial.slice(0, historialBaseCategoria + 1);
+    renderRuta();
+    renderVistaActual();
+
+    if (nodo.padre) {
+      nodo.ancestros.slice(0, -1).forEach(function(paso) {
+        pushVistaOpciones(paso.label, paso.opciones, paso.tarjetas);
+      });
+      var padre = nodo.padre;
+      abrirModalTexto(padre.tituloModal || padre.label, padre.texto, padre.tipificacion, padre.subBotones, padre.ocultarFooter, padre.subBotonesVertical);
+      mostrarSubBotonModal(nodo.subBotonIndex);
+      return;
+    }
+
+    nodo.ancestros.forEach(function(paso) {
+      pushVistaOpciones(paso.label, paso.opciones, paso.tarjetas);
+    });
+
+    var item = nodo.item;
+    if (typeof item === 'string') return;
+
+    var vistaActual = nodo.ancestros.length ? nodo.ancestros[nodo.ancestros.length - 1] : null;
+    if (item.hijos) {
+      pushVistaOpciones(item.label, item.hijos, !!item.vistaTarjetas);
+    } else if (item.texto) {
+      if (vistaActual && vistaActual.tarjetas) {
+        irATarjeta(nodo.index);
+      } else {
+        abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+      }
+    }
+  }
+
+  var resultadosBusquedaActuales = [];
+
+  function normalizarBusqueda(str) {
+    return str.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  }
+
+  function buscarEnCategoria(q) {
+    q = normalizarBusqueda(q.trim());
+    var contenedor = document.getElementById('opcionesCategoria');
+
+    if (!q) {
+      renderVistaActual();
+      return;
+    }
+
+    var arbol = OPCIONES_CATEGORIA[categoriaActualId] || [];
+    resultadosBusquedaActuales = aplanarArbol(arbol, []).filter(function(n) {
+      return normalizarBusqueda(n.label).includes(q);
+    });
+
+    document.getElementById('tituloCategoria').textContent = 'Resultados de la búsqueda';
+
+    if (resultadosBusquedaActuales.length === 0) {
+      contenedor.classList.remove('dos-columnas');
+      contenedor.innerHTML = '<p class="placeholder">No se encontraron resultados.</p>';
+      return;
+    }
+
+    contenedor.classList.toggle('dos-columnas', resultadosBusquedaActuales.length > 8);
+    contenedor.innerHTML = resultadosBusquedaActuales.map(function(r, i) {
+      return '<button class="bib-btn" onclick="irAResultadoBusqueda(' + i + ')">' + r.label + '</button>';
+    }).join('');
+  }
+
+  function irAResultadoBusqueda(i) {
+    var nodo = resultadosBusquedaActuales[i];
+    document.getElementById('buscadorCategoria').value = '';
+    irANodoBusqueda(nodo);
+  }
+
+  function pushVistaOpciones(titulo, opciones, tarjetas, tituloVista) {
+    pilaVistas.push({ titulo: titulo, opciones: opciones, tarjetas: !!tarjetas, tituloVista: tituloVista || titulo });
+    renderVistaActual();
+
+    var snapshot = pilaVistas.slice();
+    historial = historial.concat([{
+      label: titulo,
+      restaurar: function() {
+        document.getElementById('flujoSDP').style.display = 'none';
+        document.getElementById('vistaCategoria').style.display = 'flex';
+        pilaVistas = snapshot.slice();
+        renderVistaActual();
+      }
+    }]);
+    renderRuta();
+  }
+
+  function renderVistaActual() {
+    var vista = pilaVistas[pilaVistas.length - 1];
+    opcionesActuales = vista.opciones;
+
+    cerrarModalTexto();
+    panelEpoch++;
+    document.getElementById('flujoSDP').style.display = 'none';
+    document.getElementById('vistaCategoria').style.display = 'flex';
+    document.getElementById('cajaOpcionesCategoria').style.display = '';
+
+    var esPreguntaPropia = vista.tituloVista && vista.tituloVista !== vista.titulo;
+    var preguntaBusqueda = esPreguntaPropia ? vista.tituloVista : CATEGORIAS_CON_BUSQUEDA[categoriaActualId];
+    document.getElementById('cajaBusquedaCategoria').style.display = preguntaBusqueda ? 'block' : 'none';
+    if (preguntaBusqueda) document.getElementById('preguntaCategoria').textContent = preguntaBusqueda;
+
+    var imgRef = document.getElementById('imgReferenciaCategoria');
+    var infoImg = IMAGENES_REFERENCIA_CATEGORIA[vista.titulo];
+    if (infoImg) {
+      imgRef.src = infoImg.src;
+      imgRef.alt = infoImg.alt;
+      imgRef.style.display = 'block';
+    } else {
+      imgRef.style.display = 'none';
+      imgRef.src = '';
+    }
+
+    document.getElementById('vistaCategoria').classList.toggle('vista-categoria-ancha', !!vista.tarjetas);
+
+    document.getElementById('tituloCategoria').textContent = vista.titulo;
+    var contenedor = document.getElementById('opcionesCategoria');
+    var contenedorTarjetas = document.getElementById('tarjetasScripts');
+
+    if (vista.tarjetas) {
+      contenedor.classList.remove('dos-columnas', 'vista-tarjetas');
+      contenedor.innerHTML = opcionesActuales.map(function(op, i) {
+        var label = typeof op === 'string' ? op : op.label;
+        return '<button class="bib-btn" onclick="irATarjeta(' + i + ')">' + label + '</button>';
+      }).join('');
+
+      contenedorTarjetas.className = 'vista-tarjetas';
+      contenedorTarjetas.innerHTML = opcionesActuales.map(function(op, i) {
+        if (typeof op === 'string' || !op.texto) return '';
+        return '<div class="tarjeta-script" id="tarjeta-' + i + '">' +
+          '<h4>' + (op.tituloModal || op.label) + '</h4>' +
+          '<div class="tarjeta-script-cuerpo">' + op.texto + '</div>' +
+          (op.tipificacion ? '<p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> <span>' + op.tipificacion + '</span></p>' : '') +
+          '</div>';
+      }).join('');
+      return;
+    }
+
+    contenedorTarjetas.className = '';
+    contenedorTarjetas.innerHTML = '';
+    contenedor.classList.remove('vista-tarjetas');
+    contenedor.classList.toggle('dos-columnas', opcionesActuales.length > 8);
+    contenedor.innerHTML = opcionesActuales.map(function(op, i) {
+      var label = typeof op === 'string' ? op : op.label;
+      var tooltip = (op && op.tooltip) ? ' tiene-tooltip" data-tooltip="' + op.tooltip + '"' : '"';
+      return '<button class="bib-btn' + tooltip + ' onclick="clickOpcion(' + i + ')">' + label + '</button>';
+    }).join('');
+  }
+
+  function irATarjeta(i) {
+    var el = document.getElementById('tarjeta-' + i);
+    if (!el) return;
+    var topbar = document.querySelector('.topbar');
+    var rutaBar = document.querySelector('.ruta-bar');
+    var offset = (topbar ? topbar.offsetHeight : 0) + (rutaBar ? rutaBar.offsetHeight : 0) + 20;
+    el.style.scrollMarginTop = offset + 'px';
+    requestAnimationFrame(function() {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  function clickOpcion(i) {
+    var op = opcionesActuales[i];
+    if (op && op.hijos) {
+      pushVistaOpciones(op.label, op.hijos, op.vistaTarjetas, op.pregunta);
+    } else if (op && op.texto) {
+      abrirModalTexto(op.tituloModal || op.label, op.texto, op.tipificacion, op.subBotones, op.ocultarFooter, op.subBotonesVertical);
+      if (op.alerta) abrirModalTip(op.alerta);
+    }
+  }
+
+  var subBotonesActuales = [];
+
+  function abrirModalTexto(titulo, texto, tipificacion, subBotones, ocultarFooter, subBotonesVertical) {
+    document.getElementById('modalTituloTexto').textContent = titulo;
+    document.getElementById('modalCuerpoTexto').innerHTML = texto;
+
+    subBotonesActuales = subBotones || [];
+    var contBotones = document.getElementById('modalSubBotones');
+    var contSubTexto = document.getElementById('modalSubTexto');
+    contSubTexto.style.display = 'none';
+    contSubTexto.innerHTML = '';
+    contBotones.classList.toggle('sdp-botones-columna', !!subBotonesVertical);
+    if (subBotonesActuales.length) {
+      contBotones.style.display = subBotonesVertical ? 'grid' : 'flex';
+      contBotones.innerHTML = subBotonesActuales.map(function(b, i) {
+        var tooltip = b.tooltip ? ' tiene-tooltip" data-tooltip="' + b.tooltip + '"' : '"';
+        return '<button class="bib-btn' + tooltip + ' onclick="mostrarSubBotonModal(' + i + ')">' + b.label + '</button>';
+      }).join('');
+    } else {
+      contBotones.style.display = 'none';
+      contBotones.innerHTML = '';
+    }
+
+    document.querySelector('#modalTexto > .modal-tipificacion').style.display = tipificacion ? 'block' : 'none';
+    document.querySelector('#modalTexto .modal-footer').style.display = ocultarFooter ? 'none' : 'flex';
+    document.getElementById('modalTipificacion').textContent = tipificacion || '';
+    var panel = document.getElementById('modalTexto');
+    panel.classList.add('open');
+    panel.style.scrollMarginTop = '90px';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    if (historialBasePanelEpoch !== panelEpoch) {
+      historialBasePanel = historial.length;
+      historialBasePanelEpoch = panelEpoch;
+    }
+    panelHistorialStack = [];
+
+    document.querySelectorAll('#opcionesCategoria .bib-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.textContent === titulo);
+    });
+    pushPanelCrumb('panelTop', titulo, function() {}, function() {
+      document.querySelectorAll('#opcionesCategoria .bib-btn').forEach(function(btn) { btn.classList.remove('active'); });
+    });
+  }
+
+  function cerrarModalTexto() {
+    document.getElementById('modalTexto').classList.remove('open');
+    document.querySelectorAll('#opcionesCategoria .bib-btn').forEach(function(btn) { btn.classList.remove('active'); });
+    if (panelHistorialStack.length) {
+      panelHistorialStack = [];
+      var destino = historial[historialBasePanel - 1];
+      historial = historial.slice(0, historialBasePanel);
+      if (destino && destino.restaurar) destino.restaurar();
+      renderRuta();
+    }
+  }
+
+  var panelHistorialStack = [];
+  var historialBasePanel = 0;
+  var panelEpoch = 0;
+  var historialBasePanelEpoch = -1;
+
+  function scrollBloqueAVista(el) {
+    if (!el) return;
+    el.style.scrollMarginTop = '90px';
+    requestAnimationFrame(function() {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }
+
+  function aplicarMostrarUno(idMostrar, lista) {
+    lista.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    var elMostrar = document.getElementById(idMostrar);
+    if (elMostrar) elMostrar.style.display = 'block';
+    [idMostrar].concat(lista).forEach(function(id) {
+      var boton = document.querySelector('[onclick*="mostrarUno(\'' + id + '\'"]');
+      if (boton) boton.classList.toggle('active', id === idMostrar);
+    });
+    scrollBloqueAVista(elMostrar);
+  }
+
+  function pushPanelCrumb(groupKey, label, onRestaurar, onRemove) {
+    var idx = panelHistorialStack.findIndex(function(it) { return it.groupKey === groupKey; });
+    var base = idx !== -1 ? idx : panelHistorialStack.length;
+    var eliminados = panelHistorialStack.slice(base);
+    eliminados.forEach(function(it) { if (it.onRemove) it.onRemove(); });
+    panelHistorialStack = panelHistorialStack.slice(0, base);
+    panelHistorialStack.push({ groupKey: groupKey, label: label, onRestaurar: onRestaurar, onRemove: onRemove });
+    sincronizarRutaPanel();
+  }
+
+  function sincronizarRutaPanel() {
+    historial = historial.slice(0, historialBasePanel).concat(panelHistorialStack.map(function(item, i) {
+      return {
+        label: item.label,
+        restaurar: function() {
+          var eliminados = panelHistorialStack.slice(i + 1);
+          panelHistorialStack = panelHistorialStack.slice(0, i + 1);
+          eliminados.forEach(function(it) { if (it.onRemove) it.onRemove(); });
+          item.onRestaurar();
+        }
+      };
+    }));
+    renderRuta();
+  }
+
+  function abrirModalAyuda() {
+    document.getElementById('modalAyudaTipificacion').classList.add('open');
+  }
+
+  function cerrarModalAyuda() {
+    document.getElementById('modalAyudaTipificacion').classList.remove('open');
+  }
+
+  var MATRIZ_DETALLE = {
+    expresion: {
+      label: 'Expresión y personalización de la llamada',
+      valor: '30%',
+      color: '#0A3D62',
+      items: [
+        { label: 'Uso de vocabulario profesional y adecuado', valor: '6%',
+          explicacion:
+            '<p>El agente utiliza un vocabulario profesional, respetuoso y acorde al servicio, dirigiéndose al usuario de "usted".</p>' +
+            '<p>Evita el uso de tecnicismos innecesarios, lenguaje coloquial, impropio o informal, así como el uso excesivo de muletillas durante la interacción, manteniendo una comunicación clara y profesional.</p>' +
+            '<p><strong>Regla: no utiliza más de <span style="color:#E53935;">3</span> muletillas en un lapso de <span style="color:#E53935;">3</span> minutos durante la interacción.</strong></p>'
+        },
+        { label: 'Personalización de la atención', valor: '3%',
+          explicacion:
+            '<p>El agente personaliza la llamada utilizando el nombre o apellido del usuario en los siguientes momentos: <strong>en el saludo (obligatorio) y en la despedida (obligatorio).</strong></p>' +
+            '<p>Adicionalmente, se espera su uso de manera opcional al retomar tiempos de espera y al solicitar acciones específicas al usuario.</p>' +
+            '<p><strong>Regla:</strong> En llamadas cortas (&lt;5min), la personalización es obligatoria en el saludo y en la despedida. El incumplimiento de los momentos adicionales no constituye falta en este tipo de llamada. Sin embargo, si los utiliza en otros momentos adicionales al saludo y despedida tampoco incurre en falta.</p>' +
+            '<p>Se recomienda evitar menciones repetitivas en respuestas consecutivas, utilizándolo únicamente cuando aporte valor al contexto o ayude a personalizar la interacción.</p>'
+        },
+        { label: 'Mantiene tono de voz adecuado', valor: '5%',
+          explicacion:
+            '<p>El agente mantiene durante toda la interacción un tono de voz modulado, audible y con un ritmo adecuado que facilita la comprensión del usuario.</p>' +
+            '<p>Proyecta seguridad, cordialidad y profesionalismo a través de su expresión oral, sin elevar ni bajar excesivamente el volumen y evitando silencios prolongados que afecten la fluidez de la conversación.</p>' +
+            '<p><strong>Regla:</strong> Se activa cuando el agente mantiene un tono elevado, muy bajo o inseguro de forma sostenida o cambiante en cualquier momento de la llamada.</p>'
+        },
+        { label: 'Se expresa de manera clara y comprensible', valor: '6%',
+          explicacion:
+            '<p>El agente demuestra dominio en la articulación de palabras y frases, transmitiendo de forma clara el mensaje o la solución al usuario. Su expresión oral es fluida, ordenada y coherente, sin generar confusión ni requerir repeticiones innecesarias por parte del usuario.</p>' +
+            '<p><strong>Regla:</strong> Se considera incumplimiento cuando el agente presenta más de 2 palabras o frases mal articuladas dentro de un mismo lapso de evaluación, definido según la duración de la llamada:</p>' +
+            '<p>- Llamada corta (&lt;5 min): se evalúa la llamada completa como un solo lapso.</p>' +
+            '<p>- Llamada larga (&gt;5 min): se evalúa en lapsos de 2 minutos de forma continua en cualquier momento de la llamada (es de forma reincidente)</p>'
+        },
+        { label: 'Saludo inicial al usuario, se presenta con nombre y apellido', valor: '5%',
+          explicacion:
+            '<p>El agente responde de manera inmediata (máximo 3 segundos luego de contestar la llamada), saluda cordialmente, agradece la llamada, identifica la institución y se presenta con nombre y apellido, estableciendo una atención formal y profesional desde el inicio de la interacción.</p>'
+        },
+        { label: 'Cierre cordial de la llamada', valor: '5%',
+          explicacion:
+            '<p>Al finalizar la atención, el agente consulta si el usuario tiene alguna duda adicional y cierra la llamada de manera cordial, utilizando una frase empática y de despedida que refuerce una experiencia positiva.</p>'
+        },
+        { label: 'No demuestra escucha activa durante la interacción', valor: '30%', rojo: true,
+          explicacion:
+            '<p>El agente no se mantiene atento ni concentrado durante toda la llamada, no procesa correctamente la información proporcionada por el usuario y responde de forma desalineada a su solicitud.</p>' +
+            '<p>Interrumpe al usuario antes de que complete sus ideas o vuelve a solicitar datos que ya fueron proporcionados durante la interacción, demostrando poca retención y/o poca comprensión activa del contenido de la llamada.</p>' +
+            '<p><strong>Excepción:</strong> No se penaliza cuando se solicite una segunda confirmación de datos por motivos de seguridad, o cuando se evidencien interferencias o ruido ambiental durante la llamada.</p>'
+        },
+        { label: 'No demuestra respeto', valor: '30%', rojo: true },
+        { label: 'No responde con frases de empatía ante comentarios negativos', valor: '30%', rojo: true,
+          explicacion:
+            '<p>Cuando el usuario expresa inconformidad, molestia o comentarios negativos sobre el servicio, la aplicación o la atención recibida, el agente no utiliza frases empáticas para validar la situación del usuario, limitándose a responder de forma neutral, evasiva o indiferente, sin incurrir en la aceptación del comentario negativo.</p>' +
+            '<p>Ejemplos: "Siento que esta experiencia no haya sido como esperaba" / "Entiendo que esto puede ser molesto para usted, sin embargo estoy trabajando para apoyarle" / "Comprendo que esto pueda causarte molestia, sin embargo estoy trabajando para solventar su caso"</p>'
+        }
+      ]
+    },
+    registro: {
+      label: 'Registro y complementación',
+      valor: '30%',
+      color: '#1976A6',
+      items: [
+        { label: 'Solicita y confirma datos personales del usuario', valor: '3%',
+          explicacion:
+            '<p>El agente solicita al usuario sus datos personales requeridos para la atención: nombre completo, número de DUI, teléfono de contacto u otros según corresponda, los confirma y valida su veracidad.</p>'
+        },
+        { label: 'Ingresa correctamente el ID de la llamada', valor: '3%',
+          explicacion:
+            '<p>El agente registra correctamente en el ticket el ID correspondiente a la llamada, garantizando la trazabilidad, seguimiento y correcta identificación de la interacción atendida.</p>'
+        },
+        { label: 'Descripción del caso completa y alineada a la solicitud', valor: '15%',
+          explicacion:
+            '<p>El agente documenta correctamente el motivo de contacto del usuario. Se penaliza cuando la descripción del ticket es incompleta, genérica, no refleja lo que el usuario solicitó, o presenta errores ortográficos que dificultan la comprensión del caso.</p>'
+        },
+        { label: 'Documentación de evidencia y respaldo del caso', valor: '9%',
+          explicacion:
+            '<p>El agente adjunta o referencia la documentación de respaldo requerida según la tipificación del caso (capturas, números de gestión, referencias médicas u otras según procedimiento), garantizando la trazabilidad y continuidad del proceso de atención.</p>'
+        },
+        { label: 'No crea perfil de solicitante en SDP cuando aplica', valor: '30%', rojo: true,
+          explicacion:
+            '<p>El agente omite crear el perfil del usuario en SDP en aquellos casos donde el procedimiento lo exige, impidiendo su correcta identificación, la trazabilidad del ticket y la continuidad del servicio.</p>'
+        }
+      ]
+    },
+    gestionLlamada: {
+      label: 'Gestión de la llamada',
+      valor: '30%',
+      color: '#2196F3',
+      items: [
+        { label: 'Realiza preguntas de sondeo adecuadas y verifica el entendimiento del caso', valor: '12%',
+          explicacion:
+            '<p>El agente formula preguntas específicas, pertinentes y alineadas a los scripts de biblioteca, de acuerdo con el tipo de solicitud o inconveniente presentado por el usuario.</p>' +
+            '<p>Antes de proceder con la gestión, confirma que ha comprendido correctamente el motivo de la llamada, reformulando o validando la solicitud cuando corresponde.</p>' +
+            '<p>Se penaliza cuando el agente omite preguntas clave, asume datos incompletos o imprecisos sin confirmarlos, o inicia la resolución sin haber verificado el entendimiento del caso.</p>'
+        },
+        { label: 'Mantiene orden, control y dominio del proceso durante la gestión del caso', valor: '13%',
+          explicacion:
+            '<p>El agente conduce la interacción de forma ordenada y coherente, manteniendo un hilo lógico sin saltar entre temas ni generar confusión en el usuario.</p>' +
+            '<p>Antes de proceder a la resolución, recopila la información necesaria de forma progresiva: motivo de contacto → datos relevantes → causa raíz → acción.</p>' +
+            '<p>Se penaliza cuando la gestión evidencia falta de enfoque, pasos omitidos, información asumida sin confirmar o inconsistencias que afecten la comprensión o resolución del caso.</p>'
+        },
+        { label: 'Brinda al usuario # de gestión', valor: '3%',
+          explicacion:
+            '<p>El agente informa al usuario el número de gestión generado para su caso, permitiéndole dar seguimiento posterior a su solicitud, exceptuando los contactos no relacionados al servicio, emergencias u otras atenciones excluidas por el procedimiento.</p>'
+        },
+        { label: 'Informa y envía llamada a encuesta de satisfacción', valor: '2%',
+          explicacion:
+            '<p>El agente comunica al usuario que recibirá una llamada de encuesta de satisfacción y promueve su participación, exceptuando los casos no relacionados al servicio, emergencias u orientaciones de salud, conforme a los lineamientos establecidos.</p>'
+        },
+        { label: 'No gestiona la resolución del caso conforme al alcance del canal y a los procedimientos establecidos', valor: '30%', rojo: true,
+          explicacion:
+            '<p>El agente evidencia desconocimiento o una aplicación incorrecta del proceso, brindando una solución confusa o imprecisa, lo que retrasa la resolución del caso.</p>'
+        }
+      ]
+    },
+    gestionTiempo: {
+      label: 'Gestión del tiempo',
+      valor: '10%',
+      color: '#7EC8F0',
+      items: [
+        { label: 'Cumple con el Tiempo Medio de Operación (TMO) según tipificación', valor: '5%',
+          explicacion:
+            '<p>De acuerdo con la tabla de Tiempos de duración de la llamada por Tipificación, el agente gestiona la llamada dentro del tiempo establecido para cada tipo de caso, evitando prolongaciones innecesarias y asegurando una atención eficiente sin afectar la resolución del caso.</p>' +
+            '<p><strong>Regla:</strong> se exceptuarán los casos donde la duración extendida de la llamada sea atribuible exclusivamente a causas del usuario debidamente evidenciadas durante la interacción <em>(por ejemplo: usuario con poco conocimiento tecnológico, fallas en su señal de internet, etc.)</em>, de igual manera, las causas atribuibles a problemas teconologicos o de la operación interna, bajo previo aviso de jefaturas correspondientes <em>(por ejemplo: incidencias técnicas internas, el agente deberá dejar plasmado en las notas del ticket el inconveniente técnico que se presentó en el momento de la gestión o llamada)</em>.</p>'
+        },
+        { label: 'Usa de manera adecuada la herramienta hold', valor: '5%',
+          explicacion:
+            '<p>Agente informa previamente al usuario el motivo de la espera para resolver su duda o gestión, si necesita más tiempo del permitido (2min), deberá retomar la llamada antes que se cumpla dicho tiempo para informar al usuario.</p>' +
+            '<p><em>Sugerencias: Gracias por su amable espera en línea Sr(a) XXX, disculpe mi demora; le comento que sigo trabajando en la resolución de su caso, ¿podría brindarme más tiempo en espera por favor?</em></p>'
+        },
+        { label: 'No cumple con el tiempo permitido de uso del hold (máximo 1min, 30seg por uso)', valor: '10%', rojo: true,
+          explicacion:
+            '<p>El agente utiliza la herramienta hold de manera inadecuada, excediendo el tiempo máximo permitido por uso, aún cuando haya informado previamente al usuario el motivo de la espera, afectando la fluidez y eficiencia de la atención.</p>' +
+            '<p><strong>Regla: máximo 1min 30 seg por uso.</strong></p>'
+        },
+        { label: 'No respeta el tiempo prudencial para finalizar la llamada tras el cierre', valor: '10%', rojo: true,
+          explicacion:
+            '<p>Luego de realizar el cierre de la interacción, el agente finaliza la llamada de forma inmediata sin respetar el periodo de inactividad correspondiente posterior al script de cierre según el escenario de atención, impidiendo una despedida adecuada y afectando la experiencia del usuario, exceptuando los casos no relacionados al servicio.</p>'
+        }
+      ]
+    },
+    autofails: {
+      label: 'Autofails totales',
+      valor: '100%',
+      color: '#E53935',
+      items: [
+        { label: 'Habla negativamente del servicio', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente emite y/o confirma comentarios negativos, desacreditantes o despectivos sobre el servicio, la aplicación, tercerías o cualquier aspecto relacionado con DoctorSV, ya sea de forma directa o indirecta.</p>' +
+            '<p>Realiza expresiones que generan desconfianza en el usuario, afectan la imagen institucional y debilitan la percepción de calidad del servicio, en lugar de brindar una explicación orientada a la solución.</p>' +
+            '<p>Ejemplos: "La aplicación a veces falla", "Las farmacias no conocen el proceso".</p>'
+        },
+        { label: 'Discute con el usuario', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente adopta una actitud confrontativa durante la atención, contradice al usuario con tono inapropiado, eleva la voz, interrumpe, invalida su experiencia o intenta imponer su criterio en lugar de enfocarse en la solución.</p>' +
+            '<p>Utiliza expresiones que generan tensión, conflicto o incomodidad, afectando el clima de la interacción y la satisfacción del usuario.</p>' +
+            '<p>Ejemplo: "Usted está equivocado", "le digo que no es un error", "como ya le expliqué", "Escucheme nuevamente", "Calmese", "como ya le dije"…</p>'
+        },
+        { label: 'Registro incorrecto de Tipificación y Estado Inicial', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente clasifica incorrectamente el ticket al seleccionar una tipificación o estado inicial que no corresponde a la solicitud del usuario. Esta mala clasificación impide la correcta derivación, escalamiento o priorización del caso, afecta la gestión por parte de las áreas involucradas y retrasa la resolución del servicio.</p>'
+        },
+        { label: 'Registro incorrecto de ticket', valor: '', rojo: true,
+          explicacion:
+            '<p>No ingresó correctamente la descripción y/o los datos personales solicitados del usuario y en los campos correspondientes, no documenta de forma alineada a la consulta o solicitud del usuario, afectando la trazabilidad, seguimiento y registro estadístico del caso.</p>'
+        },
+        { label: 'No crea ticket/Crea ticket sin respetar jerarquía', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente omite registrar una o más solicitudes del usuario en el sistema SDP o crea los tickets sin respetar la jerarquía de tipificaciones establecida, incumpliendo el procedimiento definido para la correcta gestión de los casos.</p>' +
+            '<p>Asimismo, incurre en falta cuando no cumple con el tiempo de creación despues de finalizada la interacción (máximo 3 minutos). Excepción solo si genera más de un ticket por el tipo de gestión del usuario.</p>' +
+            '<p>Este incumplimiento impide la correcta trazabilidad, el seguimiento oportuno y la verificación posterior de la gestión, afectando la continuidad del servicio, la derivación adecuada a las áreas correspondientes y la calidad de la atención brindada al usuario.</p>'
+        },
+        { label: 'Agente no resolvió al usuario', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente no logra brindar una solución efectiva a la solicitud del usuario, afectando la confianza del usuario y la percepción del servicio. En los casos donde haya más de una consulta o una solicitud, se le brindo una solución incompleta.</p>'
+        },
+        { label: 'Agente brinda información incorrecta o imprecisa', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente proporciona información o una solución incorrecta, incompleta, incoherente o engañosa, o comunica datos que no corresponden al proceso real. Genera falsas expectativas sobre la gestión o el seguimiento del caso</p>'
+        },
+        { label: 'Solicita o proporciona datos confidenciales', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente solicita, registra, repite o divulga información sensible del usuario sin estar autorizado o fuera del procedimiento establecido. Expone datos personales, médicos o administrativos de forma indebida, comprometiendo la privacidad, seguridad y confidencialidad del usuario y del servicio.</p>'
+        },
+        { label: 'Responde con sarcasmo', valor: '', rojo: true,
+          explicacion:
+            '<p>Agente utiliza un tono o palabras que denigra, minimiza, ridiculiza al usuario, o responde con sarcasmo, ironía o burla (risas) derivando en una conducta inadecuada y generando una experiencia negativa y dañando la integridad del usuario o maltrato hacia el mismo.</p>'
+        },
+        { label: 'Divulga condiciones o procedimientos internos', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente revela información interna, procesos operativos, limitaciones del sistema, políticas o decisiones institucionales que no deben ser comunicadas al usuario. Utiliza estas explicaciones como justificación en lugar de ofrecer una respuesta orientada al servicio y a la solución.</p>'
+        },
+        { label: 'Agente transfiere la llamada a la cola de espera nuevamente', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente responde la llamada y la devuelve a la cola sin justificación operativa válida.</p>'
+        },
+        { label: 'Agente corta la llamada', valor: '', rojo: true,
+          explicacion:
+            '<p>Agente corta deliberadamente en cualquier transcurso de la llamada.</p>' +
+            '<p>Queda excento de este criterio el flujo de corte de llamada por agresión del usuario (debió haber alertado al usuario con 3 previas notificaciones cordiales).</p>'
+        },
+        { label: 'No transfiere llamada al destino correcto', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente no deriva el contacto cuando corresponde, según flujograma de proceso en casos de emergencia, grupos de riesgo y amerite transferencia a medico de apoyo por TRIAGE.</p>' +
+            '<p>Omite realizar la transferencia adecuada o la realiza de forma incorrecta, retrasando la atención especializada y poniendo en riesgo la continuidad del servicio.</p>'
+        },
+        { label: 'Propicia a realizar fraude', valor: '', rojo: true,
+          explicacion:
+            '<p>El agente realiza acciones, sugerencias u omisiones que facilitan el uso indebido de las plataformas, información o procesos para beneficio personal o de terceros.</p>' +
+            '<p>Compromete la integridad del proyecto, la seguridad de los datos y el cumplimiento de las normativas institucionales.</p>'
+        }
+      ]
+    }
+  };
+
+  function abrirModalRecursos() {
+    document.getElementById('modalRecursos').classList.add('open');
+  }
+
+  function cerrarModalRecursos() {
+    document.getElementById('modalRecursos').classList.remove('open');
+  }
+
+  function abrirModalMatrizCalidad() {
+    mostrarMatrizPrincipal();
+    document.getElementById('modalMatrizCalidad').classList.add('open');
+  }
+
+  function cerrarModalMatrizCalidad() {
+    document.getElementById('modalMatrizCalidad').classList.remove('open');
+  }
+
+  var matrizKeyActual = null;
+
+  function mostrarMatrizPrincipal() {
+    document.getElementById('matrizVistaPrincipal').style.display = 'block';
+    document.getElementById('matrizVistaDetalle').style.display = 'none';
+    document.getElementById('matrizVistaExplicacion').style.display = 'none';
+  }
+
+  function mostrarDetalleMatriz(key) {
+    var datos = MATRIZ_DETALLE[key];
+    if (!datos) return;
+
+    matrizKeyActual = key;
+    document.getElementById('matrizVistaPrincipal').style.display = 'none';
+    document.getElementById('matrizVistaDetalle').style.display = 'block';
+    document.getElementById('matrizVistaExplicacion').style.display = 'none';
+
+    var resumen = document.getElementById('matrizDetalleResumen');
+    resumen.style.background = datos.color;
+    resumen.querySelector('.matriz-calidad-label').textContent = datos.label;
+    var valorEl = resumen.querySelector('.matriz-calidad-valor');
+    valorEl.textContent = datos.valor;
+    valorEl.style.background = datos.color;
+
+    document.getElementById('matrizDetalleItems').innerHTML = datos.items.map(function(it, i) {
+      var clickeable = it.explicacion ? ' style="cursor:pointer;" onclick="mostrarExplicacionMatriz(' + i + ')"' : '';
+      return '<div class="matriz-detalle-item' + (it.rojo ? ' rojo' : '') + '"' + clickeable + '><span>' + it.label + '</span><span>' + it.valor + '</span></div>';
+    }).join('');
+  }
+
+  function mostrarExplicacionMatriz(i) {
+    var datos = MATRIZ_DETALLE[matrizKeyActual];
+    var item = datos.items[i];
+    if (!item || !item.explicacion) return;
+
+    document.getElementById('matrizVistaDetalle').style.display = 'none';
+    document.getElementById('matrizVistaExplicacion').style.display = 'block';
+    document.getElementById('matrizExplicacionTitulo').textContent = item.label;
+    document.getElementById('matrizExplicacionCuerpo').innerHTML = item.explicacion;
+  }
+
+  function abrirModalTip(html) {
+    document.getElementById('modalTipCuerpo').innerHTML = html;
+    document.getElementById('modalTip').classList.add('open');
+  }
+
+  function cerrarModalTip() {
+    document.getElementById('modalTip').classList.remove('open');
+  }
+
+  function irArriba() {
+    var main = document.querySelector('.main');
+    main.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var main = document.querySelector('.main');
+    var btnScrollTop = document.getElementById('btnScrollTop');
+    if (main && btnScrollTop) {
+      main.addEventListener('scroll', function() {
+        btnScrollTop.classList.toggle('visible', main.scrollTop > 300);
+      });
+    }
+  });
+
+  var resultadosBusquedaGlobal = [];
+
+  function abrirModalBusquedaGlobal() {
+    document.getElementById('inputBusquedaGlobal').value = '';
+    document.getElementById('resultadosBusquedaGlobal').innerHTML = '';
+    document.getElementById('modalBusquedaGlobal').classList.add('open');
+    document.getElementById('inputBusquedaGlobal').focus();
+  }
+
+  function cerrarModalBusquedaGlobal() {
+    document.getElementById('modalBusquedaGlobal').classList.remove('open');
+  }
+
+  function abrirModalDespedida() {
+    document.getElementById('modalDespedida').classList.add('open');
+  }
+
+  function cerrarModalDespedida() {
+    document.getElementById('modalDespedida').classList.remove('open');
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Escape') return;
+    document.querySelectorAll('.modal-overlay.open, .panel-inline.open').forEach(function(modal) {
+      modal.classList.remove('open');
+    });
+  });
+
+  function buscarGlobal(q) {
+    q = normalizarBusqueda(q.trim());
+    var contenedor = document.getElementById('resultadosBusquedaGlobal');
+
+    if (!q) {
+      contenedor.innerHTML = '';
+      return;
+    }
+
+    var palabras = q.split(/\s+/).filter(Boolean);
+
+    resultadosBusquedaGlobal = [];
+    Object.keys(OPCIONES_CATEGORIA).forEach(function(cat) {
+      aplanarArbol(OPCIONES_CATEGORIA[cat], []).forEach(function(n) {
+        var haystack = normalizarBusqueda(n.label);
+        if (palabras.every(function(p) { return haystack.includes(p); })) {
+          resultadosBusquedaGlobal.push({ label: n.label, cat: cat, ancestros: n.ancestros, item: n.item, index: n.index, padre: n.padre, subBotonIndex: n.subBotonIndex });
+        }
+      });
+    });
+
+    if (resultadosBusquedaGlobal.length === 0) {
+      contenedor.innerHTML = '<p class="placeholder">No se encontraron resultados.</p>';
+      return;
+    }
+
+    contenedor.innerHTML = resultadosBusquedaGlobal.map(function(r, i) {
+      var ruta = [NOMBRES_CATEGORIA[r.cat]].concat(r.ancestros.map(function(a) { return a.label; })).join(' > ');
+      return '<button class="bib-btn" onclick="irAResultadoGlobal(' + i + ')">' + r.label + '<small>' + ruta + '</small></button>';
+    }).join('');
+  }
+
+  function irAResultadoGlobal(i) {
+    var nodo = resultadosBusquedaGlobal[i];
+    cerrarModalBusquedaGlobal();
+    mostrarCategoria(nodo.cat);
+    irANodoBusqueda(nodo);
+  }
+
+  function mostrarSubBotonModal(i) {
+    var b = subBotonesActuales[i];
+    var contSubTexto = document.getElementById('modalSubTexto');
+
+    pushPanelCrumb('subBotonesModal', b.label,
+      function() { mostrarSubBotonModal(i); },
+      function() {
+        document.querySelectorAll('#modalSubBotones .bib-btn').forEach(function(btn) { btn.classList.remove('active'); });
+        contSubTexto.style.display = 'none';
+        contSubTexto.innerHTML = '';
+      }
+    );
+
+    document.querySelectorAll('#modalSubBotones .bib-btn').forEach(function(btn, idx) {
+      btn.classList.toggle('active', idx === i);
+    });
+    contSubTexto.style.display = 'block';
+    contSubTexto.innerHTML = b.texto;
+  }
+
+  function cambiarPasoImagen(imgId, contadorId, delta, textId) {
+    var img = document.getElementById(imgId);
+    if (!img) return;
+    var total = parseInt(img.getAttribute('data-total'), 10);
+    var actual = parseInt(img.getAttribute('data-paso'), 10) + delta;
+    actual = Math.max(1, Math.min(total, actual));
+    img.setAttribute('data-paso', actual);
+    img.src = img.getAttribute('data-patron').replace('{n}', actual);
+    var contador = document.getElementById(contadorId);
+    if (contador) contador.textContent = actual + ' / ' + total;
+    if (textId) {
+      var textoEl = document.getElementById(textId);
+      var textos = TEXTOS_PASO[imgId];
+      if (textoEl && textos) textoEl.innerHTML = textos[actual] || '';
+    }
+  }
+
+  function toggleBloque(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var abriendo = el.style.display !== 'block';
+    el.style.display = abriendo ? 'block' : 'none';
+    if (abriendo) scrollBloqueAVista(el);
+  }
+
+  function mostrarUno(idMostrar, idsOcultar) {
+    var lista = Array.isArray(idsOcultar) ? idsOcultar : [idsOcultar];
+    var elMostrar = document.getElementById(idMostrar);
+    var yaVisible = elMostrar && elMostrar.style.display === 'block';
+    var groupKey = [idMostrar].concat(lista).slice().sort().join('|');
+
+    if (yaVisible) {
+      var idxExistente = panelHistorialStack.findIndex(function(it) { return it.groupKey === groupKey; });
+      if (idxExistente !== -1) {
+        var eliminados = panelHistorialStack.slice(idxExistente);
+        panelHistorialStack = panelHistorialStack.slice(0, idxExistente);
+        eliminados.forEach(function(it) { if (it.onRemove) it.onRemove(); });
+        sincronizarRutaPanel();
+      } else {
+        elMostrar.style.display = 'none';
+        var botonActual = document.querySelector('[onclick*="mostrarUno(\'' + idMostrar + '\'"]');
+        if (botonActual) botonActual.classList.remove('active');
+      }
+      return;
+    }
+
+    aplicarMostrarUno(idMostrar, lista);
+
+    var botonMostrar = document.querySelector('[onclick*="mostrarUno(\'' + idMostrar + '\'"]');
+    var label = botonMostrar ? botonMostrar.textContent : idMostrar;
+
+    pushPanelCrumb(groupKey, label,
+      function() { aplicarMostrarUno(idMostrar, lista); },
+      function() {
+        var el = document.getElementById(idMostrar);
+        if (el) el.style.display = 'none';
+        var boton = document.querySelector('[onclick*="mostrarUno(\'' + idMostrar + '\'"]');
+        if (boton) boton.classList.remove('active');
+      }
+    );
+  }
+
+  function volverAtras() {
+    if (historial.length > 1) {
+      irACrumb(historial.length - 2);
+    }
+  }
+</script>
+<script src="notif.js"></script>
+<script src="sidebar.js"></script>
+<script>
+  initSidebar();
+  initNotif(db, auth);
+</script>
+</body>
+</html>

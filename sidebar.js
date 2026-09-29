@@ -36,6 +36,7 @@ var ITEMS_NAV = {
   notificaciones: { id: 'notificaciones', label: 'Notificaciones', url: BASE+'notificaciones.html', icon: '<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>', badge: true, badgeId: 'notifNavBadge' },
   solicitudes: { id: 'solicitudes', label: 'Solicitudes',        url: BASE+'solicitudes.html', icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>' },
   biblioteca:  { id: 'biblioteca',  label: 'Biblioteca',         url: BASE+'biblioteca.html',  icon: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' },
+  tercerias:   { id: 'tercerias',   label: 'Biblioteca Tercerías', url: BASE+'tercerias.html', icon: '<path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 01-6 0 3 3 0 01-6 0 3 3 0 01-6 0V9z"/><path d="M5 12.5V21h14v-8.5"/><path d="M10 21v-5h4v5"/>' },
   miturno:     { id: 'miturno',     label: 'Mi Turno',           url: BASE+'miturno.html',     icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>' },
   metricas:    { id: 'metricas',    label: 'Mis Métricas',       url: BASE+'metricas.html',    icon: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' },
   transporte:  { id: 'transporte',  label: 'Transporte',         url: BASE+'transporte.html',  icon: '<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>' },
@@ -50,6 +51,7 @@ var ITEMS_NAV = {
   'jefe-solicitudes': { id: 'jefe-solicitudes', label: 'Solicitudes',        url: BASE+'solicitudes.html',    icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>' },
   'jefe-acciones':    { id: 'jefe-acciones',    label: 'Acciones de Personal', url: BASE+'acciones.html',       icon: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>' },
   'jefe-biblioteca':  { id: 'jefe-biblioteca',  label: 'Biblioteca',         url: BASE+'biblioteca.html',     icon: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' },
+  'jefe-tercerias':   { id: 'jefe-tercerias',   label: 'Biblioteca Tercerías', url: BASE+'tercerias.html',      icon: '<path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 01-6 0 3 3 0 01-6 0 3 3 0 01-6 0V9z"/><path d="M5 12.5V21h14v-8.5"/><path d="M10 21v-5h4v5"/>' },
   'jefe-tiemporeal':  { id: 'jefe-tiemporeal',  label: 'Tiempo Real',        url: BASE+'tiemporeal.html',     icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>' },
   'jefe-metricas':    { id: 'jefe-metricas',    label: 'Métricas',           url: BASE+'metricas.html',       icon: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>' },
   'jefe-turno':       { id: 'jefe-turno',       label: 'Turno',              url: BASE+'turno.html',          icon: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>' },
@@ -76,6 +78,7 @@ var ITEMS_NAV = {
   'sup-solicitudes':  { id: 'sup-solicitudes',  label: 'Solicitudes',        url: BASE+'solicitudes.html',    icon: '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="12" y2="17"/>' },
   'sup-acciones':     { id: 'sup-acciones',     label: 'Acciones de Personal', url: BASE+'acciones.html',       icon: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>' },
   'sup-biblioteca':   { id: 'sup-biblioteca',   label: 'Biblioteca',         url: BASE+'biblioteca.html',     icon: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' },
+  'sup-tercerias':    { id: 'sup-tercerias',    label: 'Biblioteca Tercerías', url: BASE+'tercerias.html',      icon: '<path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 01-6 0 3 3 0 01-6 0 3 3 0 01-6 0V9z"/><path d="M5 12.5V21h14v-8.5"/><path d="M10 21v-5h4v5"/>' },
   'sup-transporte':   { id: 'sup-transporte',   label: 'Transporte',         url: BASE+'transporte.html',     icon: '<rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>' },
   'sup-perfil':       { id: 'sup-perfil',       label: 'Mi Perfil',          url: BASE+'perfil.html',         icon: '<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
   'sup-chat':         { id: 'sup-chat',         label: 'Chat',               url: BASE+'chat.html',           icon: '<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>', badge: true, badgeId: 'chatNavBadge' },
@@ -118,7 +121,7 @@ var NAV_POR_ROL = {
     reportes:  []
   },
   superadmin: {
-    principal: ['jefe-usuarios','jefe-bases','jefe-actce','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','super-logs','super-modulos','super-chat','jefe-transporte','jefe-perfil'],
+    principal: ['jefe-usuarios','jefe-bases','jefe-actce','jefe-badges','jefe-notif','jefe-flash','jefe-solicitudes','jefe-acciones','jefe-biblioteca','jefe-tercerias','jefe-tiemporeal','jefe-metricas','jefe-turno','jefe-reportes','super-logs','super-modulos','super-chat','jefe-transporte','jefe-perfil'],
     reportes:  []
   },
   // Fallback para cualquier otro rol que use sidebar.js
@@ -353,6 +356,7 @@ function detectarPagina() {
   if (url.indexOf('flash') > -1)          return 'jefe-flash';
   if (url.indexOf('acciones') > -1)       return 'jefe-acciones';
   if (url.indexOf('solicitudes') > -1)    return 'jefe-solicitudes';
+  if (url.indexOf('tercerias') > -1)      return 'jefe-tercerias';
   if (url.indexOf('biblioteca') > -1)     return 'jefe-biblioteca';
   if (url.indexOf('miturno') > -1)        return 'miturno';
   if (url.indexOf('transporte') > -1)     return 'jefe-transporte';
@@ -432,6 +436,12 @@ var ROLES_CON_RESTRICCION_CANAL = ['agente', 'agente-inmersion', 'formacion', 'j
 var PROYECTO_CON_BIBLIOTECA = 'doctorsv';
 var CANAL_CON_BIBLIOTECA    = 'Telefonico';
 var IDS_MODULOS_EXCLUIDOS_POR_CANAL = ['biblioteca', 'jefe-biblioteca', 'sup-biblioteca', 'flash', 'jefe-flash', 'sup-flash'];
+
+// ── Biblioteca Tercerías: exclusiva del canal de tercería de DoctorSV ────────
+// Guiones para atender a farmacias, laboratorios y centros de imágenes (136, opción 9).
+// Misma regla que la Biblioteca: solo proyecto='doctorsv' con canal='Terceria dispensa'.
+var CANAL_CON_TERCERIAS = 'Terceria dispensa';
+var IDS_MODULOS_TERCERIAS = ['tercerias', 'jefe-tercerias', 'sup-tercerias'];
 
 // ── Ocultar/mostrar la barra lateral (todas las páginas) ─────────────────────
 var SB_OCULTA_KEY = 'atu360_sidebar_oculta';
@@ -761,14 +771,21 @@ function initSidebar() {
       var proyecto = doc.exists ? (doc.data().proyecto || '') : '';
 
       var tieneBiblioteca = proyecto === PROYECTO_CON_BIBLIOTECA && canal === CANAL_CON_BIBLIOTECA;
-      if (ROLES_CON_RESTRICCION_CANAL.indexOf(rol) > -1 && !tieneBiblioteca && NAV_POR_ROL[rol]) {
+      var tieneTercerias  = proyecto === PROYECTO_CON_BIBLIOTECA && canal === CANAL_CON_TERCERIAS;
+      if (ROLES_CON_RESTRICCION_CANAL.indexOf(rol) > -1 && NAV_POR_ROL[rol]) {
+        var excluidos = (tieneBiblioteca ? [] : IDS_MODULOS_EXCLUIDOS_POR_CANAL).concat(tieneTercerias ? [] : IDS_MODULOS_TERCERIAS);
         NAV_POR_ROL[rol] = {
-          principal: (NAV_POR_ROL[rol].principal || []).filter(function(id) { return IDS_MODULOS_EXCLUIDOS_POR_CANAL.indexOf(id) < 0; }),
-          reportes:  (NAV_POR_ROL[rol].reportes  || []).filter(function(id) { return IDS_MODULOS_EXCLUIDOS_POR_CANAL.indexOf(id) < 0; })
+          principal: (NAV_POR_ROL[rol].principal || []).filter(function(id) { return excluidos.indexOf(id) < 0; }),
+          reportes:  (NAV_POR_ROL[rol].reportes  || []).filter(function(id) { return excluidos.indexOf(id) < 0; })
         };
         var archivoActual = window.location.pathname.split('/').pop() || '';
-        if (archivoActual === 'biblioteca.html' || archivoActual === 'flash.html') {
-          window.location.href = BASE + 'home.html';
+        var bloqueado = (!tieneBiblioteca && (archivoActual === 'biblioteca.html' || archivoActual === 'flash.html')) ||
+                        (!tieneTercerias && archivoActual === 'tercerias.html');
+        if (bloqueado) {
+          // Login manda a agente/supervisor/jefe a biblioteca.html: los del canal de tercería van a la suya,
+          // solo si su rol ya tiene la Biblioteca Tercerías en NAV_POR_ROL (por ahora solo superadmin la tiene)
+          var rolConTercerias = idsCompletosDeRol(rol).some(function(id) { return IDS_MODULOS_TERCERIAS.indexOf(id) > -1; });
+          window.location.href = BASE + (tieneTercerias && rolConTercerias ? 'tercerias.html' : 'home.html');
           return;
         }
       }
