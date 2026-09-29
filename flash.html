@@ -115,6 +115,10 @@
     </div>
     <div class="topbar-right">
       <div class="tb-clock" id="clock">--:--:--</div>
+      <button class="btn-nuevo" id="btnActualizarStats" style="display:none;background:#F1F5F9;color:#475569" onclick="cargarLecturasTodas()" title="Volver a consultar las estadísticas de lectura">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+        Actualizar
+      </button>
       <button class="btn-nuevo" id="btnNuevo" onclick="abrirModal()">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Nueva publicación
@@ -219,6 +223,7 @@
       esGestor = ['jefe','formacion','superadmin'].indexOf(rolUsuario) >= 0;
       if (esGestor) {
         document.getElementById('btnNuevo').classList.add('visible');
+        document.getElementById('btnActualizarStats').style.display = 'flex';
         cargarBorradores();
         cargarAudiencia();
         cargarLecturasTodas();
@@ -482,7 +487,7 @@
   }
 
   function cargarLecturasTodas() {
-    db.collection('flash_lecturas').onSnapshot(function(snap) {
+    db.collection('flash_lecturas').get().then(function(snap) {
       lecturasPorPost = {};
       snap.forEach(function(doc) {
         var d = doc.data();
@@ -491,7 +496,7 @@
         lecturasPorPost[d.postId][d.uid] = true;
       });
       renderPosts();
-    }, function(e){ console.warn('lecturas:', e.message); });
+    }).catch(function(e){ console.warn('lecturas:', e.message); });
   }
 
   var _nlLista = [];

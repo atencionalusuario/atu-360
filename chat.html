@@ -139,6 +139,10 @@
       <p id="topbarSub">Cargando...</p>
     </div>
     <div class="topbar-right">
+      <button type="button" class="btn-img" id="btnActualizarChats" style="display:none;width:auto;padding:0 12px;border-radius:8px;gap:6px;font-size:0.78rem;font-weight:600;color:#475569" onclick="cargarChats()" title="Volver a consultar las conversaciones">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+        Actualizar
+      </button>
       <div class="tb-clock" id="clock">--:--:--</div>
     </div>
   </div>
@@ -235,6 +239,7 @@
   var chatActivoId = null;
   var mensajesActuales = [];
   var unsubMensajes = null;
+  var unsubChats = null;
   var agentesDeEquipo = [];
 
   function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
@@ -271,6 +276,7 @@
       miEmailG    = user.email;
       miProyectoG = doc.data().proyecto || '';
       soloLectura = miRolG === 'superadmin';
+      if(soloLectura) document.getElementById('btnActualizarChats').style.display = 'flex';
 
       if(miRolG === 'supervisor'){
         document.getElementById('btnNuevoChat').style.display = 'flex';
@@ -321,11 +327,12 @@
   }
 
   // ── Cargar lista de conversaciones ───────────────────────────────────────────
-  function cargarChats(){
-    var q = soloLectura
-      ? db.collection('chats')
-      : db.collection('chats').where('participantes', 'array-contains', currentUser.uid);
-    q.onSnapshot(function(snap){
+  // Modo monitoreo (superadmin, sin filtro: toda la organización) usa una consulta
+  // puntual con refresco manual en vez de un listener en vivo — dejar esa vista
+  // abierta escuchando cada mensaje de cada chat de la empresa disparaba lecturas
+  // de Firestore sin control. El chat normal (acotado a los chats propios) sigue
+  // en vivo porque ahí sí hace falta ver los mensajes entrantes al instante.
+  function procesarSnapChats(snap){
       chats = [];
       snap.forEach(function(d){ chats.push(Object.assign({ id: d.id }, d.data())); });
       chats.sort(function(a,b){
@@ -338,7 +345,17 @@
         var sigueExistiendo = chats.some(function(c){ return c.id === chatActivoId; });
         if(!sigueExistiendo){ chatActivoId = null; mostrarVacio(); }
       }
-    }, function(e){ console.error('chats:', e); showToast('Error al cargar tus conversaciones.'); });
+  }
+
+  function cargarChats(){
+    if(soloLectura){
+      db.collection('chats').get().then(procesarSnapChats)
+        .catch(function(e){ console.error('chats:', e); showToast('Error al cargar las conversaciones.'); });
+    } else {
+      if(unsubChats) unsubChats();
+      unsubChats = db.collection('chats').where('participantes', 'array-contains', currentUser.uid)
+        .onSnapshot(procesarSnapChats, function(e){ console.error('chats:', e); showToast('Error al cargar tus conversaciones.'); });
+    }
   }
 
   function nombreDeChat(c){
