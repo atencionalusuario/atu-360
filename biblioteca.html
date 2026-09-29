@@ -3512,6 +3512,28 @@
               '<li>Si también desea borrar las cookies y datos de sesión (esto puede cerrar su sesión y borrar configuraciones), toque Borrar almacenamiento o Borrar todos los datos.</li>' +
             '</ol>' +
             '<p class="instruccion-interna">En algunos Android (Samsung, Xiaomi, etc.) los nombres cambian ligeramente, pero la ruta generalmente es siempre Ajustes &rarr; Aplicaciones &rarr; [nombre de la app] &rarr; Almacenamiento.</p>'
+        },
+        { label: 'Problemas con registro / Documento no encontrado',
+          tipificacion: 'Incidencias técnicas > Problemas de registro > Documento no encontrado',
+          texto:
+            '<p>¿Usuario cumplió la mayoría de edad recientemente?</p>' +
+            '<div class="triage-acciones">' +
+              '<button class="bib-btn" onclick="mostrarUno(\'registroMayorEdadSi\', \'registroMayorEdadNo\')">Sí</button>' +
+              '<button class="bib-btn" onclick="mostrarUno(\'registroMayorEdadNo\', \'registroMayorEdadSi\')">No</button>' +
+            '</div>' +
+            '<div id="registroMayorEdadSi" class="triage-resultado" style="display:none;">' +
+              '<p>Muchas gracias por su reporte, lamentamos los inconvenientes presentados. ¿Nos podría comentar el inconveniente que visualiza en la aplicación al momento de realizar su registro? Adicionalmente, ¿me podría confirmar si recibió su documento de identidad durante la última semana?</p>' +
+              '<p>Muchas gracias por la información. En este momento procederemos a realizar el reporte correspondiente bajo el número de ticket XXXX, le solicitamos se mantenga al pendiente de su teléfono ya que será contactado para brindarle la resolución de su caso.</p>' +
+            '</div>' +
+            '<div id="registroMayorEdadNo" class="triage-resultado" style="display:none;">' +
+              '<p>Muchas gracias por su reporte, lamentamos los inconvenientes presentados. Le realizaré una serie de preguntas para validar su caso:</p>' +
+              '<p>¿En qué momento le aparece el mensaje: al ingresar el DUI o al intentar completar el registro?<br>' +
+              '¿Está creando su cuenta por primera vez o ya había usado DoctorSV antes?<br>' +
+              '¿Podría revisar si escribió el número tal como aparece en su documento?<br>' +
+              '¿El mensaje le aparece cada vez que lo intenta?<br>' +
+              'Además de "DUI no encontrado", ¿la aplicación le muestra alguna otra indicación?</p>' +
+              '<p>Muchas gracias por sus respuestas. En este momento procederemos a realizar el reporte correspondiente bajo el número de ticket XXXX, le solicitamos se mantenga al pendiente de su teléfono ya que será contactado para brindarle la resolución de su caso.</p>' +
+            '</div>'
         }
       ] },
       { label: 'Operativas de todo el servicio', pregunta: 'Incidencias operativas', hijos: [
