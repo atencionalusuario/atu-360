@@ -427,6 +427,7 @@
       var batch = db.batch();
       snap.forEach(function(d){ batch.delete(d.ref); });
       batch.delete(db.collection('flash_posts').doc(id));
+      batch.delete(db.collection('flash_stats').doc(id));
       return batch.commit();
     }).then(function(){ showToast('Publicación eliminada.'); })
       .catch(function(e){ console.error(e); showToast('No se pudo eliminar.'); });
@@ -486,17 +487,17 @@
     }).catch(function(e){ console.warn('audiencia:', e.message); });
   }
 
+  // Contador resumido por publicacion (flash_stats/{postId}.lectores = {uid:true,...}),
+  // en vez de releer las decenas de miles de registros individuales de flash_lecturas
+  // en cada apertura de la pantalla (eso disparaba lecturas de Firestore sin control).
   function cargarLecturasTodas() {
-    db.collection('flash_lecturas').get().then(function(snap) {
+    db.collection('flash_stats').get().then(function(snap) {
       lecturasPorPost = {};
       snap.forEach(function(doc) {
-        var d = doc.data();
-        if (!d.postId || !d.uid) return;
-        if (!lecturasPorPost[d.postId]) lecturasPorPost[d.postId] = {};
-        lecturasPorPost[d.postId][d.uid] = true;
+        lecturasPorPost[doc.id] = doc.data().lectores || {};
       });
       renderPosts();
-    }).catch(function(e){ console.warn('lecturas:', e.message); });
+    }).catch(function(e){ console.warn('flash_stats:', e.message); });
   }
 
   var _nlLista = [];
@@ -640,14 +641,19 @@
 
   function marcarLeido(id) {
     if (!currentUser || misLecturas[id]) return;
-    db.collection('flash_lecturas').add({
-      postId:    id,
-      uid:       currentUser.uid,
-      email:     currentUser.email,
-      nombre:    currentUser.email.split('@')[0],
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(function() {
+    var statsPatch = { lectores: {} }; statsPatch.lectores[currentUser.uid] = true;
+    Promise.all([
+      db.collection('flash_lecturas').add({
+        postId:    id,
+        uid:       currentUser.uid,
+        email:     currentUser.email,
+        nombre:    currentUser.email.split('@')[0],
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }),
+      db.collection('flash_stats').doc(id).set(statsPatch, { merge: true })
+    ]).then(function() {
       misLecturas[id] = true;
+      if (lecturasPorPost[id]) lecturasPorPost[id][currentUser.uid] = true;
       renderPosts();
       if (typeof invalidarCacheBadge === 'function') invalidarCacheBadge('flash', currentUser.uid);
     }).catch(function(e){ console.error('Error guardando lectura:', e); });

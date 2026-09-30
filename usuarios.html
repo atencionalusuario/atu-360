@@ -1000,13 +1000,16 @@
 
   // Marca como leidos todos los Flash Informativos ya publicados para un usuario recien creado,
   // asi no tiene que ir marcando uno por uno el historial acumulado antes de su ingreso.
+  // Ademas de flash_lecturas (registro individual), actualiza flash_stats/{postId}.lectores
+  // (contador resumido por publicacion) para que las estadisticas de lectura no dependan de
+  // releer todo el historial de flash_lecturas (ver flash.html).
   function marcarFlashesHistoricosLeidos(uid,email,nombre){
     return db.collection('flash_posts').where('estado','==','publicado').get()
       .then(function(snap){
         var docs=[]; snap.forEach(function(d){docs.push(d.id);});
         if(!docs.length) return;
         var chunks=[];
-        for(var i=0;i<docs.length;i+=450) chunks.push(docs.slice(i,i+450));
+        for(var i=0;i<docs.length;i+=240) chunks.push(docs.slice(i,i+240));
         var cadena=Promise.resolve();
         chunks.forEach(function(chunk){
           cadena=cadena.then(function(){
@@ -1018,6 +1021,8 @@
                 timestamp:firebase.firestore.FieldValue.serverTimestamp(),
                 origen:'alta_automatica'
               });
+              var statsPatch={lectores:{}}; statsPatch.lectores[uid]=true;
+              batch.set(db.collection('flash_stats').doc(postId), statsPatch, {merge:true});
             });
             return batch.commit();
           });
