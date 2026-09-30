@@ -1,1 +1,9 @@
 .claude/
+
+# Credenciales que nunca deben versionarse (auditoria 2026-09-30)
+serviceAccountKey*.json
+*-key.json
+*.pem
+.env
+.env.*
+node_modules/

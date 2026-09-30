@@ -882,7 +882,7 @@
     var u=id?usuarios.find(function(x){return x.id===id;}):null;
     document.getElementById('formTitle').textContent=u?'Editar usuario':'Nuevo usuario';
     document.getElementById('formSub').textContent  =u?u.email:'Completa los campos requeridos';
-    document.getElementById('formFooterLeft').innerHTML=(!u)?'Contraseña inicial: <strong>ATU360*</strong>':'';
+    document.getElementById('formFooterLeft').innerHTML=(!u)?'Se enviará un correo para que el usuario defina su propia contraseña.':'';
     document.getElementById('btnGuardar').textContent=u?'Guardar cambios':'Crear usuario';
     document.getElementById('btnGuardar').disabled=false;
     var veh=u&&u.vehiculo;
@@ -1032,8 +1032,19 @@
       .catch(function(e){ console.error('No se pudo marcar el historial de Flash como leido:',e); });
   }
 
+  // Contraseña temporal aleatoria (nunca se muestra ni se guarda en ningun lado):
+  // la cuenta se crea con ella y de inmediato se manda un correo de
+  // restablecimiento, asi nadie mas que el propio usuario llega a conocerla.
+  // Antes todas las cuentas se creaban con el mismo literal fijo, visible en
+  // este archivo publico (auditoria 2026-09-30, hallazgo C2).
+  function generarPasswordTemporal(){
+    var bytes = new Uint8Array(18);
+    crypto.getRandomValues(bytes);
+    return Array.prototype.map.call(bytes, function(b){ return b.toString(36); }).join('');
+  }
+
   function crearUsuarioAuth(email,datos,btnG){
-    authSecondary.createUserWithEmailAndPassword(email,'ATU360*')
+    authSecondary.createUserWithEmailAndPassword(email,generarPasswordTemporal())
       .then(function(cred){
         var uid=cred.user.uid; authSecondary.signOut();
         datos.activo=true; datos.primerAcceso=true;
@@ -1044,7 +1055,11 @@
       .then(function(uid){
         marcarFlashesHistoricosLeidos(uid,datos.email,datos.nombre);
         usuarioSeleccionado=uid; cerrarModalForm();
-        showToast('Usuario creado. Contraseña inicial: ATU360*');
+        return auth.sendPasswordResetEmail(email)
+          .catch(function(e){ console.error('No se pudo enviar el correo de bienvenida:',e); });
+      })
+      .then(function(){
+        showToast('Usuario creado. Se envió un correo para que defina su contraseña.');
         cargarUsuarios();
       })
       .catch(function(err){
@@ -1207,7 +1222,10 @@
       if(!fila.email||!fila.email.includes('@')) errs.push('Email');
       if(!fila.documento) errs.push('Documento');
       if(!PROYECTOS_OK.includes(fila.proyecto)) errs.push('Proyecto');
-      if(!ROLES_OK.includes(fila.rol)) errs.push('Rol');
+      // Nadie que no sea ya superadmin puede crear cuentas superadmin por CSV
+      // (antes jefe/wfm/admin podian, quedando ademas ocultas en su propio listado).
+      var rolesPermitidosCarga = miRolG === 'superadmin' ? ROLES_OK : ROLES_OK.filter(function(r){ return r !== 'superadmin'; });
+      if(!rolesPermitidosCarga.includes(fila.rol)) errs.push('Rol');
       if(fechaProvista && !fecha) errs.push('Fecha'); // vacía se permite (se completa después); solo error si viene con formato inválido
       if(errs.length){ err++;
         html+='<tr class="error-row"><td>'+(i+1)+'</td><td>'+escHtml(fila.nombre)+'</td><td>'+escHtml(fila.email)+'</td><td>'+escHtml(fila.proyecto)+'</td><td>'+escHtml(fila.rol)+'</td><td><span class="badge-err">'+escHtml(errs.join(', '))+'</span></td></tr>';
@@ -1246,14 +1264,18 @@
     function siguiente(i){
       if(i>=pendientesCSV.length){
         cerrarModalCsv();
-        showToast(creados+' usuarios creados'+(errores?', '+errores+' errores.':'. Contraseña: ATU360*'));
+        showToast(creados+' usuarios creados'+(errores?', '+errores+' errores.':'. Usa "Restablecer contraseña" con cada uno para que puedan entrar.'));
         btn.disabled=false; btn.textContent='Crear usuarios';
         cargarUsuarios();
         return;
       }
       btn.textContent='Creando... ('+(i+1)+'/'+total+')';
       var u=pendientesCSV[i];
-      conTimeout(authSecondary.createUserWithEmailAndPassword(u.email,'ATU360*'), TIMEOUT_MS)
+      // Contraseña aleatoria por cuenta (nunca se muestra): a diferencia del alta
+      // individual, aqui NO se manda el correo de restablecimiento en el mismo
+      // lote (podrian ser cientos) para no toparse con el limite de envios de
+      // Firebase. Usa el boton "Restablecer contraseña" de cada usuario despues.
+      conTimeout(authSecondary.createUserWithEmailAndPassword(u.email,generarPasswordTemporal()), TIMEOUT_MS)
         .then(function(cred){
           var uid=cred.user.uid; authSecondary.signOut();
           var datos=Object.assign({},u); delete datos.id;
