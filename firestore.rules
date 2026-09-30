@@ -1,23 +1,100 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Regla de emergencia (auditoría 2026-09-30, hallazgo C1).
-    // Antes: allow read, write: if request.auth != null  -> cualquier cuenta con sesión
-    // iniciada (incluida una creada por un tercero vía signup público) leía y escribía
-    // toda la base. Esta regla exige, además, que quien pide datos tenga una ficha en
-    // 'usuarios' creada por un administrador y que no esté desactivado. Una cuenta creada
-    // desde afuera no tiene ficha y queda rechazada, igual que una persona dada de baja.
-    //
-    // Esto NO resuelve todavía: que un usuario legítimo se autoasigne un rol distinto
-    // (C3), ni que lea datos de otros proyectos (A1). Eso requiere reglas por colección
-    // (fase 2 del plan), que se probarán en el emulador antes de publicarse aquí mismo.
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    // Fase 1 (auditoría 2026-09-30, hallazgo C1): exige que quien pide datos
+    // tenga una ficha en 'usuarios' creada por un administrador y que no esté
+    // desactivado. Una cuenta creada desde afuera no tiene ficha y queda
+    // rechazada, igual que una persona dada de baja.
     function perfilActivo() {
       return request.auth != null
         && get(/databases/$(database)/documents/usuarios/$(request.auth.uid))
              .data.get('activo', true) != false;
     }
-    match /{document=**} {
-      allow read, write: if perfilActivo();
+
+    // Rol de quien hace la petición, leído de su propia ficha. Solo se llama
+    // cuando perfilActivo() ya es cierto (si no, el propio get() de arriba
+    // ya habría fallado la evaluación en el punto de llamada).
+    function miRol() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.get('rol', 'agente');
     }
+
+    function esGestion() {
+      return miRol() in ['jefe', 'admin', 'wfm', 'superadmin'];
+    }
+
+    // Nadie fuera de un superadmin puede crear o dejar un documento con
+    // rol='superadmin' (hallazgo A2: la carga CSV permitía a jefe/admin/wfm
+    // crear cuentas superadmin). Si el rol que se está escribiendo no es
+    // superadmin, esta condición no aplica (pasa libre).
+    function noEscalaASuperadmin() {
+      return request.resource.data.get('rol', 'agente') != 'superadmin' || miRol() == 'superadmin';
+    }
+
+    // ── usuarios/{uid} (hallazgo C3: el rol vive en un documento que el ────────
+    // propio dueño puede escribir) ──────────────────────────────────────────
+    match /usuarios/{uid} {
+      allow read: if perfilActivo();
+
+      // Alta de cuentas: solo roles de gestión, y nunca hacia superadmin
+      // salvo que quien lo haga ya sea superadmin.
+      allow create: if perfilActivo() && esGestion() && noEscalaASuperadmin();
+
+      // El dueño de la ficha SOLO puede tocar sus propios campos de perfil/
+      // operación (foto, vehículo, contactos de emergencia, estado del turno,
+      // primer acceso). No puede tocar rol, proyecto, activo, canal,
+      // emailSupervisor ni emailJefe: eso es justo lo que antes permitía que
+      // cualquiera se autoasignara superadmin desde la consola del navegador.
+      // Un rol de gestión puede editar la ficha de cualquiera (como hoy),
+      // salvo escalar a superadmin sin serlo.
+      allow update: if perfilActivo() && (
+        (request.auth.uid == uid &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'fotoPerfil', 'vehiculo', 'tipoVehiculo', 'marca', 'modelo', 'placa',
+            'contactosEmergencia', 'estadoActual', 'estadoDesde', 'enLinea',
+            'entradaDesde', 'primerAcceso', 'fechaActualizacion'
+          ]))
+        || (esGestion() && noEscalaASuperadmin())
+      );
+
+      allow delete: if perfilActivo() && esGestion();
+    }
+
+    // ── logs (hallazgo: bitácora escrita por el cliente, falsificable) ──────
+    match /logs/{logId} {
+      allow read: if perfilActivo();
+      // Solo se puede crear un registro a nombre de uno mismo; nunca se
+      // modifica ni se borra (ni el propio autor ni un admin).
+      allow create: if perfilActivo() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // ── Resto de colecciones: mismo nivel de acceso que ya tenían con la ────
+    // regla de emergencia (perfilActivo), sin cambiar su comportamiento hoy.
+    // El aislamiento por proyecto/participantes de cada una (chats,
+    // solicitudes, marcajes, etc.) es la fase siguiente del plan, y requiere
+    // primero ajustes de datos (ej. agregar 'proyecto' a marcajes) que no se
+    // pueden hacer solo desde las reglas.
+    match /acciones_personal/{document=**}    { allow read, write: if perfilActivo(); }
+    match /chats/{document=**}                { allow read, write: if perfilActivo(); }
+    match /bases/{document=**}                { allow read, write: if perfilActivo(); }
+    match /base_registros/{document=**}       { allow read, write: if perfilActivo(); }
+    match /centros_educativos/{document=**}   { allow read, write: if perfilActivo(); }
+    match /ce_semanas/{document=**}           { allow read, write: if perfilActivo(); }
+    match /ce_registros/{document=**}         { allow read, write: if perfilActivo(); }
+    match /badges/{document=**}               { allow read, write: if perfilActivo(); }
+    match /flash_posts/{document=**}          { allow read, write: if perfilActivo(); }
+    match /flash_lecturas/{document=**}       { allow read, write: if perfilActivo(); }
+    match /flash_stats/{document=**}          { allow read, write: if perfilActivo(); }
+    match /solicitudes/{document=**}          { allow read, write: if perfilActivo(); }
+    match /turnos/{document=**}               { allow read, write: if perfilActivo(); }
+    match /turnos_plantillas/{document=**}    { allow read, write: if perfilActivo(); }
+    match /notificaciones/{document=**}       { allow read, write: if perfilActivo(); }
+    match /config/{document=**}               { allow read, write: if perfilActivo(); }
+    match /marcajes/{document=**}             { allow read, write: if perfilActivo(); }
+    match /auxiliares/{document=**}           { allow read, write: if perfilActivo(); }
+    match /licencias/{document=**}            { allow read, write: if perfilActivo(); }
+    match /transporte/{document=**}           { allow read, write: if perfilActivo(); }
   }
 }
