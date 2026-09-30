@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Regla de emergencia (auditoría 2026-09-30, hallazgo C1).
+    // Antes: allow read, write: if request.auth != null  -> cualquier cuenta con sesión
+    // iniciada (incluida una creada por un tercero vía signup público) leía y escribía
+    // toda la base. Esta regla exige, además, que quien pide datos tenga una ficha en
+    // 'usuarios' creada por un administrador y que no esté desactivado. Una cuenta creada
+    // desde afuera no tiene ficha y queda rechazada, igual que una persona dada de baja.
+    //
+    // Esto NO resuelve todavía: que un usuario legítimo se autoasigne un rol distinto
+    // (C3), ni que lea datos de otros proyectos (A1). Eso requiere reglas por colección
+    // (fase 2 del plan), que se probarán en el emulador antes de publicarse aquí mismo.
+    function perfilActivo() {
+      return request.auth != null
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+             .data.get('activo', true) != false;
+    }
+    match /{document=**} {
+      allow read, write: if perfilActivo();
+    }
+  }
+}
