@@ -242,15 +242,32 @@
   var CALIDAD_IMG_FLASH  = 0.72;   // jpeg
   var _imagenesModal = [];
 
+  var _editandoPublicado = false;   // true al editar una publicación ya publicada (no un borrador)
+
+  function textoBtnPublicar() { return _editandoPublicado ? 'Guardar cambios' : 'Publicar ahora'; }
+
   function abrirModal(id) {
     _editId = (typeof id === 'string') ? id : null;
-    var p = _editId ? borradores.find(function(x){ return x.id === _editId; }) : null;
+    var p = null;
+    _editandoPublicado = false;
+    if (_editId) {
+      p = borradores.find(function(x){ return x.id === _editId; });
+      if (!p) {
+        p = posts.find(function(x){ return x.id === _editId; });
+        _editandoPublicado = !!p;
+      }
+      if (!p) _editId = null;
+    }
     document.getElementById('mTitulo').value    = p ? (p.titulo || '') : '';
     document.getElementById('mCat').value       = p ? (p.categoria || 'actualizacion') : 'actualizacion';
     document.getElementById('mContenido').value = p ? (p.contenido || '') : '';
     _imagenesModal = (p && Array.isArray(p.imagenes)) ? p.imagenes.slice() : [];
     renderThumbsFlash();
-    document.querySelector('#modalOverlay h3').textContent = _editId ? 'Editar borrador' : 'Nueva publicación';
+    document.querySelector('#modalOverlay h3').textContent =
+      _editandoPublicado ? 'Editar publicación' : (_editId ? 'Editar borrador' : 'Nueva publicación');
+    // Una publicación ya publicada no vuelve a borrador: solo se guardan los cambios.
+    document.getElementById('btnBorrador').style.display = _editandoPublicado ? 'none' : '';
+    document.getElementById('btnPublicar').textContent = textoBtnPublicar();
     document.getElementById('modalOverlay').classList.add('show');
     document.getElementById('mTitulo').focus();
   }
@@ -258,6 +275,7 @@
   function cerrarModal() {
     document.getElementById('modalOverlay').classList.remove('show');
     _editId = null;
+    _editandoPublicado = false;
     _imagenesModal = [];
   }
 
@@ -352,18 +370,25 @@
     if (!titulo || !contenido) { showToast('Completa el título y el contenido.'); return; }
     var btn = document.getElementById('btnPublicar');
     btn.disabled = true; btn.textContent = 'Publicando...';
+    var editando = _editandoPublicado;
     var data = {
       titulo: titulo, categoria: cat, contenido: contenido, estado: 'publicado',
       imagenes: _imagenesModal.slice(),
-      autorUid: currentUser.uid, autorNombre: currentUser.email.split('@')[0],
-      fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
     };
+    if (editando) {
+      // Se conservan autor y fecha de publicación originales; solo se marca la edición.
+      data.fechaEdicion = firebase.firestore.FieldValue.serverTimestamp();
+    } else {
+      data.autorUid = currentUser.uid;
+      data.autorNombre = currentUser.email.split('@')[0];
+      data.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
+    }
     var op = _editId ? db.collection('flash_posts').doc(_editId).update(data)
                      : db.collection('flash_posts').add(data);
-    op.then(function() { cerrarModal(); showToast('Publicado correctamente.'); })
-      .catch(function(e) { showToast('Error al publicar.'); console.error(e); })
-      .finally(function() { btn.disabled = false; btn.textContent = 'Publicar ahora'; });
+    op.then(function() { cerrarModal(); showToast(editando ? 'Cambios guardados.' : 'Publicado correctamente.'); })
+      .catch(function(e) { showToast(editando ? 'Error al guardar los cambios.' : 'Error al publicar.'); console.error(e); })
+      .finally(function() { btn.disabled = false; btn.textContent = textoBtnPublicar(); });
   }
 
   // ── Borradores (jefe/superadmin) ────────────────────────────────────────────
@@ -609,13 +634,17 @@
       var leido = !!misLecturas[p.id];
       var _d = p.fechaCreacion ? new Date(p.fechaCreacion.seconds*1000) : null;
       var fecha = _d ? _d.toLocaleDateString('es-SV', {day:'2-digit', month:'long', year:'numeric'}) + ' · ' + _d.toLocaleTimeString('es-SV', {hour:'2-digit', minute:'2-digit'}) : '';
+      if (p.fechaEdicion) fecha += ' · editado';
       html += '<article class="blog-entry'+(leido?'':' unread')+'" id="entry-'+p.id+'">'
         +'<div class="entry-header">'
         +'<div style="display:flex;align-items:center;gap:8px">'
         +'<span class="post-cat '+(p.categoria||'')+'">'+escHtml(CATS[p.categoria]||p.categoria||'General')+'</span>'
         +(leido?'':'<div class="unread-dot"></div>')
         +'</div>'
-        +(esGestor?'<button onclick="eliminarPublicado(\''+p.id+'\')" style="padding:5px 12px;border:1px solid #FECACA;border-radius:6px;background:#FEF2F2;color:#DC2626;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit">Eliminar</button>':'')
+        +(esGestor?'<div style="display:flex;gap:8px">'
+          +'<button onclick="abrirModal(\''+p.id+'\')" style="padding:5px 12px;border:1px solid #C7D2FE;border-radius:6px;background:#EEF2FF;color:#1A3DAA;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit">Editar</button>'
+          +'<button onclick="eliminarPublicado(\''+p.id+'\')" style="padding:5px 12px;border:1px solid #FECACA;border-radius:6px;background:#FEF2F2;color:#DC2626;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit">Eliminar</button>'
+          +'</div>':'')
         +'</div>'
         +'<div class="entry-title">'+escHtml(p.titulo)+'</div>'
         +'<div class="entry-date"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'+fecha+'</div>'
