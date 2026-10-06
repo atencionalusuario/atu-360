@@ -1,0 +1,7 @@
+.git
+.gitignore
+Dockerfile
+firebase.json
+firestore.rules
+tallaje-apps-script.gs
+node_modules
