@@ -847,6 +847,16 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="modalBotonFooter" onclick="if(event.target===this) cerrarModalBotonFooter()">
+  <div class="modal-box" style="max-width:640px;">
+    <button class="modal-close" onclick="cerrarModalBotonFooter()">&times;</button>
+    <h3 class="modal-titulo" id="modalBotonFooterTitulo"></h3>
+    <div class="modal-despedida-cuerpo">
+      <div class="despedida-caja" id="modalBotonFooterCuerpo"></div>
+    </div>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -997,8 +1007,7 @@
   }
 
   function abrirEmergenciaCasosEspeciales() {
-    var item = OPCIONES_CATEGORIA.emergencia[0];
-    abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, true, item.subBotonesVertical);
+    mostrarCategoria('emergencia');
   }
 
   function abrirUbicacionFarmacias() {
@@ -4558,17 +4567,13 @@
 
   function mostrarBotonFooterExtra() {
     if (!botonFooterActual) return;
-    var contSubTexto = document.getElementById('modalSubTexto');
-    pushPanelCrumb('subBotonesModal', botonFooterActual.label,
-      function() { mostrarBotonFooterExtra(); },
-      function() {
-        contSubTexto.style.display = 'none';
-        contSubTexto.innerHTML = '';
-      }
-    );
-    contSubTexto.style.display = 'block';
-    contSubTexto.innerHTML = botonFooterActual.texto;
-    scrollBloqueAVista(contSubTexto);
+    document.getElementById('modalBotonFooterTitulo').textContent = botonFooterActual.label;
+    document.getElementById('modalBotonFooterCuerpo').innerHTML = botonFooterActual.texto;
+    document.getElementById('modalBotonFooter').classList.add('open');
+  }
+
+  function cerrarModalBotonFooter() {
+    document.getElementById('modalBotonFooter').classList.remove('open');
   }
 
   function mostrarSubBotonModal(i) {
