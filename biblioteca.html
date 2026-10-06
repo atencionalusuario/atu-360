@@ -106,7 +106,7 @@
   .modal-subtitulo:first-child { margin-top: 0; }
   .modal-tipificacion { font-size: 0.76rem; color: #94A3B8; margin-top: 16px; padding-top: 12px; border-top: 1px solid #F1F5F9; font-family: 'Inter', sans-serif; }
   .modal-tipificacion strong { color: #64748B; font-weight: 600; }
-  .modal-footer { display: flex; justify-content: flex-end; margin-top: 18px; }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
   .categoria-opciones { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .categoria-opciones .bib-btn { width: 380px; }
   .categoria-opciones.dos-columnas { display: grid; grid-template-columns: 1fr 1fr; }
@@ -561,6 +561,7 @@
       <div id="modalSubTexto" class="modal-cuerpo" style="display:none;"></div>
       <p class="modal-tipificacion"><strong>Tipificación sugerida:</strong> <span id="modalTipificacion"></span></p>
       <div class="modal-footer">
+        <button class="bib-btn" id="btnFooterExtra" style="display:none;" onclick="mostrarBotonFooterExtra()"></button>
         <button class="bib-btn" onclick="abrirModalDespedida()">Despedida</button>
       </div>
     </div>
@@ -921,6 +922,11 @@
 
   var TEXTOS_PASO = { imgPasoFarmacias: TEXTOS_PASO_FARMACIAS };
 
+  var BOTON_TIEMPO_RESOLUCION = {
+    label: '¿En cuánto tiempo se resolverá?',
+    texto: '<p>En este momento estamos escalando su caso. Nuestro equipo estará ejecutando las acciones necesarias para su resolución y nos comunicaremos con usted en cuanto se hayan completado. Por favor, manténgase pendiente de su teléfono de contacto.</p>'
+  };
+
   var TEXTO_RECOMENDACIONES_TEL =
     '<p>1) Busque un lugar con buena señal móvil y que esté apartado del ruido, donde usted se pueda sentir <strong>cómodo y en confianza</strong> con el médico.</p>' +
     '<p>2) El médico <strong>le llamará puntualmente al número de teléfono registrado</strong>. Si no recibe la llamada, por favor póngase en contacto con nosotros al <strong>136</strong>.</p>' +
@@ -961,7 +967,7 @@
   function abrirAgendarCitaNueva() {
     var citas = OPCIONES_CATEGORIA.gestion.find(function(x) { return x.label === 'Gestión de citas'; });
     var item = citas.hijos.find(function(x) { return x && x.label === 'Agendar cita nueva'; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical, item.botonFooter);
   }
 
   function abrirModificarCita() {
@@ -971,7 +977,7 @@
   function abrirUbicacionFarmacias() {
     var dudas = ARBOL_CONSULTA.find(function(x) { return x.label === 'Dudas generales del servicio'; });
     var item = dudas.hijos.find(function(x) { return x && x.label === 'Ubicación de farmacias / laboratorios'; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical, item.botonFooter);
   }
 
   function abrirErrorEnReceta() {
@@ -979,7 +985,7 @@
     var medicos = OPCIONES_CATEGORIA.incidencia.find(function(x) { return x.label === 'Médicos'; });
     var errores = medicos.hijos.find(function(x) { return x.label === 'Errores en los productos'; });
     var item = errores.hijos.find(function(x) { return x && x.label === 'Error en receta'; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical, item.botonFooter);
   }
 
   function abrirMedicamentoNoDisponible() {
@@ -987,7 +993,7 @@
     var tercerias = OPCIONES_CATEGORIA.incidencia.find(function(x) { return x.label === 'Tercerías'; });
     var farmacias = tercerias.hijos.find(function(x) { return x.label === 'Farmacias'; });
     var item = farmacias.hijos.find(function(x) { return x && x.label === 'Medicamento no disponible'; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical, item.botonFooter);
   }
 
   function abrirEmergenciaCasosEspeciales() {
@@ -998,26 +1004,26 @@
   function abrirUbicacionFarmacias() {
     var dudas = ARBOL_CONSULTA.find(function(x) { return x.label === 'Dudas generales del servicio'; });
     var item = dudas.hijos.find(function(x) { return x.label === 'Ubicación de farmacias / laboratorios'; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical, item.botonFooter);
   }
 
   function abrirIncidenciaOperativa(label) {
     var operativas = OPCIONES_CATEGORIA.incidencia.find(function(x) { return x.label === 'Operativas de todo el servicio'; });
     var item = operativas.hijos.find(function(x) { return x && x.label === label; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical, item.botonFooter);
   }
 
   function abrirCanalesOficiales() {
     var dudas = ARBOL_CONSULTA.find(function(x) { return x.label === 'Dudas generales del servicio'; });
     var item = dudas.hijos.find(function(x) { return x.label === 'Canales oficiales'; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical, item.botonFooter);
   }
 
   function abrirNodoOrientacion(label) {
     var dudas = ARBOL_CONSULTA.find(function(x) { return x.label === 'Dudas generales del servicio'; });
     var orientacion = dudas.hijos.find(function(x) { return x.label === 'Orientación sobre todo el servicio'; });
     var item = orientacion.hijos.find(function(x) { return x && x.label === label; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical, item.botonFooter);
   }
 
   function abrirDescargaApp() {
@@ -1033,14 +1039,14 @@
   function abrirScriptPerfiles(label) {
     var perfiles = OPCIONES_CATEGORIA.gestion.find(function(x) { return x.label === 'Gestión de perfiles'; });
     var item = perfiles.hijos.find(function(x) { return x && x.label === label; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical, item.botonFooter);
   }
 
   function abrirActualizarDato(label) {
     var perfiles = OPCIONES_CATEGORIA.gestion.find(function(x) { return x.label === 'Gestión de perfiles'; });
     var actualizar = perfiles.hijos.find(function(x) { return x.label === 'Actualizar datos del usuario'; });
     var item = actualizar.hijos.find(function(x) { return x && x.label === label; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical, item.botonFooter);
   }
 
   var TEXTOS_SDP = {
@@ -2988,6 +2994,7 @@
         },
         { label: 'Errores en los productos', hijos: [
           { label: 'Error en receta',
+            botonFooter: BOTON_TIEMPO_RESOLUCION,
             tipificacion: 'Incidencias calidad médica > Problemas con prescripción médica > Error en receta',
             alerta:
               '<p><strong>Error en receta:</strong> cuando efectivamente hay un dato incorrecto con la receta en cuanto al nombre del medicamento o en cuanto a la dosis recetada.</p>' +
@@ -3005,6 +3012,7 @@
               '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del médico<br>* Fecha y hora de la cita<br>* ID de la receta<br>* Especialidad</p>'
           },
           { label: 'Error en estudios de laboratorio',
+            botonFooter: BOTON_TIEMPO_RESOLUCION,
             tipificacion: 'Incidencias calidad médica > Problemas con estudios de laboratorio > Error en estudios de laboratorio',
             alerta:
               '<p><strong>Error en estudios de laboratorio:</strong> Usuario reporta que su órden de estudios de laboratorio tiene errores y se desea asistencia de un médico para corregirla.</p>',
@@ -3018,6 +3026,7 @@
               '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           },
           { label: 'Error en estudios de imágenes',
+            botonFooter: BOTON_TIEMPO_RESOLUCION,
             tipificacion: 'Incidencias calidad médica > Problemas con estudios de imágenes > Error en estudios de imágenes',
             alerta:
               '<p><strong>Error en estudios de imágenes:</strong> Usuario reporta que su órden de estudios de imágenes tiene errores y se desea asistencia de un médico para corregirla.</p>',
@@ -3031,6 +3040,7 @@
               '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           },
           { label: 'Error en procedimientos presenciales',
+            botonFooter: BOTON_TIEMPO_RESOLUCION,
             tipificacion: 'Incidencias calidad médica > Problemas con estudios de imágenes > Error en estudios de imágenes',
             alerta:
               '<p><strong>Error en estudios de imágenes:</strong> Usuario reporta que su órden de estudios de imágenes tiene errores y se desea asistencia de un médico para corregirla.</p>',
@@ -3044,6 +3054,7 @@
               '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           },
           { label: 'Error en referencia externa',
+            botonFooter: BOTON_TIEMPO_RESOLUCION,
             tipificacion: 'Incidencias calidad médica > Problemas con referencia externa > Error en referencia externa',
             texto:
               '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
@@ -3055,6 +3066,7 @@
               '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           },
           { label: 'Error en referencia interna',
+            botonFooter: BOTON_TIEMPO_RESOLUCION,
             tipificacion: 'Incidencias calidad médica > Problemas con referencia interna > Error en referencia interna',
             texto:
               '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
@@ -3066,6 +3078,7 @@
               '<p class="instruccion-interna">* Nombre del paciente<br>* Teléfono de contacto del paciente<br>* Tipo de documento del paciente<br>* Número de documento del paciente<br>* ¿El paciente es familiar asociado a otra cuenta?<br>* Nombre completo del medico<br>* Fecha y hora de la cita<br>* Orden de estudio<br>* Especialidad</p>'
           },
           { label: 'Error en datos de constancia médica',
+            botonFooter: BOTON_TIEMPO_RESOLUCION,
             tipificacion: 'Incidencias calidad médica > Problemas con constancia médica > Error en datos de constancia médica',
             texto:
               '<p>Lamentamos escuchar los inconvenientes, Sr / Sra XXXX. <strong>Le pedimos disculpas por las molestias que esto haya podido causar.</strong> En este mismo momento crearemos un reporte para que sea solucionado a la brevedad posible.</p>' +
@@ -3831,7 +3844,7 @@
       if (vistaActual && vistaActual.tarjetas) {
         irATarjeta(nodo.index);
       } else {
-        abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical);
+        abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical, item.botonFooter);
       }
     }
   }
@@ -3972,15 +3985,21 @@
     if (op && op.hijos) {
       pushVistaOpciones(op.label, op.hijos, op.vistaTarjetas, op.pregunta);
     } else if (op && op.texto) {
-      abrirModalTexto(op.tituloModal || op.label, op.texto, op.tipificacion, op.subBotones, op.ocultarFooter, op.subBotonesVertical);
+      abrirModalTexto(op.tituloModal || op.label, op.texto, op.tipificacion, op.subBotones, op.ocultarFooter, op.subBotonesVertical, op.botonFooter);
       if (op.alerta) abrirModalTip(op.alerta);
     }
   }
 
   var subBotonesActuales = [];
 
-  function abrirModalTexto(titulo, texto, tipificacion, subBotones, ocultarFooter, subBotonesVertical) {
+  var botonFooterActual = null;
+
+  function abrirModalTexto(titulo, texto, tipificacion, subBotones, ocultarFooter, subBotonesVertical, botonFooter) {
     document.getElementById('modalTituloTexto').textContent = titulo;
+    botonFooterActual = botonFooter || null;
+    var btnExtra = document.getElementById('btnFooterExtra');
+    btnExtra.style.display = botonFooterActual ? '' : 'none';
+    btnExtra.textContent = botonFooterActual ? botonFooterActual.label : '';
     document.getElementById('modalCuerpoTexto').innerHTML = texto;
 
     subBotonesActuales = subBotones || [];
@@ -4522,6 +4541,21 @@
     cerrarModalBusquedaGlobal();
     mostrarCategoria(nodo.cat);
     irANodoBusqueda(nodo);
+  }
+
+  function mostrarBotonFooterExtra() {
+    if (!botonFooterActual) return;
+    var contSubTexto = document.getElementById('modalSubTexto');
+    pushPanelCrumb('subBotonesModal', botonFooterActual.label,
+      function() { mostrarBotonFooterExtra(); },
+      function() {
+        contSubTexto.style.display = 'none';
+        contSubTexto.innerHTML = '';
+      }
+    );
+    contSubTexto.style.display = 'block';
+    contSubTexto.innerHTML = botonFooterActual.texto;
+    scrollBloqueAVista(contSubTexto);
   }
 
   function mostrarSubBotonModal(i) {
