@@ -847,6 +847,17 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="modalCanalesOficiales" onclick="if(event.target===this) cerrarModalCanalesOficiales()">
+  <div class="modal-box" style="max-width:640px;">
+    <button class="modal-close" onclick="cerrarModalCanalesOficiales()">&times;</button>
+    <h3 class="modal-titulo">Canales oficiales</h3>
+    <div class="modal-cuerpo" id="modalCanalesOficialesCuerpo"></div>
+    <div class="modal-footer">
+      <button class="bib-btn" onclick="cerrarModalCanalesOficiales(); abrirModalDespedida()">Despedida</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modalBotonFooter" onclick="if(event.target===this) cerrarModalBotonFooter()">
   <div class="modal-box" style="max-width:640px;">
     <button class="modal-close" onclick="cerrarModalBotonFooter()">&times;</button>
@@ -931,6 +942,17 @@
   };
 
   var TEXTOS_PASO = { imgPasoFarmacias: TEXTOS_PASO_FARMACIAS };
+
+  var TEXTO_CANALES_OFICIALES =
+    '<p>Canal telefónico: <strong>136</strong></p>' +
+    '<p>Número de llamadas salientes: <strong>2397-2600 / 136</strong></p>' +
+    '<p>Correo: <strong>soporte@doctorsv.gob.sv</strong></p>' +
+    '<p>Whatsapp: <strong>2397-2600</strong></p>' +
+    '<p>Canal telefónico de tercería: <strong>136, opción 9</strong></p>' +
+    '<p>Facebook: <strong>DoctorSv</strong></p>' +
+    '<p>X: <strong>@doctorsvapp</strong></p>' +
+    '<p>Instagram: <strong>doctorsvapp</strong></p>' +
+    '<p>Tiktok: <strong>doctorsvapp</strong></p>';
 
   var BOTON_TIEMPO_RESOLUCION = {
     label: '¿En cuánto tiempo se resolverá?',
@@ -1023,9 +1045,12 @@
   }
 
   function abrirCanalesOficiales() {
-    var dudas = ARBOL_CONSULTA.find(function(x) { return x.label === 'Dudas generales del servicio'; });
-    var item = dudas.hijos.find(function(x) { return x.label === 'Canales oficiales'; });
-    if (item) abrirModalTexto(item.tituloModal || item.label, item.texto, item.tipificacion, item.subBotones, item.ocultarFooter, item.subBotonesVertical, item.botonFooter);
+    document.getElementById('modalCanalesOficialesCuerpo').innerHTML = TEXTO_CANALES_OFICIALES;
+    document.getElementById('modalCanalesOficiales').classList.add('open');
+  }
+
+  function cerrarModalCanalesOficiales() {
+    document.getElementById('modalCanalesOficiales').classList.remove('open');
   }
 
   function abrirNodoOrientacion(label) {
@@ -1512,16 +1537,7 @@
           '</div>'
       },
       { label: 'Canales oficiales',
-        texto:
-          '<p>Canal telefónico: <strong>136</strong></p>' +
-          '<p>Número de llamadas salientes: <strong>2397-2600 / 136</strong></p>' +
-          '<p>Correo: <strong>soporte@doctorsv.gob.sv</strong></p>' +
-          '<p>Whatsapp: <strong>2397-2600</strong></p>' +
-          '<p>Canal telefónico de tercería: <strong>136, opción 9</strong></p>' +
-          '<p>Facebook: <strong>DoctorSv</strong></p>' +
-          '<p>X: <strong>@doctorsvapp</strong></p>' +
-          '<p>Instagram: <strong>doctorsvapp</strong></p>' +
-          '<p>Tiktok: <strong>doctorsvapp</strong></p>'
+        texto: TEXTO_CANALES_OFICIALES
       },
       { label: 'Programa de crónicos', vistaTarjetas: true, hijos: [
         { label: 'En qué consiste el programa de crónicos',
