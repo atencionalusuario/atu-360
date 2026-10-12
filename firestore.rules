@@ -61,6 +61,20 @@ service cloud.firestore {
       allow delete: if perfilActivo() && esGestion();
     }
 
+    // ── Flash: resumen de publicadas y lecturas por usuario ─────────────────────
+    // flash_resumen/publicados: ids de las publicaciones publicadas; solo lo
+    // escriben quienes gestionan Flash (jefe, formación, superadmin).
+    match /flash_resumen/{document=**} {
+      allow read: if perfilActivo();
+      allow write: if perfilActivo() && miRol() in ['jefe', 'formacion', 'superadmin'];
+    }
+    // flash_lecturas_usuario/{uid}: qué publicaciones leyó cada persona. Cada quien
+    // escribe solo el suyo; un rol de gestión puede escribirlo al dar de alta a alguien.
+    match /flash_lecturas_usuario/{uid} {
+      allow read: if perfilActivo();
+      allow write: if perfilActivo() && (request.auth.uid == uid || esGestion());
+    }
+
     // ── logs (hallazgo: bitácora escrita por el cliente, falsificable) ──────
     match /logs/{logId} {
       allow read: if perfilActivo();

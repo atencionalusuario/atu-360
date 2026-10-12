@@ -205,16 +205,38 @@ function renderSidebar(paginaActiva, rol) {
 // ── Caché con expiración para los badges de la barra lateral ────────────────────
 // Evita re-consultar Firestore en cada navegación entre páginas dentro de la
 // misma sesión de trabajo (causa principal de picos de lecturas en horas pico).
-var BADGE_CACHE_TTL_MS = 4 * 60 * 1000; // 4 minutos
+// El caché vive en localStorage por usuario, así que también se reutiliza al volver
+// a iniciar sesión (antes de caducar). Cada tipo tiene su propia vigencia según
+// cuánto cambia: Flash se publica pocas veces al día y se invalida al leer; los
+// logros casi nunca cambian; el chat se mantiene más corto porque se espera ver
+// mensajes nuevos.
+var BADGE_CACHE_TTL_POR_TIPO = {
+  flash:  15 * 60 * 1000,
+  badges: 60 * 60 * 1000,
+  chat:    5 * 60 * 1000
+};
+var BADGE_CACHE_TTL_MS = 4 * 60 * 1000; // por defecto, tipos no listados arriba
 
 function claveCacheBadge(tipo, uid) { return 'atu360_badge_' + tipo + '_' + uid; }
+
+// Lectura de la ficha del usuario compartida en la página (ver notif.js: la misma
+// función; la primera que se cargue gana).
+window.atuPerfil = window.atuPerfil || function(db, uid) {
+  var m = window.__atuPerfilP = window.__atuPerfilP || {};
+  if (!m[uid]) {
+    m[uid] = db.collection('usuarios').doc(uid).get();
+    m[uid].catch(function() { delete m[uid]; });
+  }
+  return m[uid];
+};
 
 function leerCacheBadge(tipo, uid) {
   try {
     var raw = localStorage.getItem(claveCacheBadge(tipo, uid));
     if (!raw) return null;
     var obj = JSON.parse(raw);
-    if (!obj || typeof obj.ts !== 'number' || (Date.now() - obj.ts) > BADGE_CACHE_TTL_MS) return null;
+    var ttl = BADGE_CACHE_TTL_POR_TIPO[tipo] || BADGE_CACHE_TTL_MS;
+    if (!obj || typeof obj.ts !== 'number' || (Date.now() - obj.ts) > ttl) return null;
     return obj.valor;
   } catch (e) { return null; }
 }
@@ -274,45 +296,64 @@ function renderFlashBadge(sinLeer) {
   if (badge && sinLeer > 0) { badge.textContent = sinLeer; badge.style.display = 'inline'; }
 }
 
+// ── Estado de lectura de Flash: 2 lecturas por usuario, sin importar cuántas ─────
+// publicaciones haya. Antes se traían todas las publicaciones (~90) y todas las
+// lecturas propias (~90 documentos) en cada carga fría (~180 lecturas).
+//   flash_resumen/publicados        -> { ids: [ids de publicaciones publicadas] }
+//                                      (lo mantiene flash.html al publicar/eliminar)
+//   flash_lecturas_usuario/{uid}    -> { leidos: { postId: true, ... } }
+// Para los usuarios que todavía no tienen su documento se migra de forma perezosa
+// desde flash_lecturas (una sola vez por usuario).
+function flashMigrarLecturasUsuario(uid, db) {
+  return db.collection('flash_lecturas').where('uid', '==', uid).get().then(function(snap) {
+    var leidos = {};
+    snap.forEach(function(d) { var p = d.data().postId; if (p) leidos[p] = true; });
+    return db.collection('flash_lecturas_usuario').doc(uid).set({ leidos: leidos, migrado: true }, { merge: true })
+      .then(function() { return leidos; });
+  });
+}
+
+function flashIdsPublicados(db) {
+  return db.collection('flash_resumen').doc('publicados').get().then(function(doc) {
+    if (doc.exists && Array.isArray(doc.data().ids)) return doc.data().ids;
+    // Sin resumen todavía: se calcula a la antigua (solo mientras no exista el documento).
+    return db.collection('flash_posts').where('estado', '==', 'publicado').get().then(function(snap) {
+      var ids = []; snap.forEach(function(d) { ids.push(d.id); }); return ids;
+    });
+  });
+}
+
+function flashEstadoUsuario(uid, db) {
+  var pIds = flashIdsPublicados(db);
+  var pLeidos = db.collection('flash_lecturas_usuario').doc(uid).get().then(function(doc) {
+    if (doc.exists) return doc.data().leidos || {};
+    return flashMigrarLecturasUsuario(uid, db);
+  });
+  return Promise.all([pIds, pLeidos]).then(function(r) { return { ids: r[0], leidos: r[1] }; });
+}
+
 function cargarFlashBadge(uid, db) {
   var cache = leerCacheBadge('flash', uid);
   if (cache !== null) { renderFlashBadge(cache); return; }
-  db.collection('flash_posts').where('estado', '==', 'publicado').get()
-    .then(function(snapPosts) {
-      var ids = [];
-      snapPosts.forEach(function(d) { ids.push(d.id); });
-      if (ids.length === 0) { guardarCacheBadge('flash', uid, 0); return; }
-      db.collection('flash_lecturas').where('uid', '==', uid).get()
-        .then(function(snapLect) {
-          var leidos = {};
-          snapLect.forEach(function(d) { leidos[d.data().postId] = true; });
-          var sinLeer = ids.filter(function(id) { return !leidos[id]; }).length;
-          guardarCacheBadge('flash', uid, sinLeer);
-          renderFlashBadge(sinLeer);
-        });
-    });
+  flashEstadoUsuario(uid, db).then(function(est) {
+    var sinLeer = est.ids.filter(function(id) { return !est.leidos[id]; }).length;
+    guardarCacheBadge('flash', uid, sinLeer);
+    renderFlashBadge(sinLeer);
+  }).catch(function(e) { console.warn('flash badge:', e.message); });
 }
 
 function renderNotifBadge(sinLeer) {
   var badge = document.getElementById('notifNavBadge');
-  if (badge && sinLeer > 0) { badge.textContent = sinLeer > 9 ? '9+' : sinLeer; badge.style.display = 'inline'; }
+  if (!badge) return;
+  if (sinLeer > 0) { badge.textContent = sinLeer > 9 ? '9+' : sinLeer; badge.style.display = 'inline'; }
+  else { badge.style.display = 'none'; }
 }
 
-function cargarNotifBadge(uid, rol, db) {
-  var cache = leerCacheBadge('notif', uid);
-  if (cache !== null) { renderNotifBadge(cache); return; }
-  var targets = [uid, 'todos', rol];
-  db.collection('notificaciones').where('uid', 'in', targets).get()
-    .then(function(snap) {
-      var sinLeer = 0;
-      snap.forEach(function(d) {
-        var data = d.data();
-        if (!(data.leidaPor || []).includes(uid)) sinLeer++;
-      });
-      guardarCacheBadge('notif', uid, sinLeer);
-      renderNotifBadge(sinLeer);
-    })
-    .catch(function(e) { console.warn('notif badge:', e.message); });
+// El conteo lo calcula el listener de notificaciones de notif.js (ya está abierto en
+// todas las páginas); aquí solo se engancha, sin consulta propia.
+function cargarNotifBadge() {
+  window.__ntfNavCb = renderNotifBadge;
+  if (typeof window.__ntfSinLeer === 'number') renderNotifBadge(window.__ntfSinLeer);
 }
 
 function renderChatBadge(sinLeer) {
@@ -764,7 +805,7 @@ function initSidebar() {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
     verificarSesion();
     var db = firebase.firestore();
-    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+    window.atuPerfil(db, user.uid).then(function(doc) {
       var rol      = doc.exists ? (doc.data().rol || 'agente') : 'agente';
       var nombre   = (doc.exists && doc.data().nombre) ? doc.data().nombre : user.email.split('@')[0];
       var canal    = doc.exists ? (doc.data().canal || '') : '';

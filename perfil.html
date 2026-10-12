@@ -262,7 +262,7 @@
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = 'login.html'; return; }
     currentUser = user;
-    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+    window.atuPerfil(db, user.uid).then(function(doc) {
       var d = doc.exists ? doc.data() : {};
       var nombre = d.nombre || user.email.split('@')[0];
       var iniciales = nombre.substring(0, 2).toUpperCase();

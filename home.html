@@ -237,7 +237,7 @@
   firebase.auth().onAuthStateChanged(function(user) {
     if (!user) return;
 
-    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+    window.atuPerfil(db, user.uid).then(function(doc) {
       var nombre = doc.exists ? doc.data().nombre : user.email.split('@')[0];
       rolG = doc.exists ? (doc.data().rol || '') : '';
       document.getElementById('greetName').textContent = nombre;

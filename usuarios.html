@@ -459,7 +459,7 @@
 
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = BASE + 'login.html'; return; }
-    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+    window.atuPerfil(db, user.uid).then(function(doc) {
       if (!doc.exists || !ROLES_PERMITIDOS.includes(doc.data().rol)) {
         window.location.href = BASE + 'home.html'; return;
       }
@@ -1004,10 +1004,14 @@
   // (contador resumido por publicacion) para que las estadisticas de lectura no dependan de
   // releer todo el historial de flash_lecturas (ver flash.html).
   function marcarFlashesHistoricosLeidos(uid,email,nombre){
-    return db.collection('flash_posts').where('estado','==','publicado').get()
-      .then(function(snap){
-        var docs=[]; snap.forEach(function(d){docs.push(d.id);});
+    // ids de las publicadas desde flash_resumen (1 lectura) en vez de leer todas las publicaciones.
+    return flashIdsPublicados(db)
+      .then(function(docs){
         if(!docs.length) return;
+        // Documento unico de lecturas del usuario (lo que usa el conteo "sin leer").
+        var leidosMap={}; docs.forEach(function(id){ leidosMap[id]=true; });
+        db.collection('flash_lecturas_usuario').doc(uid).set({leidos:leidosMap, migrado:true},{merge:true})
+          .catch(function(e){ console.error('No se pudo guardar las lecturas del usuario:',e); });
         var chunks=[];
         for(var i=0;i<docs.length;i+=240) chunks.push(docs.slice(i,i+240));
         var cadena=Promise.resolve();

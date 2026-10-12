@@ -590,7 +590,7 @@
     if (!user) return;
     currentUser = user;
     nombreUsuario = user.email.split('@')[0];   // fallback inmediato hasta que resuelva la lectura
-    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+    window.atuPerfil(db, user.uid).then(function(doc) {
       if (doc.exists && doc.data().nombre) nombreUsuario = doc.data().nombre;
     });
     cargarReservas(user.uid);
@@ -612,7 +612,7 @@
     if (user) {
       initNotif(db, auth);
       // Mostrar botón de reporte solo a roles admin
-      db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      window.atuPerfil(db, user.uid).then(function(doc) {
         if (!doc.exists) return;
         var r = doc.data().rol || '';
         var rolesAdmin = ['admin','jefe','wfm','superadmin'];

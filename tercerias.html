@@ -709,7 +709,7 @@
 
   auth.onAuthStateChanged(function(user) {
     if (!user) return;
-    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+    window.atuPerfil(db, user.uid).then(function(doc) {
       var nombre = (doc.exists && doc.data().nombre) ? doc.data().nombre : user.email.split('@')[0];
       document.getElementById('nombreAgente').textContent = acortarNombreAgente(nombre);
     });

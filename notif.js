@@ -5,6 +5,27 @@
 
   var _db, _auth, _unsubNotif = null, _notifs = [], _open = false, _notifDesdeMs = 0;
 
+  // Lectura de la ficha del usuario compartida por toda la pagina (guarda de la
+  // pagina, barra lateral y notificaciones): una sola lectura en vez de 3 o 4.
+  // sidebar.js define la misma funcion con la misma condicion; la primera en
+  // cargarse gana.
+  window.atuPerfil = window.atuPerfil || function(db, uid) {
+    var m = window.__atuPerfilP = window.__atuPerfilP || {};
+    if (!m[uid]) {
+      m[uid] = db.collection('usuarios').doc(uid).get();
+      m[uid].catch(function() { delete m[uid]; });
+    }
+    return m[uid];
+  };
+
+  // Conteo de notificaciones sin leer: lo calcula el listener de este archivo y
+  // tambien alimenta el numerito del menu lateral (antes la barra lateral hacia
+  // su propia consulta de las mismas notificaciones en cada pagina).
+  function publicarSinLeer(n) {
+    window.__ntfSinLeer = n;
+    if (typeof window.__ntfNavCb === 'function') window.__ntfNavCb(n);
+  }
+
   var SVG_BELL = '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>';
   var SVG_SOL  = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
   var SVG_ADMIN= '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
@@ -219,7 +240,7 @@
       if (_unsubNotif) _unsubNotif();
 
       // Leer rol del usuario
-      db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+      window.atuPerfil(db, user.uid).then(function(doc) {
         var data = doc.exists ? doc.data() : {};
         var rol = data.rol || 'agente';
         var targets = [user.uid, 'todos', rol];
@@ -252,6 +273,7 @@
               var tb = b.timestamp ? b.timestamp.seconds : 0;
               return tb - ta;
             });
+            publicarSinLeer(_notifs.filter(function(n){ return !(n.leidaPor||[]).includes(user.uid); }).length);
             renderPanel(user);
           }, function(err) { console.warn('notif error:', err.message); });
       });

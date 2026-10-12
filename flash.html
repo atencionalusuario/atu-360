@@ -115,7 +115,7 @@
     </div>
     <div class="topbar-right">
       <div class="tb-clock" id="clock">--:--:--</div>
-      <button class="btn-nuevo" id="btnActualizarStats" style="display:none;background:#F1F5F9;color:#475569" onclick="cargarLecturasTodas()" title="Volver a consultar las estadísticas de lectura">
+      <button class="btn-nuevo" id="btnActualizarStats" style="display:none;background:#F1F5F9;color:#475569" onclick="recargarFlash()" title="Volver a consultar las publicaciones">
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
         Actualizar
       </button>
@@ -203,7 +203,12 @@
   var currentUser = null;
   var posts = [];
   var misLecturas = {};
-  var lecturasPorPost = {};   // postId -> { uid: true } (todas las lecturas)
+  var resumenIds = null;      // ids de TODAS las publicaciones publicadas (flash_resumen), para el conteo "sin leer"
+  var PAGINA_FLASH = 15;      // publicaciones por carga; las anteriores se piden con "Ver más"
+  var cursorPosts = null;     // último documento cargado (punto de partida de "Ver más")
+  var hayMasPosts = false;
+  var postsCargados = false;  // evita mostrar "No hay publicaciones" mientras todavía se cargan
+  var lecturasPorPost = {};   // postId -> { uid: true } (solo de las publicaciones cargadas)
   var audiencia = [];         // usuarios activos que deben leer el flash
   var esGestor = false;       // jefe / formacion / superadmin (ven estadísticas)
 
@@ -218,17 +223,17 @@
   auth.onAuthStateChanged(function(user) {
     if (!user) { window.location.href = 'login.html'; return; }
     currentUser = user;
-    db.collection('usuarios').doc(user.uid).get().then(function(doc) {
+    window.atuPerfil(db, user.uid).then(function(doc) {
       rolUsuario = doc.exists ? doc.data().rol : null;
       esGestor = ['jefe','formacion','superadmin'].indexOf(rolUsuario) >= 0;
       if (esGestor) {
         document.getElementById('btnNuevo').classList.add('visible');
-        document.getElementById('btnActualizarStats').style.display = 'flex';
         cargarBorradores();
         cargarAudiencia();
-        cargarLecturasTodas();
+        cargarStatsDe(posts.map(function(p){ return p.id; }));
       }
     });
+    document.getElementById('btnActualizarStats').style.display = 'flex';
     cargarPosts();
     cargarMisLecturas();
   });
@@ -384,9 +389,16 @@
       data.autorNombre = currentUser.email.split('@')[0];
       data.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
     }
-    var op = _editId ? db.collection('flash_posts').doc(_editId).update(data)
-                     : db.collection('flash_posts').add(data);
-    op.then(function() { cerrarModal(); showToast(editando ? 'Cambios guardados.' : 'Publicado correctamente.'); })
+    // La publicación y el resumen de publicadas (flash_resumen) se escriben en la
+    // misma operación: así el resumen nunca queda desfasado de las publicaciones.
+    var ref = _editId ? db.collection('flash_posts').doc(_editId) : db.collection('flash_posts').doc();
+    var batch = db.batch();
+    if (_editId) batch.update(ref, data); else batch.set(ref, data);
+    batch.set(db.collection('flash_resumen').doc('publicados'),
+      { ids: firebase.firestore.FieldValue.arrayUnion(ref.id), actualizado: firebase.firestore.FieldValue.serverTimestamp() },
+      { merge: true });
+    var op = batch.commit();
+    op.then(function() { cerrarModal(); showToast(editando ? 'Cambios guardados.' : 'Publicado correctamente.'); recargarFlash(); })
       .catch(function(e) { showToast(editando ? 'Error al guardar los cambios.' : 'Error al publicar.'); console.error(e); })
       .finally(function() { btn.disabled = false; btn.textContent = textoBtnPublicar(); });
   }
@@ -431,11 +443,16 @@
 
   function publicarBorrador(id) {
     if (!confirm('¿Publicar este borrador ahora?')) return;
-    db.collection('flash_posts').doc(id).update({
+    var batch = db.batch();
+    batch.update(db.collection('flash_posts').doc(id), {
       estado: 'publicado',
       fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(function(){ showToast('Publicado correctamente.'); })
+    });
+    batch.set(db.collection('flash_resumen').doc('publicados'),
+      { ids: firebase.firestore.FieldValue.arrayUnion(id), actualizado: firebase.firestore.FieldValue.serverTimestamp() },
+      { merge: true });
+    batch.commit().then(function(){ showToast('Publicado correctamente.'); recargarFlash(); })
       .catch(function(e){ console.error(e); showToast('No se pudo publicar.'); });
   }
 
@@ -453,8 +470,17 @@
       snap.forEach(function(d){ batch.delete(d.ref); });
       batch.delete(db.collection('flash_posts').doc(id));
       batch.delete(db.collection('flash_stats').doc(id));
+      batch.set(db.collection('flash_resumen').doc('publicados'),
+        { ids: firebase.firestore.FieldValue.arrayRemove(id), actualizado: firebase.firestore.FieldValue.serverTimestamp() },
+        { merge: true });
       return batch.commit();
-    }).then(function(){ showToast('Publicación eliminada.'); })
+    }).then(function(){
+      posts = posts.filter(function(p){ return p.id !== id; });
+      delete lecturasPorPost[id];
+      if (resumenIds) resumenIds = resumenIds.filter(function(x){ return x !== id; });
+      renderPosts();
+      showToast('Publicación eliminada.');
+    })
       .catch(function(e){ console.error(e); showToast('No se pudo eliminar.'); });
   };
 
@@ -515,15 +541,25 @@
   // Contador resumido por publicacion (flash_stats/{postId}.lectores = {uid:true,...}),
   // en vez de releer las decenas de miles de registros individuales de flash_lecturas
   // en cada apertura de la pantalla (eso disparaba lecturas de Firestore sin control).
-  function cargarLecturasTodas() {
-    db.collection('flash_stats').get().then(function(snap) {
-      lecturasPorPost = {};
-      snap.forEach(function(doc) {
-        lecturasPorPost[doc.id] = doc.data().lectores || {};
-      });
-      renderPosts();
-    }).catch(function(e){ console.warn('flash_stats:', e.message); });
+  // Solo se leen las estadísticas de las publicaciones que están en pantalla (una
+  // lectura por publicación), no las de todo el historial.
+  function cargarStatsDe(ids) {
+    var faltan = ids.filter(function(id){ return !(id in lecturasPorPost); });
+    if (!faltan.length) return;
+    Promise.all(faltan.map(function(id) {
+      return db.collection('flash_stats').doc(id).get()
+        .then(function(d){ lecturasPorPost[id] = d.exists ? (d.data().lectores || {}) : {}; })
+        .catch(function(e){ console.warn('flash_stats:', e.message); lecturasPorPost[id] = {}; });
+    })).then(renderPosts);
   }
+
+  // Vuelve a consultar publicaciones, lecturas propias y estadísticas.
+  function recargarFlash() {
+    lecturasPorPost = {};
+    cargarPosts();
+    cargarMisLecturas();
+  }
+  window.recargarFlash = recargarFlash;
 
   var _nlLista = [];
 
@@ -584,46 +620,82 @@
     setTimeout(function(){ t.classList.remove('show'); }, 3000);
   }
 
-  // Cargar lecturas previas (no bloquea los posts)
+  // Lecturas propias + ids de todas las publicadas: 2 lecturas en total (ver
+  // flashEstadoUsuario en sidebar.js), sin importar cuántas publicaciones haya.
   function cargarMisLecturas() {
-    db.collection('flash_lecturas')
-      .where('uid', '==', currentUser.uid)
-      .get()
-      .then(function(snap) {
-        snap.forEach(function(doc) { misLecturas[doc.data().postId] = true; });
-        renderPosts(); // refrescar badges de leído/no leído
-      })
-      .catch(function(e) {
-        console.warn('flash_lecturas:', e.message);
-      });
+    flashEstadoUsuario(currentUser.uid, db).then(function(est) {
+      resumenIds = est.ids;
+      misLecturas = est.leidos;
+      renderPosts();
+    }).catch(function(e) { console.warn('flash lecturas:', e.message); });
   }
 
-  // Cargar posts publicados en tiempo real
-  function cargarPosts() {
-    db.collection('flash_posts')
-      .where('estado', '==', 'publicado')
-      .onSnapshot(function(snap) {
-        posts = [];
-        snap.forEach(function(doc) {
-          posts.push(Object.assign({ id: doc.id }, doc.data()));
-        });
-        posts.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0)-(a.fechaCreacion?a.fechaCreacion.seconds:0); });
-        renderPosts();
-      }, function(e){
-        console.error('flash_posts error:', e);
-        var el = document.getElementById('postsList');
-        if (el) el.innerHTML = '<div style="padding:32px;color:#DC2626;font-size:0.85rem;">Error Firestore: ' + e.code + ' — ' + e.message + '</div>';
-      });
+  function mostrarErrorPosts(e) {
+    console.error('flash_posts error:', e);
+    var el = document.getElementById('postsList');
+    if (el) el.innerHTML = '<div style="padding:32px;color:#DC2626;font-size:0.85rem;">Error Firestore: ' + (e.code || '') + ' — ' + e.message + '</div>';
   }
+
+  function consultaPosts() {
+    return db.collection('flash_posts').where('estado', '==', 'publicado').orderBy('fechaCreacion', 'desc');
+  }
+
+  function agregarPaginaPosts(snap) {
+    var nuevos = [];
+    snap.forEach(function(doc) {
+      var p = Object.assign({ id: doc.id }, doc.data());
+      posts.push(p); nuevos.push(p.id);
+    });
+    if (snap.docs.length) cursorPosts = snap.docs[snap.docs.length - 1];
+    hayMasPosts = snap.docs.length === PAGINA_FLASH;
+    postsCargados = true;
+    if (esGestor) cargarStatsDe(nuevos);
+    renderPosts();
+  }
+
+  // Carga solo las publicaciones más recientes; las anteriores con "Ver más".
+  // Es una consulta puntual (ya no un listener en vivo): una publicación nueva se
+  // ve al abrir la pantalla o con el botón "Actualizar".
+  function cargarPosts() {
+    consultaPosts().limit(PAGINA_FLASH).get().then(function(snap) {
+      posts = []; cursorPosts = null;
+      agregarPaginaPosts(snap);
+    }).catch(function(e) {
+      // Respaldo si el índice (estado + fechaCreacion) todavía no está creado.
+      console.warn('flash_posts sin índice, usando respaldo:', e.message);
+      db.collection('flash_posts').where('estado', '==', 'publicado').get().then(function(snap) {
+        posts = [];
+        snap.forEach(function(doc) { posts.push(Object.assign({ id: doc.id }, doc.data())); });
+        posts.sort(function(a,b){ return (b.fechaCreacion?b.fechaCreacion.seconds:0)-(a.fechaCreacion?a.fechaCreacion.seconds:0); });
+        hayMasPosts = false; postsCargados = true;
+        if (esGestor) cargarStatsDe(posts.map(function(p){ return p.id; }));
+        renderPosts();
+      }).catch(mostrarErrorPosts);
+    });
+  }
+
+  window.verMasPosts = function() {
+    if (!cursorPosts) return;
+    var btn = document.getElementById('btnVerMas');
+    if (btn) { btn.disabled = true; btn.textContent = 'Cargando...'; }
+    consultaPosts().startAfter(cursorPosts).limit(PAGINA_FLASH).get().then(agregarPaginaPosts)
+      .catch(function(e) { console.error(e); showToast('No se pudieron cargar más publicaciones.'); renderPosts(); });
+  };
 
   function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
   function renderPosts() {
-    var sinLeer = posts.filter(function(p){ return !misLecturas[p.id]; }).length;
-    document.getElementById('sinLeerLabel').textContent = sinLeer > 0 ? sinLeer + ' sin leer' : 'Todo al día';
-    var badge = document.getElementById('flashBadge');
-    if (badge) { badge.textContent = sinLeer; badge.style.display = sinLeer > 0 ? 'inline' : 'none'; }
+    // El conteo sale de TODAS las publicadas (resumen), no solo de las cargadas en pantalla.
+    // Mientras el resumen no llega, no se muestra un número parcial.
+    if (resumenIds) {
+      var sinLeer = resumenIds.filter(function(id){ return !misLecturas[id]; }).length;
+      document.getElementById('sinLeerLabel').textContent = sinLeer > 0 ? sinLeer + ' sin leer' : 'Todo al día';
+      var badge = document.getElementById('flashBadge');
+      if (badge) { badge.textContent = sinLeer; badge.style.display = sinLeer > 0 ? 'inline' : 'none'; }
+      if (currentUser && typeof guardarCacheBadge === 'function') guardarCacheBadge('flash', currentUser.uid, sinLeer);
+    }
 
+    if (!postsCargados) return;
     if (posts.length === 0) {
       document.getElementById('postsList').innerHTML = '<div class="loading">No hay publicaciones disponibles.</div>';
       return;
@@ -665,13 +737,18 @@
         +'</div>'
         +'</article>';
     });
+    if (hayMasPosts) {
+      html += '<div style="text-align:center;padding:4px 0 28px"><button class="btn-cancel" id="btnVerMas" onclick="verMasPosts()">Ver publicaciones anteriores</button></div>';
+    }
     document.getElementById('postsList').innerHTML = html;
   }
 
   function marcarLeido(id) {
     if (!currentUser || misLecturas[id]) return;
     var statsPatch = { lectores: {} }; statsPatch.lectores[currentUser.uid] = true;
+    var lecturaPropia = { leidos: {} }; lecturaPropia.leidos[id] = true;
     Promise.all([
+      db.collection('flash_lecturas_usuario').doc(currentUser.uid).set(lecturaPropia, { merge: true }),
       db.collection('flash_lecturas').add({
         postId:    id,
         uid:       currentUser.uid,
@@ -683,8 +760,7 @@
     ]).then(function() {
       misLecturas[id] = true;
       if (lecturasPorPost[id]) lecturasPorPost[id][currentUser.uid] = true;
-      renderPosts();
-      if (typeof invalidarCacheBadge === 'function') invalidarCacheBadge('flash', currentUser.uid);
+      renderPosts();   // también deja actualizado el caché del conteo de la barra lateral
     }).catch(function(e){ console.error('Error guardando lectura:', e); });
   }
 </script>
