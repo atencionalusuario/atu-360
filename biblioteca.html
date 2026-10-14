@@ -2274,8 +2274,8 @@
               '<p style="text-align:center; color:#64748B; font-style:italic;">Buscar el DUI o nombre del usuario en la sección de Solicitudes de seguimiento de TCA.</p>' +
               '<p style="text-align:center;"><strong>¿Existe el seguimiento?</strong></p>' +
               '<div class="triage-acciones">' +
-                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'seguimientoStHayCupo\', \'seguimientoStNoHayCupo\')">Sí existe y hay cupo</button>' +
-                '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'seguimientoStNoHayCupo\', \'seguimientoStHayCupo\')">Sí existe pero no hay cupo</button>' +
+                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'seguimientoStHayCupo\', \'seguimientoStNoHayCupo\')">Está activa y hay cupo</button>' +
+                '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'seguimientoStNoHayCupo\', \'seguimientoStHayCupo\')">Está activa pero no hay cupo</button>' +
               '</div>' +
               '<div id="seguimientoStHayCupo" class="triage-resultado" style="display:none;">' +
                 '<p>De acuerdo, según el calendario le tenemos disponibilidad el día XX a las XX:XX AM / PM. ¿Le parece bien?</p>' +
@@ -2333,9 +2333,9 @@
             '<div id="seguimientoNoTicket" class="triage-resultado" style="display:none;">' +
               '<p style="text-align:center; color:#64748B; font-style:italic;">Buscar el DUI o nombre del usuario en la sección de Solicitud de Seguimiento de TCA. ¿Existe? ¿La fecha del seguimiento está dentro del periodo de publicación de agenda?</p>' +
               '<div class="triage-acciones" style="flex-direction:column; align-items:center;">' +
-                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'seguimientoNtHayCupo\', [\'seguimientoNtNoHayCupo\',\'seguimientoNtFueraAgenda\',\'seguimientoNtNoExiste\']); document.getElementById(\'seguimientoNtTipificacion\').innerHTML = \'Gestión de citas &gt; Seguimiento &gt; Según sea el caso\';">Sí existe y hay cupo</button>' +
-                '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'seguimientoNtNoHayCupo\', [\'seguimientoNtHayCupo\',\'seguimientoNtFueraAgenda\',\'seguimientoNtNoExiste\']); document.getElementById(\'seguimientoNtTipificacion\').innerHTML = \'Gestión de citas &gt; Seguimiento &gt; Según sea el caso\';">Sí existe pero no hay cupo</button>' +
-                '<button class="bib-btn btn-naranja" onclick="mostrarUno(\'seguimientoNtFueraAgenda\', [\'seguimientoNtHayCupo\',\'seguimientoNtNoHayCupo\',\'seguimientoNtNoExiste\']); document.getElementById(\'seguimientoNtTipificacion\').innerHTML = \'Consultas &gt; Información general del servicio &gt; Proceso de referencia / seguimiento\';">Sí existe, fuera de la agenda publicada</button>' +
+                '<button class="bib-btn btn-si-verde" onclick="mostrarUno(\'seguimientoNtHayCupo\', [\'seguimientoNtNoHayCupo\',\'seguimientoNtFueraAgenda\',\'seguimientoNtNoExiste\']); document.getElementById(\'seguimientoNtTipificacion\').innerHTML = \'Gestión de citas &gt; Seguimiento &gt; Según sea el caso\';">Está activa y hay cupo</button>' +
+                '<button class="bib-btn btn-amarillo-cupo" onclick="mostrarUno(\'seguimientoNtNoHayCupo\', [\'seguimientoNtHayCupo\',\'seguimientoNtFueraAgenda\',\'seguimientoNtNoExiste\']); document.getElementById(\'seguimientoNtTipificacion\').innerHTML = \'Gestión de citas &gt; Seguimiento &gt; Según sea el caso\';">Está activa pero no hay cupo</button>' +
+                '<button class="bib-btn btn-naranja" onclick="mostrarUno(\'seguimientoNtFueraAgenda\', [\'seguimientoNtHayCupo\',\'seguimientoNtNoHayCupo\',\'seguimientoNtNoExiste\']); document.getElementById(\'seguimientoNtTipificacion\').innerHTML = \'Consultas &gt; Información general del servicio &gt; Proceso de referencia / seguimiento\';">Está inactiva</button>' +
                 '<button class="bib-btn btn-no-rojo" onclick="mostrarUno(\'seguimientoNtNoExiste\', [\'seguimientoNtHayCupo\',\'seguimientoNtNoHayCupo\',\'seguimientoNtFueraAgenda\']); document.getElementById(\'seguimientoNtTipificacion\').innerHTML = \'Gestión de citas &gt; Seguimiento &gt; Según sea el caso\';">No existe</button>' +
               '</div>' +
               '<div id="seguimientoNtHayCupo" class="triage-resultado" style="display:none;">' +
