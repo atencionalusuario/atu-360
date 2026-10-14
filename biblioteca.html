@@ -554,7 +554,7 @@
     <div id="tarjetasScripts"></div>
 
     <div class="panel-inline" id="modalTexto">
-      <button class="modal-close" onclick="cerrarModalTexto()">&times;</button>
+      <button class="modal-close" onclick="cerrarModalTexto(true)">&times;</button>
       <h3 id="modalTituloTexto" class="modal-titulo"></h3>
       <div id="modalCuerpoTexto" class="modal-cuerpo"></div>
       <div class="sdp-botones" id="modalSubBotones" style="display:none;"></div>
@@ -4086,14 +4086,14 @@
     });
   }
 
-  function cerrarModalTexto() {
+  function cerrarModalTexto(restaurarPantalla) {
     document.getElementById('modalTexto').classList.remove('open');
     document.querySelectorAll('#opcionesCategoria .bib-btn').forEach(function(btn) { btn.classList.remove('active'); });
     if (panelHistorialStack.length) {
       panelHistorialStack = [];
       var destino = historial[historialBasePanel - 1];
       historial = historial.slice(0, historialBasePanel);
-      if (destino && destino.restaurar) destino.restaurar();
+      if (restaurarPantalla && destino && destino.restaurar) destino.restaurar();
       renderRuta();
     }
   }
