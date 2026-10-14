@@ -198,6 +198,10 @@
         <label style="font-size:0.78rem;font-weight:600;color:#374151;margin-bottom:8px;display:block">Ícono del grupo</label>
         <div id="egAvatares" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px"></div>
       </div>
+      <div id="egIntegrantesWrap">
+        <label style="font-size:0.78rem;font-weight:600;color:#374151;margin-bottom:6px;display:block">Integrantes</label>
+        <div id="egIntegrantes" style="max-height:220px;overflow-y:auto;border:1.5px solid #E2E8F0;border-radius:8px"></div>
+      </div>
     </div>
     <div style="padding:14px 22px;border-top:1px solid #F1F5F9;display:flex;justify-content:flex-end;gap:8px">
       <button class="btn-icon" style="width:auto;padding:8px 16px;font-size:0.8rem;font-weight:600;color:#374151" onclick="cerrarModalEditarGrupo()">Cancelar</button>
@@ -739,7 +743,41 @@
     avatarSeleccionado = { emoji: c.avatarEmoji || '👥', color: c.avatarColor || '#7C3AED' };
     document.getElementById('egNombre').value = c.nombre || '';
     renderAvatarPicker();
+    // Los chats de equipo automáticos (grupal_<uid>) se arman solos según el supervisor asignado;
+    // solo los grupos creados a mano permiten editar integrantes.
+    var editable = chatId.indexOf('grupal_') !== 0 && (miRolG === 'jefe' || miRolG === 'supervisor');
+    document.getElementById('egIntegrantesWrap').style.display = editable ? 'block' : 'none';
+    integrantesGrupo = null;
+    if(editable){
+      document.getElementById('egIntegrantes').innerHTML = '<div class="loading">Cargando…</div>';
+      var fuente = miRolG === 'jefe' ? cargarContactosJefe : cargarAgentesDeEquipo;
+      fuente(function(){
+        var info = c.participantesInfo || {};
+        var cand = {};
+        listaContactosActual().forEach(function(a){ cand[a.uid] = { nombre: a.nombre, rol: a.rol }; });
+        (c.participantes || []).forEach(function(uid){ if(uid !== currentUser.uid && !cand[uid]) cand[uid] = info[uid] || { nombre: uid, rol: '' }; });
+        integrantesGrupo = { cand: cand, sel: {} };
+        (c.participantes || []).forEach(function(uid){ if(uid !== currentUser.uid) integrantesGrupo.sel[uid] = true; });
+        renderIntegrantesGrupo();
+      });
+    }
     document.getElementById('modalEditarGrupo').classList.add('show');
+  };
+
+  var integrantesGrupo = null;
+  function renderIntegrantesGrupo(){
+    var g = integrantesGrupo;
+    var uids = Object.keys(g.cand).sort(function(a,b){ return (g.cand[a].nombre||'').localeCompare(g.cand[b].nombre||'','es'); });
+    document.getElementById('egIntegrantes').innerHTML = uids.map(function(uid){
+      var a = g.cand[uid];
+      return '<label class="grupo-pick"><input type="checkbox" '+(g.sel[uid]?'checked':'')+' onchange="toggleIntegranteGrupo(\''+uid+'\')">'
+        + '<div class="conv-avatar">'+escHtml(iniciales(a.nombre))+'</div>'
+        + '<div><div>'+escHtml(a.nombre)+'</div><div class="conv-preview">'+(LABEL_ROL_CONTACTO[a.rol]||a.rol||'')+'</div></div></label>';
+    }).join('') || '<div class="loading">No hay personas para agregar.</div>';
+  }
+  window.toggleIntegranteGrupo = function(uid){
+    if(!integrantesGrupo) return;
+    if(integrantesGrupo.sel[uid]) delete integrantesGrupo.sel[uid]; else integrantesGrupo.sel[uid] = true;
   };
 
   function renderAvatarPicker(){
@@ -760,9 +798,16 @@
     if(!grupoEditandoId) return;
     var nombre = (document.getElementById('egNombre').value || '').trim();
     if(!nombre){ showToast('Escribe un nombre para el grupo.'); return; }
-    db.collection('chats').doc(grupoEditandoId).update({
-      nombre: nombre, avatarEmoji: avatarSeleccionado.emoji, avatarColor: avatarSeleccionado.color
-    }).then(function(){
+    var patch = { nombre: nombre, avatarEmoji: avatarSeleccionado.emoji, avatarColor: avatarSeleccionado.color };
+    if(integrantesGrupo){
+      var sel = Object.keys(integrantesGrupo.sel);
+      var info = {};
+      info[currentUser.uid] = { nombre: miNombreG, rol: miRolG };
+      sel.forEach(function(uid){ var a = integrantesGrupo.cand[uid]; info[uid] = { nombre: a.nombre, rol: a.rol }; });
+      patch.participantes = [currentUser.uid].concat(sel);
+      patch.participantesInfo = info;
+    }
+    db.collection('chats').doc(grupoEditandoId).update(patch).then(function(){
       showToast('Grupo actualizado.');
       cerrarModalEditarGrupo();
       if(chatActivoId === grupoEditandoId) abrirChat(grupoEditandoId);
