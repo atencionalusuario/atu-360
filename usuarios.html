@@ -777,6 +777,10 @@
     var batch = db.batch();
     ids.forEach(function(id){ batch.update(db.collection('usuarios').doc(id), datos); });
     batch.commit().then(function(){
+      if(campo==='supervisor' || campo==='rol' || campo==='estado'){
+        return Promise.all(ids.map(function(id){ return sincronizarChatTrasEdicion(id, datos); }));
+      }
+    }).then(function(){
       showToast(ids.length+' usuario(s) actualizado(s).');
       limpiarSeleccion();
       cargarUsuarios();
@@ -785,6 +789,48 @@
     }).finally(function(){
       btn.disabled = false; btn.textContent = txtOrig;
     });
+  }
+
+  // ── Chat grupal del equipo: mantenerlo al día cuando cambia supervisor/rol/estado ──
+  // El chat 'grupal_<uidSupervisor>' se armaba solo cuando el supervisor abría el chat,
+  // así que un agente reasignado seguía en el chat viejo y no entraba al nuevo.
+  // Esto lo corrige en el momento de guardar: saca a la persona de cualquier chat grupal
+  // que no sea el de su supervisor actual y la agrega al correcto.
+  var ROLES_EN_CHAT_EQUIPO = ['agente','agente-inmersion'];
+  function sincronizarChatGrupalUsuario(uid, d){
+    var FV = firebase.firestore.FieldValue;
+    var sup = (d.activo!==false && ROLES_EN_CHAT_EQUIPO.indexOf(d.rol)>=0 && d.emailSupervisor)
+      ? usuarios.find(function(x){ return x.email===d.emailSupervisor && x.rol==='supervisor'; }) : null;
+    var supUid = sup ? sup.id : null;
+    return db.collection('chats').where('participantes','array-contains',uid).get().then(function(snap){
+      var ops = [];
+      snap.forEach(function(c){
+        var x = c.data();
+        if(x.tipo!=='grupal' || c.id==='grupal_'+supUid) return;
+        var u = { participantes: FV.arrayRemove(uid) };
+        u['participantesInfo.'+uid] = FV.delete();
+        ops.push(c.ref.update(u));
+      });
+      if(!sup) return Promise.all(ops);
+      var ref = db.collection('chats').doc('grupal_'+supUid);
+      ops.push(ref.get().then(function(doc){
+        var info = {}; info[uid] = { nombre: d.nombre||d.email||'', rol: d.rol };
+        var data = { tipo:'grupal', supervisorUid:supUid, supervisorNombre:sup.nombre||'',
+                     participantes: FV.arrayUnion(uid), participantesInfo: info };
+        if(!doc.exists){
+          data.nombre = 'Equipo de '+(sup.nombre||'');
+          data.creadoEn = FV.serverTimestamp();
+          data.participantes = FV.arrayUnion(supUid, uid);
+          data.participantesInfo[supUid] = { nombre: sup.nombre||'', rol: 'supervisor' };
+        }
+        return ref.set(data,{merge:true});
+      }));
+      return Promise.all(ops);
+    }).catch(function(e){ console.error('sync chat equipo:', e); showToast('Se guardó, pero no se pudo actualizar el chat del equipo.'); });
+  }
+  function sincronizarChatTrasEdicion(id, cambios){
+    var u = usuarios.find(function(x){ return x.id===id; }) || {};
+    return sincronizarChatGrupalUsuario(id, Object.assign({}, u, cambios));
   }
 
   // ── Eliminación masiva ───────────────────────────────────────────────────────
@@ -993,7 +1039,9 @@
       return;
     }
     datos.fechaActualizacion=firebase.firestore.FieldValue.serverTimestamp();
-    db.collection('usuarios').doc(usuarioSeleccionado).update(datos)
+    var idEditado = usuarioSeleccionado;
+    db.collection('usuarios').doc(idEditado).update(datos)
+      .then(function(){ return sincronizarChatTrasEdicion(idEditado, datos); })
       .then(function(){ cerrarModalForm(); showToast('Cambios guardados.'); cargarUsuarios(); })
       .catch(function(e){ btnG.disabled=false; btnG.textContent='Guardar cambios'; showToast('Error: '+e.message); console.error(e); });
   }
