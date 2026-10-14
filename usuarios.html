@@ -808,7 +808,8 @@
       var ops = [];
       snap.forEach(function(c){
         var x = c.data();
-        if(x.tipo!=='grupal' || c.id==='grupal_'+supUid) return;
+        // Solo los chats de equipo automáticos (grupal_<uid>); los grupos que arma un jefe a mano no se tocan.
+        if(x.tipo!=='grupal' || c.id.indexOf('grupal_')!==0 || c.id==='grupal_'+supUid) return;
         var u = { participantes: FV.arrayRemove(uid) };
         u['participantesInfo.'+uid] = FV.delete();
         ops.push(c.ref.update(u));
