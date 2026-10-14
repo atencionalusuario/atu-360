@@ -800,8 +800,10 @@
   function sincronizarChatGrupalUsuario(uid, d){
     var FV = firebase.firestore.FieldValue;
     var sup = (d.activo!==false && ROLES_EN_CHAT_EQUIPO.indexOf(d.rol)>=0 && d.emailSupervisor)
-      ? usuarios.find(function(x){ return x.email===d.emailSupervisor && x.rol==='supervisor'; }) : null;
+      ? usuarios.find(function(x){ return String(x.email||'').trim().toLowerCase()===String(d.emailSupervisor).trim().toLowerCase(); }) : null;
     var supUid = sup ? sup.id : null;
+    if(d.activo!==false && ROLES_EN_CHAT_EQUIPO.indexOf(d.rol)>=0 && d.emailSupervisor && !sup)
+      showToast('No se encontró al supervisor '+d.emailSupervisor+' en la lista; el chat del equipo no se actualizó.');
     return db.collection('chats').where('participantes','array-contains',uid).get().then(function(snap){
       var ops = [];
       snap.forEach(function(c){
