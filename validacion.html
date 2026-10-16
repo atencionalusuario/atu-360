@@ -447,6 +447,12 @@ document.querySelectorAll('.tabs button').forEach(function (b) {
   };
 });
 
+// Medidores ordenados por departamento (en el orden de DEPTOS) y luego por nombre.
+function porDeptoNombre(a, b) {
+  var da = DEPTOS.indexOf(aMed[a].depto), dbb = DEPTOS.indexOf(aMed[b].depto);
+  return (da - dbb) || (aMed[a].nombre || '').localeCompare(aMed[b].nombre || '');
+}
+
 function pintarAdmin() { pintarAvance(); pintarAsignacion(); pintarMedidores(); }
 
 function pintarAvance() {
@@ -494,7 +500,7 @@ function pintarAvance() {
 ['asDepto','asBuscar'].forEach(function (id) { $(id).addEventListener('input', pintarAsignacion); });
 function pintarAsignacion() {
   var d = $('asDepto').value, q = $('asBuscar').value.trim().toLowerCase();
-  var meds = Object.keys(aMed).filter(function (u) { return aMed[u].activo !== false; }).sort(function (a, b) { return (aMed[a].nombre || '').localeCompare(aMed[b].nombre || ''); });
+  var meds = Object.keys(aMed).filter(function (u) { return aMed[u].activo !== false; }).sort(porDeptoNombre);
   var ids = Object.keys(aCentros).filter(function (k) {
     var c = aCentros[k];
     return (!d || c.depto === d) && (!q || k.indexOf(q) >= 0 || c.nombre.toLowerCase().indexOf(q) >= 0);
@@ -502,7 +508,10 @@ function pintarAsignacion() {
   function sel(k, i) {
     var cur = (aCentros[k].asignadoA || [])[i] || '';
     return '<select class="input" style="padding:6px" data-ce="' + esc(k) + '" data-i="' + i + '"><option value="">—</option>' +
-      meds.map(function (u) { return '<option value="' + u + '"' + (u === cur ? ' selected' : '') + '>' + esc(aMed[u].nombre) + ' (' + esc(aMed[u].depto || '') + ')</option>'; }).join('') + '</select>';
+      DEPTOS.map(function (d) {
+        var us = meds.filter(function (u) { return aMed[u].depto === d; });
+        return us.length ? '<optgroup label="' + d + '">' + us.map(function (u) { return '<option value="' + u + '"' + (u === cur ? ' selected' : '') + '>' + esc(aMed[u].nombre) + '</option>'; }).join('') + '</optgroup>' : '';
+      }).join('') + '</select>';
   }
   $('asTabla').innerHTML = '<tr><th>Depto</th><th>CE</th><th>Centro</th><th class="num">Prin./Res.</th><th>Medidor 1</th><th>Medidor 2</th><th>Fecha</th></tr>' +
     ids.map(function (k) {
@@ -527,7 +536,7 @@ $('asTabla').addEventListener('change', function (e) {
 });
 
 function pintarMedidores() {
-  var ids = Object.keys(aMed).sort(function (a, b) { return (aMed[a].nombre || '').localeCompare(aMed[b].nombre || ''); });
+  var ids = Object.keys(aMed).sort(porDeptoNombre);
   var nCE = {}; Object.keys(aCentros).forEach(function (k) { (aCentros[k].asignadoA || []).forEach(function (u) { nCE[u] = (nCE[u] || 0) + 1; }); });
   $('mdTabla').innerHTML = '<tr><th>Nombre</th><th>Usuario</th><th>Departamento</th><th class="num">CE asignados</th><th>Estado</th></tr>' +
     (ids.length ? ids.map(function (u) {
