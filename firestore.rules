@@ -110,5 +110,64 @@ service cloud.firestore {
     match /auxiliares/{document=**}           { allow read, write: if perfilActivo(); }
     match /licencias/{document=**}            { allow read, write: if perfilActivo(); }
     match /transporte/{document=**}           { allow read, write: if perfilActivo(); }
+
+    // ── Validación de tallas (validacion.html) ──────────────────────────────
+    // Los medidores NO tienen ficha en 'usuarios': su perfil vive en
+    // val_usuarios, así que no pueden leer nada del resto de ATU 360.
+    // Admin = superadmin de ATU 360 o val_usuarios con rol 'admin'.
+    // La talla registrada (clave) nunca se sube a Firestore.
+    function esValAdmin() {
+      return request.auth != null && (
+        (exists(/databases/$(database)/documents/val_usuarios/$(request.auth.uid))
+          && get(/databases/$(database)/documents/val_usuarios/$(request.auth.uid)).data.rol == 'admin')
+        || (perfilActivo() && miRol() == 'superadmin')
+      );
+    }
+    function esMedidor() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/val_usuarios/$(request.auth.uid))
+        && get(/databases/$(database)/documents/val_usuarios/$(request.auth.uid)).data.rol == 'medidor'
+        && get(/databases/$(database)/documents/val_usuarios/$(request.auth.uid)).data.get('activo', true) != false;
+    }
+    function asignado() {
+      return request.auth.uid in resource.data.get('asignadoA', []);
+    }
+    function grupoDe(nie) {
+      return get(/databases/$(database)/documents/val_estudiantes/$(nie)).data.grupo;
+    }
+    // Un reemplazo solo puede enlazar estudiantes del mismo grupo, y una vez
+    // puesto no se cambia desde el celular.
+    function reemplazoValido() {
+      let antesA = resource.data.get('reemplazaA', null);
+      let nuevoA = request.resource.data.get('reemplazaA', null);
+      let antesPor = resource.data.get('reemplazadoPor', null);
+      let nuevoPor = request.resource.data.get('reemplazadoPor', null);
+      return (nuevoA == antesA || (antesA == null && resource.data.tipo == 'Reserva' && grupoDe(nuevoA) == resource.data.grupo))
+          && (nuevoPor == antesPor || (antesPor == null && grupoDe(nuevoPor) == resource.data.grupo));
+    }
+    function capturaValida() {
+      let t = request.resource.data.get('tallaMedida', null);
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+               'estado', 'tallaMedida', 'fechaMed', 'medidoPor', 'medidoPorUid',
+               'obs', 'reemplazaA', 'reemplazadoPor', 'actualizado'])
+        && request.resource.data.get('medidoPorUid', request.auth.uid) == request.auth.uid
+        && (t == null || (t is int && t >= 15 && t <= 50))
+        && request.resource.data.get('estado', null) in [null, 'medido', 'ausente'];
+    }
+
+    match /val_usuarios/{uid} {
+      allow read: if request.auth != null && (request.auth.uid == uid || esValAdmin());
+      allow write: if esValAdmin();
+    }
+    match /val_centros/{ce} {
+      allow read: if esValAdmin() || (esMedidor() && asignado());
+      allow write: if esValAdmin();
+    }
+    match /val_estudiantes/{nie} {
+      allow read: if esValAdmin() || (esMedidor() && asignado());
+      allow update: if esValAdmin()
+        || (esMedidor() && asignado() && capturaValida() && reemplazoValido());
+      allow create, delete: if esValAdmin();
+    }
   }
 }

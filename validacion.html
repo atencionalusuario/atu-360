@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0F2070">
+<title>Validación de tallas</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="validacion.webmanifest">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #F8FAFC; color: #1E293B; min-height: 100vh; }
+  .hidden { display: none !important; }
+  button { font-family: inherit; cursor: pointer; }
+  input, select, textarea { font-family: inherit; font-size: 0.95rem; }
+
+  /* Barra superior */
+  .top { position: sticky; top: 0; z-index: 10; background: #0F2070; color: white; padding: 12px 16px; display: flex; align-items: center; gap: 10px; }
+  .top .titulo { font-weight: 800; font-size: 1rem; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .top .titulo small { display: block; font-weight: 500; font-size: 0.72rem; color: rgba(255,255,255,0.7); }
+  .top button { background: rgba(255,255,255,0.12); color: white; border: none; border-radius: 8px; padding: 7px 10px; font-size: 0.78rem; font-weight: 600; }
+  .sync { font-size: 0.7rem; font-weight: 700; padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
+  .sync.ok { background: #DCFCE7; color: #166534; }
+  .sync.off { background: #FEF3C7; color: #92400E; }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  .card { background: white; border: 1px solid #E2E8F0; border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+  .muted { color: #64748B; font-size: 0.8rem; }
+  .btn { background: linear-gradient(135deg,#1A3DAA,#29ABE2); color: white; border: none; border-radius: 10px; padding: 12px 16px; font-weight: 700; font-size: 0.9rem; }
+  .btn.sec { background: white; color: #1A3DAA; border: 1.5px solid #CBD5E1; }
+  .btn.warn { background: #F59E0B; }
+  .btn:disabled { opacity: 0.5; }
+  .input { width: 100%; padding: 11px 12px; border: 1.5px solid #E2E8F0; border-radius: 10px; background: #F8FAFC; outline: none; }
+  .input:focus { border-color: #1A3DAA; background: white; }
+  label.l { display: block; font-size: 0.75rem; font-weight: 600; color: #374151; margin: 10px 0 5px; }
+  .err { background: #FEF2F2; border: 1px solid #FECACA; color: #DC2626; border-radius: 8px; padding: 10px; font-size: 0.8rem; margin-top: 10px; }
+
+  /* Login */
+  .login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; background: linear-gradient(145deg,#142D8A,#1A3DAA 50%,#29ABE2); }
+  .login .card { width: 100%; max-width: 380px; padding: 28px 24px; }
+  .login h1 { font-size: 1.3rem; font-weight: 800; }
+
+  /* Listas */
+  .item { display: flex; align-items: center; gap: 12px; padding: 14px; background: white; border: 1px solid #E2E8F0; border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
+  .item .main { flex: 1; min-width: 0; }
+  .item .nom { font-weight: 700; font-size: 0.95rem; }
+  .item .det { font-size: 0.78rem; color: #64748B; margin-top: 2px; }
+  .badge { font-size: 0.68rem; font-weight: 700; padding: 4px 8px; border-radius: 999px; white-space: nowrap; }
+  .b-pend { background: #F1F5F9; color: #475569; }
+  .b-med { background: #DCFCE7; color: #166534; }
+  .b-aus { background: #FEE2E2; color: #991B1B; }
+  .b-res { background: #E0F2FE; color: #075985; }
+  .barra { height: 6px; background: #E2E8F0; border-radius: 999px; overflow: hidden; margin-top: 6px; }
+  .barra div { height: 100%; background: #22C55E; }
+  .filtros { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .filtros > * { flex: 1; min-width: 140px; }
+
+  /* Hoja de captura */
+  .sheet-bg { position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 50; display: flex; align-items: flex-end; justify-content: center; }
+  .sheet { background: white; width: 100%; max-width: 520px; border-radius: 18px 18px 0 0; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); max-height: 92vh; overflow: auto; }
+  .tallas { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 8px; }
+  .tallas button { padding: 12px 0; border: 1.5px solid #CBD5E1; background: white; border-radius: 10px; font-weight: 700; font-size: 1rem; color: #1E293B; }
+  .tallas button.sel { background: #1A3DAA; border-color: #1A3DAA; color: white; }
+  .acciones { display: flex; gap: 8px; margin-top: 14px; }
+  .acciones .btn { flex: 1; }
+
+  /* Admin */
+  .tabs { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 14px; }
+  .tabs button { border: none; background: #E2E8F0; color: #334155; padding: 9px 14px; border-radius: 999px; font-weight: 600; font-size: 0.82rem; white-space: nowrap; }
+  .tabs button.on { background: #1A3DAA; color: white; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 12px; }
+  .kpi { background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px; }
+  .kpi b { display: block; font-size: 1.5rem; font-weight: 800; color: #0F2070; }
+  .kpi span { font-size: 0.75rem; color: #64748B; }
+  .tabla { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  .tabla th { text-align: left; background: #F1F5F9; padding: 8px; font-weight: 700; color: #334155; position: sticky; top: 0; }
+  .tabla td { padding: 7px 8px; border-top: 1px solid #F1F5F9; }
+  .scroll { overflow: auto; max-height: 65vh; }
+  .num { text-align: right; }
+
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #1E293B; color: white; padding: 10px 16px; border-radius: 10px; font-size: 0.85rem; z-index: 99; opacity: 0; transition: opacity 0.2s; pointer-events: none; max-width: 90vw; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- ── Login ─────────────────────────────────────────────────────────── -->
+<div id="vLogin" class="login hidden">
+  <div class="card">
+    <h1>Validación de tallas</h1>
+    <p class="muted" style="margin:4px 0 14px">Re-medición de talla de zapato 2026</p>
+    <label class="l">Usuario</label>
+    <input id="lgUser" class="input" autocomplete="username" autocapitalize="off">
+    <label class="l">Contraseña</label>
+    <input id="lgPass" class="input" type="password" autocomplete="current-password">
+    <div id="lgErr" class="err hidden"></div>
+    <button id="lgBtn" class="btn" style="width:100%;margin-top:16px">Entrar</button>
+  </div>
+</div>
+
+<!-- ── Medidor ───────────────────────────────────────────────────────── -->
+<div id="vMed" class="hidden">
+  <div class="top">
+    <button id="mBack" class="hidden">‹</button>
+    <div class="titulo" id="mTitulo">Mis centros<small id="mSub"></small></div>
+    <span id="mSync" class="sync ok">En línea</span>
+    <button onclick="salir()">Salir</button>
+  </div>
+  <div class="wrap">
+    <div id="mCentros"></div>
+    <div id="mCE" class="hidden">
+      <div class="filtros">
+        <input id="mBuscar" class="input" placeholder="Buscar nombre o NIE">
+        <select id="mGrado" class="input"><option value="">Todos los grados</option></select>
+        <select id="mEstado" class="input">
+          <option value="">Todos</option><option value="pendiente">Pendientes</option>
+          <option value="medido">Medidos</option><option value="ausente">Ausentes</option>
+        </select>
+      </div>
+      <div id="mLista"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Admin ─────────────────────────────────────────────────────────── -->
+<div id="vAdm" class="hidden">
+  <div class="top">
+    <div class="titulo">Validación de tallas · Administración<small id="aSub"></small></div>
+    <span id="aSync" class="sync ok">En línea</span>
+    <button onclick="salir()">Salir</button>
+  </div>
+  <div class="wrap">
+    <div class="tabs">
+      <button data-t="avance" class="on">Avance</button>
+      <button data-t="asignacion">Asignación</button>
+      <button data-t="medidores">Medidores</button>
+      <button data-t="datos">Importar / Exportar</button>
+    </div>
+
+    <div id="t-avance">
+      <div class="kpis" id="aKpis"></div>
+      <div class="card"><b>Por departamento</b><div class="scroll" style="margin-top:8px"><table class="tabla" id="aDepto"></table></div></div>
+      <div class="card"><b>Cuota por grupo de reemplazo</b><p class="muted">Medidos (principales + reservas que los reemplazan) contra principales del grupo.</p><div class="scroll" style="margin-top:8px"><table class="tabla" id="aGrupo"></table></div></div>
+      <div class="card"><b>Por medidor y día</b><div class="scroll" style="margin-top:8px"><table class="tabla" id="aDia"></table></div></div>
+    </div>
+
+    <div id="t-asignacion" class="hidden">
+      <div class="filtros">
+        <select id="asDepto" class="input"><option value="">Todos los departamentos</option></select>
+        <input id="asBuscar" class="input" placeholder="Buscar CE">
+      </div>
+      <div class="card scroll"><table class="tabla" id="asTabla"></table></div>
+    </div>
+
+    <div id="t-medidores" class="hidden">
+      <div class="card">
+        <b>Nuevo medidor</b>
+        <div class="filtros" style="margin-top:8px">
+          <div><label class="l">Usuario (sin espacios)</label><input id="mdUser" class="input" autocapitalize="off"></div>
+          <div><label class="l">Nombre completo</label><input id="mdNombre" class="input"></div>
+          <div><label class="l">Departamento</label><select id="mdDepto" class="input"></select></div>
+          <div><label class="l">Contraseña inicial (mín. 6)</label><input id="mdPass" class="input"></div>
+        </div>
+        <button class="btn" id="mdCrear" style="margin-top:12px">Crear medidor</button>
+      </div>
+      <div class="card scroll"><table class="tabla" id="mdTabla"></table></div>
+    </div>
+
+    <div id="t-datos" class="hidden">
+      <div class="card">
+        <b>Importar muestra oficial</b>
+        <p class="muted" style="margin-top:4px">Sube <i>Muestreo_validacion_por_talla_zapato_2026.xlsx</i>. Se leen solo las hojas <b>Lista_campo</b> y <b>Centros</b>; la hoja Clave_NO_campo no se lee ni se sube. Volver a importar actualiza los datos base (por ejemplo, los nombres) sin borrar lo capturado ni las asignaciones.</p>
+        <input type="file" id="impFile" accept=".xlsx" style="margin-top:10px">
+        <div id="impInfo" class="muted" style="margin-top:8px"></div>
+        <button class="btn hidden" id="impBtn" style="margin-top:10px">Importar</button>
+      </div>
+      <div class="card">
+        <b>Exportar capturas</b>
+        <p class="muted" style="margin-top:4px">Excel con la misma estructura de Lista_campo y las columnas de captura llenas, más el estado y los reemplazos. Pégalo en tu Excel oficial para calcular resultados.</p>
+        <button class="btn" id="expBtn" style="margin-top:10px">Descargar Excel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hoja de captura -->
+<div id="sheet" class="sheet-bg hidden">
+  <div class="sheet">
+    <div style="display:flex;justify-content:space-between;gap:8px">
+      <div><div class="nom" id="shNom" style="font-weight:800;font-size:1.05rem"></div><div class="muted" id="shDet"></div></div>
+      <button class="btn sec" style="padding:6px 12px" onclick="cerrarSheet()">✕</button>
+    </div>
+    <div id="shAviso" class="muted" style="margin-top:8px"></div>
+    <label class="l">Talla medida</label>
+    <div class="tallas" id="shTallas"></div>
+    <label class="l">Observación (opcional)</label>
+    <input id="shObs" class="input" maxlength="200">
+    <div class="acciones">
+      <button class="btn warn" id="shAus">Ausente</button>
+      <button class="btn" id="shOk" disabled>Guardar talla</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+// ── Configuración ────────────────────────────────────────────────────────────
+// Los medidores no tienen correo: su usuario se convierte en un correo interno
+// de este dominio ficticio. El admin entra con su correo normal de ATU 360.
+var DOMINIO_MED = '@medidores.validacion-tallas.app';
+var TALLAS = []; for (var t = 18; t <= 47; t++) TALLAS.push(t);
+var DEPTOS = ['AHUACHAPÁN','SANTA ANA','SONSONATE','CHALATENANGO','LA LIBERTAD','SAN SALVADOR','CUSCATLÁN','LA PAZ','CABAÑAS','SAN VICENTE','USULUTÁN','SAN MIGUEL','MORAZÁN','LA UNIÓN'];
+
+// Cache sin conexión: la lista del CE queda guardada en el celular y las
+// capturas se encolan hasta que vuelve la señal.
+db.enablePersistence({ synchronizeTabs: true }).catch(function () {});
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw-validacion.js').catch(function () {});
+}
+
+var yo = null, miPerfil = null;
+var unsubs = [];
+
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
+function hoy() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+var _tt; function toast(m) { var e = $('toast'); e.textContent = m; e.classList.add('show'); clearTimeout(_tt); _tt = setTimeout(function(){ e.classList.remove('show'); }, 3500); }
+function mostrar(v) { ['vLogin','vMed','vAdm'].forEach(function (x) { $(x).classList.toggle('hidden', x !== v); }); }
+function salir() { unsubs.forEach(function (u) { u(); }); unsubs = []; auth.signOut(); }
+
+function pintarSync(el, pendientes) {
+  var off = !navigator.onLine;
+  el.className = 'sync ' + (off || pendientes ? 'off' : 'ok');
+  el.textContent = off ? (pendientes ? 'Sin señal · ' + pendientes + ' por enviar' : 'Sin señal')
+                       : (pendientes ? 'Enviando ' + pendientes + '…' : 'En línea');
+}
+
+// ── Login ────────────────────────────────────────────────────────────────────
+$('lgBtn').onclick = function () {
+  var u = $('lgUser').value.trim().toLowerCase(), p = $('lgPass').value;
+  $('lgErr').classList.add('hidden');
+  if (!u || !p) return;
+  var email = u.indexOf('@') >= 0 ? u : u + DOMINIO_MED;
+  $('lgBtn').disabled = true;
+  auth.signInWithEmailAndPassword(email, p).catch(function () {
+    $('lgErr').textContent = 'Usuario o contraseña incorrectos.';
+    $('lgErr').classList.remove('hidden');
+  }).finally(function () { $('lgBtn').disabled = false; });
+};
+$('lgPass').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('lgBtn').click(); });
+
+auth.onAuthStateChanged(function (user) {
+  yo = user;
+  if (!user) { mostrar('vLogin'); return; }
+  // Perfil propio de la validación; si no hay, se prueba si es superadmin de ATU 360.
+  db.collection('val_usuarios').doc(user.uid).get().then(function (d) {
+    if (d.exists && d.data().activo !== false) return d.data();
+    return db.collection('usuarios').doc(user.uid).get().then(function (u) {
+      return (u.exists && u.data().rol === 'superadmin') ? { rol: 'admin', nombre: u.data().nombre || user.email } : null;
+    }).catch(function () { return null; });
+  }).then(function (perfil) {
+    if (!perfil) { toast('Esta cuenta no tiene acceso a la validación.'); auth.signOut(); return; }
+    miPerfil = perfil;
+    if (perfil.rol === 'admin') iniciarAdmin(); else iniciarMedidor();
+  }).catch(function () { toast('No se pudo cargar tu perfil. Revisa la conexión.'); });
+});
+
+// ═════════════════════════════ MEDIDOR ═══════════════════════════════════════
+var mCentros = {}, mEst = {}, ceActual = null, estActual = null, tallaSel = null;
+
+function iniciarMedidor() {
+  mostrar('vMed');
+  $('mSub').textContent = miPerfil.nombre || '';
+  unsubs.push(db.collection('val_centros').where('asignadoA', 'array-contains', yo.uid)
+    .onSnapshot({ includeMetadataChanges: true }, function (s) {
+      mCentros = {}; s.forEach(function (d) { mCentros[d.id] = d.data(); });
+      pintarCentros();
+    }, function () { toast('No se pudieron cargar tus centros.'); }));
+  unsubs.push(db.collection('val_estudiantes').where('asignadoA', 'array-contains', yo.uid)
+    .onSnapshot({ includeMetadataChanges: true }, function (s) {
+      mEst = {}; var pend = 0;
+      s.forEach(function (d) { mEst[d.id] = d.data(); if (d.metadata.hasPendingWrites) pend++; });
+      pintarSync($('mSync'), pend);
+      pintarCentros(); if (ceActual) pintarLista();
+    }));
+  window.addEventListener('online', function () { pintarSync($('mSync'), 0); });
+  window.addEventListener('offline', function () { pintarSync($('mSync'), 0); });
+}
+
+// Estudiantes que el medidor debe ver en un CE: los principales y las reservas
+// ya activadas como reemplazo. Las reservas sin activar no se muestran.
+function visibles(ce) {
+  return Object.keys(mEst).map(function (k) { return mEst[k]; }).filter(function (e) {
+    return e.ce === ce && (e.tipo === 'Principal' || e.reemplazaA);
+  });
+}
+
+function pintarCentros() {
+  if (ceActual) return;
+  var ids = Object.keys(mCentros).sort(function (a, b) { return (mCentros[a].fecha || '9').localeCompare(mCentros[b].fecha || '9'); });
+  if (!ids.length) { $('mCentros').innerHTML = '<div class="card muted">Aún no tienes centros asignados. Abre la app con señal después de que el coordinador te asigne.</div>'; return; }
+  $('mCentros').innerHTML = '<p class="muted" style="margin-bottom:10px">Abre cada centro con señal antes de salir: queda guardado para trabajar sin internet.</p>' +
+    ids.map(function (id) {
+      var c = mCentros[id], l = visibles(id), hechos = l.filter(function (e) { return e.estado === 'medido' || e.estado === 'ausente'; }).length;
+      var pct = l.length ? Math.round(hechos * 100 / l.length) : 0;
+      return '<div class="item" onclick="abrirCE(\'' + esc(id) + '\')"><div class="main"><div class="nom">' + esc(c.nombre) + '</div>' +
+        '<div class="det">' + esc(id) + ' · ' + esc(c.depto) + (c.fecha ? ' · ' + esc(c.fecha) : '') + ' · ' + hechos + '/' + l.length + '</div>' +
+        '<div class="barra"><div style="width:' + pct + '%"></div></div></div><span>›</span></div>';
+    }).join('');
+}
+
+function abrirCE(id) {
+  ceActual = id;
+  var c = mCentros[id];
+  $('mTitulo').firstChild.textContent = c.nombre;
+  $('mBack').classList.remove('hidden');
+  $('mCentros').classList.add('hidden'); $('mCE').classList.remove('hidden');
+  var grados = {}; visibles(id).forEach(function (e) { grados[e.grado] = 1; });
+  $('mGrado').innerHTML = '<option value="">Todos los grados</option>' + Object.keys(grados).sort().map(function (g) { return '<option>' + esc(g) + '</option>'; }).join('');
+  pintarLista();
+}
+$('mBack').onclick = function () {
+  ceActual = null; $('mTitulo').firstChild.textContent = 'Mis centros';
+  $('mBack').classList.add('hidden'); $('mCE').classList.add('hidden'); $('mCentros').classList.remove('hidden');
+  pintarCentros();
+};
+['mBuscar','mGrado','mEstado'].forEach(function (id) { $(id).addEventListener('input', pintarLista); });
+
+function estadoDe(e) { return e.estado || 'pendiente'; }
+function badge(e) {
+  var s = estadoDe(e);
+  if (s === 'medido') return '<span class="badge b-med">Medido · ' + esc(e.tallaMedida) + '</span>';
+  if (s === 'ausente') return '<span class="badge b-aus">Ausente</span>';
+  return '<span class="badge b-pend">Pendiente</span>';
+}
+
+function pintarLista() {
+  var q = $('mBuscar').value.trim().toLowerCase(), g = $('mGrado').value, st = $('mEstado').value;
+  var l = visibles(ceActual).filter(function (e) {
+    if (g && e.grado !== g) return false;
+    if (st && estadoDe(e) !== st) return false;
+    if (q && (e.nombre || '').toLowerCase().indexOf(q) < 0 && String(e.nie).indexOf(q) < 0) return false;
+    return true;
+  }).sort(function (a, b) {
+    return (a.grado + a.seccion + (a.nombre || '')).localeCompare(b.grado + b.seccion + (b.nombre || ''));
+  });
+  $('mLista').innerHTML = l.length ? l.map(function (e) {
+    return '<div class="item" onclick="abrirSheet(\'' + esc(e.nie) + '\')"><div class="main">' +
+      '<div class="nom">' + esc(e.nombre || 'Sin nombre') + '</div>' +
+      '<div class="det">NIE ' + esc(e.nie) + ' · ' + esc(e.grado) + ' · Secc. ' + esc(e.seccion) + ' · ' + esc(e.genero) + '</div>' +
+      (e.reemplazaA ? '<div class="det"><span class="badge b-res">Reemplazo</span></div>' : '') +
+      '</div>' + badge(e) + '</div>';
+  }).join('') : '<div class="card muted">No hay estudiantes con ese filtro.</div>';
+}
+
+function abrirSheet(nie) {
+  estActual = mEst[nie]; tallaSel = estActual.tallaMedida || null;
+  $('shNom').textContent = estActual.nombre || 'Sin nombre';
+  $('shDet').textContent = 'NIE ' + estActual.nie + ' · ' + estActual.grado + ' · Secc. ' + estActual.seccion + ' · ' + estActual.genero;
+  $('shAviso').textContent = 'Confirma nombre, grado y sección antes de medir.';
+  $('shObs').value = estActual.obs || '';
+  $('shTallas').innerHTML = TALLAS.map(function (t) { return '<button data-t="' + t + '"' + (t === tallaSel ? ' class="sel"' : '') + '>' + t + '</button>'; }).join('');
+  $('shOk').disabled = !tallaSel;
+  // Una vez reemplazado, ya no se puede volver a marcar ausente (el reemplazo ya existe).
+  $('shAus').disabled = !!estActual.reemplazadoPor;
+  $('sheet').classList.remove('hidden');
+}
+function cerrarSheet() { $('sheet').classList.add('hidden'); estActual = null; }
+$('sheet').addEventListener('click', function (e) { if (e.target.id === 'sheet') cerrarSheet(); });
+$('shTallas').addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b) return;
+  tallaSel = +b.dataset.t;
+  [].forEach.call($('shTallas').children, function (x) { x.classList.toggle('sel', x === b); });
+  $('shOk').disabled = false;
+});
+
+function datosCaptura(estado, talla) {
+  return {
+    estado: estado, tallaMedida: talla, fechaMed: hoy(),
+    medidoPor: miPerfil.nombre || '', medidoPorUid: yo.uid,
+    obs: $('shObs').value.trim(), actualizado: firebase.firestore.FieldValue.serverTimestamp()
+  };
+}
+
+// Las escrituras no se esperan con .then(): sin señal la promesa no se resuelve
+// hasta sincronizar, pero el cambio ya quedó guardado en el celular.
+$('shOk').onclick = function () {
+  if (!tallaSel) return;
+  db.collection('val_estudiantes').doc(String(estActual.nie)).update(datosCaptura('medido', tallaSel))
+    .catch(function (e) { toast('No se guardó: ' + e.message); });
+  toast('Talla ' + tallaSel + ' guardada'); cerrarSheet();
+};
+
+// Siguiente reserva válida: mismo grupo, mismo CE, sin usar, con el menor orden.
+function siguienteReserva(e) {
+  var cands = Object.keys(mEst).map(function (k) { return mEst[k]; }).filter(function (r) {
+    return r.tipo === 'Reserva' && r.grupo === e.grupo && r.ce === e.ce && !r.reemplazaA && !r.estado;
+  }).sort(function (a, b) { return a.orden - b.orden; });
+  return cands[0] || null;
+}
+
+$('shAus').onclick = function () {
+  var e = estActual, r = siguienteReserva(e);
+  var msg = r ? '¿Marcar ausente?\n\nEn su lugar se medirá a:\n' + (r.nombre || 'Sin nombre') + '\nNIE ' + r.nie + ' · ' + r.grado + ' · Secc. ' + r.seccion
+              : '¿Marcar ausente?\n\nNo hay reserva disponible en este CE para este estudiante. Avisa al coordinador.';
+  if (!confirm(msg)) return;
+  var b = db.batch(), ref = db.collection('val_estudiantes');
+  var d = datosCaptura('ausente', null);
+  if (r) d.reemplazadoPor = String(r.nie);
+  b.update(ref.doc(String(e.nie)), d);
+  if (r) b.update(ref.doc(String(r.nie)), { reemplazaA: String(e.nie), actualizado: firebase.firestore.FieldValue.serverTimestamp() });
+  b.commit().catch(function (x) { toast('No se guardó: ' + x.message); });
+  cerrarSheet();
+  toast(r ? 'Reserva agregada a la lista' : 'Marcado ausente');
+};
+
+// ═════════════════════════════ ADMIN ═════════════════════════════════════════
+var aCentros = {}, aEst = {}, aMed = {};
+
+function iniciarAdmin() {
+  mostrar('vAdm');
+  $('aSub').textContent = miPerfil.nombre || '';
+  var opts = DEPTOS.map(function (d) { return '<option>' + d + '</option>'; }).join('');
+  $('asDepto').innerHTML = '<option value="">Todos los departamentos</option>' + opts;
+  $('mdDepto').innerHTML = opts;
+  unsubs.push(db.collection('val_centros').onSnapshot(function (s) { aCentros = {}; s.forEach(function (d) { aCentros[d.id] = d.data(); }); pintarAdmin(); }));
+  unsubs.push(db.collection('val_estudiantes').onSnapshot({ includeMetadataChanges: true }, function (s) {
+    aEst = {}; var pend = 0;
+    s.forEach(function (d) { aEst[d.id] = d.data(); if (d.metadata.hasPendingWrites) pend++; });
+    pintarSync($('aSync'), pend); pintarAdmin();
+  }));
+  unsubs.push(db.collection('val_usuarios').onSnapshot(function (s) { aMed = {}; s.forEach(function (d) { if (d.data().rol === 'medidor') aMed[d.id] = d.data(); }); pintarAdmin(); }));
+}
+
+document.querySelectorAll('.tabs button').forEach(function (b) {
+  b.onclick = function () {
+    document.querySelectorAll('.tabs button').forEach(function (x) { x.classList.toggle('on', x === b); });
+    ['avance','asignacion','medidores','datos'].forEach(function (t) { $('t-' + t).classList.toggle('hidden', t !== b.dataset.t); });
+  };
+});
+
+function pintarAdmin() { pintarAvance(); pintarAsignacion(); pintarMedidores(); }
+
+function pintarAvance() {
+  var est = Object.keys(aEst).map(function (k) { return aEst[k]; });
+  var prin = est.filter(function (e) { return e.tipo === 'Principal'; });
+  var medidos = est.filter(function (e) { return e.estado === 'medido'; });
+  var aus = est.filter(function (e) { return e.estado === 'ausente'; });
+  var reemp = est.filter(function (e) { return e.reemplazaA; });
+  var ceIniciados = {}; medidos.concat(aus).forEach(function (e) { ceIniciados[e.ce] = 1; });
+  var sinAsig = Object.keys(aCentros).filter(function (k) { return !(aCentros[k].asignadoA || []).length; }).length;
+  $('aKpis').innerHTML = [
+    [medidos.length.toLocaleString('es-SV'), 'medidos de ' + prin.length.toLocaleString('es-SV') + ' principales'],
+    [prin.length ? Math.round(medidos.length * 100 / prin.length) + '%' : '—', 'avance'],
+    [aus.length, 'ausentes'], [reemp.length, 'reemplazos activados'],
+    [Object.keys(ceIniciados).length + '/' + Object.keys(aCentros).length, 'CE iniciados'], [sinAsig, 'CE sin asignar']
+  ].map(function (k) { return '<div class="kpi"><b>' + k[0] + '</b><span>' + k[1] + '</span></div>'; }).join('');
+
+  var dep = {};
+  DEPTOS.forEach(function (d) { dep[d] = { ce: 0, prin: 0, med: 0, aus: 0 }; });
+  Object.keys(aCentros).forEach(function (k) { var d = aCentros[k].depto; if (dep[d]) dep[d].ce++; });
+  est.forEach(function (e) {
+    var d = dep[e.depto]; if (!d) return;
+    if (e.tipo === 'Principal') d.prin++;
+    if (e.estado === 'medido') d.med++; if (e.estado === 'ausente') d.aus++;
+  });
+  $('aDepto').innerHTML = '<tr><th>Departamento</th><th class="num">CE</th><th class="num">Principales</th><th class="num">Medidos</th><th class="num">Ausentes</th><th class="num">Avance</th></tr>' +
+    DEPTOS.map(function (n) { var d = dep[n]; return '<tr><td>' + n + '</td><td class="num">' + d.ce + '</td><td class="num">' + d.prin + '</td><td class="num">' + d.med + '</td><td class="num">' + d.aus + '</td><td class="num">' + (d.prin ? Math.round(d.med * 100 / d.prin) : 0) + '%</td></tr>'; }).join('');
+
+  var gr = {};
+  est.forEach(function (e) {
+    var g = gr[e.grupo] || (gr[e.grupo] = { prin: 0, res: 0, med: 0, resLibres: 0 });
+    if (e.tipo === 'Principal') g.prin++; else { g.res++; if (!e.reemplazaA && !e.estado) g.resLibres++; }
+    if (e.estado === 'medido') g.med++;
+  });
+  $('aGrupo').innerHTML = '<tr><th>Grupo</th><th class="num">Principales</th><th class="num">Medidos</th><th class="num">Cumplimiento</th><th class="num">Reservas libres</th></tr>' +
+    Object.keys(gr).sort().map(function (k) { var g = gr[k]; return '<tr><td>' + esc(k) + '</td><td class="num">' + g.prin + '</td><td class="num">' + g.med + '</td><td class="num">' + (g.prin ? Math.round(g.med * 100 / g.prin) : 0) + '%</td><td class="num">' + g.resLibres + ' / ' + g.res + '</td></tr>'; }).join('');
+
+  var dia = {};
+  medidos.forEach(function (e) { var k = (e.fechaMed || '?') + '|' + (e.medidoPor || '?'); dia[k] = (dia[k] || 0) + 1; });
+  var filas = Object.keys(dia).sort().reverse();
+  $('aDia').innerHTML = '<tr><th>Fecha</th><th>Medidor</th><th class="num">Medidos</th></tr>' +
+    (filas.length ? filas.map(function (k) { var p = k.split('|'); return '<tr><td>' + esc(p[0]) + '</td><td>' + esc(p[1]) + '</td><td class="num">' + dia[k] + '</td></tr>'; }).join('') : '<tr><td colspan="3" class="muted">Sin mediciones aún.</td></tr>');
+}
+
+['asDepto','asBuscar'].forEach(function (id) { $(id).addEventListener('input', pintarAsignacion); });
+function pintarAsignacion() {
+  var d = $('asDepto').value, q = $('asBuscar').value.trim().toLowerCase();
+  var meds = Object.keys(aMed).filter(function (u) { return aMed[u].activo !== false; }).sort(function (a, b) { return (aMed[a].nombre || '').localeCompare(aMed[b].nombre || ''); });
+  var ids = Object.keys(aCentros).filter(function (k) {
+    var c = aCentros[k];
+    return (!d || c.depto === d) && (!q || k.indexOf(q) >= 0 || c.nombre.toLowerCase().indexOf(q) >= 0);
+  }).sort(function (a, b) { return (aCentros[a].depto + a).localeCompare(aCentros[b].depto + b); });
+  function sel(k, i) {
+    var cur = (aCentros[k].asignadoA || [])[i] || '';
+    return '<select class="input" style="padding:6px" data-ce="' + esc(k) + '" data-i="' + i + '"><option value="">—</option>' +
+      meds.map(function (u) { return '<option value="' + u + '"' + (u === cur ? ' selected' : '') + '>' + esc(aMed[u].nombre) + ' (' + esc(aMed[u].depto || '') + ')</option>'; }).join('') + '</select>';
+  }
+  $('asTabla').innerHTML = '<tr><th>Depto</th><th>CE</th><th>Centro</th><th class="num">Prin./Res.</th><th>Medidor 1</th><th>Medidor 2</th><th>Fecha</th></tr>' +
+    ids.map(function (k) {
+      var c = aCentros[k];
+      return '<tr><td>' + esc(c.depto) + '</td><td>' + esc(k) + '</td><td>' + esc(c.nombre) + '</td><td class="num">' + c.principales + '/' + c.reservas + '</td>' +
+        '<td>' + sel(k, 0) + '</td><td>' + sel(k, 1) + '</td><td><input type="date" class="input" style="padding:6px" data-fecha="' + esc(k) + '" value="' + esc(c.fecha || '') + '"></td></tr>';
+    }).join('');
+}
+// Al asignar, el arreglo asignadoA se copia a cada estudiante del CE: así las
+// reglas de Firestore dejan al medidor leer solo lo suyo.
+$('asTabla').addEventListener('change', function (e) {
+  var t = e.target;
+  if (t.dataset.fecha) { db.collection('val_centros').doc(t.dataset.fecha).update({ fecha: t.value || null }); toast('Fecha guardada'); return; }
+  if (!t.dataset.ce) return;
+  var ce = t.dataset.ce, arr = ((aCentros[ce].asignadoA || []).slice()).concat(['', '']).slice(0, 2);
+  arr[+t.dataset.i] = t.value;
+  arr = arr.filter(function (x, i) { return x && arr.indexOf(x) === i; });
+  var b = db.batch();
+  b.update(db.collection('val_centros').doc(ce), { asignadoA: arr });
+  Object.keys(aEst).forEach(function (k) { if (aEst[k].ce === ce) b.update(db.collection('val_estudiantes').doc(k), { asignadoA: arr }); });
+  b.commit().then(function () { toast('Asignación guardada'); }).catch(function (x) { toast('Error: ' + x.message); });
+});
+
+function pintarMedidores() {
+  var ids = Object.keys(aMed).sort(function (a, b) { return (aMed[a].nombre || '').localeCompare(aMed[b].nombre || ''); });
+  var nCE = {}; Object.keys(aCentros).forEach(function (k) { (aCentros[k].asignadoA || []).forEach(function (u) { nCE[u] = (nCE[u] || 0) + 1; }); });
+  $('mdTabla').innerHTML = '<tr><th>Nombre</th><th>Usuario</th><th>Departamento</th><th class="num">CE asignados</th><th>Estado</th></tr>' +
+    (ids.length ? ids.map(function (u) {
+      var m = aMed[u];
+      return '<tr><td>' + esc(m.nombre) + '</td><td>' + esc(m.usuario) + '</td><td>' + esc(m.depto) + '</td><td class="num">' + (nCE[u] || 0) + '</td>' +
+        '<td><button class="btn sec" style="padding:5px 10px;font-size:0.75rem" onclick="toggleMed(\'' + u + '\')">' + (m.activo === false ? 'Inactivo · activar' : 'Activo · desactivar') + '</button></td></tr>';
+    }).join('') : '<tr><td colspan="5" class="muted">Sin medidores.</td></tr>');
+}
+function toggleMed(u) { db.collection('val_usuarios').doc(u).update({ activo: aMed[u].activo === false }); }
+
+// Crear la cuenta en una instancia secundaria para no cerrar la sesión del admin.
+$('mdCrear').onclick = function () {
+  var user = $('mdUser').value.trim().toLowerCase(), nombre = $('mdNombre').value.trim(), dep = $('mdDepto').value, pass = $('mdPass').value;
+  if (!/^[a-z0-9._-]{3,}$/.test(user)) return toast('Usuario: mínimo 3 caracteres, sin espacios ni tildes.');
+  if (!nombre || pass.length < 6) return toast('Completa nombre y una contraseña de al menos 6 caracteres.');
+  $('mdCrear').disabled = true;
+  var sec = firebase.apps.find(function (a) { return a.name === 'secundaria'; }) || firebase.initializeApp(firebase.app().options, 'secundaria');
+  sec.auth().createUserWithEmailAndPassword(user + DOMINIO_MED, pass).then(function (cred) {
+    var uid = cred.user.uid; sec.auth().signOut();
+    return db.collection('val_usuarios').doc(uid).set({ usuario: user, nombre: nombre, depto: dep, rol: 'medidor', activo: true, creado: firebase.firestore.FieldValue.serverTimestamp() });
+  }).then(function () {
+    toast('Medidor creado: ' + user); ['mdUser','mdNombre','mdPass'].forEach(function (i) { $(i).value = ''; });
+  }).catch(function (e) {
+    toast(e.code === 'auth/email-already-in-use' ? 'Ese usuario ya existe.' : 'Error: ' + e.message);
+  }).finally(function () { $('mdCrear').disabled = false; });
+};
+
+// ── Importar / Exportar (SheetJS se carga solo cuando se usa) ────────────────
+function cargarXLSX() {
+  if (window.XLSX) return Promise.resolve();
+  return new Promise(function (ok, ko) {
+    var s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload = ok; s.onerror = ko; document.head.appendChild(s);
+  });
+}
+
+var impDatos = null;
+$('impFile').onchange = function () {
+  var f = this.files[0]; if (!f) return;
+  $('impInfo').textContent = 'Leyendo…'; $('impBtn').classList.add('hidden');
+  cargarXLSX().then(function () { return f.arrayBuffer(); }).then(function (buf) {
+    // Solo se piden las dos hojas necesarias: la clave nunca se lee.
+    var wb = XLSX.read(buf, { type: 'array', sheets: ['Lista_campo', 'Centros'] });
+    if (!wb.Sheets.Lista_campo || !wb.Sheets.Centros) throw new Error('Faltan las hojas Lista_campo o Centros.');
+    var lista = XLSX.utils.sheet_to_json(wb.Sheets.Lista_campo, { defval: '' });
+    var cen = XLSX.utils.sheet_to_json(wb.Sheets.Centros, { defval: '' });
+    var req = ['Departamento','Código CE','Centro Escolar','Grado','Sección','NIE','Género','Tipo','Grupo de reemplazo','Orden en grupo'];
+    var falta = req.filter(function (c) { return !(c in (lista[0] || {})); });
+    if (falta.length) throw new Error('Faltan columnas en Lista_campo: ' + falta.join(', '));
+    var tieneNombre = lista.length && ('Nombre' in lista[0]);
+    var nies = {}; lista.forEach(function (r) { nies[r.NIE] = (nies[r.NIE] || 0) + 1; });
+    var dup = Object.keys(nies).filter(function (k) { return nies[k] > 1; });
+    if (dup.length) throw new Error('NIE repetidos en Lista_campo: ' + dup.slice(0, 5).join(', '));
+    impDatos = { lista: lista, cen: cen };
+    var p = lista.filter(function (r) { return r.Tipo === 'Principal'; }).length;
+    $('impInfo').innerHTML = '<b>' + cen.length + '</b> centros · <b>' + p + '</b> principales · <b>' + (lista.length - p) + '</b> reservas · nombres: <b>' +
+      (tieneNombre ? 'sí' : 'no (columna "Nombre" no encontrada)') + '</b>';
+    $('impBtn').classList.remove('hidden');
+  }).catch(function (e) { $('impInfo').textContent = 'Error: ' + e.message; });
+};
+
+$('impBtn').onclick = function () {
+  if (!impDatos || !confirm('¿Importar la muestra? Lo capturado y las asignaciones se conservan.')) return;
+  $('impBtn').disabled = true;
+  var ops = [];
+  impDatos.cen.forEach(function (r) {
+    ops.push([db.collection('val_centros').doc(String(r['Código CE'])), {
+      depto: r.Departamento, nombre: r['Centro Escolar'], tipoCE: r['Tipo de CE'],
+      principales: +r['Estudiantes principales'] || 0, reservas: +r.Reservas || 0
+    }]);
+  });
+  impDatos.lista.forEach(function (r) {
+    var d = {
+      nie: String(r.NIE), ce: String(r['Código CE']), depto: r.Departamento, grado: r.Grado, seccion: String(r['Sección']),
+      genero: r['Género'], tipo: r.Tipo, grupo: r['Grupo de reemplazo'], orden: +r['Orden en grupo']
+    };
+    if ('Nombre' in r) d.nombre = String(r.Nombre).trim();
+    ops.push([db.collection('val_estudiantes').doc(d.nie), d]);
+  });
+  // Si el CE ya estaba asignado, el estudiante hereda la asignación.
+  ops.forEach(function (o) {
+    if (o[0].parent.id === 'val_estudiantes' && !aEst[o[0].id]) o[1].asignadoA = (aCentros[o[1].ce] || {}).asignadoA || [];
+  });
+  var i = 0;
+  (function lote() {
+    if (i >= ops.length) { $('impInfo').textContent = 'Importación terminada: ' + ops.length + ' registros.'; $('impBtn').disabled = false; return; }
+    var b = db.batch();
+    ops.slice(i, i + 400).forEach(function (o) { b.set(o[0], o[1], { merge: true }); });
+    b.commit().then(function () {
+      i += 400; $('impInfo').textContent = 'Importando… ' + Math.min(i, ops.length) + ' / ' + ops.length; lote();
+    }).catch(function (e) { $('impInfo').textContent = 'Error: ' + e.message; $('impBtn').disabled = false; });
+  })();
+};
+
+$('expBtn').onclick = function () {
+  cargarXLSX().then(function () {
+    var filas = Object.keys(aEst).map(function (k) { return aEst[k]; }).sort(function (a, b) {
+      return (a.depto + a.ce + a.grado + a.seccion + a.nie).localeCompare(b.depto + b.ce + b.grado + b.seccion + b.nie);
+    }).map(function (e) {
+      var c = aCentros[e.ce] || {};
+      return {
+        'Departamento': e.depto, 'Código CE': e.ce, 'Centro Escolar': c.nombre || '', 'Tipo de CE': c.tipoCE || '',
+        'Grado': e.grado, 'Sección': e.seccion, 'NIE': e.nie, 'Nombre': e.nombre || '', 'Género': e.genero, 'Tipo': e.tipo,
+        'Grupo de reemplazo': e.grupo, 'Orden en grupo': e.orden,
+        'Talla medida': e.tallaMedida || '', 'Fecha medición': e.fechaMed || '', 'Medido por': e.medidoPor || '', 'Observación': e.obs || '',
+        'Estado': e.estado || 'pendiente', 'Reemplaza a NIE': e.reemplazaA || '', 'Reemplazado por NIE': e.reemplazadoPor || ''
+      };
+    });
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(filas), 'Capturas');
+    XLSX.writeFile(wb, 'capturas_validacion_' + hoy() + '.xlsx');
+  }).catch(function () { toast('No se pudo generar el Excel.'); });
+};
+</script>
+</body>
+</html>

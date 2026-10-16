@@ -1,0 +1,10 @@
+{
+  "name": "Validación de tallas",
+  "short_name": "Tallas",
+  "start_url": "validacion.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0F2070",
+  "theme_color": "#0F2070",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
