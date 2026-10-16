@@ -176,6 +176,12 @@
         <button class="btn hidden" id="impBtn" style="margin-top:10px">Importar</button>
       </div>
       <div class="card">
+        <b>Borrar muestra cargada</b>
+        <p class="muted" style="margin-top:4px">Elimina todos los centros y estudiantes cargados, junto con sus asignaciones y capturas, para subir un archivo nuevo desde cero. Las cuentas de los medidores se conservan. Si ya hay capturas, descarga antes el Excel.</p>
+        <div id="borInfo" class="muted" style="margin-top:8px"></div>
+        <button class="btn warn" id="borBtn" style="margin-top:10px">Borrar muestra</button>
+      </div>
+      <div class="card">
         <b>Exportar capturas</b>
         <p class="muted" style="margin-top:4px">Excel con la misma estructura de Lista_campo y las columnas de captura llenas, más el estado y los reemplazos. Pégalo en tu Excel oficial para calcular resultados.</p>
         <button class="btn" id="expBtn" style="margin-top:10px">Descargar Excel</button>
@@ -629,6 +635,27 @@ $('impBtn').onclick = function () {
     b.commit().then(function () {
       i += 400; $('impInfo').textContent = 'Importando… ' + Math.min(i, ops.length) + ' / ' + ops.length; lote();
     }).catch(function (e) { $('impInfo').textContent = 'Error: ' + e.message; $('impBtn').disabled = false; });
+  })();
+};
+
+$('borBtn').onclick = function () {
+  var nEst = Object.keys(aEst).length, nCen = Object.keys(aCentros).length;
+  if (!nEst && !nCen) return toast('No hay muestra cargada.');
+  var nCap = Object.keys(aEst).filter(function (k) { return aEst[k].estado; }).length;
+  var txt = prompt('Se borrarán ' + nCen + ' centros y ' + nEst + ' estudiantes' +
+    (nCap ? ', incluidas ' + nCap + ' capturas ya hechas' : '') + '.\n\nEscribe BORRAR para confirmar.');
+  if (txt !== 'BORRAR') return;
+  $('borBtn').disabled = true;
+  var refs = Object.keys(aEst).map(function (k) { return db.collection('val_estudiantes').doc(k); })
+    .concat(Object.keys(aCentros).map(function (k) { return db.collection('val_centros').doc(k); }));
+  var i = 0;
+  (function lote() {
+    if (i >= refs.length) { $('borInfo').textContent = 'Muestra borrada. Ya puedes importar el archivo nuevo.'; $('borBtn').disabled = false; return; }
+    var b = db.batch();
+    refs.slice(i, i + 400).forEach(function (r) { b.delete(r); });
+    b.commit().then(function () {
+      i += 400; $('borInfo').textContent = 'Borrando… ' + Math.min(i, refs.length) + ' / ' + refs.length; lote();
+    }).catch(function (e) { $('borInfo').textContent = 'Error: ' + e.message; $('borBtn').disabled = false; });
   })();
 };
 
