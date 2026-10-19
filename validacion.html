@@ -485,7 +485,13 @@ function pintarAvance() {
     if (e.estado === 'medido') d.med++; if (e.estado === 'ausente') d.aus++;
   });
   $('aDepto').innerHTML = '<tr><th>Departamento</th><th class="num">CE</th><th class="num">Principales</th><th class="num">Medidos</th><th class="num">Ausentes</th><th class="num">Avance</th></tr>' +
-    DEPTOS.map(function (n) { var d = dep[n]; return '<tr><td>' + n + '</td><td class="num">' + d.ce + '</td><td class="num">' + d.prin + '</td><td class="num">' + d.med + '</td><td class="num">' + d.aus + '</td><td class="num">' + (d.prin ? Math.round(d.med * 100 / d.prin) : 0) + '%</td></tr>'; }).join('');
+    DEPTOS.map(function (n) { var d = dep[n]; return '<tr><td>' + n + '</td><td class="num">' + d.ce + '</td><td class="num">' + d.prin + '</td><td class="num">' + d.med + '</td><td class="num">' + d.aus + '</td><td class="num">' + (d.prin ? Math.round(d.med * 100 / d.prin) : 0) + '%</td></tr>'; }).join('') +
+    (function () {
+      var t = { ce: 0, prin: 0, med: 0, aus: 0 };
+      DEPTOS.forEach(function (n) { ['ce','prin','med','aus'].forEach(function (k) { t[k] += dep[n][k]; }); });
+      var f = function (x) { return x.toLocaleString('es-SV'); };
+      return '<tr style="font-weight:800;background:#F1F5F9"><td>TOTAL</td><td class="num">' + f(t.ce) + '</td><td class="num">' + f(t.prin) + '</td><td class="num">' + f(t.med) + '</td><td class="num">' + f(t.aus) + '</td><td class="num">' + (t.prin ? Math.round(t.med * 100 / t.prin) : 0) + '%</td></tr>';
+    })();
 
   var gr = {};
   est.forEach(function (e) {
