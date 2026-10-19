@@ -51,6 +51,7 @@
   .b-med { background: #DCFCE7; color: #166534; }
   .b-aus { background: #FEE2E2; color: #991B1B; }
   .b-res { background: #E0F2FE; color: #075985; }
+  .grado-cab { display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 800; color: #0F2070; text-transform: uppercase; letter-spacing: 0.5px; margin: 14px 2px 6px; }
   .barra { height: 6px; background: #E2E8F0; border-radius: 999px; overflow: hidden; margin-top: 6px; }
   .barra div { height: 100%; background: #22C55E; }
   .filtros { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
@@ -339,7 +340,7 @@ function abrirCE(id) {
   $('mBack').classList.remove('hidden');
   $('mCentros').classList.add('hidden'); $('mCE').classList.remove('hidden');
   var grados = {}; visibles(id).forEach(function (e) { grados[e.grado] = 1; });
-  $('mGrado').innerHTML = '<option value="">Todos los grados</option>' + Object.keys(grados).sort().map(function (g) { return '<option>' + esc(g) + '</option>'; }).join('');
+  $('mGrado').innerHTML = '<option value="">Todos los grados</option>' + Object.keys(grados).sort(function (a, b) { return (ordenGrado(a) - ordenGrado(b)) || a.localeCompare(b); }).map(function (g) { return '<option>' + esc(g) + '</option>'; }).join('');
   pintarLista();
 }
 $('mBack').onclick = function () {
@@ -357,6 +358,14 @@ function badge(e) {
   return '<span class="badge b-pend">Pendiente</span>';
 }
 
+// Orden natural de grados (Parvularia, Primero… Noveno, Bachillerato…); lo no reconocido va al final.
+var ORDEN_GRADOS = ['parvularia','inicial','primer','segundo','tercer','cuarto','quinto','sexto','séptimo','octavo','noveno','bachillerato','laboral','especializaci'];
+function ordenGrado(g) {
+  g = String(g || '').toLowerCase();
+  for (var i = 0; i < ORDEN_GRADOS.length; i++) if (g.indexOf(ORDEN_GRADOS[i]) === 0) return i;
+  return 99;
+}
+
 function pintarLista() {
   var todos = visibles(ceActual);
   var med = todos.filter(function (e) { return e.estado === 'medido'; }).length;
@@ -371,10 +380,20 @@ function pintarLista() {
     if (q && (e.nombre || '').toLowerCase().indexOf(q) < 0 && String(e.nie).indexOf(q) < 0) return false;
     return true;
   }).sort(function (a, b) {
-    return (a.grado + a.seccion + (a.nombre || '')).localeCompare(b.grado + b.seccion + (b.nombre || ''));
+    return (ordenGrado(a.grado) - ordenGrado(b.grado)) ||
+      (a.grado + a.seccion + (a.nombre || '')).localeCompare(b.grado + b.seccion + (b.nombre || ''));
   });
+  // Encabezado por grado con su avance (medidos + ausentes / total del grado en el CE).
+  var gradoAnt = null, todosCE = visibles(ceActual);
   $('mLista').innerHTML = l.length ? l.map(function (e) {
-    return '<div class="item" onclick="abrirSheet(\'' + esc(e.nie) + '\')"><div class="main">' +
+    var cab = '';
+    if (e.grado !== gradoAnt) {
+      gradoAnt = e.grado;
+      var delGrado = todosCE.filter(function (x) { return x.grado === e.grado; });
+      var hechos = delGrado.filter(function (x) { return x.estado === 'medido' || x.estado === 'ausente'; }).length;
+      cab = '<div class="grado-cab"><span>' + esc(e.grado) + '</span><span>' + hechos + '/' + delGrado.length + '</span></div>';
+    }
+    return cab + '<div class="item" onclick="abrirSheet(\'' + esc(e.nie) + '\')"><div class="main">' +
       '<div class="nom">' + esc(e.nombre || 'Sin nombre') + '</div>' +
       '<div class="det">NIE ' + esc(e.nie) + ' · ' + esc(e.grado) + ' · Secc. ' + esc(e.seccion) + ' · ' + esc(e.genero) + '</div>' +
       (e.reemplazaA ? '<div class="det"><span class="badge b-res">Reemplazo</span></div>' : '') +
