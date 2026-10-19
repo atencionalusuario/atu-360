@@ -59,7 +59,7 @@
   /* Hoja de captura */
   .sheet-bg { position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 50; display: flex; align-items: flex-end; justify-content: center; }
   .sheet { background: white; width: 100%; max-width: 520px; border-radius: 18px 18px 0 0; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); max-height: 92vh; overflow: auto; }
-  .tallas { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 8px; }
+  .tallas { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 8px; }
   .tallas button { padding: 12px 0; border: 1.5px solid #CBD5E1; background: white; border-radius: 10px; font-weight: 700; font-size: 1rem; color: #1E293B; }
   .tallas button.sel { background: #1A3DAA; border-color: #1A3DAA; color: white; }
   .acciones { display: flex; gap: 8px; margin-top: 14px; }
@@ -221,7 +221,7 @@
 // Los medidores no tienen correo: su usuario se convierte en un correo interno
 // de este dominio ficticio. El admin entra con su correo normal de ATU 360.
 var DOMINIO_MED = '@medidores.validacion-tallas.app';
-var TALLAS = []; for (var t = 18; t <= 47; t++) TALLAS.push(t);
+var TALLAS = []; for (var t = 22; t <= 45; t++) TALLAS.push(t);
 var DEPTOS = ['AHUACHAPÁN','SANTA ANA','SONSONATE','CHALATENANGO','LA LIBERTAD','SAN SALVADOR','CUSCATLÁN','LA PAZ','CABAÑAS','SAN VICENTE','USULUTÁN','SAN MIGUEL','MORAZÁN','LA UNIÓN'];
 
 // Cache sin conexión: la lista del CE queda guardada en el celular y las
