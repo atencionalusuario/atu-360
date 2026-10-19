@@ -358,11 +358,13 @@ function badge(e) {
   return '<span class="badge b-pend">Pendiente</span>';
 }
 
-// Orden natural de grados (Parvularia, Primero… Noveno, Bachillerato…); lo no reconocido va al final.
-var ORDEN_GRADOS = ['parvularia','inicial','primer','segundo','tercer','cuarto','quinto','sexto','séptimo','octavo','noveno','bachillerato','laboral','especializaci'];
+// Orden oficial de grados. Se compara el inicio del nombre ("Cuarto Grado - Año 2" cae en "cuarto grado");
+// lo que no coincide (Laboral, Especialización…) va al final.
+var ORDEN_GRADOS = ['inicial 3','parvularia 4','parvularia 5','parvularia 6','primer grado','segundo grado','tercer grado','cuarto grado','quinto grado','sexto grado','séptimo grado','octavo grado','noveno grado','primer año','segundo año','tercer año'];
 function ordenGrado(g) {
-  g = String(g || '').toLowerCase();
-  for (var i = 0; i < ORDEN_GRADOS.length; i++) if (g.indexOf(ORDEN_GRADOS[i]) === 0) return i;
+  var limpio = function (x) { return String(x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim(); };
+  g = limpio(g);
+  for (var i = 0; i < ORDEN_GRADOS.length; i++) if (g.indexOf(limpio(ORDEN_GRADOS[i])) === 0) return i;
   return 99;
 }
 
