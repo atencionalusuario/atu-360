@@ -111,6 +111,7 @@
   <div class="wrap">
     <div id="mCentros"></div>
     <div id="mCE" class="hidden">
+      <div id="mAvance" class="card" style="padding:12px 14px"></div>
       <div class="filtros">
         <input id="mBuscar" class="input" placeholder="Buscar nombre o NIE">
         <select id="mGrado" class="input"><option value="">Todos los grados</option></select>
@@ -357,6 +358,12 @@ function badge(e) {
 }
 
 function pintarLista() {
+  var todos = visibles(ceActual);
+  var med = todos.filter(function (e) { return e.estado === 'medido'; }).length;
+  var aus = todos.filter(function (e) { return e.estado === 'ausente'; }).length;
+  var pct = todos.length ? Math.round((med + aus) * 100 / todos.length) : 0;
+  $('mAvance').innerHTML = '<div class="det" style="font-size:0.82rem;color:#334155"><b>' + (med + aus) + '/' + todos.length + '</b> · ' +
+    med + ' medidos · ' + aus + ' ausentes · ' + (todos.length - med - aus) + ' pendientes</div><div class="barra"><div style="width:' + pct + '%"></div></div>';
   var q = $('mBuscar').value.trim().toLowerCase(), g = $('mGrado').value, st = $('mEstado').value;
   var l = visibles(ceActual).filter(function (e) {
     if (g && e.grado !== g) return false;
