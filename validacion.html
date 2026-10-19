@@ -77,7 +77,8 @@
   .tabla th { text-align: left; background: #F1F5F9; padding: 8px; font-weight: 700; color: #334155; position: sticky; top: 0; }
   .tabla td { padding: 7px 8px; border-top: 1px solid #F1F5F9; }
   .scroll { overflow: auto; max-height: 65vh; }
-  .num { text-align: right; }
+  .num { text-align: center; }
+  .tabla tr.tot td { position: sticky; top: 33px; background: #E0E7FF; font-weight: 800; color: #0F2070; z-index: 1; }
 
   .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #1E293B; color: white; padding: 10px 16px; border-radius: 10px; font-size: 0.85rem; z-index: 99; opacity: 0; transition: opacity 0.2s; pointer-events: none; max-width: 90vw; }
   .toast.show { opacity: 1; }
@@ -484,14 +485,15 @@ function pintarAvance() {
     if (e.tipo === 'Principal') d.prin++;
     if (e.estado === 'medido') d.med++; if (e.estado === 'ausente') d.aus++;
   });
+  // La fila TOTAL va justo debajo del encabezado y queda fija al hacer scroll.
+  var tot = { ce: 0, prin: 0, med: 0, aus: 0 };
+  DEPTOS.forEach(function (n) { ['ce','prin','med','aus'].forEach(function (k) { tot[k] += dep[n][k]; }); });
+  var fmt = function (x) { return x.toLocaleString('es-SV'); };
   $('aDepto').innerHTML = '<tr><th>Departamento</th><th class="num">CE</th><th class="num">Principales</th><th class="num">Medidos</th><th class="num">Ausentes</th><th class="num">Avance</th></tr>' +
-    DEPTOS.map(function (n) { var d = dep[n]; return '<tr><td>' + n + '</td><td class="num">' + d.ce + '</td><td class="num">' + d.prin + '</td><td class="num">' + d.med + '</td><td class="num">' + d.aus + '</td><td class="num">' + (d.prin ? Math.round(d.med * 100 / d.prin) : 0) + '%</td></tr>'; }).join('') +
-    (function () {
-      var t = { ce: 0, prin: 0, med: 0, aus: 0 };
-      DEPTOS.forEach(function (n) { ['ce','prin','med','aus'].forEach(function (k) { t[k] += dep[n][k]; }); });
-      var f = function (x) { return x.toLocaleString('es-SV'); };
-      return '<tr style="font-weight:800;background:#F1F5F9"><td>TOTAL</td><td class="num">' + f(t.ce) + '</td><td class="num">' + f(t.prin) + '</td><td class="num">' + f(t.med) + '</td><td class="num">' + f(t.aus) + '</td><td class="num">' + (t.prin ? Math.round(t.med * 100 / t.prin) : 0) + '%</td></tr>';
-    })();
+    '<tr class="tot"><td>TOTAL</td><td class="num">' + fmt(tot.ce) + '</td><td class="num">' + fmt(tot.prin) + '</td><td class="num">' + fmt(tot.med) + '</td><td class="num">' + fmt(tot.aus) + '</td><td class="num">' + (tot.prin ? Math.round(tot.med * 100 / tot.prin) : 0) + '%</td></tr>' +
+    DEPTOS.map(function (n) { var d = dep[n]; return '<tr><td>' + n + '</td><td class="num">' + d.ce + '</td><td class="num">' + d.prin + '</td><td class="num">' + d.med + '</td><td class="num">' + d.aus + '</td><td class="num">' + (d.prin ? Math.round(d.med * 100 / d.prin) : 0) + '%</td></tr>'; }).join('');
+  var altoTh = $('aDepto').querySelector('th').offsetHeight;
+  [].forEach.call($('aDepto').querySelectorAll('tr.tot td'), function (td) { td.style.top = altoTh + 'px'; });
 
   var gr = {};
   est.forEach(function (e) {
