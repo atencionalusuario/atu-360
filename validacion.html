@@ -149,6 +149,7 @@
     <div id="t-asignacion" class="hidden">
       <div class="filtros">
         <select id="asDepto" class="input"><option value="">Todos los departamentos</option></select>
+        <select id="asFecha" class="input"><option value="">Todas las fechas</option></select>
         <input id="asBuscar" class="input" placeholder="Buscar CE">
       </div>
       <div class="card scroll"><table class="tabla" id="asTabla"></table></div>
@@ -517,13 +518,24 @@ function pintarAvance() {
     (filas.length ? filas.map(function (k) { var p = k.split('|'); return '<tr><td>' + esc(p[0]) + '</td><td>' + esc(p[1]) + '</td><td class="num">' + dia[k] + '</td></tr>'; }).join('') : '<tr><td colspan="3" class="muted">Sin mediciones aún.</td></tr>');
 }
 
-['asDepto','asBuscar'].forEach(function (id) { $(id).addEventListener('input', pintarAsignacion); });
+['asDepto','asFecha','asBuscar'].forEach(function (id) { $(id).addEventListener('input', pintarAsignacion); });
+function formatoFecha(iso) {
+  var dias = ['dom','lun','mar','mié','jue','vie','sáb'], p = iso.split('-');
+  return dias[new Date(+p[0], p[1] - 1, +p[2]).getDay()] + ' ' + p[2] + '/' + p[1] + '/' + p[0];
+}
 function pintarAsignacion() {
   var d = $('asDepto').value, q = $('asBuscar').value.trim().toLowerCase();
+  // Lista de fechas programadas (con cuántos CE tiene cada una) para filtrar por día.
+  var f = $('asFecha').value, porFecha = {}, sinFecha = 0;
+  Object.keys(aCentros).forEach(function (k) { var x = aCentros[k].fecha; if (x) porFecha[x] = (porFecha[x] || 0) + 1; else sinFecha++; });
+  $('asFecha').innerHTML = '<option value="">Todas las fechas</option><option value="-">Sin fecha (' + sinFecha + ')</option>' +
+    Object.keys(porFecha).sort().map(function (x) { return '<option value="' + x + '">' + formatoFecha(x) + ' (' + porFecha[x] + ' CE)</option>'; }).join('');
+  $('asFecha').value = f;
+  if ($('asFecha').value !== f) f = $('asFecha').value;
   var meds = Object.keys(aMed).filter(function (u) { return aMed[u].activo !== false; }).sort(porDeptoNombre);
   var ids = Object.keys(aCentros).filter(function (k) {
     var c = aCentros[k];
-    return (!d || c.depto === d) && (!q || k.indexOf(q) >= 0 || c.nombre.toLowerCase().indexOf(q) >= 0);
+    return (!d || c.depto === d) && (!f || (f === '-' ? !c.fecha : c.fecha === f)) && (!q || k.indexOf(q) >= 0 || c.nombre.toLowerCase().indexOf(q) >= 0);
   }).sort(function (a, b) { return (aCentros[a].depto + a).localeCompare(aCentros[b].depto + b); });
   function sel(k, i) {
     var cur = (aCentros[k].asignadoA || [])[i] || '';
