@@ -177,6 +177,12 @@
         <button class="btn hidden" id="impBtn" style="margin-top:10px">Importar</button>
       </div>
       <div class="card">
+        <b>Limpiar capturas</b>
+        <p class="muted" style="margin-top:4px">Deja en blanco las tallas, ausencias y reemplazos registrados (por ejemplo, después de hacer pruebas). La muestra, las asignaciones y los medidores se conservan.</p>
+        <div id="limInfo" class="muted" style="margin-top:8px"></div>
+        <button class="btn warn" id="limBtn" style="margin-top:10px">Limpiar capturas</button>
+      </div>
+      <div class="card">
         <b>Borrar muestra cargada</b>
         <p class="muted" style="margin-top:4px">Elimina todos los centros y estudiantes cargados, junto con sus asignaciones y capturas, para subir un archivo nuevo desde cero. Las cuentas de los medidores se conservan. Si ya hay capturas, descarga antes el Excel.</p>
         <div id="borInfo" class="muted" style="margin-top:8px"></div>
@@ -652,6 +658,28 @@ $('impBtn').onclick = function () {
     b.commit().then(function () {
       i += 400; $('impInfo').textContent = 'Importando… ' + Math.min(i, ops.length) + ' / ' + ops.length; lote();
     }).catch(function (e) { $('impInfo').textContent = 'Error: ' + e.message; $('impBtn').disabled = false; });
+  })();
+};
+
+// Solo se tocan los estudiantes con algo capturado, para no gastar escrituras.
+$('limBtn').onclick = function () {
+  var ids = Object.keys(aEst).filter(function (k) { var e = aEst[k]; return e.estado || e.tallaMedida || e.reemplazaA || e.reemplazadoPor; });
+  if (!ids.length) return toast('No hay capturas que limpiar.');
+  if (prompt('Se limpiarán las capturas de ' + ids.length + ' estudiantes.\n\nEscribe LIMPIAR para confirmar.') !== 'LIMPIAR') return;
+  $('limBtn').disabled = true;
+  var borrar = firebase.firestore.FieldValue.delete();
+  var i = 0;
+  (function lote() {
+    if (i >= ids.length) { $('limInfo').textContent = 'Capturas limpiadas: ' + ids.length + ' estudiantes.'; $('limBtn').disabled = false; return; }
+    var b = db.batch();
+    ids.slice(i, i + 400).forEach(function (k) {
+      b.update(db.collection('val_estudiantes').doc(k), {
+        estado: borrar, tallaMedida: borrar, fechaMed: borrar, medidoPor: borrar, medidoPorUid: borrar,
+        obs: borrar, reemplazaA: borrar, reemplazadoPor: borrar, actualizado: borrar
+      });
+    });
+    b.commit().then(function () { i += 400; lote(); })
+      .catch(function (e) { $('limInfo').textContent = 'Error: ' + e.message; $('limBtn').disabled = false; });
   })();
 };
 
