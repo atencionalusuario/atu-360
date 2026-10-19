@@ -627,9 +627,18 @@ $('impBtn').onclick = function () {
   ops.forEach(function (o) {
     if (o[0].parent.id === 'val_estudiantes' && !aEst[o[0].id]) o[1].asignadoA = (aCentros[o[1].ce] || {}).asignadoA || [];
   });
+  // Solo se escribe lo que falta o cambió: el plan gratuito de Firebase permite
+  // 20,000 escrituras al día, así que una importación cortada se retoma
+  // sin volver a gastar en lo que ya quedó cargado.
+  var total = ops.length;
+  ops = ops.filter(function (o) {
+    var actual = (o[0].parent.id === 'val_estudiantes' ? aEst : aCentros)[o[0].id];
+    if (!actual) return true;
+    return Object.keys(o[1]).some(function (k) { return k !== 'asignadoA' && actual[k] !== o[1][k]; });
+  });
   var i = 0;
   (function lote() {
-    if (i >= ops.length) { $('impInfo').textContent = 'Importación terminada: ' + ops.length + ' registros.'; $('impBtn').disabled = false; return; }
+    if (i >= ops.length) { $('impInfo').textContent = 'Importación terminada: ' + ops.length + ' registros escritos; ' + (total - ops.length) + ' ya estaban cargados.'; $('impBtn').disabled = false; return; }
     var b = db.batch();
     ops.slice(i, i + 400).forEach(function (o) { b.set(o[0], o[1], { merge: true }); });
     b.commit().then(function () {
