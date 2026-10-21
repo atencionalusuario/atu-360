@@ -804,6 +804,18 @@
   </div>
 </div>
 
+<div class="modal-overlay open" id="modalAvisoEnlace" style="z-index:9500;" onclick="if(event.target===this) this.classList.remove('open')">
+  <div class="modal-box" style="max-width:480px; text-align:center;">
+    <button class="modal-close" onclick="document.getElementById('modalAvisoEnlace').classList.remove('open')">&times;</button>
+    <svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="#EA580C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:8px;"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+    <h3 class="modal-titulo" style="text-align:center;">Aviso importante</h3>
+    <div class="modal-ayuda-cuerpo" style="text-align:left;">
+      <p>Este enlace dejará de funcionar pronto. Continúa usando la herramienta en el siguiente enlace:</p>
+      <p style="text-align:center;"><a class="bib-btn" href="https://atu360.goes.gob.sv/" target="_blank" rel="noopener" style="display:inline-block; text-decoration:none; min-width:0;">https://atu360.goes.gob.sv/</a></p>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modalTip" onclick="if(event.target===this) cerrarModalTip()">
   <div class="modal-box" style="max-width:480px; text-align:center;">
     <button class="modal-close" onclick="cerrarModalTip()">&times;</button>
